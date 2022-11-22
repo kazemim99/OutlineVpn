@@ -1,0 +1,21 @@
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Outline.Api.ViewModels
+{
+    public class VerifyCodeViewModel
+    {
+        public string Code { get; set; }
+
+        public string Mobile { get; set; }
+    }
+
+    public class ChangePasswordViewModel
+    {
+        [Required]
+        public string Password { get; set; }
+
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; }
+    }
+}

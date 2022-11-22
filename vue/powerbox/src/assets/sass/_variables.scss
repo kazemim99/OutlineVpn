@@ -1,0 +1,43 @@
+$body-font-family: 'IranSans';
+$heading-font-family: 'IranSans';
+
+$white-color: #fff;
+$gray-color: #444;
+$gray-black-color: #252b33;
+$dim-gray-color: #666;
+$dim-gray-light-color: #8e9a9d;
+$light-cyan-color: #bdefe0;
+
+$font-size-light: 13px;
+$font-size-base: 14px;
+$font-size-small: 18px;
+$font-size-medium: 20px;
+$font-size-big: 24px;
+$font-size-bigger: 32px;
+
+$font-weight-thin: 100;
+$font-weight-extra-light: 200;
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semi-bold: 600;
+$font-weight-bold: 700;
+$font-weight-extra-bold: 800;
+$font-weight-black: 900;
+
+.v-application {
+  .display-1,
+  .display-2,
+  .display-3,
+  .display-4,
+  .headline,
+  .title,
+  .subtitle-1,
+  .subtitle-2,
+  .body-1,
+  .body-2,
+  .caption,
+  .overline {
+    font-family: $body-font-family !important;
+  }
+}
