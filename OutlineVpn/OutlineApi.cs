@@ -62,9 +62,10 @@ public class OutlineApi
         return (JObject.Parse(content)["accessKeys"] as JArray).ToObject<List<OutlineKey>>();
     }
 
-    public OutlineKey CreateKey()
+    public OutlineKey CreateKey(int value)
     {
-        CallRequest("access-keys", "POST", new NameValueCollection(), out string? content);
+        var cal = new NameValueCollection(value);
+        CallRequest("access-keys", "POST", cal, out string? content);
         return (JObject.Parse(content)).ToObject<OutlineKey>();
     }
 

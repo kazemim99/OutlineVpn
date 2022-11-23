@@ -31,8 +31,5 @@ namespace Outline.Api.Services.UserServices
         Task ChangePasswordAsync(string mobile, string password);
 
         Task<IEnumerable<OptionItem>> GetSelectList(string input);
-
-        Task<int> GetByCode(string userCode);
-
     }
 }

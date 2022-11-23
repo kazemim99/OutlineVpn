@@ -4,9 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DebugType>embedded</DebugType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
 	  <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.0" />
 	  <PackageReference Include="AutoWrapper.Core" Version="4.5.0" />
@@ -53,6 +55,10 @@
 	  
   </ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\OutlineVpn\OutlineVpn.csproj" />
+	</ItemGroup>
+
   <ItemGroup>
     <Content Update="appsettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -63,6 +69,10 @@
     <Content Update="appsettings.Production.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\UserServices\Mapping\" />
   </ItemGroup>
 
 </Project>

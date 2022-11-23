@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Outline.Api.Extensions
 {
@@ -7,11 +8,16 @@ namespace Outline.Api.Extensions
         public int Page { get; set; } = 1;
 
         public int ItemsPerPage { get; set; } = 10;
-        public string GroupBy { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public string? GroupBy { get; set; }
+
         public bool? GroupDesc { get; set; }
         public bool? MustSort { get; set; }
         public bool? MultiSort { get; set; }
-        public string SortBy { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public string? SortBy { get; set; }
 
         public bool? SortDesc { get; set; } = false;
 

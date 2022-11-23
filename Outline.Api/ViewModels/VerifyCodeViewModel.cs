@@ -3,6 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Outline.Api.ViewModels
 {
+    public class CreateUserViewModel
+    {
+        public string PhoneNumber { get; set; }
+    }
     public class VerifyCodeViewModel
     {
         public string Code { get; set; }

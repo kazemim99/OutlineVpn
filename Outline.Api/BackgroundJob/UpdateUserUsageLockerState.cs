@@ -32,7 +32,7 @@ namespace Outline.Api.BackgroundJob
             {
                 using var scope = _scopeFactory.CreateScope();
                 var _db = scope.ServiceProvider.GetRequiredService<DB>();
-                var _smsService = scope.ServiceProvider.GetRequiredService<IRahyabSmsSender>();
+                //var _smsService = scope.ServiceProvider.GetRequiredService<IRahyabSmsSender>();
 
                 _db.SaveChanges();
             }

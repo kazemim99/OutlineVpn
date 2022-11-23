@@ -17,6 +17,8 @@ using Outline.Api.BackgroundJob;
 using Outline.Api.IOC;
 using Outline.Api.Filter;
 using Outline.Api.Entity;
+using Serilog;
+using Serilog.Formatting.Compact;
 
 namespace Outline.Api
 {
@@ -33,6 +35,14 @@ namespace Outline.Api
             .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
+
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
+              .Enrich.FromLogContext()
+              .WriteTo.File(new RenderedCompactJsonFormatter(), "logs/log.ndjson")
+              .WriteTo.Seq("http://localhost:5341")
+              .CreateLogger();
+
+
             IOC.IOC.Container.Options.ResolveUnregisteredConcreteTypes = false;
             IOC.IOC.Container.Options.DefaultScopedLifestyle = Lifestyle.CreateHybrid(
                 defaultLifestyle: new AsyncScopedLifestyle(),

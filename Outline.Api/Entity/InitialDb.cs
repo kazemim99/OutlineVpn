@@ -59,14 +59,11 @@ namespace Outline.Api.Entity
             db.Users.Add(new User
             {
                 IsAdmin = true,
-                Code = new Random().Next(111111, 999999).ToString(),
                 UserState = true,
                 FirstName = DefaultUserConst.FirstName,
                 LastName = DefaultUserConst.LastName,
-                Password = BCrypt.Net.BCrypt.HashPassword(DefaultUserConst.Password),
                 Mobile = DefaultUserConst.Mobile,
                 Avatar = DefaultUserConst.Avatar,
-                Phone = DefaultUserConst.Phone,
                 Email = DefaultUserConst.Email,
                 Roles = new List<UserRole> {
                     new UserRole

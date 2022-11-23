@@ -61,8 +61,8 @@ namespace Outline.Api.Services.UserServices
             if (!user.UserState)
                 throw new ApiException(AppErrors.UserDeactive, 400);
 
-            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
-                throw new ApiException(AppErrors.WrongPassword);
+            //if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
+            //    throw new ApiException(AppErrors.WrongPassword);
             await SendCode(user.Mobile);
             SendMail(user.Email);
             var response = new LoginResultDto
@@ -98,12 +98,11 @@ namespace Outline.Api.Services.UserServices
 
                 var map = _mapper.Map<User>(input);
                 map.Id = id;
-                map.Code = user.Code;
 
-                if (!string.IsNullOrEmpty(input.Password) && input.Password != "null")
-                    map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
-                else
-                    map.Password = user.Password;
+                //if (!string.IsNullOrEmpty(input.Password) && input.Password != "null")
+                //    map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
+                //else
+                //    map.Password = user.Password;
 
                 if (!string.IsNullOrEmpty(map.Avatar))
                     map.Avatar = input.Avatar;
@@ -141,7 +140,7 @@ namespace Outline.Api.Services.UserServices
             {
                 RoleId = _db.Roles.First(a => a.Title == Policies.User).Id
             });
-            map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
+            //map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
          
             await _db.AddAsync(map);
             await _db.SaveChangesAsync();
@@ -174,8 +173,6 @@ namespace Outline.Api.Services.UserServices
             if (filter.UserState != null)
                 query = query.Where(a => a.UserState == filter.UserState);
 
-            if (filter.RoleId != null && filter.RoleId.Any())
-                query = query.Where(a => a.Roles.Any(c => filter.RoleId.Contains(c.RoleId)));
 
             return query;
         }
@@ -216,7 +213,7 @@ namespace Outline.Api.Services.UserServices
         {
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Mobile == mobile);
 
-            user.Password = BCrypt.Net.BCrypt.HashPassword(password);
+            //user.Password = BCrypt.Net.BCrypt.HashPassword(password);
             _db.Update(user);
             await _db.SaveChangesAsync();
         }
@@ -236,13 +233,7 @@ namespace Outline.Api.Services.UserServices
         }
 
 
-        public async Task<int> GetByCode(string userCode)
-        {
-            var user = await _db.Users.Where(a => a.Code == userCode).Select(a => a.Id).FirstOrDefaultAsync();
-            if (user == null)
-                throw new ApiException("کد ارسال اشتباه است");
-            return user;
-        }
+   
 
         public async Task IsDelete(int id, string fullName)
         {
