@@ -47,18 +47,18 @@
                   required
                 ></v-text-field>
               </v-col>
-              <v-col cols="4" sm="12" md="4">
+              <!-- <v-col cols="4" sm="12" md="4">
                 <v-text-field
                   autocomplete="false"
                   v-model="user.phone"
                   label="تلفن"
                   placeholder=" "
                 ></v-text-field>
-              </v-col>
+              </v-col> -->
             </v-row>
 
             <v-row>
-              <v-col cols="4" sm="12" md="4">
+              <!-- <v-col cols="4" sm="12" md="4">
                 <v-text-field
                   v-model="user.password"
                   autocomplete="new-password"
@@ -82,7 +82,7 @@
                   type="password"
                   required
                 ></v-text-field>
-              </v-col>
+              </v-col> -->
               <v-col cols="4" sm="12" md="4">
                 <v-col>
                   <v-file-input
@@ -147,7 +147,7 @@ export default Vue.extend({
       code:"",
       isAdmin:false,
       lastName: "",
-      email: "",
+      email: null,
       mobile: "",
       phone: "",
       avatar: undefined,

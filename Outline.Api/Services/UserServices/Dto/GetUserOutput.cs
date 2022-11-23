@@ -6,6 +6,7 @@ namespace Outline.Api.Services.UserServices.Dto
     public class GetUserOutput : EntityDto<int>
     {
         public string FirstName { get; set; }
+        public string AccessUrl { get; set; }
 
         public string LastName { get; set; }
 
@@ -22,6 +23,8 @@ namespace Outline.Api.Services.UserServices.Dto
         public bool UserState { get; set; }
 
         public string[] ComplexRoles { get; set; }
+        public double CunsumedTraffic { get; internal set; }
+        public double InitCapacity { get;  set; }
     }
 
     public class UserRoleComplexesOutput

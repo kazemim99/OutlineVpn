@@ -22,7 +22,10 @@ namespace Outline.Api.Entity
 
         }
 
+        public double CunsumedTraffic { get; set; }
+        public double InitCapacity { get; set; }
         public string FirstName { get; set; }
+        public string AccessUrl { get; set; }
 
 
         public string LastName { get; set; }

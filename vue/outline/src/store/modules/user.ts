@@ -77,7 +77,7 @@ class User extends VuexModule implements IUserState {
       const result = a.data.result;
       const token = result.jwtToken.token;
       setToken(`Bearer ${token}`);
-      this.SET_MOBILE(result.userName);
+      this.SET_MOBILE(username);
       store.commit("setUserDetails", result);
     });
   }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Outline.Api.Database;
 
@@ -11,9 +12,10 @@ using Outline.Api.Database;
 namespace Outline.Api.Migrations
 {
     [DbContext(typeof(DB))]
-    partial class DBModelSnapshot : ModelSnapshot
+    [Migration("20221123174449_4")]
+    partial class _4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,9 +113,6 @@ namespace Outline.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("int");
 
-                    b.Property<double>("CunsumedTraffic")
-                        .HasColumnType("float");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -137,6 +136,9 @@ namespace Outline.Api.Migrations
                     b.Property<string>("Mobile")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("RemainigCapacity")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");

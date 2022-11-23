@@ -3,6 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Outline.Api.ViewModels
 {
+
+    public class HomePageViewModel
+    {
+        public double? ConsumedTraffic { get; set; }
+        public double InitTraffic { get; set; }
+        public double RaminingTraffic { get; set; }
+    }
     public class CreateUserViewModel
     {
         public string PhoneNumber { get; set; }

@@ -2,21 +2,27 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Outline.Api.Database;
+using Outline.Api.Services.sms;
+using Outline.Api.Services.sms.Rahyab;
 using Outline.Api.Services.UserServices;
 using Outline.Api.Services.UserServices.Dto;
+using OutlineVpn;
 
 namespace Outline.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController :  CustomBaseController
+    public class UserController : CustomBaseController
     {
-
+        const string URL_PRIFIX = "https://s3.amazonaws.com/outline-vpn/invite.html#";
         private readonly IUserService _service;
-
-        public UserController(IUserService userService)
+        private readonly IRahyabSmsSender _rahyabSmsSender;
+        private readonly OutlineApi _outline;
+        public UserController(IUserService userService, IRahyabSmsSender rahyabSmsSender)
         {
             _service = userService;
+            _outline = new OutlineApi("https://13.232.11.178:44751/w7BTeKeVYCIwb8jPIu94eA");
+            _rahyabSmsSender = rahyabSmsSender;
         }
 
 
@@ -31,9 +37,42 @@ namespace Outline.Api.Controllers
             return new ApiResponse(result);
         }
 
-        [HttpPost]
+        /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("{userId:int}")]
         [Authorize]
 
+        public async Task<ApiResponse> Update([FromRoute] int userId, [FromForm] UpdateUserInput input)
+        {
+            if (Request.Form.Files.Count > 0)
+            {
+                var file = Request.Form.Files[0];
+                var folderName = Path.Combine("UserAvatars");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+                if (!Directory.Exists(pathToSave))
+                    Directory.CreateDirectory(pathToSave);
+
+                if (file.Length > 0)
+                {
+                    var fileName = file.FileName;
+                    var fullPath = Path.Combine(pathToSave, fileName);
+                    var dbPath = Path.Combine(folderName, fileName);
+                    await using (var stream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                    input.Avatar = dbPath;
+                }
+            }
+            input.CreatorFullName = FullName;
+            await _service.UpdateAsync(userId, input);
+            return new ApiResponse();
+        }
+
+        [HttpPost]
+        [Authorize]
         public async Task<ApiResponse> Create([FromForm] CreateUserInput input)
         {
             if (Request.Form.Files.Count > 0)
@@ -56,47 +95,46 @@ namespace Outline.Api.Controllers
                     input.Avatar = dbPath;
                 }
             }
-            input.CreatorFullName = FullName;
-            await _service.InsertAsync(input);
-            return new ApiResponse();
-        }
 
-
-        /// <summary>
-        /// ویرایش یک کاربر جدید
-        /// </summary>
-        ///
-        [HttpPut("{userId:int}")]
-        [Authorize]
-
-        public async Task<ApiResponse> Update([FromRoute] int userId, [FromForm] UpdateUserInput input)
-        {
-            if (Request.Form.Files.Count > 0)
+            if (!input.IsAdmin)
             {
-                var file = Request.Form.Files[0];
-                var folderName = Path.Combine( "UserAvatars");
-                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-                if (!Directory.Exists(pathToSave))
-                    Directory.CreateDirectory(pathToSave);
-
-                if (file.Length > 0)
+                var output = _outline.CreateKey();
+                _outline.RenameKey(output.Id, input.Mobile);
+                var gig = Convert.ToInt64(input.InitCapacity * 1000d * 1000d * 1000d);
+                input.InitCapacity = gig;
+                _outline.AddDataLimit(output.Id, gig);
+                await _rahyabSmsSender.SendAsync(new RahyabSendSmsReques
                 {
-                    var fileName = file.FileName;
-                    var fullPath = Path.Combine(pathToSave, fileName);
-                    var dbPath = Path.Combine(folderName, fileName);
-                    await using (var stream = new FileStream(fullPath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-                    input.Avatar = dbPath;
-                }
+                    destinationAddress = input.Mobile,
+                    message = $"سرور اوت لاین  => {URL_PRIFIX}{output.AccessUrl}"
+                });
+
+                input.AccessUrl = output.AccessUrl;
+
             }
             input.CreatorFullName = FullName;
+            await _service.InsertAsync(input);
 
-            await _service.UpdateAsync(userId, input);
             return new ApiResponse();
         }
 
+
+        [HttpGet("sendAccessKey/{id}")]
+        public async Task<ApiResponse> SendAccessKey([FromRoute] int id)
+        {
+            var user = await _service.GetById(id);
+            if (string.IsNullOrEmpty(user.AccessUrl))
+            {
+                var accessUrl = _outline.GetAccessUrl(user.Mobile);
+                await _service.SetAccessKey(id, accessUrl);
+            }
+            await _rahyabSmsSender.SendAsync(new RahyabSendSmsReques
+            {
+                destinationAddress = user.Mobile,
+                message = $"سرور اوت لاین  => {URL_PRIFIX}{user.AccessUrl}",
+            });
+            return new ApiResponse();
+        }
 
         /// <summary>
         /// دریافت اطلاعات یک کاربر
@@ -106,11 +144,12 @@ namespace Outline.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int userId)
         {
-            var include = new[] { "Complexes" };
-            var result = await _service.GetById(userId, include);
+            var result = await _service.GetById(userId);
+            result.CunsumedTraffic =Convert.ToDouble(_outline.Capacity(result.Mobile));
+           await _service.UpdateConsumedTraffic(result.CunsumedTraffic, userId);
             return new ApiResponse(result);
         }
-        /// <summary>
+        /// <summary> 
         /// اطلاعات پروفایل یک کاربر
         /// </summary>
         ///
@@ -119,6 +158,7 @@ namespace Outline.Api.Controllers
         public async Task<ApiResponse> Profile()
         {
             var result = await _service.GetById(UserId);
+            //result.RemainigCapacity = _outline.Capacity(result.Mobile);
             return new ApiResponse(result);
         }
         /// <summary>
@@ -130,8 +170,25 @@ namespace Outline.Api.Controllers
         public async Task<ApiResponse> Profile([FromForm] UpdateUserInput input)
         {
             return await Update(UserId, input);
-        } 
-        
-    
+        }
+
+        /// <summary>
+        /// ویرایش پروفایل یک کاربر
+        /// </summary>
+        ///
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<ApiResponse> Delete([FromRoute] int id)
+        {
+            var user = await _service.GetById(id);
+            var key = _outline.GetKeys().FirstOrDefault(a => a.Name == user.Mobile);
+            if (key != null)
+                _outline.DeleteKey(key.Id);
+
+            await _service.Delete(id);
+            return new ApiResponse();
+        }
+
+
     }
 }

@@ -38,7 +38,22 @@ public class OutlineApi
         
         return false;
     }
-    
+
+    public object? Capacity(string mobile)
+    {
+        object? capacity = null;
+        double? bytes = 0;
+        var data2 = GetKeys(); // Get all transferred data
+        var user = data2.FirstOrDefault(a => a.Name.Contains(mobile));
+        if (user != null)
+            bytes = GetTransferredData().FirstOrDefault(a => a.Id == user.Id)?.UsedBytes;
+
+        if (bytes != null || bytes > 0)
+            capacity = string.Format("{0:N2}", (bytes / Math.Pow(1024, 3)));
+
+        return capacity;
+    }
+
     private bool CallRequest(string url, string method, JObject args, out string? content)
     {
         try
@@ -62,9 +77,9 @@ public class OutlineApi
         return (JObject.Parse(content)["accessKeys"] as JArray).ToObject<List<OutlineKey>>();
     }
 
-    public OutlineKey CreateKey(int value)
+    public OutlineKey CreateKey()
     {
-        var cal = new NameValueCollection(value);
+        var cal = new NameValueCollection();
         CallRequest("access-keys", "POST", cal, out string? content);
         return (JObject.Parse(content)).ToObject<OutlineKey>();
     }
@@ -107,5 +122,16 @@ public class OutlineApi
             outline.Add(outl);
         }
         return outline;
+    }
+
+    public string GetAccessUrl(string mobile)
+    {
+        var key =GetKeys().FirstOrDefault(a => a.Name.Contains(mobile));
+        if (key == null)
+            throw new Exception("access key is null");
+
+            return key.AccessUrl;
+
+       
     }
 }

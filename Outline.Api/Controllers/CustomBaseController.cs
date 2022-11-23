@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Outline.Api.Controllers
 {
@@ -13,6 +14,14 @@ namespace Outline.Api.Controllers
             }
         }
 
+
+        public string Mobile
+        {
+            get
+            {
+                return User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            }
+        }
         public bool IsAdmin
         {
             get
@@ -28,13 +37,6 @@ namespace Outline.Api.Controllers
                 return result.Value;
             }
         }
-
-        public int DeviceId
-        {
-            get
-            {
-                return int.Parse(User.Claims.First(x => x.Type.ToLower() == "DeviceId".ToLower()).Value);
-            }
-        }
+       
     }
 }

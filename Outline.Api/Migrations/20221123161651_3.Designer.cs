@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Outline.Api.Database;
 
@@ -11,9 +12,10 @@ using Outline.Api.Database;
 namespace Outline.Api.Migrations
 {
     [DbContext(typeof(DB))]
-    partial class DBModelSnapshot : ModelSnapshot
+    [Migration("20221123161651_3")]
+    partial class _3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,10 +100,6 @@ namespace Outline.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("AccessUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Avatar")
                         .HasColumnType("nvarchar(max)");
 
@@ -111,18 +109,12 @@ namespace Outline.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("int");
 
-                    b.Property<double>("CunsumedTraffic")
-                        .HasColumnType("float");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("InitCapacity")
-                        .HasColumnType("float");
 
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
@@ -137,6 +129,9 @@ namespace Outline.Api.Migrations
                     b.Property<string>("Mobile")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("RemainigCapacity")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");

@@ -1,6 +1,7 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Outline.Api.Services.UserServices;
 using Outline.Api.ViewModels;
 using OutlineVpn;
 
@@ -13,16 +14,18 @@ namespace Outline.Api.Controllers
     {
 
         private readonly OutlineApi _outline;
-        public KeysController()
+        private readonly IUserService _userService;
+        public KeysController(IUserService userService)
         {
             _outline = new OutlineApi("https://13.232.11.178:44751/w7BTeKeVYCIwb8jPIu94eA");
+            _userService = userService;
         }
-       
+
         [HttpPost]
         [AllowAnonymous]
         public ApiResponse Create([FromBody] CreateUserViewModel input)
         {
-          var output =  _outline.CreateKey(30);
+            var output = _outline.CreateKey();
             _outline.RenameKey(output.Id, input.PhoneNumber);
             return new ApiResponse();
         }
@@ -32,19 +35,18 @@ namespace Outline.Api.Controllers
         /// </summary>
         ///
         [Authorize]
-        [HttpGet("capacity/{mobile}")]
-        public async Task<ApiResponse> Capacity([FromRoute] string mobile)
+        [HttpGet("consumed-traffic")]
+        public async Task<ApiResponse> ConsumedTraffic()
         {
-            var capacity = 0;
-            double? bytes=0;
-            var data2 = _outline.GetKeys(); // Get all transferred data
-            var user = data2.FirstOrDefault(a => a.Name.Contains(mobile));
-            if(user != null)
-             bytes = _outline.GetTransferredData().FirstOrDefault(a => a.Id == user.Id)?.UsedBytes;
-
-            if(user != null)
-                capacity = Convert.ToInt32(user.UsedBytes / Math.Pow(1024, 2));
-            return new ApiResponse(capacity);
+            var consumedTraffic = _outline.Capacity(Mobile);
+            var user = await _userService.GetById(UserId);
+            var result = new HomePageViewModel
+            {
+                ConsumedTraffic = Convert.ToDouble(consumedTraffic),
+                InitTraffic = user.InitCapacity,
+                RaminingTraffic = user.InitCapacity - Convert.ToDouble(consumedTraffic)
+            };
+            return new ApiResponse(result);
         }
     }
 }

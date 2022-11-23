@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
+    userMobile:"",
     userStates: [],
     selectedDeviceName: "",
     userDetails: {
@@ -33,6 +34,8 @@ export default new Vuex.Store({
    
   },
   actions: {
+
+  
     getComplexRoles({ commit }) {
       request.get(`/complexRole/roles`).then((response) => {
         commit("setComplexRoles", response.data.result);

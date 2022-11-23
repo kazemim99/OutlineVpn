@@ -57,14 +57,14 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <!-- <v-col cols="4" sm="12" md="4">
+                <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     autocomplete="false"
-                    v-model="user.phone"
-                    label="تلفن"
+                    v-model="user.initCapacity"
+                    label="حجم"
                     placeholder=" "
                   ></v-text-field>
-                </v-col> -->
+                </v-col>
               </v-row>
 
               <v-row>
@@ -145,7 +145,7 @@
                   ></v-switch>
                 </v-col>
 
-                <v-col cols="4" v-if="!selectedComplexId && this.$store.state.userDetails.isAdmin">
+                <v-col cols="4" v-if="this.$store.state.userDetails.isAdmin">
                   <v-switch
                     v-model="user.isAdmin"
                     :label="`نقش: ${user.isAdmin ? 'ادمین' : 'کاربر عادی'}`"
@@ -239,13 +239,15 @@ export default Vue.extend({
     userRoles: [],
     roleAndComplexes: [],
     user: {
+      initCapacity:0,
       isAdmin: false,
       password:"",
-      firstName: "",
-      lastName: "",
+      firstName: "کاربر",
+      lastName: "مهمان",
       email:"",
       mobile: "",
       phone: "",
+      RemainigCapacity :0,
       userState: true,
       avatar: undefined,
       confirmPassword: null,
@@ -310,6 +312,7 @@ export default Vue.extend({
         this.user.avatar = "";
         this.user.isAdmin = data.isAdmin;
         this.imageUrl = data.avatar;
+        this.initCapacity =data.initCapacity
       });
     },
     clickImg() {
@@ -397,8 +400,8 @@ export default Vue.extend({
     clearData() {
       // (this.user.confirmPassword = ""),
       //   (this.user.password = ""),
-        (this.user.firstName = ""),
-        (this.user.lastName = ""),
+        (this.user.firstName = "کاربر"),
+        (this.user.lastName = "مهمان"),
         (this.user.email = ""),
         // (this.user.phone = ""),
         (this.user.mobile = ""),

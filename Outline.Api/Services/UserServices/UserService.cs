@@ -64,7 +64,7 @@ namespace Outline.Api.Services.UserServices
             //if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
             //    throw new ApiException(AppErrors.WrongPassword);
             await SendCode(user.Mobile);
-            SendMail(user.Email);
+            //SendMail(user.Email);
             var response = new LoginResultDto
             {
                 JwtToken = new JwtToken()
@@ -186,7 +186,7 @@ namespace Outline.Api.Services.UserServices
         public void SendMail(string mail)
         {
             var otpCode = _otpService.GetCode(mail);
-            _smsServcie.SendEmail(otpCode, mail);
+            //_smsServcie.SendEmail(otpCode, mail);
         }
         public async Task SendCode(string mobile)
         {
@@ -274,5 +274,20 @@ namespace Outline.Api.Services.UserServices
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public async Task SetAccessKey(int id,string accessUrl)
+        {
+            var user =await _db.Users.FirstOrDefaultAsync(a => a.Id == id);
+            user.AccessUrl = accessUrl;
+            _db.Update(user);
+            _db.SaveChanges();
+        }
+
+        public async Task UpdateConsumedTraffic(double cunsumedTraffic, int userId)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Id == userId);
+            user.CunsumedTraffic = cunsumedTraffic;
+            _db.Update(user);
+            _db.SaveChanges();
+        }
     }
 }

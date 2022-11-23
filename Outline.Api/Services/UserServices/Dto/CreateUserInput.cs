@@ -14,8 +14,8 @@ namespace Outline.Api.Services.UserServices.Dto
         public string LastName { get; set; }
 
         //public string Code { get; set; }
-
-        public string Email { get; set; }
+        [DataMember(IsRequired = false)]
+        public string? Email { get; set; }
 
         [Required]
         public string Mobile { get; set; }
@@ -41,5 +41,10 @@ namespace Outline.Api.Services.UserServices.Dto
         [System.Text.Json.Serialization.JsonIgnore]
         public string? CreatorFullName { get; set; }
 
+        [DataMember(IsRequired = false)]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string? AccessUrl { get;  set; }
+        
+        public double InitCapacity { get;  set; }
     }
 }

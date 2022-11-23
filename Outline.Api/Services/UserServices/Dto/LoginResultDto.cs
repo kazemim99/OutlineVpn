@@ -18,6 +18,6 @@ namespace Outline.Api.Services.UserServices.Dto
 
         public int Id { get; set; }
 
-        public IEnumerable<string> Permissions { get; internal set; }
+        //public IEnumerable<string> Permissions { get; internal set; }
     }
 }

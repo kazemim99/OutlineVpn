@@ -2,8 +2,8 @@
 {
     public class UpdateUserInput : CreateUserInput
     {
-        public new string Password { get; set; }
+        //public new string Password { get; set; }
 
-        public new string ConfirmPassword { get; set; }
+        //public new string ConfirmPassword { get; set; }
     }
 }

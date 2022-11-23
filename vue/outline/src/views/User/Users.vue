@@ -31,9 +31,16 @@
         ></v-switch>
       </template>
 
+
+      <template  v-slot:item.sendaccesskey="{ item }">
+        <v-icon  medium class="mr-2" @click="sendAccessKey(item.id)">mdi-recycle</v-icon>
+      </template>
+
       <template  v-slot:item.edit="{ item }">
         <v-icon v-can="'Member_Edit'" medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       </template>
+
+    
 
          <template  v-slot:item.delete="{ item }">
         <v-icon v-can="'Member_Delete'" medium class="mr-2" @click="deleteItem(item.id)">mdi-delete</v-icon>
@@ -190,9 +197,9 @@ export default {
         { text: "کد", value: "code", sortable: true },
         { text: "نام کاربری", value: "mobile", sortable: false },
         { text: "وضعیت", value: "userState", sortable: true },
-        { text: "مجموعه ها", value: "complexes", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
+        { text: "", value: "sendaccesskey", sortable: false },
       ],
     };
   },
@@ -265,6 +272,29 @@ export default {
             .then(() => {
               Vue.swal("", "کاربر با موفقیت حذف گردید", "success");
               this.getUsers();
+            })
+            .finally(() => {
+              this.uploadLoading = false;
+            });
+        }
+      });
+    },
+
+    sendAccessKey(id) {
+      Vue.swal({
+        title: "ایا مطمئن  هستید",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "بله ,ارسال شود",
+        cancelButtonText: "انصراف",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          request
+            .get(`/user/sendAccessKey/${id}`)
+            .then(() => {
+              Vue.swal("", "پیام با موفقیت ارسال گردید", "success");
             })
             .finally(() => {
               this.uploadLoading = false;
