@@ -17,7 +17,7 @@ namespace Outline.Api.Controllers
         private readonly IUserService _userService;
         public KeysController(IUserService userService)
         {
-            _outline = new OutlineApi("https://13.232.11.178:44751/w7BTeKeVYCIwb8jPIu94eA");
+            _outline = new OutlineApi();
             _userService = userService;
         }
 

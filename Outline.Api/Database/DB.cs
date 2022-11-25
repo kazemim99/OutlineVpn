@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Outline.Api.Entity;
+using Outline.Api.Entity.Configurations;
 
 namespace Outline.Api.Database
 {
@@ -21,25 +22,21 @@ namespace Outline.Api.Database
     public class DB : DbContext
     {
 
-      
-
         public DB(DbContextOptions<DB> options) : base(options)
         {
-
-
         }
 
+        public DbSet<Plan> Plans { get; set; }
         public DbSet<FailedSms> FailedSms { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
-
-
+        public DbSet<ApiUrl> ApiUrls { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(User).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfig).Assembly);
         }
     }
 }

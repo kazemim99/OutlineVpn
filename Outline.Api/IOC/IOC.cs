@@ -8,6 +8,8 @@ using Outline.Api.Services.OTP;
 using Outline.Api.Services.JWT;
 using Outline.Api.Services.UserServices;
 using Outline.Api.Mapping;
+using Outline.Api.Services.PlanServices;
+using Outline.Api.Services.ApiUrlServices;
 
 namespace Outline.Api.IOC
 {
@@ -23,6 +25,8 @@ namespace Outline.Api.IOC
             Container.Register<IUserService, UserService>();
             Container.Register<IRahyabSmsSender, SmsService>();
             Container.Register<IOtpService, OtpSharpService>();
+            Container.Register<IPlanService, PlanService>();
+            Container.Register<IApiUrlService, ApiUrlService>();
 
             Container.Register<IJwtAuthManager, JwtAuthManager>(Lifestyle.Singleton);
 

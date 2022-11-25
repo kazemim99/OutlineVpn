@@ -1,38 +1,32 @@
 <template>
   <div class="small">
     <v-row>
-
-      <v-col cols="6" >
+      <v-col cols="6">
         <div class="grey--text mb-2">ترافیک مصرف شده</div>
       </v-col>
       <v-col cols="6">
-        <div class="mb-2">
-          {{ this.consumedTraffic }}   گیگا بایت
-        </div>
+        <div class="mb-2">{{ this.consumedTraffic }} گیگا بایت</div>
       </v-col>
-      
-    </v-row>
-    <v-row >
-      <v-col cols="6" >
-        <div class="grey--text mb-2">ترافیک  باقی مانده</div>
-      </v-col>
-      <v-col cols="6">
-        <div class="mb-2">
-          {{ this.raminingTraffic }}   گیگا بایت
-        </div>
-      </v-col>
-      
     </v-row>
     <v-row>
-      <v-col cols="6" >
+      <v-col cols="6">
+        <div class="grey--text mb-2">ترافیک باقی مانده</div>
+      </v-col>
+      <v-col cols="6">
+        <div class="mb-2">{{ this.raminingTraffic }} گیگا بایت</div>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="6">
         <div class="grey--text mb-2">ترافیک خریداری شده</div>
       </v-col>
       <v-col cols="6">
-        <div class="mb-2">
-          {{ this.initTraffic }}   گیگا بایت
-        </div>
+        <div class="mb-2">{{ this.initTraffic }} گیگا بایت</div>
       </v-col>
     </v-row>
+    <div class="text-center mt-10">
+      <v-btn to="/plans" rounded color="primary" dark> خرید ترافیک </v-btn>
+    </div>
   </div>
 </template>
 

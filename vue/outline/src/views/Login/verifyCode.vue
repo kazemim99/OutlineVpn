@@ -67,13 +67,14 @@ export default class extends Vue {
     try {
       if (this.code.length != 4) {
         alert("کد اشتباه است");
+        this.loading = false;
         return;
       }
       await UserModule.VerifyCode({ code: this.code, mobile: UserModule.mobile });
       this.loading = false;
       if (UserModule.verfied)
         if (UserModule.isAdmin) this.$router.push("/");
-        else this.$router.push("/plans");
+        else this.$router.push("/home");
     } catch (error) {
       this.loading = false;
     }

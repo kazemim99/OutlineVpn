@@ -26,7 +26,12 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/views/User/Users.vue'),
         meta: { requireAuth: true }
       },
-     
+      {
+        path: '/manage-plans',
+        name: 'ManagPlans',
+        component: () => import('@/views/Plans/ManagePlans.vue'),
+        meta: { requireAuth: true }
+      },
 
       {
         path: "/profile",
@@ -36,13 +41,31 @@ const routes: Array<RouteConfig> = [
       },
 
       {
+        path: "/checkout/:id",
+        name: "Checkout",
+        component: () => import("@/views/Plans/Checkout.vue"),
+        meta: { requireAuth: true }
+      },
+
+      {
+        path: "/buy-traffic",
+        name: "BuyTraffic",
+        component: () => import("@/views/Plans/index.vue"),
+        meta: { requireAuth: true }
+      },
+      {
         path: "/plans",
         name: "Plans",
         component: () => import("@/views/Plans/index.vue"),
         meta: { requireAuth: true }
       },
     
-
+      {
+        path: "/api-urls",
+        name: "ApiUrls",
+        component: () => import("@/views/ApiUrls/index.vue"),
+        meta: { requireAuth: true }
+      },
     ]
   },
  

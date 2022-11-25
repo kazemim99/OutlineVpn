@@ -21,11 +21,16 @@ namespace Outline.Api.Controllers
         public UserController(IUserService userService, IRahyabSmsSender rahyabSmsSender)
         {
             _service = userService;
-            _outline = new OutlineApi("https://13.232.11.178:44751/w7BTeKeVYCIwb8jPIu94eA");
+            _outline = new OutlineApi();
             _rahyabSmsSender = rahyabSmsSender;
         }
 
-
+        [HttpGet("setApiUrl")]
+        public ApiResponse SetApiUrl([FromRoute]string url)
+        {
+            _outline.SetUrl(url);
+            return new ApiResponse();
+        }
         [HttpGet("users")]
         [Authorize]
 
@@ -49,7 +54,7 @@ namespace Outline.Api.Controllers
             if (Request.Form.Files.Count > 0)
             {
                 var file = Request.Form.Files[0];
-                var folderName = Path.Combine("UserAvatars");
+                var folderName = Path.Combine("Resources", "Images", "UserAvatars");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
                 if (!Directory.Exists(pathToSave))
                     Directory.CreateDirectory(pathToSave);
@@ -67,7 +72,11 @@ namespace Outline.Api.Controllers
                 }
             }
             input.CreatorFullName = FullName;
+          var keyId =  _outline.GetKeys().FirstOrDefault(c => c.Name == input.Mobile);
+            input.UserKeyId = keyId.Id;
             await _service.UpdateAsync(userId, input);
+            _outline.AddDataLimit(keyId.Id, Convert.ToInt64(input.InitCapacity));
+
             return new ApiResponse();
         }
 
@@ -78,7 +87,8 @@ namespace Outline.Api.Controllers
             if (Request.Form.Files.Count > 0)
             {
                 var file = Request.Form.Files[0];
-                var folderName = Path.Combine("UserAvatars");
+                var folderName = Path.Combine("Resources", "Images", "UserAvatars");
+
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
                 if (!Directory.Exists(pathToSave))
                     Directory.CreateDirectory(pathToSave);
@@ -99,6 +109,7 @@ namespace Outline.Api.Controllers
             if (!input.IsAdmin)
             {
                 var output = _outline.CreateKey();
+                input.UserKeyId = output.Id;
                 _outline.RenameKey(output.Id, input.Mobile);
                 var gig = Convert.ToInt64(input.InitCapacity * 1000d * 1000d * 1000d);
                 input.InitCapacity = gig;
@@ -171,6 +182,25 @@ namespace Outline.Api.Controllers
         {
             return await Update(UserId, input);
         }
+
+
+        /// <summary>
+        /// ویرایش پروفایل یک کاربر
+        /// </summary>
+        ///
+        [Authorize]
+        [HttpDelete("change-server/{id}/{url}")]
+        public async Task<ApiResponse> Delete([FromRoute] int id,[FromRoute] url)
+        {
+            var user = await _service.GetById(id);
+            var key = _outline.GetKeys().FirstOrDefault(a => a.Name == user.Mobile);
+            if (key != null)
+                _outline.DeleteKey(key.Id);
+
+            await _service.Delete(id);
+            return new ApiResponse();
+        }
+
 
         /// <summary>
         /// ویرایش پروفایل یک کاربر

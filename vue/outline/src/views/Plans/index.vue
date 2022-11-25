@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row dense>
-      <v-col v-for="card in cards" :key="card.title" :cols="card.flex">
+      <v-col v-for="card in cards" :key="card.id" :cols="card.flex">
         <v-card :loading="card.loading" class="mx-auto my-12" max-width="374">
           <template slot="progress">
             <v-progress-linear
@@ -11,19 +11,21 @@
             ></v-progress-linear>
           </template>
 
-          <v-img
-            height="250"
-            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-          ></v-img>
+          <v-img height="250" :src="card.image"></v-img>
 
           <v-card-title v-text="card.title"></v-card-title>
 
           <v-divider class="mx-4"></v-divider>
 
-          <v-card-title></v-card-title>
+          <v-card-title
+            v-text="`${card.period / 30} ماهه ${card.trafficCapacity} گیگابایت`"
+          ></v-card-title>
+          <v-card-title
+            v-text="`${formatPrice(card.price)} تومان `"
+          ></v-card-title>
 
           <v-card-actions>
-            <v-btn color="deep-purple lighten-2" text @click="reserve(card.id)">
+            <v-btn color="deep-purple lighten-2"  text @click="reserve(card.id)">
               خرید
             </v-btn>
           </v-card-actions>
@@ -35,48 +37,29 @@
 
 <script>
 import request from "@/utils/request";
+import Vue from "vue";
 
 export default {
   data: () => ({
-    input: {
-      phoneNumber: "09123135143",
-    },
-    selection: 1,
-    cards: [
-      {
-        id: 1,
-        title: "10 گیگ یک ماه",
-        src: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
-        flex: 4,
-        loading: false,
-      },
-      {
-        id: 2,
-        title: "20 گیگ یک ماه",
-        src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
-        flex: 4,
-        loading: false,
-      },
-      {
-        id: 3,
-        title: "30 گیگ یک ماه",
-        src: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
-        flex: 4,
-        loading: false,
-      },
-    ],
+    cards: [],
   }),
+  mounted() {
+    this.getConsumedTraffic();
+  },
 
   methods: {
+    formatPrice(value) {
+      let val = (value / 1).toFixed().replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    getConsumedTraffic() {
+      request.get(`plan/plans`).then((response) => {
+        let data = response.data.result;
+        this.cards = data.result;
+      });
+    },
     reserve(id) {
-      request
-        .post(`/keys`,this.input)
-        .then(() => {
-          alert("success")
-        })
-        .finally(() => {
-          console.log("finaly")
-        });
+      this.$router.push(`/checkout/${id}`);
     },
   },
 };

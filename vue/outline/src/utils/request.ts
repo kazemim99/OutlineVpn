@@ -29,7 +29,6 @@ service.interceptors.response.use(
       Vue.swal("خطا", error.response.data.detail, "error");
     }else{
 
-    
     let message = error.response.data.responseException.exceptionMessage;
     if (message.errors) {
       const result = Object.keys(message.errors).map((key) => [

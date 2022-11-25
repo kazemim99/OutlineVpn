@@ -91,14 +91,19 @@ namespace Outline.Api.Services.UserServices
         {
             try
             {
-                include = new[] {"Roles" };
+                include = new[] { "Roles" };
                 var user = await _db.Users.Include(include).FirstOrDefaultAsync(a => a.Id == id);
                 if (user == null)
                     throw new ApiException(AppErrors.UserNotFound);
 
-                var map = _mapper.Map<User>(input);
-                map.Id = id;
 
+                var map = _mapper.Map<User>(input);
+                if (user.UserKeyId == null)
+                {
+                    map.UserKeyId = input.UserKeyId;
+                }
+                map.Id = id;
+                map.AccessUrl = user.AccessUrl;
                 //if (!string.IsNullOrEmpty(input.Password) && input.Password != "null")
                 //    map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
                 //else
@@ -109,7 +114,7 @@ namespace Outline.Api.Services.UserServices
                 else
                     map.Avatar = user.Avatar;
 
-               
+
                 _db.Users.Update(map);
                 await _db.SaveChangesAsync();
             }
@@ -127,7 +132,7 @@ namespace Outline.Api.Services.UserServices
 
             var map = _mapper.Map<CreateUserInput, User>(input);
 
-            
+
             map.Roles = new List<UserRole>();
             if (input.IsAdmin)
             {
@@ -141,7 +146,7 @@ namespace Outline.Api.Services.UserServices
                 RoleId = _db.Roles.First(a => a.Title == Policies.User).Id
             });
             //map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
-         
+
             await _db.AddAsync(map);
             await _db.SaveChangesAsync();
         }
@@ -153,14 +158,14 @@ namespace Outline.Api.Services.UserServices
             _db.Update(user);
 
             var stateString = user.UserState ? "فعال" : "غیر فعال";
-         
+
             await _db.SaveChangesAsync();
         }
 
         public override IQueryable<User> Filter(UserFilterInput filter)
         {
             var query = _db.Users.AsQueryable();
-           
+
             if (!filter.FirstName.IsNullOrEmpty())
                 query = query.Where(a => a.FirstName.Contains(filter.FirstName));
 
@@ -218,8 +223,8 @@ namespace Outline.Api.Services.UserServices
             await _db.SaveChangesAsync();
         }
 
-  
-     
+
+
 
         public async Task<IEnumerable<OptionItem>> GetSelectList(string input)
         {
@@ -233,14 +238,14 @@ namespace Outline.Api.Services.UserServices
         }
 
 
-   
+
 
         public async Task IsDelete(int id, string fullName)
         {
             var user = await _db.Users.FirstAsync(a => a.Id == id);
             user.IsDeleted = true;
             _db.Update(user);
-          
+
             await _db.SaveChangesAsync();
         }
 
@@ -274,9 +279,9 @@ namespace Outline.Api.Services.UserServices
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public async Task SetAccessKey(int id,string accessUrl)
+        public async Task SetAccessKey(int id, string accessUrl)
         {
-            var user =await _db.Users.FirstOrDefaultAsync(a => a.Id == id);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Id == id);
             user.AccessUrl = accessUrl;
             _db.Update(user);
             _db.SaveChanges();

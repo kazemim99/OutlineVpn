@@ -26,6 +26,9 @@ namespace Outline.Api.Mapping
             //CreateMap<AddComplexToUser, ComplexUser>();
 
             CreateMap<UpdateUserInput, User>()
+                 .ForMember(a => a.AccessUrl,
+                    c =>
+                        c.Ignore())
                  .ForMember(a => a.Roles,
                     c =>
                         c.Ignore());

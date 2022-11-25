@@ -15,6 +15,9 @@
         public static string NotMatchPass = "تکرار رمز عبور اشتباه است";
 
         public static string UserDeactive = "کاربر غیر فعال است";
+
+        public static string PlanNotFound = "پلن غیر فعال است";
+        public static string ApiUrlNotFound = "سرور یافت نشد";
     }
 
     public static class DefaultUserConst

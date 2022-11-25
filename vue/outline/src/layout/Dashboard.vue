@@ -121,15 +121,36 @@ export default class Dashboard extends Vue {
       permission: "Member_Show",
       to: "/users",
     },
-
+    
     {
       icon: "mdi-account-key ",
       title: "نقش ها",
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "Role_Show",
-      to: "/complex-roles",
+      to: "/user-roles",
     },
-   
+    {
+      icon: "mdi-currency-usd",
+      title: "پلن ها",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      permission: "Role_Show",
+      to: "/manage-plans",
+    },
+
+    {
+      icon: "mdi-server",
+      title: "سرورها",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      permission: "ApiUrl_Show",
+      to: "/api-urls",
+    },
+    {
+      icon: "mdi-currency-usd",
+      title: "خرید ترافیک",
+      adminVisible: true,
+      permission: "Member_Show",
+      to: "/buy-traffic",
+    },
     {
       icon: "mdi-account-edit",
       title: "پروفایل",

@@ -13,15 +13,21 @@ namespace Outline.Api.Entity
         public string Number { get; set; }
         public string MessageId { get; set; }
         public string ExceptionMessage { get; set; }
-        public bool Sent { get; set; }
+        public bool Sent
+        {
+            get; set;
+
+        }
     }
+
     public class User : FullAuditEntity<int>, ISoftDelete
     {
         public User()
         {
 
         }
-
+        public int? UserKeyId { get; set; }
+        public bool UsedTest { get; set; }
         public double CunsumedTraffic { get; set; }
         public double InitCapacity { get; set; }
         public string FirstName { get; set; }

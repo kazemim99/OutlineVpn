@@ -1,6 +1,6 @@
 ﻿using OutlineVpn;
 
-var api = new OutlineApi("https://13.232.11.178:44751/w7BTeKeVYCIwb8jPIu94eA"); 
+var api = new OutlineApi(); 
 
 var data = api.CreateKey(); // Create new key
 api.RenameKey(data.Id, "Test_name"); // Rename new key

@@ -8,13 +8,15 @@ namespace OutlineVpn;
 public class OutlineApi
 {
     private WebClient _webClient = new();
-    public string ApiUrl;
-    public OutlineApi(string apiUrl)
+    private string ApiUrl { get; set; }
+    public OutlineApi()
     {
-        ApiUrl = apiUrl;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
     }
-
+public void SetUrl(string apiUrl)
+    {
+        this.ApiUrl = apiUrl;
+    }
     private bool CallRequest(string url, string method, NameValueCollection args, out string? content)
     {
         try

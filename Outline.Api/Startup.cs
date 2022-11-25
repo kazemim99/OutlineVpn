@@ -148,6 +148,10 @@ namespace Outline.Api
                     ShowIsErrorFlagForSuccessfulResponse = true,
                     BypassHTMLValidation = true,
                     IsApiOnly = false,
+                    ExcludePaths = new List<AutoWrapperExcludePath>
+                {
+                    new AutoWrapperExcludePath("\\bget-file\\b",ExcludeMode.Regex),
+                }
                 }); ;
             }
             app.UseStaticFiles();

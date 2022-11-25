@@ -7,6 +7,8 @@ namespace Outline.Api.Services.UserServices.Dto
 {
     public class CreateUserInput 
     {
+
+        public List<int> Servers { get; set; }
         [Required]
         public string FirstName { get; set; }
 
@@ -31,15 +33,20 @@ namespace Outline.Api.Services.UserServices.Dto
         //[Required]
         //[Compare("Password")]
         //public string ConfirmPassword { get; set; }
+        [DataMember(IsRequired = false)]
 
         [System.Text.Json.Serialization.JsonIgnore]
-        public string Avatar { get; set; }
+        public string? Avatar { get; set; }
 
         public bool UserState { get; set; }
 
         [DataMember(IsRequired =false)]
         [System.Text.Json.Serialization.JsonIgnore]
-        public string? CreatorFullName { get; set; }
+        public string? CreatorFullName { get; set; } 
+        
+        [DataMember(IsRequired =false)]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public int UserKeyId { get; set; }
 
         [DataMember(IsRequired = false)]
         [System.Text.Json.Serialization.JsonIgnore]

@@ -152,6 +152,11 @@
                   ></v-switch>
                 </v-col>
               </v-row>
+              <div >
+                <h3>
+                 {{user.initCapacity}} /  {{user.cunsumedTraffic}} 
+                </h3>
+              </div>
               <div v-if="!user.isAdmin">
                 <!-- <v-list
                   v-if="selectedComplexId"
@@ -251,6 +256,7 @@ export default Vue.extend({
       userState: true,
       avatar: undefined,
       confirmPassword: null,
+      cunsumedTraffic: 0,
     },
 
     FirstNameRules: [(v) => !!v || "لطفا نام را وارد نمایید"],
@@ -303,6 +309,7 @@ export default Vue.extend({
     async getUser(id) {
       await request.get(`/user/${id}`).then((response) => {
         var data = response.data.result;
+       
         this.user.firstName = data.firstName;
         this.user.lastName = data.lastName;
         this.user.mobile = data.mobile;
@@ -312,7 +319,8 @@ export default Vue.extend({
         this.user.avatar = "";
         this.user.isAdmin = data.isAdmin;
         this.imageUrl = data.avatar;
-        this.initCapacity =data.initCapacity
+        this.user.initCapacity =data.initCapacity
+        this.user.cunsumedTraffic =data.cunsumedTraffic
       });
     },
     clickImg() {
