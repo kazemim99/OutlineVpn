@@ -294,5 +294,10 @@ namespace Outline.Api.Services.UserServices
             _db.Update(user);
             _db.SaveChanges();
         }
+
+        public ApiUrl UserServer(int userId)
+        {
+            return _db.Users.Include(a=>a.Server).FirstOrDefault(a => a.Id == userId).Server;
+        }
     }
 }

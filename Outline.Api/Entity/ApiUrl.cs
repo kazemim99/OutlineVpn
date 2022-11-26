@@ -8,6 +8,7 @@
         public string IP { get; set; }
         public bool State { get; set; }
         public bool IsDeleted { get; set; }
+        public List<User> Users { get;  set; }
     }
 
     public class UserServer

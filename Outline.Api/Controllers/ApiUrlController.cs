@@ -16,10 +16,12 @@ namespace Outline.Api.Controllers
     public class ApiUrlController : CustomBaseController
     {
         private readonly IApiUrlService _service;
+        private readonly IOutlineApi _outline;
 
-        public ApiUrlController(IApiUrlService service)
+        public ApiUrlController(IApiUrlService service, IOutlineApi outline)
         {
             _service = service;
+            _outline = outline;
         }
 
         [HttpGet("ApiUrls")]
@@ -43,6 +45,14 @@ namespace Outline.Api.Controllers
         {
             await _service.UpdateAsync(id, input);
 
+            return new ApiResponse();
+        }
+
+
+        [HttpGet("setApiUrl/{id}")]
+        public async Task<ApiResponse> SetApiUrl([FromRoute] int id)
+        {
+            await _outline.SetUrl(id);
             return new ApiResponse();
         }
 

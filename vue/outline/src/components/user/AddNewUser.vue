@@ -152,10 +152,8 @@
                   ></v-switch>
                 </v-col>
               </v-row>
-              <div >
-                <h3>
-                 {{user.initCapacity}} /  {{user.cunsumedTraffic}} 
-                </h3>
+              <div>
+                <h3>{{ user.initCapacity }} / {{ user.cunsumedTraffic }}</h3>
               </div>
               <div v-if="!user.isAdmin">
                 <!-- <v-list
@@ -172,41 +170,21 @@
                     </v-list-item-content>
                   </v-list-item>
                 </v-list> -->
-                <!-- <div v-if="selectedComplexId">
-                  
+                <div>
                   <v-divider></v-divider>
-                  <v-card-text class="h3">نقشها </v-card-text>
-                  <v-checkbox
-                    v-for="role in complexRoleList"
-                    :key="role.id"
-                    :label="role.title"
-                    color="red"
-                    :value="role.id"
-                    hide-details
-                  ></v-checkbox>
-                </div> -->
+                  <v-card-text class="h3"> سرور </v-card-text>
+                  <v-select
+                    v-model="user.serverId"
+                    :items="servers"
+                    item-value="id"
+                    item-text="title"
+                    label="سرور"
+                    solo
+                  ></v-select>
+                </div>
               </div>
             </v-container>
           </v-form>
-
-          <!-- <v-list
-            v-if="roleAndComplexes && !selectedComplexId"
-            two-line
-            subheader
-          >
-            <v-subheader>مجموعه های کاربر</v-subheader>
-
-            <v-list-item v-for="(item, i) in roleAndComplexes" :key="i">
-              <v-list-item-content>
-                <v-list-item-title>{{ item.complexName }}</v-list-item-title>
-                <v-list-item-subtitle
-                  v-for="(role, i) in item.roles"
-                  :key="i"
-                  >{{ role.roleName }}</v-list-item-subtitle
-                >
-              </v-list-item-content>
-            </v-list-item>
-          </v-list> -->
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -240,19 +218,19 @@ export default Vue.extend({
     valid: true,
     loading: false,
     imageUrl: "",
-    selectedRoles: [],
+    servers: [],
     userRoles: [],
-    roleAndComplexes: [],
     user: {
-      initCapacity:0,
+      serverId :0,
+      initCapacity: 0,
       isAdmin: false,
-      password:"",
+      password: "",
       firstName: "کاربر",
       lastName: "مهمان",
-      email:"",
+      email: "",
       mobile: "",
       phone: "",
-      RemainigCapacity :0,
+      RemainigCapacity: 0,
       userState: true,
       avatar: undefined,
       confirmPassword: null,
@@ -279,25 +257,14 @@ export default Vue.extend({
     allRoles() {
       return this.$store.state.roles;
     },
-
-    // passwordConfirmationRule() {
-    //   if (this.userId) return true;
-    //   return () =>
-    //     this.user.password === this.user.confirmPassword ||
-    //     "تکرار رمز عبور اشتباه است";
-    // },
-    // passwordRules() {
-    //   if (this.userId) return true;
-    //   return () =>
-    //     this.user.password.length > 7 || "رمز باید حداقل 8 کارکتر باشد";
-    // },
   },
   watch: {
     dialog: {
       handler() {
-       
         if (!this.dialog) {
           this.clearData();
+        } else {
+          this.getServers();
         }
         if (this.userId) this.getUser(this.userId);
       },
@@ -305,22 +272,27 @@ export default Vue.extend({
     },
   },
   methods: {
-  
+    async getServers() {
+      await request.get(`/ApiUrl/ApiUrls`).then((response) => {
+        this.servers = response.data.result.result;
+      });
+    },
     async getUser(id) {
       await request.get(`/user/${id}`).then((response) => {
         var data = response.data.result;
-       
+
         this.user.firstName = data.firstName;
         this.user.lastName = data.lastName;
         this.user.mobile = data.mobile;
+        this.user.serverId = data.serverId;
         this.user.email = data.email;
         this.user.phone = data.phone;
         this.user.userState = data.userState;
         this.user.avatar = "";
         this.user.isAdmin = data.isAdmin;
         this.imageUrl = data.avatar;
-        this.user.initCapacity =data.initCapacity
-        this.user.cunsumedTraffic =data.cunsumedTraffic
+        this.user.initCapacity = data.initCapacity;
+        this.user.cunsumedTraffic = data.cunsumedTraffic;
       });
     },
     clickImg() {
@@ -360,13 +332,12 @@ export default Vue.extend({
 
       return new File([u8arr], filename, { type: mime });
     },
- 
+
     getRoles() {
       this.$store.commit("getRoles");
     },
-   
+
     submit() {
-     
       if (!this.$refs.form.validate()) {
         return;
       }
@@ -375,8 +346,8 @@ export default Vue.extend({
       var form_data = new FormData();
 
       for (var key in this.user) {
-        if(this.user[key] !== "" && this.user[key]!== null)
-        form_data.append(key, this.user[key]);
+        if (this.user[key] !== "" && this.user[key] !== null)
+          form_data.append(key, this.user[key]);
       }
       request.defaults.headers.common.accept = "multipart/form-data";
       if (this.userId) {
@@ -408,10 +379,11 @@ export default Vue.extend({
     clearData() {
       // (this.user.confirmPassword = ""),
       //   (this.user.password = ""),
-        (this.user.firstName = "کاربر"),
+      (this.user.firstName = "کاربر"),
         (this.user.lastName = "مهمان"),
         (this.user.email = ""),
         // (this.user.phone = ""),
+        (this.user.selectedServers = []),
         (this.user.mobile = ""),
         (this.user.isAdmin = false),
         (this.user.avatar = undefined),

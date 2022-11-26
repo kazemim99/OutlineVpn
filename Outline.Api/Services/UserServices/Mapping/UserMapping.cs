@@ -16,6 +16,7 @@ namespace Outline.Api.Mapping
                     c => c.MapFrom(d => GetAvatar(d)));
 
             CreateMap<CreateUserInput, User>()
+
                      .ForMember(a => a.Avatar,
                     c => c.Ignore())
                       .AfterMap((input, user) =>
@@ -41,7 +42,6 @@ namespace Outline.Api.Mapping
             if (a.Avatar == null) return "";
             return $"api/publicData/get-file/{a.Avatar.Replace('\\', '*')}";
         }
-
 
 
         #region Private +

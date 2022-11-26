@@ -8,7 +8,7 @@ namespace Outline.Api.Services.UserServices.Dto
     public class CreateUserInput 
     {
 
-        public List<int> Servers { get; set; }
+        public int ServerId { get; set; }
         [Required]
         public string FirstName { get; set; }
 

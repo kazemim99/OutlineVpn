@@ -10,6 +10,7 @@ using Outline.Api.Services.UserServices;
 using Outline.Api.Mapping;
 using Outline.Api.Services.PlanServices;
 using Outline.Api.Services.ApiUrlServices;
+using OutlineVpn;
 
 namespace Outline.Api.IOC
 {
@@ -27,6 +28,7 @@ namespace Outline.Api.IOC
             Container.Register<IOtpService, OtpSharpService>();
             Container.Register<IPlanService, PlanService>();
             Container.Register<IApiUrlService, ApiUrlService>();
+            Container.Register<IOutlineApi, OutlineApi>();
 
             Container.Register<IJwtAuthManager, JwtAuthManager>(Lifestyle.Singleton);
 

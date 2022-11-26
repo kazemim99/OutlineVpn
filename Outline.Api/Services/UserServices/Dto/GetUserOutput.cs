@@ -5,6 +5,8 @@ namespace Outline.Api.Services.UserServices.Dto
 {
     public class GetUserOutput : EntityDto<int>
     {
+        public int ServerId { get; set; }
+
         public string FirstName { get; set; }
         public string AccessUrl { get; set; }
 

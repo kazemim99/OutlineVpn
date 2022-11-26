@@ -11,13 +11,13 @@ namespace Outline.Api.Entity.Configurations
         }
     }
 
-    public class UserRoleConfig : IEntityTypeConfiguration<UserRole>
-    {
-        public void Configure(EntityTypeBuilder<UserRole> builder)
-        {
-            builder.HasKey(bc => new { bc.RoleId, bc.UserId });
-        }
-    }
+    //public class UserRoleConfig : IEntityTypeConfiguration<UserRole>
+    //{
+    //    public void Configure(EntityTypeBuilder<UserRole> builder)
+    //    {
+    //        builder.HasKey(bc => new { bc.RoleId, bc.UserId });
+    //    }
+    //}
     public class UserServerConfig : IEntityTypeConfiguration<UserServer>
     {
         public void Configure(EntityTypeBuilder<UserServer> builder)
@@ -43,7 +43,10 @@ namespace Outline.Api.Entity.Configurations
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+
+            builder.HasOne<ApiUrl>(a=>a.Server).WithMany(a => a.Users).HasForeignKey(c => c.ServerId);;
             builder.HasQueryFilter(a => !a.IsDeleted);
+            builder.Property(a => a.ServerId).IsRequired(false);
         }
     }
 }

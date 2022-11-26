@@ -13,12 +13,12 @@ namespace Outline.Api.Controllers
     public class KeysController : CustomBaseController
     {
 
-        private readonly OutlineApi _outline;
+        private readonly IOutlineApi _outline;
         private readonly IUserService _userService;
-        public KeysController(IUserService userService)
+        public KeysController(IUserService userService, IOutlineApi outline)
         {
-            _outline = new OutlineApi();
             _userService = userService;
+            _outline = outline;
         }
 
         [HttpPost]

@@ -33,5 +33,6 @@ namespace Outline.Api.Services.UserServices
         Task<IEnumerable<OptionItem>> GetSelectList(string input);
         Task SetAccessKey(int id, string accessUrl);
         Task UpdateConsumedTraffic(double remainigCapacity, int userId);
+        ApiUrl UserServer(int userId);
     }
 }

@@ -17,20 +17,16 @@ namespace Outline.Api.Controllers
         const string URL_PRIFIX = "https://s3.amazonaws.com/outline-vpn/invite.html#";
         private readonly IUserService _service;
         private readonly IRahyabSmsSender _rahyabSmsSender;
-        private readonly OutlineApi _outline;
-        public UserController(IUserService userService, IRahyabSmsSender rahyabSmsSender)
+        private readonly IOutlineApi _outline;
+        public UserController(IUserService userService, IRahyabSmsSender rahyabSmsSender, IOutlineApi outline)
         {
             _service = userService;
-            _outline = new OutlineApi();
             _rahyabSmsSender = rahyabSmsSender;
+            _outline = outline;
         }
 
-        [HttpGet("setApiUrl")]
-        public ApiResponse SetApiUrl([FromRoute]string url)
-        {
-            _outline.SetUrl(url);
-            return new ApiResponse();
-        }
+
+
         [HttpGet("users")]
         [Authorize]
 
@@ -51,6 +47,7 @@ namespace Outline.Api.Controllers
 
         public async Task<ApiResponse> Update([FromRoute] int userId, [FromForm] UpdateUserInput input)
         {
+
             if (Request.Form.Files.Count > 0)
             {
                 var file = Request.Form.Files[0];
@@ -72,10 +69,39 @@ namespace Outline.Api.Controllers
                 }
             }
             input.CreatorFullName = FullName;
-          var keyId =  _outline.GetKeys().FirstOrDefault(c => c.Name == input.Mobile);
-            input.UserKeyId = keyId.Id;
+            var server = _service.UserServer(userId);
+
+            if (server.Id == input.ServerId)
+            {
+                await _outline.SetUrl(input.ServerId);
+
+                var keyId = _outline.GetKeys().FirstOrDefault(c => c.Name == input.Mobile);
+                input.UserKeyId = keyId.Id;
+                _outline.AddDataLimit(keyId.Id, Convert.ToInt64(input.InitCapacity));
+
+            }
+            else
+            {
+                await DelteKey(server.Id, input.Mobile);
+                var capa = _outline.Capacity(input.Mobile);
+                await _outline.SetUrl(input.ServerId);
+                var output = _outline.CreateKey();
+                input.UserKeyId = output.Id;
+                _outline.RenameKey(output.Id, input.Mobile);
+                var gig = Convert.ToDouble(capa);
+                var bytecap = Convert.ToInt64(input.InitCapacity) - Convert.ToInt64(gig);
+                var gigcap = Convert.ToInt64(bytecap * 1000d * 1000d * 1000d);
+                _outline.AddDataLimit(output.Id, gigcap);
+                await _rahyabSmsSender.SendAsync(new RahyabSendSmsReques
+                {
+                    destinationAddress = input.Mobile,
+                    message = $"سرور اوت لاین  => {URL_PRIFIX}{output.AccessUrl}"
+                });
+
+                input.AccessUrl = output.AccessUrl;
+            }
+
             await _service.UpdateAsync(userId, input);
-            _outline.AddDataLimit(keyId.Id, Convert.ToInt64(input.InitCapacity));
 
             return new ApiResponse();
         }
@@ -84,6 +110,7 @@ namespace Outline.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Create([FromForm] CreateUserInput input)
         {
+            await _outline.SetUrl(input.ServerId);
             if (Request.Form.Files.Count > 0)
             {
                 var file = Request.Form.Files[0];
@@ -112,7 +139,6 @@ namespace Outline.Api.Controllers
                 input.UserKeyId = output.Id;
                 _outline.RenameKey(output.Id, input.Mobile);
                 var gig = Convert.ToInt64(input.InitCapacity * 1000d * 1000d * 1000d);
-                input.InitCapacity = gig;
                 _outline.AddDataLimit(output.Id, gig);
                 await _rahyabSmsSender.SendAsync(new RahyabSendSmsReques
                 {
@@ -134,6 +160,7 @@ namespace Outline.Api.Controllers
         public async Task<ApiResponse> SendAccessKey([FromRoute] int id)
         {
             var user = await _service.GetById(id);
+            await _outline.SetUrl(user.ServerId);
             if (string.IsNullOrEmpty(user.AccessUrl))
             {
                 var accessUrl = _outline.GetAccessUrl(user.Mobile);
@@ -155,9 +182,14 @@ namespace Outline.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int userId)
         {
+
             var result = await _service.GetById(userId);
-            result.CunsumedTraffic =Convert.ToDouble(_outline.Capacity(result.Mobile));
-           await _service.UpdateConsumedTraffic(result.CunsumedTraffic, userId);
+            await _outline.SetUrl(result.ServerId);
+
+            result.CunsumedTraffic = Convert.ToDouble(_outline.Capacity(result.Mobile));
+         
+            await _service.UpdateConsumedTraffic(result.CunsumedTraffic, userId);
+
             return new ApiResponse(result);
         }
         /// <summary> 
@@ -190,9 +222,11 @@ namespace Outline.Api.Controllers
         ///
         [Authorize]
         [HttpDelete("change-server/{id}/{url}")]
-        public async Task<ApiResponse> Delete([FromRoute] int id,[FromRoute] url)
+        public async Task<ApiResponse> ChangeServer([FromRoute] int id, [FromRoute] string url)
         {
             var user = await _service.GetById(id);
+            await _outline.SetUrl(user.ServerId);
+
             var key = _outline.GetKeys().FirstOrDefault(a => a.Name == user.Mobile);
             if (key != null)
                 _outline.DeleteKey(key.Id);
@@ -211,14 +245,25 @@ namespace Outline.Api.Controllers
         public async Task<ApiResponse> Delete([FromRoute] int id)
         {
             var user = await _service.GetById(id);
-            var key = _outline.GetKeys().FirstOrDefault(a => a.Name == user.Mobile);
-            if (key != null)
-                _outline.DeleteKey(key.Id);
+            await DelteKey(user.ServerId, user.Mobile);
 
             await _service.Delete(id);
             return new ApiResponse();
         }
 
+        private async Task DelteKey(int serverId, string mobile)
+        {
+            await _outline.SetUrl(serverId);
+
+            var key = _outline.GetKeys().Where(a => a.Name == mobile);
+            if (key.Any())
+            {
+                foreach (var item in key)
+                {
+                    _outline.DeleteKey(item.Id);
+                } 
+            }
+        }
 
     }
 }

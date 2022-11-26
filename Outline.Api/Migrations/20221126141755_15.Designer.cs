@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Outline.Api.Database;
 
@@ -11,9 +12,10 @@ using Outline.Api.Database;
 namespace Outline.Api.Migrations
 {
     [DbContext(typeof(DB))]
-    partial class DBModelSnapshot : ModelSnapshot
+    [Migration("20221126141755_15")]
+    partial class _15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,12 +252,6 @@ namespace Outline.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ServerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServerId1")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
@@ -272,10 +268,6 @@ namespace Outline.Api.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ServerId");
-
-                    b.HasIndex("ServerId1");
 
                     b.ToTable("Users");
                 });
@@ -318,21 +310,6 @@ namespace Outline.Api.Migrations
                     b.ToTable("UserServer");
                 });
 
-            modelBuilder.Entity("Outline.Api.Entity.User", b =>
-                {
-                    b.HasOne("Outline.Api.Entity.ApiUrl", null)
-                        .WithMany("Users")
-                        .HasForeignKey("ServerId");
-
-                    b.HasOne("Outline.Api.Entity.ApiUrl", "Server")
-                        .WithMany()
-                        .HasForeignKey("ServerId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Server");
-                });
-
             modelBuilder.Entity("Outline.Api.Entity.UserRole", b =>
                 {
                     b.HasOne("Outline.Api.Entity.Role", "Role")
@@ -361,7 +338,7 @@ namespace Outline.Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Outline.Api.Entity.User", "User")
-                        .WithMany()
+                        .WithMany("UserServers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -369,11 +346,6 @@ namespace Outline.Api.Migrations
                     b.Navigation("Server");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Outline.Api.Entity.ApiUrl", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Outline.Api.Entity.Role", b =>
@@ -384,6 +356,8 @@ namespace Outline.Api.Migrations
             modelBuilder.Entity("Outline.Api.Entity.User", b =>
                 {
                     b.Navigation("Roles");
+
+                    b.Navigation("UserServers");
                 });
 #pragma warning restore 612, 618
         }

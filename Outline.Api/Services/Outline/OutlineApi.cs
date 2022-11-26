@@ -1,21 +1,42 @@
 using System.Collections.Specialized;
 using System.Net;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using Outline.Api.Database;
 
 namespace OutlineVpn;
 
-public class OutlineApi
+
+
+public interface IOutlineApi
+{
+    Task SetUrl(int id);
+    object? Capacity(string mobile);
+    List<OutlineKey> GetKeys();
+    OutlineKey CreateKey();
+    string GetAccessUrl(string mobile);
+    bool DeleteKey(int id);
+    bool RenameKey(int id, string name);
+    bool AddDataLimit(int id, long limitBytes);
+    bool DeleteDataLimit(int id);
+    List<OutlineKey> GetTransferredData();
+}
+public class OutlineApi : IOutlineApi
 {
     private WebClient _webClient = new();
+    private readonly DB _db;
     private string ApiUrl { get; set; }
-    public OutlineApi()
+    public OutlineApi(DB db)
     {
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        _db = db;
     }
-public void SetUrl(string apiUrl)
+    public async Task SetUrl(int id)
     {
-        this.ApiUrl = apiUrl;
+        var apiUrl = await _db.ApiUrls.FirstOrDefaultAsync(a => a.Id == id);
+        this.ApiUrl = apiUrl.Url;
+
     }
     private bool CallRequest(string url, string method, NameValueCollection args, out string? content)
     {
@@ -24,9 +45,9 @@ public void SetUrl(string apiUrl)
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create($"{ApiUrl}/{url}");
             request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             request.Method = method;
-            using(HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-            using(Stream stream = response.GetResponseStream())
-            using(StreamReader reader = new StreamReader(stream))
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
             {
                 content = reader.ReadToEnd();
             }
@@ -37,7 +58,7 @@ public void SetUrl(string apiUrl)
         {
             content = null;
         }
-        
+
         return false;
     }
 
@@ -69,10 +90,10 @@ public void SetUrl(string apiUrl)
         {
             content = null;
         }
-        
+
         return false;
     }
-    
+
     public List<OutlineKey> GetKeys()
     {
         CallRequest("access-keys", "GET", new NameValueCollection(), out string? content);
@@ -128,12 +149,12 @@ public void SetUrl(string apiUrl)
 
     public string GetAccessUrl(string mobile)
     {
-        var key =GetKeys().FirstOrDefault(a => a.Name.Contains(mobile));
+        var key = GetKeys().FirstOrDefault(a => a.Name.Contains(mobile));
         if (key == null)
             throw new Exception("access key is null");
 
-            return key.AccessUrl;
+        return key.AccessUrl;
 
-       
+
     }
 }
