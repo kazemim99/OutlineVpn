@@ -67,7 +67,7 @@ public class OutlineApi : IOutlineApi
         object? capacity = null;
         double? bytes = 0;
         var data2 = GetKeys(); // Get all transferred data
-        var user = data2.FirstOrDefault(a => a.Name.Contains(mobile));
+        var user = data2.FirstOrDefault(a => a.Name.Replace(" ", "").Contains(mobile));
         if (user != null)
             bytes = GetTransferredData().FirstOrDefault(a => a.Id == user.Id)?.UsedBytes;
 

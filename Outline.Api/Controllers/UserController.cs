@@ -140,6 +140,7 @@ namespace Outline.Api.Controllers
                 _outline.RenameKey(output.Id, input.Mobile);
                 var gig = Convert.ToInt64(input.InitCapacity * 1000d * 1000d * 1000d);
                 _outline.AddDataLimit(output.Id, gig);
+
                 await _rahyabSmsSender.SendAsync(new RahyabSendSmsReques
                 {
                     destinationAddress = input.Mobile,
@@ -245,9 +246,11 @@ namespace Outline.Api.Controllers
         public async Task<ApiResponse> Delete([FromRoute] int id)
         {
             var user = await _service.GetById(id);
-            await DelteKey(user.ServerId, user.Mobile);
 
             await _service.Delete(id);
+            
+            await DelteKey(user.ServerId, user.Mobile);
+
             return new ApiResponse();
         }
 
