@@ -13,7 +13,7 @@
         public bool IsDeleted { get; set; }
         public List<V2Key> Keys { get; set; }
         public int CityId { get; set; }
-
+        public bool IsActive { get; set; }
     }
 
     public class Country : FullAuditEntity<int>, ISoftDelete
@@ -39,6 +39,7 @@
         public bool IsDeleted { get; set; }
         public int ServerId { get; set; }
         public V2Server Server { get; set; }
-        public User MyProperty { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }

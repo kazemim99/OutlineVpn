@@ -96,54 +96,78 @@ namespace V2Ray.Api.Services.Server
             await _db.SaveChangesAsync();
         }
 
-        public void SaveKey(string key)
+        public void SaveKey(string key, int serverId, int userId)
         {
             _db.V2Keys.Add(new V2Key
             {
-                Key = key
+                Key = key,
+                ServerId = serverId,
+                UserId = userId
             });
             _db.SaveChanges();
         }
 
-        public async Task CreateKey(CreateKeyInput input)
+        public async Task CreateKey(int userId)
         {
+            var servers =await GetActiveServers();
+            foreach (var input in servers)
+            {
+                var httpClient = GetCookie(input);
 
-            var httpClient = GetCookie(input);
+                var root = await GetServerKeys(input, httpClient);
 
+                foreach (var item in root)
+                {
+
+                    var guid = Guid.NewGuid().ToString();
+                    item.settings = Regex.Replace(
+          item.settings,
+          @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
+          @$"{guid}",
+          RegexOptions.IgnoreCase
+    );
+
+                    item.id = null;
+                    item.port = new Random().Next(10000, 60000);
+                    item.remark = $"{input.City.Title}_{item.port}";
+                    var formContent = new StringContent(JsonConvert.SerializeObject(root), Encoding.UTF8, "application/json");
+
+                    var result = await httpClient.PostAsync($"https://{input.Url}:{input.Port}/xui/inbound/add", formContent);
+                    var tt = await result.Content.ReadAsStringAsync();
+                    var serverResponse = JsonConvert.DeserializeObject<ServerResponse>(tt);
+                    if (!serverResponse.success)
+                        throw new ApiException(serverResponse.msg);
+
+                    result.EnsureSuccessStatusCode();
+                    var key = $"{item.protocol.ToString()}://{guid}@{input.Url}:{item.port}";
+                    if (item.protocol == Protocol.vless.ToString())
+                        key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+                   else if (item.protocol == Protocol.shadowsocks.ToString())
+                        key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+                    else
+                        key += $"#{item.remark}";
+
+                    SaveKey(key,input.Id, userId);
+                }
+            }
+
+        }
+
+        private async Task<List<V2Server>> GetActiveServers()
+        {
+            return await _db.V2Servers.Where(a => a.IsActive).ToListAsync();
+        }
+
+        private static async Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient)
+        {
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var re = await httpClient.PostAsJsonAsync($"https://{input.Url}:{input.Port}/xui/inbound/list", new { }); ;
             var ttt = await re.Content.ReadAsStringAsync();
-            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderByDescending(a => a.id).First();
-            var guid = Guid.NewGuid().ToString();
-            root.settings = Regex.Replace(
-      root.settings,
-      @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
-      @$"{guid}",
-      RegexOptions.IgnoreCase
-);
-
-            root.id = null;
-            root.remark = "rema";
-            root.port = new Random().Next(10000, 60000);
-            var formContent = new StringContent(JsonConvert.SerializeObject(root), Encoding.UTF8, "application/json");
-
-            var result = await httpClient.PostAsync($"https://{input.Url}:{input.Port}/xui/inbound/add", formContent);
-            var tt = await result.Content.ReadAsStringAsync();
-            var serverResponse = JsonConvert.DeserializeObject<ServerResponse>(tt);
-            if (!serverResponse.success)
-                throw new ApiException(serverResponse.msg);
-
-            result.EnsureSuccessStatusCode();
-            var key = $"{input.Protocol.ToString()}://{guid}@{input.Url}:{root.port}";
-            if (input.Protocol == Protocol.vless)
-                key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{root.remark}";
-            else
-                key += $"#{root.remark}";
-
-            SaveKey(key);
+            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderByDescending(a => a.id).Where(a=>a.protocol != "vmess").Take(4).ToList();
+            return root;
         }
 
-        private HttpClient GetCookie(CreateKeyInput input)
+        private HttpClient GetCookie(V2Server input)
         {
             var uri = new Uri($"{input.Url}:{input.Port}");
 
@@ -183,9 +207,10 @@ namespace V2Ray.Api.Services.Server
 
         public enum Protocol
         {
-            vless = 1,
-            vmess = 2,
-            trojan = 3
+            vless,
+            vmess,
+            trojan,
+            shadowsocks
         }
         public class ServerResponse
         {
