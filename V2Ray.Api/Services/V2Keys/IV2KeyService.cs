@@ -1,6 +1,7 @@
 ﻿using V2Ray.Api.Controllers;
 using V2Ray.Api.Entity;
 using V2Ray.Api.Services.V2Keys.Dto;
+using static V2Ray.Api.Services.Server.ServerService;
 
 namespace V2Ray.Api.Services.V2Keys
 {
@@ -12,5 +13,7 @@ namespace V2Ray.Api.Services.V2Keys
         V2KeyFilterInput>
     {
         Task ChangeState(int id);
+        Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient);
+        Task<string> GenerateKey(V2Server server, int userId = 0, string user = "cu");
     }
 }

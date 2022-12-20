@@ -46,6 +46,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Create([FromBody] CreateV2KeyInput input)
         {
+            input.UserId = UserId;
             await _v2KeyService.InsertAsync(input);
             return new ApiResponse();
         }

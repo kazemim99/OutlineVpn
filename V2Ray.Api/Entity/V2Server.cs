@@ -1,4 +1,6 @@
-﻿namespace V2Ray.Api.Entity
+﻿using static V2Ray.Api.Services.Server.ServerService;
+
+namespace V2Ray.Api.Entity
 {
     public class V2Server : FullAuditEntity<int>, ISoftDelete
     {
@@ -34,6 +36,11 @@
     }
     public class V2Key : FullAuditEntity<int>, ISoftDelete
     {
+
+        public int Capacity { get; set; }
+        public int ExpireDate { get; set; }
+        public bool State { get; set; }
+        public Protocol Protocol { get; set; }
         public string Key { get; set; }
         public bool IsDeleted { get; set; }
         public int ServerId { get; set; }

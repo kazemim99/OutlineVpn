@@ -124,6 +124,7 @@ namespace V2Ray.Api.Controllers
         }
 
         [HttpPost("Create_Bulk_Key")]
+        [Authorize]
         public async Task<ApiResponse> CreateKey([FromBody] CreateBuldKeyInput input)
         {
             //var V2Keys =await _service.GetAllAsync(new V2KeyFilterInput
