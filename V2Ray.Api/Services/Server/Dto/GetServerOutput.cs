@@ -10,7 +10,7 @@ namespace V2Ray.Api.Services.Server.Dto
         public string Title { get; set; }
         public int CityId { get; set; }
         public string IP { get; set; }
-        public bool State { get; set; }
+        public bool IsActive { get; set; }
         public string? Url { get; set; }
 
 

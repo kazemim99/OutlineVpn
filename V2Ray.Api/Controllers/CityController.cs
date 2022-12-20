@@ -1,29 +1,47 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using V2Ray.Api.Services.V2Keys;
-using V2Ray.Api.Services.V2Keys.Dto;
+using Newtonsoft.Json;
+using System.Net;
+using System.Text;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
+using V2Ray.Api.Services.Cities.Dto;
+using V2Ray.Api.Services.Cities;
 
 namespace V2Ray.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class V2KeyController : CustomBaseController
+    public class CityController : CustomBaseController
     {
-        private readonly IV2KeyService _v2KeyService;
+        private readonly ICitieservice _service;
 
-        public V2KeyController(IV2KeyService service)
+        public CityController(ICitieservice service)
         {
-            _v2KeyService = service;
+            _service = service;
         }
 
-        [HttpGet("V2Keys")]
+        [HttpGet("all-cities")]
         [Authorize]
-        public async Task<ApiResponse> Filter([FromQuery] V2KeyFilterInput filter)
+        public async Task<ApiResponse> Filter()
         {
-            //filter.V2KeyId = V2KeyId;
+            //filter.CityId = CityId;
             //filter.IsAdmin = IsAdmin;
-            var result = await _v2KeyService.GetAllAsync(filter);
+            var result = await _service.GetAllAsync(new CityFilterInput
+            {
+                ItemsPerPage = 100
+            });
+            return new ApiResponse(result);
+        }
+
+        [HttpGet("Cities")]
+        [Authorize]
+        public async Task<ApiResponse> Filter([FromQuery] CityFilterInput filter)
+        {
+            //filter.CityId = CityId;
+            //filter.IsAdmin = IsAdmin;
+            var result = await _service.GetAllAsync(filter);
             return new ApiResponse(result);
         }
 
@@ -34,9 +52,9 @@ namespace V2Ray.Api.Controllers
         [HttpPut("{id:int}")]
         [Authorize]
 
-        public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateV2KeyInput input)
+        public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateCityInput input)
         {
-            await _v2KeyService.UpdateAsync(id, input);
+            await _service.UpdateAsync(id, input);
 
             return new ApiResponse();
         }
@@ -44,9 +62,9 @@ namespace V2Ray.Api.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ApiResponse> Create([FromBody] CreateV2KeyInput input)
+        public async Task<ApiResponse> Create([FromBody] CreateCityInput input)
         {
-            await _v2KeyService.InsertAsync(input);
+            await _service.InsertAsync(input);
             return new ApiResponse();
         }
 
@@ -59,7 +77,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-           var result =   await _v2KeyService.GetById(id);
+           var result =   await _service.GetById(id);
 
             return new ApiResponse(result);
         }
@@ -75,7 +93,7 @@ namespace V2Ray.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ApiResponse> Delete([FromRoute] int id)
         {
-            await _v2KeyService.SoftDelete(id);
+            await _service.SoftDelete(id);
 
             return new ApiResponse();
         }
@@ -100,6 +118,7 @@ namespace V2Ray.Api.Controllers
         //    return new ApiResponse(root);
         //}
 
+      
       
     }
    

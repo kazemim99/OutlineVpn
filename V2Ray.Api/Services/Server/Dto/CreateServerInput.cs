@@ -28,7 +28,7 @@ namespace V2Ray.Api.Services.Server.Dto
         [Required]
         public string IP { get; set; }
 
-        public bool State { get; set; }
+        public bool IsActive { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

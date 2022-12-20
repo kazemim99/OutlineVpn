@@ -9,7 +9,6 @@
         public int Port { get; set; }
         public City City { get; set; }
         public string IP { get; set; }
-        public bool State { get; set; }
         public bool IsDeleted { get; set; }
         public List<V2Key> Keys { get; set; }
         public int CityId { get; set; }

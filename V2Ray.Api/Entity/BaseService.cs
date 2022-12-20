@@ -67,7 +67,7 @@ namespace V2Ray.Api.Entity
             await _db.SaveChangesAsync();
         }
 
-        public async Task<Pagination<TListOut>> GetAllAsync(TFilter paging, params string[] include)
+        public virtual async Task<Pagination<TListOut>> GetAllAsync(TFilter paging, params string[] include)
         {
             var model = Filter(paging);
             var result = await model.Include(include)
@@ -75,7 +75,7 @@ namespace V2Ray.Api.Entity
             return result;
         }
 
-        public async Task<Pagination<TOut>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, TFilter paging, params string[] include)
+        public virtual async Task<Pagination<TOut>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, TFilter paging, params string[] include)
         {
             var model = await SearchFor(predicate, include).GetPagination<TEntity, TOut, TFilter>(paging, _mapper);
             return model;
@@ -86,7 +86,7 @@ namespace V2Ray.Api.Entity
             return _db.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> SearchFor(Expression<Func<TEntity, bool>> predicate, params string[] include)
+        public virtual IQueryable<TEntity> SearchFor(Expression<Func<TEntity, bool>> predicate, params string[] include)
         {
             return _db.Set<TEntity>().Include(include).Where(predicate);
         }

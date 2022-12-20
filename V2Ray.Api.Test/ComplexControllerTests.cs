@@ -92,7 +92,6 @@ namespace POD.Test.Integrations
             serverInput.UserName.Should().Be(serverUpdated.UserName);
             serverInput.Password.Should().Be(serverUpdated.Password);
             serverInput.Port.Should().Be(serverUpdated.Port);
-            serverInput.State.Should().Be(serverUpdated.State);
         }
 
         [Theory]
@@ -110,7 +109,6 @@ namespace POD.Test.Integrations
                 a.V2Servers.Where(a => a.Id == serverId).FirstOrDefaultAsync());
 
             apiResponse.Title.Should().Be(server.Title);
-            apiResponse.State.Should().Be(server.State);
             apiResponse.IP.Should().Be(server.IP);
             apiResponse.Url.Should().Be(server.Url);
             apiResponse.CityId.Should().Be(server.CityId);
@@ -164,7 +162,7 @@ namespace POD.Test.Integrations
                 {
                     Title = Guid.NewGuid().ToString(),
                     IP = Guid.NewGuid().ToString(),
-                    State = i / 3 == 0,
+                    IsActive = i / 3 == 0,
                     Port = new Random().Next(10000, 60000),
                     Password = Guid.NewGuid().ToString(),
                     UserName = Guid.NewGuid().ToString(),

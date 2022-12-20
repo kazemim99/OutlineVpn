@@ -18,6 +18,7 @@
 
         public static string PlanNotFound = "پلن غیر فعال است";
         public static string ServerNotFound = "سرور یافت نشد";
+        public static string CityNotFound = "شهر یافت نشد";
     }
 
     public static class DefaultUserConst

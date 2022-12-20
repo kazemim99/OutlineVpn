@@ -61,9 +61,15 @@ const routes: Array<RouteConfig> = [
       },
     
       {
-        path: "/api-urls",
-        name: "ApiUrls",
-        component: () => import("@/views/ApiUrls/index.vue"),
+        path: "/v2servers",
+        name: "V2Servers",
+        component: () => import("@/views/V2Servers/index.vue"),
+        meta: { requireAuth: true }
+      },
+      {
+        path: "/v2Keys",
+        name: "v2Keys",
+        component: () => import("@/views/V2Keys/index.vue"),
         meta: { requireAuth: true }
       },
     ]

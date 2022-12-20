@@ -109,7 +109,6 @@ vless://d6d987c5-dfb5-4197-8d86-810163d0abd1@gra.irantrojan.ml:14297?type=tcp&se
 
 trojan://ESy5ZGNJYY@gra.irantrojan.ml:37975?type=tcp&security=xtls&flow=xtls-rprx-direct#Frankfurt_37975_trojan_cu
 
-vless://94054d81-fb2e-4107-9261-f873b8d0ef83@gra.irantrojan.ml:47763?type=tcp&security=xtls&flow=xtls-rprx-direct#Frankfurt_47763_vless_cu
 
 trojan://ESy5ZGNJYY@gra.irantrojan.ml:29678?type=tcp&security=xtls&flow=xtls-rprx-direct#Frankfurt_29678_trojan_cu
 

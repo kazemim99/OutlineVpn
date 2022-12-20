@@ -6,7 +6,7 @@
         public string Title { get; set; }
         public string City { get; set; }
         public string IP { get; set; }
-        public bool State { get; set; }
+        public bool IsActive { get; set; }
 
 
     }

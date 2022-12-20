@@ -1,0 +1,26 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace V2Ray.Api.Migrations
+{
+    public partial class _4 : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "State",
+                table: "V2Servers");
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AddColumn<bool>(
+                name: "State",
+                table: "V2Servers",
+                type: "bit",
+                nullable: false,
+                defaultValue: false);
+        }
+    }
+}

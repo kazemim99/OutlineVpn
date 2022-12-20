@@ -2,6 +2,7 @@
 using V2Ray.Api.Controllers;
 using V2Ray.Api.Entity;
 using V2Ray.Api.Services.Server.Dto;
+using static V2Ray.Api.Services.Server.ServerService;
 
 namespace V2Ray.Api.Services.Server
 {
@@ -13,8 +14,10 @@ namespace V2Ray.Api.Services.Server
         ServerFilterInput>
     {
         Task IsDelete(int id, string fullName);
-        Task ChangeState(int id, string fullName);
+        Task ChangeState(int id);
         void SaveKey(string key, int id,int port);
         Task CreateKey(int count,string customer);
+        HttpClient GetCookie(V2Server input);
+        Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient);
     }
 }

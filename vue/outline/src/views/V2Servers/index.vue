@@ -4,19 +4,19 @@
 
     <v-data-table
       :headers="headers"
-      :items="ApiUrlList"
+      :items="v2ServerList"
       :loading="loading"
-      :server-items-length="totalApiUrls"
+      :server-items-length="totalV2Servers"
       item-key="id"
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.ApiUrlState="{ item }">
+      <template v-slot:item.isActive="{ item }">
         <v-switch
-          v-model="item.ApiUrlState"
+          v-model="item.isActive"
           flat
-          @change="changeApiUrlState(item)"
-          :label="`${item.ApiUrlState ? 'فعال' : 'غیر فعال'}`"
+          @change="changeState(item)"
+          :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
         ></v-switch>
       </template>
  
@@ -35,7 +35,7 @@
         <v-toolbar flat>
           <v-col cols="3">
             <template right >
-              <AddNewApiUrl v-can="'Member_Create'" ref="addApiUrlCom" @reloadApiUrls="getApiUrls" />
+              <AddNewV2Server v-can="'Member_Create'" ref="addV2ServerCom" @reloadV2Servers="getV2Servers" />
             </template>
           </v-col>
           <v-spacer></v-spacer>
@@ -83,15 +83,15 @@
 </template>
 <script>
 import request from "@/utils/request";
-import AddNewApiUrl from "@/components/ApiUrls/AddNewApiUrl.vue";
+import AddNewV2Server from "@/components/V2Servers/AddNewV2Server.vue";
 import Breadcrump from "@/components/common/Breadcrump.vue";
 import Vue from "vue";
 
 export default {
-  name: "ApiUrls",
+  name: "V2Servers",
   components: {
-    // ApiUrlStates
-    AddNewApiUrl,
+    // states
+    AddNewV2Server,
     Breadcrump,
   },
   data() {
@@ -107,20 +107,20 @@ export default {
           disabled: true,
         },
       ],
-      ApiUrl: {},
-      totalApiUrls: 0,
+      V2Server: {},
+      totalV2Servers: 0,
       switchLoading: null,
       pages: 0,
-      ApiUrlState: null,
+      isActive: null,
       title: null,
-      ApiUrlList: [],
+      v2ServerList: [],
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "عنوان", value: "title", sortable: true },
-        { text: "کشور", value: "country", sortable: true },
+        { text: "شهر", value: "city", sortable: true },
         { text: "آی پی", value: "ip", sortable: false },
-        { text: "وضعیت", value: "state", sortable: false },
+        { text: "وضعیت", value: "isActive", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
       ],
@@ -129,7 +129,7 @@ export default {
   watch: {
     options: {
       handler() {
-        this.getApiUrls();
+        this.getV2Servers();
       },
       deep: true,
     },
@@ -138,32 +138,32 @@ export default {
         this.options.page = 1;
       this.options.title = this.title;
 
-      this.getApiUrls();
+      this.getV2Servers();
     },
   },
   mounted() {
-    this.getApiUrls();
+    this.getV2Servers();
   },
 
   methods: {
-    async changeApiUrlState(item) {
+    async changeState(item) {
       this.switchLoading = "warning";
       await request
-        .put(`/ApiUrl/change-state/${item.id}`)
+        .put(`/v2Server/change-state/${item.id}`)
         .then(() => {
-          console.log(item.ApiUrlState);
+          console.log(item.isActive);
         })
         .catch((error) => {
           alert(error);
-          this.stae = !this.ApiUrlState;
+          this.isActive = !this.isActive;
         })
         .finally(() => {
           this.loading = false;
         });
     },
     async editItem(item) {
-      this.$refs.addApiUrlCom.dialog = true;
-      this.$refs.addApiUrlCom.id = item.id;
+      this.$refs.addV2ServerCom.dialog = true;
+      this.$refs.addV2ServerCom.id = item.id;
     },
      deleteItem(id) {
       Vue.swal({
@@ -177,10 +177,10 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           request
-            .delete(`/ApiUrl/${id}`)
+            .delete(`/V2Server/${id}`)
             .then(() => {
               Vue.swal("", "سرور با موفقیت حذف گردید", "success");
-              this.getApiUrls();
+              this.getV2Servers();
             })
             .finally(() => {
               this.uploadLoading = false;
@@ -192,16 +192,16 @@ export default {
   
     next(page) {
       this.options.page = page;
-      this.getApiUrls();
+      this.getV2Servers();
     },
     handler(event) {
       this.options = event;
     },
     GetSelectedState(state) {
-      this.ApiUrlState = state;
+      this.state = state;
     },
 
-    async getApiUrls() {
+    async getV2Servers() {
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
       this.loading = true;
 
@@ -214,11 +214,11 @@ export default {
 
       this.loading = true;
       await request
-        .get("/ApiUrl/ApiUrls?" + filterQuery)
+        .get("/v2Server/filter?" + filterQuery)
         .then((response) => {
           var data = response.data.result;
-          this.ApiUrlList = data.result;
-          this.totalApiUrls = data.totalItems;
+          this.v2ServerList = data.result;
+          this.totalV2Servers = data.totalItems;
           this.pages = data.pageCount;
         })
         .catch((error) => {

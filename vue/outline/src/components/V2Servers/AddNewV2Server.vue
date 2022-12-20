@@ -18,10 +18,22 @@
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
+
+              <v-col class="d-flex" cols="12" sm="6">
+                <v-select
+                  v-model="v2Server.cityId"
+                  :items="cities"
+                  item-value="id"
+                  item-text="title"
+                  label="شهر"
+                  solo
+                ></v-select>
+              </v-col>
+
               <v-row>
                 <v-col cols="6" sm="12" md="6">
                   <v-text-field
-                    v-model="apiUrl.title"
+                    v-model="v2Server.title"
                     label="عنوان *"
                     placeholder=" "
                     autocomplete="false"
@@ -32,8 +44,8 @@
                 <v-col cols="6" sm="12" md="6">
                   <v-text-field
                     autocomplete="false"
-                    v-model="apiUrl.url"
-                    label="آدرس"
+                    v-model="v2Server.url"
+                    label="آدرس URL"
                     required
                   ></v-text-field>
                 </v-col>
@@ -42,8 +54,8 @@
                 <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     autocomplete="false"
-                    v-model="apiUrl.country"
-                    label="کشور *"
+                    v-model="v2Server.userName"
+                    label="نام کاربری *"
                     placeholder=" "
                     required
                   ></v-text-field>
@@ -51,18 +63,37 @@
                 <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     autocomplete="false"
-                    v-model="apiUrl.ip"
+                    v-model="v2Server.password"
+                    label="کلمه عبور *"
+                    placeholder=" "
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    autocomplete="false"
+                    v-model="v2Server.port"
+                    label="پورت  *"
+                    placeholder=" "
+                    required
+                  ></v-text-field>
+                </v-col>
+               
+              </v-row>
+              <v-row>
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    autocomplete="false"
+                    v-model="v2Server.ip"
                     label="آی پی *"
                     required
                   ></v-text-field>
                 </v-col>
-              </v-row>
-              <v-row>
                 <v-col cols="4">
                   <v-switch
-                    v-model="apiUrl.state"
+                    v-model="v2Server.isActive"
                     :label="`وضعیت: ${
-                      apiUrl.state ? 'فعال' : 'غیر فعال'
+                      v2Server.isActive ? 'فعال' : 'غیر فعال'
                     }`"
                   ></v-switch>
                 </v-col>
@@ -87,20 +118,25 @@ import Vue from "vue";
 import request from "@/utils/request";
 
 export default Vue.extend({
-  name: "AddNewApiUrl",
+  name: "AddNewV2Server",
 
   data: () => ({
     id: null,
     dialog: false,
+    cities: [],
     dialogLogo: false,
     valid: true,
     loading: false,
-    apiUrl: {
+    v2Server: {
       title: "",
+      state : false,
+      isActive: false,
       url: "",
-      country: "",
+      cityId: 0,
       ip: "",
-      state: true,
+      userName: "",
+      password: "",
+      port:4152
     },
   }),
   watch: {
@@ -109,25 +145,38 @@ export default Vue.extend({
         if (!this.dialog) {
           this.clearData();
         }
-        if (this.id) this.getApiUrl(this.id);
+        if (this.id) this.getV2Server(this.id);
       },
       deep: true,
     },
   },
+  created() {
+    this.getCities();
+  },
   methods: {
-    async getApiUrl(id) {
-      await request.get(`/apiUrl/${id}`).then((response) => {
+    async getV2Server(id) {
+      await request.get(`/v2Server/${id}`).then((response) => {
         var data = response.data.result;
-        this.apiUrl.id = id;
-        this.apiUrl.title = data.title;
-        this.apiUrl.url = data.url;
-        this.apiUrl.country = data.country;
-        this.apiUrl.ip = data.ip;
-        this.apiUrl.state = data.state;
+        this.v2Server.id = id;
+        this.v2Server.title = data.title;
+        this.v2Server.url = data.url;
+        this.v2Server.cityId = data.cityId;
+        this.v2Server.ip = data.ip;
+        this.v2Server.isActive = data.isActive;
+        this.v2Server.userName = data.userName;
+        this.v2Server.password = data.password;
       });
     },
    
-
+    async getCities() {
+      await request
+        .get(`city/all-cities`)
+        .then((response) => {
+          var data = response.data.result;
+          console.log(data.result)
+          this.cities = data.result;
+        });
+    },
     submit() {
       if (!this.$refs.form.validate()) {
         return;
@@ -136,10 +185,10 @@ export default Vue.extend({
       
       if (this.id) {
         request
-          .put(`/apiUrl/${this.id}`,this.apiUrl)
+          .put(`/v2Server/${this.id}`,this.v2Server)
           .then((response) => {
             this.dialog = false;
-            this.$emit("reloadApiUrls");
+            this.$emit("reloadV2Servers");
             this.clearData();
             // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
           })
@@ -148,10 +197,10 @@ export default Vue.extend({
           });
       } else {
         request
-          .post("/apiUrl", this.apiUrl)
+          .post("/v2Server", this.v2Server)
           .then((response) => {
             this.dialog = false;
-            this.$emit("reloadApiUrls");
+            this.$emit("reloadV2Servers");
             // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
           })
           .finally(() => {
@@ -161,11 +210,15 @@ export default Vue.extend({
     },
 
     clearData() {
-        (this.apiUrl.title = ""),
-        (this.apiUrl.url = ""),
-        (this.apiUrl.country = ""),
-        (this.apiUrl.ip = ""),
-        (this.apiUrl.state = true)
+      this.selectedComplexId = null;
+
+        (this.v2Server.title = ""),
+        (this.v2Server.url = ""),
+        (this.v2Server.userName = ""),
+        (this.v2Server.password = ""),
+        (this.v2Server.ip = ""),
+        (this.v2Server.cityId = 0),
+        (this.v2Server.state = true)
     },
   },
 });

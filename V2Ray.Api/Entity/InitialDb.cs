@@ -49,8 +49,8 @@ namespace V2Ray.Api.Entity
 
         private static void CreateServer<T>(T db) where T : DB
         {
-            db.V2Servers.RemoveRange(db.V2Servers.ToList());
-            db.SaveChanges();
+            //db.V2Servers.RemoveRange(db.V2Servers.ToList());
+            //db.SaveChanges();
             //if (!db.V2Servers.Any(a => a.Title != "Amesterdam-B"))
             //{
             //    db.V2Servers.Add(new V2Server
@@ -119,7 +119,6 @@ namespace V2Ray.Api.Entity
                     Port = 4152,
                     UserName = "kazemi.mst",
                     IsActive = true,
-                    State = true,
                     Url = "gre.iranoutline.tk",
                 });
             }
