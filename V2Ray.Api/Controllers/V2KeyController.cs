@@ -105,19 +105,19 @@ namespace V2Ray.Api.Controllers
         //}
 
         [HttpPost("Create_Key")]
-        [Authorize]
-        public async Task<ApiResponse> CreateKey()
+        public async Task<ApiResponse> CreateKey([FromBody] CreateKeyInput input)
         {
             //var servers =await _service.GetAllAsync(new ServerFilterInput
             //{
             //    ItemsPerPage = 99999
             //});
 
-          await  _service.CreateKey(UserId);
+          await  _service.CreateKey(input.Count,input.Customer);
 
             return new ApiResponse();
 
         }
       
     }
+   
 }

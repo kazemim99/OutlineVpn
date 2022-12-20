@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.Server
     {
         Task IsDelete(int id, string fullName);
         Task ChangeState(int id, string fullName);
-        void SaveKey(string key, int id, int userId);
-        Task CreateKey(int userId);
+        void SaveKey(string key, int id,int port);
+        Task CreateKey(int count,string customer);
     }
 }

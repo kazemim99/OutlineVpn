@@ -27,6 +27,7 @@ namespace V2Ray.Api.Services.Server
         private readonly DB _db;
 
         private readonly IMapper _mapper;
+        private static List<Obj> Objs = new List<Obj>();
 
         public ServerService(DB db, IMapper mapper) : base(mapper, db)
         {
@@ -96,75 +97,124 @@ namespace V2Ray.Api.Services.Server
             await _db.SaveChangesAsync();
         }
 
-        public void SaveKey(string key, int serverId, int userId)
+        public void SaveKey(string key, int serverId, int port)
         {
             _db.V2Keys.Add(new V2Key
             {
+                Port = port,
                 Key = key,
                 ServerId = serverId,
-                UserId = userId
             });
             _db.SaveChanges();
         }
 
-        public async Task CreateKey(int userId)
+        public async Task CreateKey(int count = 1,string customer="cu")
         {
-            var servers =await GetActiveServers();
-            foreach (var input in servers)
+            try
             {
-                var httpClient = GetCookie(input);
 
-                var root = await GetServerKeys(input, httpClient);
-
-                foreach (var item in root)
+           
+            var servers = await GetActiveServers();
+            var listString = new List<string>();
+            List<Obj> root = new List<Obj>();
+            for (int i = 0; i < count; i++)
+            {
+                foreach (var input in servers)
                 {
+                    var httpClient = GetCookie(input);
+                    if (!root.Any())
+                        root = await GetServerKeys(input, httpClient);
 
-                    var guid = Guid.NewGuid().ToString();
-                    item.settings = Regex.Replace(
-          item.settings,
-          @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
-          @$"{guid}",
-          RegexOptions.IgnoreCase
-    );
+                    if (!root.Any())
+                        throw new Exception();
 
-                    item.id = null;
-                    item.port = new Random().Next(10000, 60000);
-                    item.remark = $"{input.City.Title}_{item.port}";
-                    var formContent = new StringContent(JsonConvert.SerializeObject(root), Encoding.UTF8, "application/json");
+                    foreach (var item in root)
+                    {
 
-                    var result = await httpClient.PostAsync($"https://{input.Url}:{input.Port}/xui/inbound/add", formContent);
-                    var tt = await result.Content.ReadAsStringAsync();
-                    var serverResponse = JsonConvert.DeserializeObject<ServerResponse>(tt);
-                    if (!serverResponse.success)
-                        throw new ApiException(serverResponse.msg);
+                        var guid = Guid.NewGuid().ToString();
+                        item.settings = Regex.Replace(
+              item.settings,
+              @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
+              @$"{guid}",
+              RegexOptions.IgnoreCase
+        );
+                        var set = JsonConvert.DeserializeObject<Setting>(item.settings);
+                        item.id = null;
+                        item.port = GeneratePort(_db);
+                        item.remark = $"{input.City.Title}_{item.port}_{item.protocol}_{customer}";
+                        var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
 
-                    result.EnsureSuccessStatusCode();
-                    var key = $"{item.protocol.ToString()}://{guid}@{input.Url}:{item.port}";
-                    if (item.protocol == Protocol.vless.ToString())
-                        key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
-                   else if (item.protocol == Protocol.shadowsocks.ToString())
-                        key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
-                    else
-                        key += $"#{item.remark}";
+                        var result = await httpClient.PostAsync($"https://{input.Url}:{input.Port}/xui/inbound/add", formContent);
+                        var tt = await result.Content.ReadAsStringAsync();
+                        var serverResponse = JsonConvert.DeserializeObject<ServerResponse>(tt);
+                        if (!serverResponse.success)
+                            throw new ApiException(serverResponse.msg);
 
-                    SaveKey(key,input.Id, userId);
+                        result.EnsureSuccessStatusCode();
+                        var key = "";
+                        if (item.protocol == Protocol.vless.ToString())
+                        {
+                            key = $"{item.protocol}://{guid}@{input.Url}:{item.port}";
+                            key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+
+                        }
+                        else if (item.protocol == Protocol.shadowsocks.ToString())
+                            key = $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+                        else
+                        {
+                            key = $"{item.protocol}://{set.clients.First().password}@{input.Url}:{item.port}";
+                            key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+                        }
+
+                        listString.Add(key + Environment.NewLine);
+
+                        SaveKey(key, input.Id, item.port);
+                    }
                 }
             }
+            await File.AppendAllLinesAsync("keys.txt", listString);
 
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+        private int GeneratePort(DB db)
+        {
+            var port = 0;
+            do
+            {
+                port = new Random().Next(10000, 60000);
+
+            }
+            while (db.V2Keys.Any(a => a.Port == port));
+
+            return port;
         }
 
         private async Task<List<V2Server>> GetActiveServers()
         {
-            return await _db.V2Servers.Where(a => a.IsActive).ToListAsync();
+            return await _db.V2Servers.Include(a => a.City).Where(a => a.IsActive).ToListAsync();
         }
 
         private static async Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient)
         {
+            if (Objs.Any())
+                return Objs;
+
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var re = await httpClient.PostAsJsonAsync($"https://{input.Url}:{input.Port}/xui/inbound/list", new { }); ;
             var ttt = await re.Content.ReadAsStringAsync();
-            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderByDescending(a => a.id).Where(a=>a.protocol != "vmess").Take(4).ToList();
-            return root;
+            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderBy(a => a.remark).ToList();
+
+            Objs.Add(root.First(a => a.protocol == "vless"));
+            Objs.Add(root.First(a => a.protocol == "trojan"));
+            return Objs;
         }
 
         private HttpClient GetCookie(V2Server input)
@@ -219,7 +269,17 @@ namespace V2Ray.Api.Services.Server
             public object obj { get; set; }
         }
 
+        public class Client
+        {
+            public string password { get; set; }
+            public string flow { get; set; }
+        }
 
+        public class Setting
+        {
+            public List<Client> clients { get; set; }
+            public List<object> fallbacks { get; set; }
+        }
         // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
         public class Obj
         {

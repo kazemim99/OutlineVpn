@@ -39,7 +39,8 @@
         public bool IsDeleted { get; set; }
         public int ServerId { get; set; }
         public V2Server Server { get; set; }
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public User User { get; set; }
+        public int Port { get; internal set; }
     }
 }

@@ -13,7 +13,7 @@ namespace V2Ray.Api.Database
             var builder = new DbContextOptionsBuilder<DB>();
 
             //var connectionString = "Data Source=185.55.224.120;Initial Catalog= powerbox_sa;User ID=powerbox_sa;Password=Pa$$w0rd";
-            var connectionString = "Server=.; Database=Outline; Trusted_Connection=true;";
+            var connectionString = "Server=.; Database=V2Ray; Trusted_Connection=true;";
 
             builder.UseSqlServer(connectionString);
             return new DB(builder.Options);

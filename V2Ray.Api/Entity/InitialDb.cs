@@ -49,63 +49,65 @@ namespace V2Ray.Api.Entity
 
         private static void CreateServer<T>(T db) where T : DB
         {
-            if (!db.V2Servers.Any(a => a.Title != "Amesterdam-B"))
-            {
-                db.V2Servers.Add(new V2Server
-                {
-                    Title = "Amesterdam-B",
-                    CityId = db.Cities.First(a => a.Title == "Amesterdam").Id,
-                    IP = "",
-                    Password = "!Q@W3e4r",
-                    Port = 4152,
-                    UserName = "kazemi.mst",
-                    State = true,
-                    Url = "",
-                });
-            }
-            if (!db.V2Servers.Any(a => a.Title != "Amesterdam-A"))
-            {
-                db.V2Servers.Add(new V2Server
-                {
-                    Title = "Amesterdam-A",
-                    CityId = db.Cities.First(a => a.Title == "Amesterdam").Id,
-                    IP = "",
-                    Password = "!Q@W3e4r",
-                    Port = 4152,
-                    UserName = "kazemi.mst",
-                    State = true,
-                    Url = "",
-                });
-            }
-            if (!db.V2Servers.Any(a => a.Title != "Paris-A"))
-            {
-                db.V2Servers.Add(new V2Server
-                {
-                    Title = "Paris-A",
-                    CityId = db.Cities.First(a => a.Title == "Paris").Id,
-                    IP = "",
-                    Password = "!Q@W3e4r",
-                    Port = 4152,
-                    UserName = "kazemi.mst",
-                    State = true,
-                    Url = "",
-                });
-            }
+            db.V2Servers.RemoveRange(db.V2Servers.ToList());
+            db.SaveChanges();
+            //if (!db.V2Servers.Any(a => a.Title != "Amesterdam-B"))
+            //{
+            //    db.V2Servers.Add(new V2Server
+            //    {
+            //        Title = "Amesterdam-B",
+            //        CityId = db.Cities.First(a => a.Title == "Amesterdam").Id,
+            //        IP = "",
+            //        Password = "!Q@W3e4r",
+            //        Port = 4152,
+            //        UserName = "kazemi.mst",
+            //        State = false,
+            //        Url = "",
+            //    });
+            //}
+            //if (!db.V2Servers.Any(a => a.Title != "Amesterdam-A"))
+            //{
+            //    db.V2Servers.Add(new V2Server
+            //    {
+            //        Title = "Amesterdam-A",
+            //        CityId = db.Cities.First(a => a.Title == "Amesterdam").Id,
+            //        IP = "",
+            //        Password = "!Q@W3e4r",
+            //        Port = 4152,
+            //        UserName = "kazemi.mst",
+            //        State = false,
+            //        Url = "",
+            //    });
+            //}
+            //if (!db.V2Servers.Any(a => a.Title != "Paris-A"))
+            //{
+            //    db.V2Servers.Add(new V2Server
+            //    {
+            //        Title = "Paris-A",
+            //        CityId = db.Cities.First(a => a.Title == "Paris").Id,
+            //        IP = "",
+            //        Password = "!Q@W3e4r",
+            //        Port = 4152,
+            //        UserName = "kazemi.mst",
+            //        State = true,
+            //        Url = "",
+            //    });
+            //}
 
-            if (!db.V2Servers.Any(a => a.Title != "Paris-B"))
-            {
-                db.V2Servers.Add(new V2Server
-                {
-                    Title = "Paris-B",
-                    CityId = db.Cities.First(a => a.Title == "Paris").Id,
-                    IP = "",
-                    Password = "!Q@W3e4r",
-                    Port = 4152,
-                    UserName = "kazemi.mst",
-                    State = true,
-                    Url = "",
-                });
-            }
+            //if (!db.V2Servers.Any(a => a.Title != "Paris-B"))
+            //{
+            //    db.V2Servers.Add(new V2Server
+            //    {
+            //        Title = "Paris-B",
+            //        CityId = db.Cities.First(a => a.Title == "Paris").Id,
+            //        IP = "",
+            //        Password = "!Q@W3e4r",
+            //        Port = 4152,
+            //        UserName = "kazemi.mst",
+            //        State = true,
+            //        Url = "",
+            //    });
+            //}
             if (!db.V2Servers.Any(a => a.Title != "Frankfurt-B"))
             {
                 db.V2Servers.Add(new V2Server
@@ -116,24 +118,27 @@ namespace V2Ray.Api.Entity
                     Password = "!Q@W3e4r",
                     Port = 4152,
                     UserName = "kazemi.mst",
+                    IsActive = true,
                     State = true,
-                    Url = "",
+                    Url = "gre.iranoutline.tk",
                 });
             }
-            if (!db.V2Servers.Any(a=>a.Title != "Frankfurt-A"))
-            {
-                db.V2Servers.Add(new V2Server
-                {
-                    Title = "Frankfurt-A",
-                    CityId = db.Cities.First(a => a.Title == "Frankfurt").Id,
-                    IP = "",
-                    Password = "!Q@W3e4r",
-                    Port = 4152,
-                    UserName = "kazemi.mst",
-                    State = true,
-                    Url = "",
-                });
-            }
+            //if (!db.V2Servers.Any(a=>a.Title == "Frankfurt-A"))
+            //{
+            //    db.V2Servers.Add(new V2Server
+            //    {
+            //        Title = "Frankfurt-A",
+            //        CityId = db.Cities.First(a => a.Title == "Frankfurt").Id,
+            //        IP = "",
+            //        Password = "!Q@W3e4r",
+            //        Port = 4152,
+            //        UserName = "kazemi.mst",
+            //        State = true,
+            //        IsActive =true,
+            //        Url = "gra.irantrojan.ml",
+            //    });
+            //}
+            db.SaveChanges();
                
         }
             private static void CreateCity<T>(T db) where T : DB
