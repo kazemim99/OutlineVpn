@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.UserServices
         GetUserListOutput,
         UserFilterInput>
     {
-        Task<LoginResultDto> Login(LoginDto login);
+        Task Login(LoginDto login);
 
         Task IsDelete(int id, string fullName);
 
@@ -26,7 +26,7 @@ namespace V2Ray.Api.Services.UserServices
 
         Task SendCode(string mobile);
         void SendMail(string mail);
-        void VerifyCode(string code, string mobile);
+        Task<LoginResultDto> VerifyCode(string code, string mobile);
         Task ChangePasswordAsync(string mobile, string password);
         Task<IEnumerable<OptionItem>> GetSelectList(string input);
     }

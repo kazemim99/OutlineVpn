@@ -72,9 +72,11 @@ export default class extends Vue {
       }
       await UserModule.VerifyCode({ code: this.code, mobile: UserModule.mobile });
       this.loading = false;
-      if (UserModule.verfied)
+      console.log(UserModule.verfied)
+      if (UserModule.verfied){
         if (UserModule.isAdmin) this.$router.push("/");
         else this.$router.push("/home");
+      }
     } catch (error) {
       this.loading = false;
     }

@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
-    userMobile:"",
+    userMobile: "",
     userStates: [],
     selectedDeviceName: "",
     userDetails: {
@@ -21,27 +21,29 @@ export default new Vuex.Store({
     selectedComplexId: null,
   },
   mutations: {
- 
+
     setRoles(state, roles: []) {
       state.roles = roles;
     },
     setUserDetails(state, userDetails: any) {
+      alert(userDetails);
       state.userDetails = userDetails;
+      console.log(userDetails);
     },
     setUserStates(state, userStates: any) {
       state.userStates = userStates;
     }
-   
+
   },
   actions: {
 
-  
+
     getComplexRoles({ commit }) {
       request.get(`/complexRole/roles`).then((response) => {
         commit("setComplexRoles", response.data.result);
       });
     },
-   
+
     getRoles({ commit }) {
       request.get("/userRoleAndPermission/roles").then((response) => {
         commit("setRoles", response.data.result);

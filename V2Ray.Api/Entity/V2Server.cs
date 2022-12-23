@@ -15,6 +15,7 @@ namespace V2Ray.Api.Entity
         public List<V2Key> Keys { get; set; }
         public int CityId { get; set; }
         public bool IsActive { get; set; }
+        public bool Swapped { get;  set; }
     }
 
     public class Country : FullAuditEntity<int>, ISoftDelete
@@ -36,9 +37,10 @@ namespace V2Ray.Api.Entity
     }
     public class V2Key : FullAuditEntity<int>, ISoftDelete
     {
-
-        public int Capacity { get; set; }
-        public int ExpireDate { get; set; }
+        public string Remark { get; set; }
+        public long Capacity { get; set; }
+        public string ClientKeyId { get; set; }
+        public long ExpireDate { get; set; }
         public bool State { get; set; }
         public Protocol Protocol { get; set; }
         public string Key { get; set; }

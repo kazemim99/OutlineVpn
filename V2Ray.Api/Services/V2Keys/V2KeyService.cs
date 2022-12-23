@@ -28,98 +28,174 @@ namespace V2Ray.Api.Services.V2Keys
     {
         private readonly DB _db;
 
-        private readonly IMapper _mapper;
-        private readonly IServerService _server;
         private static Obj Objs;
 
-        public V2KeyService(DB db, IMapper mapper, IServerService server) : base(mapper, db)
+        public V2KeyService(DB db, IMapper mapper) : base(mapper, db)
         {
-            _mapper = mapper;
             _db = db;
-            _server = server;
         }
-        public override async Task<Pagination<GetV2KeyListOutput>> GetAllAsync(V2KeyFilterInput paging, params string[] include)
+        public async Task<Pagination<GetV2KeyListOutput>> GetAllFromXUIServerAsync(V2KeyFilterInput input)
         {
-            var input = _db.V2Servers.First(a => a.Id == 1);
+            var server = _db.V2Servers.First(a => a.Id == input.ServerId);
             List<Obj> root = new List<Obj>();
 
-            var httpClient = GetCookie(input);
+            var httpClient = GetCookie(server);
             if (!root.Any())
-                root = await GetServerKeys(input, httpClient);
+                root = await GetServerKeys(server, httpClient);
 
-            var result = root.Select(a => new GetV2KeyListOutput
+            var result = root.Select(a =>
             {
-                ExpireDate = DateTime.Now.ToPeString(),
-                PrimaryCapacity = 50,
-                State = true,
-                Id = 1,
-                Title = a.remark,
-                UsedCapacity = 25,
-                User = "user"
+                var settin = JsonConvert.DeserializeObject<Setting>(a.settings);
+                return new GetV2KeyListOutput
+                {
+                    ExpireDate = a.expiryTime.ToString(),
+                    ClientId = settin.clients.First().id,
+                    PrimaryCapacity = a.total,
+                    State = a.enable,
+                    Id = a.id,
+                    Title = a.remark,
+                    UsedCapacity = a.down,
+                    User = "user"
+                };
             }).ToList();
 
             return new Pagination<GetV2KeyListOutput>
             {
                 Result = result,
-                CurrentPage = paging.Page,
-                PageCount = paging.ItemsPerPage,
+                CurrentPage = input.Page,
+                PageCount = input.ItemsPerPage,
                 TotalItems = root.Count()
             };
         }
+        public async Task SwapServerKeysAsync(SwapServerKeysInput input)
+        {
+            var server = _db.V2Servers.First(a => a.Id == input.FromServerId);
+            List<Obj> root = new List<Obj>();
+            var httpClient = GetCookie(server);
+            if (!root.Any())
+                root = await GetServerKeys(server, httpClient);
+            var server2 = _db.V2Servers.First(a => a.Id == input.ToServerId);
+            httpClient = GetCookie(server2, true);
 
+            foreach (var item in root.Take(20))
+            {
+                var result = await GenerateKey(server2, item, httpClient, true);
+            }
+            server2.Swapped = true;
+            _db.V2Servers.Update(server2);
+            await _db.SaveChangesAsync();
+        }
         public override async Task InsertAsync(CreateV2KeyInput input)
         {
             var server = _db.V2Servers.First(a => a.Id == input.ServerId);
-           var result = await GenerateKey(server);
-            input.Key = result;
-            await InsertAsync(input);
+            var httpClient = GetCookie(server);
+            var item = await GetServerSampleKey(server, httpClient);
+
+            item.total = GigaByteToBytes(input.Capacity);
+            item.expiryTime = input.ExpireDate.ToGeo().ToTimeStamp();
+            item.enable = input.State;
+            for (int i = 0; i < input.Count; i++)
+            {
+                if (item == null)
+                    throw new Exception();
+                var result = await GenerateKey(server, item, httpClient);
+                input.Key = result.Key;
+                input.ClientKeyId = result.ClientKeyId;
+                input.Remark = result.Remark;
+
+                await base.InsertAsync(input);
+            }
 
         }
 
-        public async Task<string> GenerateKey(V2Server server, int userId = 0, string user = "cu")
+        private async Task<GenerateKeyOutput> GenerateKey(V2Server server, Obj item, HttpClient httpClient, bool swap = false)
         {
-            var httpClient = GetCookie(server);
-            var item = await GetServerKeys(server, httpClient);
-
-            if (item == null)
-                throw new Exception();
-            var guid = Guid.NewGuid().ToString();
-            item.settings = Regex.Replace(item.settings,
-                                              @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
-                                              @$"{guid}",
-                                              RegexOptions.IgnoreCase);
-            var set = JsonConvert.DeserializeObject<Setting>(item.settings);
-            item.id = null;
-            item.port = GeneratePort(_db);
-            item.remark = $"{server.City.Title}_{item.port}_{item.protocol}_{user}";
-            var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
-
-            var result = await httpClient.PostAsync($"https://{server.Url}:{server.Port}/xui/inbound/add", formContent);
-            var tt = await result.Content.ReadAsStringAsync();
-            var serverResponse = JsonConvert.DeserializeObject<ServerResponse>(tt);
-            if (!serverResponse.success)
-                throw new ApiException(serverResponse.msg);
-
-            result.EnsureSuccessStatusCode();
-            var key = "";
-            if (item.protocol == Protocol.vless.ToString())
+            try
             {
-                key = $"{item.protocol}://{guid}@{server.Url}:{item.port}";
-                key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
 
-            }
-            else if (item.protocol == Protocol.shadowsocks.ToString())
-                key = $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
-            else
-            {
-                key = $"{item.protocol}://{set.clients.First().password}@{server.Url}:{item.port}";
-                key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
-            }
-            await File.AppendAllLinesAsync("keys.txt", new List<string>
+
+                var output = new GenerateKeyOutput();
+                string guid = "";
+                if (!swap)
+                {
+                    guid = Guid.NewGuid().ToString();
+                    item.settings = Regex.Replace(item.settings,
+                                                      @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
+                                                      @$"{guid}",
+                                                      RegexOptions.IgnoreCase);
+                }
+                var set = JsonConvert.DeserializeObject<Setting>(item.settings);
+                try
+                {
+
+
+                    if (set != null && set.clients != null && set.clients.Any())
+                    {
+                        guid = swap ? set.clients.First().id : guid;
+                        output.ClientKeyId = set.clients.First().id;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+                item.id = null;
+
+                item.port = swap ? item.port : GeneratePort(_db);
+                item.remark = swap ? item.remark : $"{server.Title}_{item.port}_{item.protocol}";
+                output.Remark = item.remark;
+                var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
+                var http = "";
+                http = swap ? "http" : "https";
+                var result = await httpClient.PostAsync($"{http}://{server.Url}:{server.Port}/xui/inbound/add", formContent);
+                result.EnsureSuccessStatusCode();
+
+                var tt = await result.Content.ReadAsStringAsync();
+
+                var serverResponse = JsonConvert.DeserializeObject<ServerResponse>(tt);
+                if (!serverResponse.success)
+                {
+                    if (serverResponse.msg.Contains(item.port.ToString()))
+                    {
+
+                    }
+                    else
+                    {
+                        throw new ApiException(serverResponse.msg);
+                    }
+                }
+
+                if (!swap)
+                {
+                    string key = "";
+
+                    if (item.protocol == Protocol.vless.ToString())
+                    {
+                        key = $"{item.protocol}://{guid}@{server.Url}:{item.port}";
+
+                        key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+
+                    }
+                    else if (item.protocol == Protocol.shadowsocks.ToString())
+                        key = $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+                    else
+                    {
+                        key = $"{item.protocol}://{set.clients.First().password}@{server.Url}:{item.port}";
+                        key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+                    }
+                    await File.AppendAllLinesAsync("keys.txt", new List<string>
             {
                 key
             });
-            return key;
+                }
+                return output;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
         private int GeneratePort(DB db)
         {
@@ -139,7 +215,8 @@ namespace V2Ray.Api.Services.V2Keys
             return await _db.V2Servers.Include(a => a.City).Where(a => a.IsActive).ToListAsync();
         }
 
-        public async Task<Obj> GetServerKeys(V2Server input, HttpClient httpClient)
+
+        public async Task<Obj> GetServerSampleKey(V2Server input, HttpClient httpClient)
         {
             if (Objs != null)
                 return Objs;
@@ -152,18 +229,25 @@ namespace V2Ray.Api.Services.V2Keys
             Objs = root;
             return Objs;
         }
+        public async Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient)
+        {
+
+
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var re = await httpClient.PostAsJsonAsync($"https://{input.Url}:{input.Port}/xui/inbound/list", new { }); ;
+            var ttt = await re.Content.ReadAsStringAsync();
+            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderBy(a => a.remark).ToList();
+
+            return root;
+        }
         private long GigaByteToBytes(long gigateBytes)
         {
             return gigateBytes * Convert.ToInt64(Math.Pow(1024, 3));
         }
-        private long ConvertToTimestamp(DateTime value)
+
+        private HttpClient GetCookie(V2Server input, bool swap = false)
         {
-            long epoch = (value.Ticks - 621355968000000000) / 10000000;
-            return epoch;
-        }
-        private HttpClient GetCookie(V2Server input)
-        {
-            var uri = new Uri($"{input.Url}:{input.Port}");
+            input.Url = swap ? input.IP : input.Url;
 
 
             var formContent = new FormUrlEncodedContent(new[]
@@ -175,27 +259,18 @@ namespace V2Ray.Api.Services.V2Keys
             HttpClientHandler handler = new HttpClientHandler();
             handler.CookieContainer = cookies;
             HttpClient client = new HttpClient(handler);
-
-            var response = client.PostAsync($"https://{input.Url}:{input.Port}/login", formContent).Result;
+            var url = swap ? $"http://{input.Url}" : $"https://{input.Url}";
+            var response = client.PostAsync($"{url}:{input.Port}/login", formContent).Result;
 
             var stringContent = response.Content.ReadAsStringAsync().Result;
 
-            cookies.Add(uri, new Cookie("domain", $"{input.Url}"));
+            cookies.Add(new Uri("http://www.iranoutline.tk"), new Cookie("domain", $"{input.Url}"));
 
-            var responseCookies = cookies.GetCookies(uri).Cast<Cookie>().ToList();
+            //var responseCookies = cookies.GetCookies(uri).Cast<Cookie>().ToList();
 
             return client;
 
 
-        }
-        private long GigaByteToBytes(long gigateBytes)
-        {
-            return gigateBytes * Convert.ToInt64(Math.Pow(1024, 3));
-        }
-        private long ConvertToTimestamp(DateTime value)
-        {
-            long epoch = (value.Ticks - 621355968000000000) / 10000000;
-            return epoch;
         }
 
         public Task ChangeState(int id)

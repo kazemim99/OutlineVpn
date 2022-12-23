@@ -20,6 +20,13 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/views/Home.vue'),
         meta: { requireAuth: true }
       },
+     
+      {
+        path: '/swaps',
+        name: 'Swap',
+        component: () => import('@/views/Swaps/swap.vue'),
+        meta: { requireAuth: true }
+      },
       {
         path: '/users',
         name: 'User',
@@ -72,6 +79,7 @@ const routes: Array<RouteConfig> = [
         component: () => import("@/views/V2Keys/index.vue"),
         meta: { requireAuth: true }
       },
+    
     ]
   },
  

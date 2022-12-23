@@ -7,7 +7,7 @@ namespace V2Ray.Api.Services.V2Keys.Dto
 {
     public class V2KeyFilterInput : PaginationModelInput
     {
-        public string? Title { get; set; }
+        public int ServerId { get; set; }
     }
 
 }

@@ -96,6 +96,13 @@
                       v2Server.isActive ? 'فعال' : 'غیر فعال'
                     }`"
                   ></v-switch>
+
+                  <v-switch
+                    v-model="v2Server.swapped"
+                    :label="`انتقال جدید: ${
+                      v2Server.swapped ? 'بله' : 'خیر'
+                    }`"
+                  ></v-switch>
                 </v-col>
               </v-row>
             </v-container>
@@ -128,6 +135,7 @@ export default Vue.extend({
     valid: true,
     loading: false,
     v2Server: {
+      swapped:false,
       title: "",
       state : false,
       isActive: false,
@@ -160,6 +168,8 @@ export default Vue.extend({
         this.v2Server.id = id;
         this.v2Server.title = data.title;
         this.v2Server.url = data.url;
+        this.v2Server.swapped = data.swapped;
+        this.v2Server.state = data.state;
         this.v2Server.cityId = data.cityId;
         this.v2Server.ip = data.ip;
         this.v2Server.isActive = data.isActive;
@@ -210,15 +220,14 @@ export default Vue.extend({
     },
 
     clearData() {
-      this.selectedComplexId = null;
-
         (this.v2Server.title = ""),
         (this.v2Server.url = ""),
         (this.v2Server.userName = ""),
         (this.v2Server.password = ""),
         (this.v2Server.ip = ""),
         (this.v2Server.cityId = 0),
-        (this.v2Server.state = true)
+        (this.v2Server.state = false),
+        (this.v2Server.swapped = false)
     },
   },
 });

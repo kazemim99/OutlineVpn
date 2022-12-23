@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using V2Ray.Api.Database;
 
@@ -11,9 +12,10 @@ using V2Ray.Api.Database;
 namespace V2Ray.Api.Migrations
 {
     [DbContext(typeof(DB))]
-    partial class DBModelSnapshot : ModelSnapshot
+    [Migration("20221222155036_9")]
+    partial class _9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,9 +255,6 @@ namespace V2Ray.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("FreeAccount")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
@@ -275,6 +274,9 @@ namespace V2Ray.Api.Migrations
 
                     b.Property<int?>("UpdaterUserId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("UsedTest")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("UserState")
                         .HasColumnType("bit");

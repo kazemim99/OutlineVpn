@@ -41,7 +41,7 @@ class User extends VuexModule implements IUserState {
 
   @Mutation
   SET_VERIFIED(result: boolean) {
-    this.verfied = result;
+    this.verfied = true;
   }
 
   @Mutation
@@ -64,21 +64,21 @@ class User extends VuexModule implements IUserState {
       .then((a) => {
         this.SET_VERIFIED(true);
         this.SET_MOBILE(verifyModel.mobile);
+        const result = a.data.result;
+        const token = result.jwtToken.token;
+        setToken(`Bearer ${token}`);
+        store.commit("setUserDetails", result);
       })
-      .catch(() => {
+      .catch((e) => {
         this.SET_VERIFIED(false);
       });
   }
 
   @Action
   public async Login(username) {
-  
-    await login({username : username}).then((a) => {
-      const result = a.data.result;
-      const token = result.jwtToken.token;
-      setToken(`Bearer ${token}`);
+
+    await login({ username: username }).then((a) => {
       this.SET_MOBILE(username);
-      store.commit("setUserDetails", result);
     });
   }
 

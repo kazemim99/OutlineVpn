@@ -8,6 +8,18 @@ namespace V2Ray.Api.Extensions
     {
         private static CultureInfo _Culture;
 
+
+
+        public static int GigaByteToBytes(this long bytes)
+        {
+            return Convert.ToInt32(bytes / 1024d / 1024d / 1024d);
+        }
+        public static DateTime TimeStampToDateTime(this long date)
+        {
+            date /= 1000; // Divide by 1,000 because we need milliseconds, not microseconds.
+
+            return DateTimeOffset.FromUnixTimeMilliseconds(date).DateTime;
+        }
         public static CultureInfo GetPersianCulture()
         {
             if (_Culture == null)
@@ -59,26 +71,20 @@ namespace V2Ray.Api.Extensions
             return dt;
         }
 
-        public static DateTime ToGeo(this DateTime? date)
-        {
-            PersianCalendar pc = new PersianCalendar();
-            DateTime dt = new DateTime(date.Value.Year, date.Value.Month, date.Value.Day, pc);
-            return dt;
-        }
 
         public static string ToPeString(this DateTime date, string format = "yyyy/MM/dd")
         {
             return date.ToString(format, GetPersianCulture());
         }
-
-        public static DateTime ToDateTime(this string stamp)
+      
+        public static long  ToTimeStamp(this DateTime dateTime)
         {
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(Convert.ToDouble(stamp)).ToLocalTime();
-            return dateTime;
+            var epoch = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
+            epoch = Convert.ToInt64(epoch + "754");
+            return epoch;
         }
 
-        public static DateTime ToDateTime(this double stamp)
+        public static DateTime ToDateTime(this long stamp)
         {
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dateTime = dateTime.AddSeconds(stamp).ToLocalTime();

@@ -50,7 +50,7 @@ namespace V2Ray.Api.Services.UserServices
             
         }
 
-        public async Task<LoginResultDto> Login(LoginDto input)
+        public async Task Login(LoginDto input)
         {
             var user = await _db.Users.Include(new[] { "Roles.Role" })
                  .FirstOrDefaultAsync(a => a.Mobile == input.UserName);
@@ -65,19 +65,7 @@ namespace V2Ray.Api.Services.UserServices
             //    throw new ApiException(AppErrors.WrongPassword);
             await SendCode(user.Mobile);
             //SendMail(user.Email);
-            var response = new LoginResultDto
-            {
-                JwtToken = new JwtToken()
-                {
-                    Token = GenerateJwtToken(user),
-                },
-                IsAdmin = user.IsAdmin,
-                UserName = user.Mobile,
-                FirstName = $"{user.FirstName} ",
-                LastName = $"{user.LastName} ",
-                Id = user.Id,
-            };
-            return response;
+           
         }
 
         //public async Task AddComplexToUser(AddComplexToUser input)
@@ -191,16 +179,30 @@ namespace V2Ray.Api.Services.UserServices
         {
             if (_otpService.Sandbox) return;
 
-            var otpKey = mobile.TrimStart(new[] { '0' });
-            var otpCode = _otpService.GetCode(otpKey);
+            var otpCode = _otpService.GetCode(mobile);
             await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode, destinationAddress = mobile });
         }
 
-        public void VerifyCode(string code, string mobile)
+        public async Task<LoginResultDto> VerifyCode(string code, string mobile)
         {
             try
             {
                 _otpService.VerifyCode(mobile, code);
+                var user =await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Mobile ==  mobile);
+                var response = new LoginResultDto
+                {
+                    JwtToken = new JwtToken()
+                    {
+                        Token = GenerateJwtToken(user),
+                    },
+                    IsAdmin = user.IsAdmin,
+                    FreeAccount = user.FreeAccount,
+                    UserName = user.Mobile,
+                    FirstName = $"{user.FirstName} ",
+                    LastName = $"{user.LastName} ",
+                    Id = user.Id,
+                };
+                return response;
             }
             catch (Exception ex)
             {
@@ -253,6 +255,7 @@ namespace V2Ray.Api.Services.UserServices
                 new Claim(JwtRegisteredClaimNames.Sub, userInfo.Mobile),
                 new Claim("fullName", $"{userInfo.FirstName} {userInfo.LastName}"),
                 new Claim("UserId", userInfo.Id.ToString()),
+                new Claim("FreeAccount", userInfo.FreeAccount.ToString()),
                 new Claim("IsAdmin", userInfo.IsAdmin.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };

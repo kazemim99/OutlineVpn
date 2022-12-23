@@ -8,6 +8,7 @@ namespace V2Ray.Api.Services.Server.Dto
     public class ServerFilterInput : PaginationModelInput
     {
         public string? Title { get; set; }
+        public bool Swapped { get; set; }
     }
 
 }

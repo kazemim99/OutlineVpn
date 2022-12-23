@@ -52,8 +52,8 @@ namespace V2Ray.Api.Controllers
         [AllowAnonymous]
         public async Task<ApiResponse> Login([FromBody] LoginDto login)
         {
-            var result = await _service.Login(login);
-            return new ApiResponse(result);
+             await _service.Login(login);
+            return new ApiResponse(login.UserName);
         }
 
 
@@ -93,6 +93,8 @@ namespace V2Ray.Api.Controllers
                 await _service.SendCode(mobile);
                 _service.SendMail(result.Email);
 
+
+
                 return new ApiResponse();
             }
             catch (Exception ex)
@@ -110,16 +112,15 @@ namespace V2Ray.Api.Controllers
         /// <returns></returns>
         /// 
         [HttpPost("verify-code")]
-        public ApiResponse VerifyCode([FromBody] VerifyCodeViewModel model)
+        public async Task<ApiResponse> VerifyCode([FromBody] VerifyCodeViewModel model)
         {
-            model.Mobile = model.Mobile.TrimStart(new[] { '0' });
 
-            if (!Regex.IsMatch(model.Mobile, @"^9[0-9]{9}$"))
+            if (!Regex.IsMatch(model.Mobile, @"^09[0-9]{9}$"))
                 throw new ApiException("شماره وارد شده صحیح نیست");
 
-            _service.VerifyCode(model.Code, model.Mobile);
+          var result =await  _service.VerifyCode(model.Code, model.Mobile);
 
-            return new ApiResponse();
+            return new ApiResponse(result);
         }
 
 

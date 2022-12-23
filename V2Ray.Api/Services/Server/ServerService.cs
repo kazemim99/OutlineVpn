@@ -28,12 +28,10 @@ namespace V2Ray.Api.Services.Server
         private readonly DB _db;
 
         private readonly IMapper _mapper;
-        private readonly IV2KeyService _v2KeyService;
-        public ServerService(DB db, IMapper mapper, IV2KeyService v2KeyService) : base(mapper, db)
+        public ServerService(DB db, IMapper mapper) : base(mapper, db)
         {
             _mapper = mapper;
             _db = db;
-            _v2KeyService = v2KeyService;
         }
 
         public override async Task UpdateAsync(int id, UpdateServerInput input, params string[] include)
@@ -76,10 +74,10 @@ namespace V2Ray.Api.Services.Server
         {
             var query = _db.V2Servers.AsQueryable();
 
+            query = query.Where(a => a.Swapped == filter.Swapped);
+
             if (!filter.Title.IsNullOrEmpty())
                 query = query.Where(a => a.Title.Contains(filter.Title));
-
-
 
 
             return query;
@@ -106,34 +104,39 @@ namespace V2Ray.Api.Services.Server
             _db.SaveChanges();
         }
 
-        public async Task CreateKey(int count = 1, string customer = "cu")
+
+        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        public class Certificate
         {
-            try
-            {
-                var servers = await _db.V2Servers.Where(a=>a.IsActive).ToListAsync();
-                for (int i = 0; i < count; i++)
-                {
-                    foreach (var input in servers)
-                    {
-                        await _v2KeyService.InsertAsync(new V2Keys.Dto.CreateV2KeyInput
-                        {
-                            Capacity =""
-                        });
-                    }
-                }
+            public string certificateFile { get; set; }
+            public string keyFile { get; set; }
+        }
 
-            }
-            catch (Exception)
-            {
+        public class Header
+        {
+            public string type { get; set; }
+        }
 
-                throw;
-            }
+        public class StreamSetting
+        {
+            public string network { get; set; }
+            public string security { get; set; }
+            public XtlsSettings xtlsSettings { get; set; }
+            public TcpSettings tcpSettings { get; set; }
+        }
 
+        public class TcpSettings
+        {
+            public Header header { get; set; }
+        }
 
+        public class XtlsSettings
+        {
+            public string serverName { get; set; }
+            public List<Certificate> certificates { get; set; }
         }
 
 
-     
 
 
         public enum Protocol
@@ -152,6 +155,7 @@ namespace V2Ray.Api.Services.Server
 
         public class Client
         {
+            public string id { get; set; }
             public string password { get; set; }
             public string flow { get; set; }
         }

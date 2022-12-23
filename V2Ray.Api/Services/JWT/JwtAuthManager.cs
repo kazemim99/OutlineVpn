@@ -73,7 +73,7 @@ namespace V2Ray.Api.Services.JWT
             var claims = new[]
     {
                 new Claim(ClaimTypes.Name,username),
-                new Claim("id",userId.ToString()),
+                new Claim("UserId",userId.ToString()),
                 new Claim(ClaimTypes.Role,"BasicUser"),
             };
             var shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);

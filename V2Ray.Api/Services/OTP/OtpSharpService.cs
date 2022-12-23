@@ -14,6 +14,8 @@ namespace V2Ray.Api.Services.OTP
 
         public string GetCode(string key, int? stepWindowSeconds = null)
         {
+            key = key.TrimStart(new[] { '0' });
+
             if (_settings.Sandbox) return _settings.SandboxCode;
 
             var totp = GetTotp(key);

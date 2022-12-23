@@ -17,7 +17,7 @@ namespace V2Ray.Api.Controllers
             _v2KeyService = service;
         }
 
-        [HttpGet("V2Keys")]
+        [HttpGet("filter")]
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] V2KeyFilterInput filter)
         {
@@ -50,7 +50,13 @@ namespace V2Ray.Api.Controllers
             await _v2KeyService.InsertAsync(input);
             return new ApiResponse();
         }
-
+        [HttpPost("SwapServerKeys")]
+        [Authorize]
+        public async Task<ApiResponse> SwapServerKeys([FromBody] SwapServerKeysInput input)
+        {
+            await _v2KeyService.SwapServerKeysAsync(input);
+            return new ApiResponse();
+        }
 
         /// <summary>
         /// دریافت اطلاعات یک کاربر

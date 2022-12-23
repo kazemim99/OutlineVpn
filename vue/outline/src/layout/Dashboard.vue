@@ -115,6 +115,12 @@ export default class Dashboard extends Vue {
       permission: "Home_Show",
     },
     {
+      icon: "mdi-sync",
+      title: "انتقال",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      to: "/swaps",
+    },
+    {
       icon: "mdi-account",
       title: "مدیریت کاربران",
       adminVisible: this.$store.state.userDetails.isAdmin,
@@ -151,6 +157,7 @@ export default class Dashboard extends Vue {
       permission: "ApiUrl_Show",
       to: "/v2Keys",
     },
+    
     {
       icon: "mdi-currency-usd",
       title: "خرید ترافیک",

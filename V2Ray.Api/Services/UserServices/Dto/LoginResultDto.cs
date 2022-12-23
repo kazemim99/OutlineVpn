@@ -17,6 +17,7 @@ namespace V2Ray.Api.Services.UserServices.Dto
         public bool IsAdmin { get; set; }
 
         public int Id { get; set; }
+        public bool FreeAccount { get;  set; }
 
         //public IEnumerable<string> Permissions { get; internal set; }
     }
