@@ -33,8 +33,8 @@ namespace V2Ray.Api.Controllers
             //filter.IsAdmin = IsAdmin;
             var result = await _service.GetAllAsync(filter, new[] { "City.Country"});
             return new ApiResponse(result);
-        }  
-        
+        }
+      
         [HttpGet("all-servers")]
         [Authorize]
         public async Task<ApiResponse> AllServers()
@@ -141,7 +141,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> CreateKey([FromBody] CreateBuldKeyInput input)
         {
-            //var V2Keys =await _service.GetAllAsync(new V2KeyFilterInput
+            //var V2Keys = await _service.GetAllAsync(new V2KeyFilterInput
             //{
             //    ItemsPerPage = 99999
             //});

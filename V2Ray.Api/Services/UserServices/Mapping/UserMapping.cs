@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.UserServices.Mapping
                    .ForMember(a => a.Avatar,
                     c => c.MapFrom(d => GetAvatar(d)));
 
-            CreateMap<CreateUserInput, User>()
+            CreateMap<CreateUserInput, User>().ForMember(a => a.NeedConfirm, c => c.MapFrom(b => true))
 
                      .ForMember(a => a.Avatar,
                     c => c.Ignore())

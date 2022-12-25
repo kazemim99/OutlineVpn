@@ -52,10 +52,22 @@ namespace V2Ray.Api.Controllers
         [AllowAnonymous]
         public async Task<ApiResponse> Login([FromBody] LoginDto login)
         {
-             await _service.Login(login);
-            return new ApiResponse(login.UserName);
+          var result =  await _service.Login(login);
+            return new ApiResponse(result);
         }
-
+        /// <summary>
+        /// فرم ثبت نام کاربر 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> RegisterUser([FromBody] CreateUserInput input)
+        {
+            input.IP = ipAddress();
+            await _service.InsertAsync(input);
+            return new ApiResponse();
+        }
 
         /// <summary>
         /// دریافت اطلاعات کاربری که لاگین کرده 
@@ -63,6 +75,8 @@ namespace V2Ray.Api.Controllers
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost("me")]
+        [Authorize]
+
         public async Task<ApiResponse> GetCurrentUser()
         {
             var result = new GetUserOutput()
@@ -82,7 +96,6 @@ namespace V2Ray.Api.Controllers
         {
             try
             {
-
 
                 if (!Regex.IsMatch(mobile, @"^09[0-9]{9}$"))
                     throw new ApiException("شماره وارد شده صحیح نیست");
@@ -114,14 +127,14 @@ namespace V2Ray.Api.Controllers
         [HttpPost("verify-code")]
         public async Task<ApiResponse> VerifyCode([FromBody] VerifyCodeViewModel model)
         {
+            if (!Regex.IsMatch(model.Email, @"\b[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)\b"))
+                throw new ApiException("ایمیل وارد شده صحیح نیست");
 
-            if (!Regex.IsMatch(model.Mobile, @"^09[0-9]{9}$"))
-                throw new ApiException("شماره وارد شده صحیح نیست");
-
-          var result =await  _service.VerifyCode(model.Code, model.Mobile);
+            var result = await _service.VerifyCode(model.Code, model.Email);
 
             return new ApiResponse(result);
         }
+
 
 
         /// <summary>
@@ -131,7 +144,23 @@ namespace V2Ray.Api.Controllers
         /// <returns></returns>
         ///
         /// 
+        [HttpPut("forget-password/{email}")]
+        [Authorize]
+        public ApiResponse ForgetPassword([FromRoute] string email)
+        {
+             _service.SendMail(email);
+            return new ApiResponse();
+        }
+
+        /// <summary>
+        /// تغییر رمز عبور کاربر
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        ///
+        /// 
         [HttpPut("change-password/{mobile}")]
+        [Authorize]
         public async Task<ApiResponse> ChangePassword([FromRoute] string mobile, [FromBody] ChangePasswordViewModel input)
         {
             await _service.ChangePasswordAsync(mobile, input.Password);

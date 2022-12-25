@@ -159,6 +159,13 @@ namespace V2Ray.Api.Services.Server
             public string password { get; set; }
             public string flow { get; set; }
         }
+      
+        public class ShadowSetting
+        {
+            public string method { get; set; }
+            public string password { get; set; }
+            public string network { get; set; }
+        }
 
         public class Setting
         {

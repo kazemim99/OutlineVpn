@@ -10,20 +10,21 @@ namespace V2Ray.Api.Entity
 
         }
         public bool FreeAccount { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string? Email { get; set; }
-        public string Mobile { get; set; }
+        public string Email { get; set; }
         public string? Avatar { get; set; }
+        public string  IP { get; set; }
 
         //public string Password { get; set; }
 
         public bool IsAdmin { get; set; }
-        public bool UserState { get; set; }
+        public bool Enable { get; set; }
         public bool IsDeleted { get; set; }
         public V2Server V2Server { get; set; }
         public int? V2ServerId { get; set; }
         public ICollection<UserRole> Roles { get; set; }
-
+        public string Password { get;  set; }
+        public bool NeedConfirm { get;  set; }
+        public string? FirstName { get;  set; }
+        public string? LastName { get;  set; }
     }
 }

@@ -172,11 +172,13 @@ namespace V2Ray.Api.Entity
 
             db.Users.Add(new User
             {
+                IP ="192.168.1.1",
                 IsAdmin = true,
-                UserState = true,
+                Enable = true,
+                NeedConfirm =false,
+                Password = BCrypt.Net.BCrypt.HashPassword("!Q@W3e4r"),
                 FirstName = DefaultUserConst.FirstName,
                 LastName = DefaultUserConst.LastName,
-                Mobile = DefaultUserConst.Mobile,
                 Avatar = DefaultUserConst.Avatar,
                 Email = DefaultUserConst.Email,
                 Roles = new List<UserRole> {

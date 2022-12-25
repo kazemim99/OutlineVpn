@@ -26,6 +26,9 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
         [DataMember(IsRequired = false)]
         public bool? IsAdmin { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public string Email { get;  set; }
     }
 
 }

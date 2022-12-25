@@ -70,7 +70,7 @@ export default class extends Vue {
         this.loading = false;
         return;
       }
-      await UserModule.VerifyCode({ code: this.code, mobile: UserModule.mobile });
+      await UserModule.VerifyCode({ code: this.code, mobile: UserModule.email });
       this.loading = false;
       console.log(UserModule.verfied)
       if (UserModule.verfied){

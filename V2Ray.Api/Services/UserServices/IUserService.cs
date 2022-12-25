@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.UserServices
         GetUserListOutput,
         UserFilterInput>
     {
-        Task Login(LoginDto login);
+        Task<LoginResultDto> Login(LoginDto input);
 
         Task IsDelete(int id, string fullName);
 

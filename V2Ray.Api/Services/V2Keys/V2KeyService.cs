@@ -14,6 +14,7 @@ using System.Net.Http.Headers;
 using V2Ray.Api.Services.V2Keys.Dto;
 using static V2Ray.Api.Services.Server.ServerService;
 using V2Ray.Api.Services.Server;
+using ShadowsocksUriGenerator.Protocols.Shadowsocks;
 
 namespace V2Ray.Api.Services.V2Keys
 {
@@ -28,7 +29,7 @@ namespace V2Ray.Api.Services.V2Keys
     {
         private readonly DB _db;
 
-        private static Obj Objs;
+        private static List<Obj> Objs;
         private readonly IHttpClientFactory _httpClientFactory;
         public V2KeyService(DB db, IMapper mapper, IHttpClientFactory httpClientFactory) : base(mapper, db)
         {
@@ -76,7 +77,8 @@ namespace V2Ray.Api.Services.V2Keys
             List<Obj> root = new List<Obj>();
             var httpClient = GetCookie(server);
             if (!root.Any())
-                root =  GetServerKeys(server, httpClient).Result.Where(a=>!a.protocol.Contains("shadowsocks")).ToList();
+                root = GetServerKeys(server, httpClient).Result.ToList();
+
             var server2 = _db.V2Servers.First(a => a.Id == input.ToServerId);
             httpClient = GetCookie(server2, true);
             var root2 = await GetServerKeys(server2, httpClient, true);
@@ -100,24 +102,38 @@ namespace V2Ray.Api.Services.V2Keys
         }
         public override async Task InsertAsync(CreateV2KeyInput input)
         {
+
             var server = _db.V2Servers.First(a => a.Id == input.ServerId);
             var httpClient = GetCookie(server);
-            var item = await GetServerSampleKey(server, httpClient);
-
-            item.total = GigaByteToBytes(input.Capacity);
-            item.expiryTime = input.ExpireDate.ToGeo().ToTimeStamp();
-            item.enable = input.State;
+            var sampleKeys = await GetServerSampleKey(server, httpClient);
             for (int i = 0; i < input.Count; i++)
             {
-                if (item == null)
-                    throw new Exception();
-                var result = await GenerateKey(server, item, httpClient);
-                input.Key = result.Key;
-                input.ClientKeyId = result.ClientKeyId;
-                input.Remark = result.Remark;
+                foreach (var item in sampleKeys)
+                {
+                    try
+                    {
+                        item.total = GigaByteToBytes(input.Capacity);
+                        item.expiryTime = input.ExpireDate.ToGeo().ToTimeStamp();
+                        item.down = 0;
+                        item.up = 0;
+                        item.remark = input.Remark?.ToUpper();
+                        if (item == null)
+                            throw new Exception();
+                        var result = await GenerateKey(server, item, httpClient);
+                        input.Key = result.Key;
+                        input.ClientKeyId = result.ClientKeyId;
+                        input.Remark = result.Remark;
 
-                await base.InsertAsync(input);
+                        await base.InsertAsync(input);
+                    }
+                    catch (Exception ex)
+                    {
+                        continue;
+                    }
+
+                }
             }
+
 
         }
 
@@ -135,30 +151,16 @@ namespace V2Ray.Api.Services.V2Keys
                                                   @$"{guid}",
                                                   RegexOptions.IgnoreCase);
             }
-            var set = JsonConvert.DeserializeObject<Setting>(item.settings);
-            try
-            {
 
-
-                if (set != null && set.clients != null && set.clients.Any())
-                {
-                    guid = swap ? set.clients.First().id : guid;
-                    output.ClientKeyId = set.clients.First().id;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
             item.id = null;
 
             item.port = swap ? item.port : GeneratePort(_db);
-            item.remark = swap ? item.remark : $"{server.Title}_{item.port}_{item.protocol}";
+            var newRemark = swap ? item.remark : $"{server.Title}_{item.port}_{item.remark}";
+            item.remark = newRemark;
             output.Remark = item.remark;
             var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
-            var http = "";
-            http = swap ? "http" : "https";
+
+            var http = swap ? "http" : "https";
             var result = await httpClient.PostAsync($"{http}://{server.Url}:{server.Port}/xui/inbound/add", formContent);
             result.EnsureSuccessStatusCode();
 
@@ -180,27 +182,64 @@ namespace V2Ray.Api.Services.V2Keys
             if (!swap)
             {
                 string key = "";
-
                 if (item.protocol == Protocol.vless.ToString())
                 {
+                    var set = JsonConvert.DeserializeObject<Setting>(item.settings);
+                    if (set != null && set.clients != null && set.clients.Any())
+                    {
+                        guid = swap ? set.clients.First().id : guid;
+                        output.ClientKeyId = set.clients.First().id;
+                    }
                     key = $"{item.protocol}://{guid}@{server.Url}:{item.port}";
 
                     key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
 
                 }
                 else if (item.protocol == Protocol.shadowsocks.ToString())
-                    key = $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+                {
+                    var set = JsonConvert.DeserializeObject<ShadowSetting>(item.settings);
+                    output.ClientKeyId = set.password;
+                    var serverConfig = new ShadowsocksServerConfig()
+                    {
+                        UserPSK = set.password,
+                        Method = set.method,
+                        Host = server.Url,
+                        Port = item.port,
+                        Name = item.remark,
+                    };
+                    var ssUriString = serverConfig.ToUri().AbsoluteUri;
+                    key = ssUriString;
+
+                }
                 else
                 {
-                    key = $"{item.protocol}://{set.clients.First().password}@{server.Url}:{item.port}";
+                    var set = JsonConvert.DeserializeObject<Setting>(item.settings);
+                    var clientPass = set.clients.First().password;
+                    if (set != null && set.clients != null && set.clients.Any())
+                    {
+                        guid = swap ? set.clients.First().id : guid;
+                        output.ClientKeyId = set.clients.First().id;
+                    }
+                    key = $"{item.protocol}://{clientPass}@{server.Url}:{item.port}";
                     key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
+
                 }
+                output.Key = key;
                 await File.AppendAllLinesAsync("keys.txt", new List<string>
             {
                 key
             });
             }
             return output;
+        }
+
+        public string TelegramSendMessage(string destID, string text)
+        {
+            string urlString = $"https://api.telegram.org/bot{5860902566:AAG0ZhGjjlsVHbdjwxfwM3s_4MwXpiaHeoE}/sendMessage?chat_id={destID}&text={text}";
+
+            WebClient webclient = new WebClient();
+
+            return webclient.DownloadString(urlString);
         }
         private int GeneratePort(DB db)
         {
@@ -221,17 +260,22 @@ namespace V2Ray.Api.Services.V2Keys
         }
 
 
-        public async Task<Obj> GetServerSampleKey(V2Server input, HttpClient httpClient)
+        public async Task<List<Obj>> GetServerSampleKey(V2Server input, HttpClient httpClient)
         {
-            if (Objs != null)
+            if (Objs != null && Objs.Any())
                 return Objs;
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var re = await httpClient.PostAsJsonAsync($"https://{input.Url}:{input.Port}/xui/inbound/list", new { }); ;
             var ttt = await re.Content.ReadAsStringAsync();
-            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderBy(a => a.remark).First(a => a.protocol == "vless");
-            Objs = new Obj();
-            Objs = root;
+            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderBy(a => a.remark).Take(3);
+            Objs = new List<Obj>();
+            var vless = root.First(a => a.protocol == "vless");
+            var shadow = root.First(a => a.protocol == "shadowsocks");
+            var trojan = root.First(a => a.protocol == "trojan");
+            Objs.Add(vless);
+            Objs.Add(shadow);
+            Objs.Add(trojan);
             return Objs;
         }
         public async Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient, bool swap = false)
@@ -266,11 +310,9 @@ namespace V2Ray.Api.Services.V2Keys
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromSeconds(10);
             var url = swap ? $"http://{input.Url}" : $"https://{input.Url}";
+            Thread.Sleep(2);
             var response = client.PostAsync($"{url}:{input.Port}/login", formContent).Result;
-
-            var stringContent = response.Content.ReadAsStringAsync().Result;
-
-            cookies.Add(new Uri("http://www.iranoutline.tk"), new Cookie("domain", $"{input.Url}"));
+            cookies.Add(new Uri(url), new Cookie("domain", $"{input.Url}"));
 
             //var responseCookies = cookies.GetCookies(uri).Cast<Cookie>().ToList();
 

@@ -12,6 +12,7 @@ import {
   getCode,
   veriFyCode,
   changePassword,
+  register,
 } from "@/api/autheticationApi/users";
 
 export interface IUserState {
@@ -28,7 +29,8 @@ class User extends VuexModule implements IUserState {
   public roles: string[] = [];
   public permisiones: string[] = [];
   public verfied = false;
-  public mobile = "";
+  public needConfirm = false;
+  public email = "";
   public isAdmin = false;
   @Mutation
   SET_TOKEN(token: string) {
@@ -46,7 +48,12 @@ class User extends VuexModule implements IUserState {
 
   @Mutation
   SET_MOBILE(mobile: string) {
-    this.mobile = mobile;
+    this.email = mobile;
+  }
+
+  @Mutation
+  SET_NEEDCONFIRM(needConfirm: boolean) {
+    this.needConfirm = needConfirm;
   }
   @Mutation
   SET_FULLNAME(input: any) {
@@ -75,13 +82,28 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async Login(username) {
+  public async Login(userInfo: { email: string; password: string }) {
 
-    await login({ username: username }).then((a) => {
-      this.SET_MOBILE(username);
+    await login(userInfo).then((a) => {
+      const result = a.data.result;
+
+      this.SET_MOBILE(userInfo.email);
+      this.SET_NEEDCONFIRM(result.NeedConfirm)
+      if (!result.needConfirm) {
+        const token = result.jwtToken.token;
+        setToken(`Bearer ${token}`);
+      }
     });
   }
 
+  @Action
+  public async Register(userInfo: { email: string; password: string }) {
+
+    await register(userInfo).then((a) => {
+      this.SET_MOBILE(userInfo.email);
+      this.GetCode(userInfo.email)
+    });
+  }
   @Action
   public async GetCode(mobile: string) {
     await getCode(mobile);
@@ -92,7 +114,7 @@ class User extends VuexModule implements IUserState {
     password: string;
     confirmPassword: string;
   }) {
-    await changePassword(this.mobile, input);
+    await changePassword(this.email, input);
   }
   @Action
   public ResetToken() {

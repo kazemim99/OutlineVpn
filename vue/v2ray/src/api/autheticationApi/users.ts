@@ -12,6 +12,12 @@ export const login = (data: any) =>
     data,
   });
 
+export const register = (data: any) =>
+  request({
+    url: "/authentication/register",
+    method: "post",
+    data,
+  });
 export const getCode = (mobile: string) =>
   request({
     url: `/authentication/get-code/${mobile}`,

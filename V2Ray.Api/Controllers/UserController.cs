@@ -60,10 +60,8 @@ namespace V2Ray.Api.Controllers
                     {
                         await file.CopyToAsync(stream);
                     }
-                    input.Avatar = dbPath;
                 }
             }
-            input.CreatorFullName = FullName;
             await _service.UpdateAsync(userId, input);
 
             return new ApiResponse();
@@ -91,10 +89,9 @@ namespace V2Ray.Api.Controllers
                     {
                         file.CopyTo(stream);
                     }
-                    input.Avatar = dbPath;
+                    //input.Avatar = dbPath;
                 }
             }
-           input.CreatorFullName = FullName;
             await _service.InsertAsync(input);
 
             return new ApiResponse();

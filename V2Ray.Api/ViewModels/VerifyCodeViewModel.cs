@@ -12,13 +12,16 @@ namespace V2Ray.Api.ViewModels
     }
     public class CreateUserViewModel
     {
-        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
     }
     public class VerifyCodeViewModel
     {
+        [Required]
         public string Code { get; set; }
 
-        public string Mobile { get; set; }
+        [Required]
+        [RegularExpression(@"\b[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)\b", ErrorMessage = "ایمیل وارد شده معتبر نیست")]
+        public string Email { get; set; }
     }
 
     public class ChangePasswordViewModel

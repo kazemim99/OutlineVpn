@@ -18,6 +18,7 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
         public int Id { get; set; }
         public bool FreeAccount { get;  set; }
+        public bool NeedConfirm { get; internal set; }
 
         //public IEnumerable<string> Permissions { get; internal set; }
     }

@@ -7,51 +7,24 @@ namespace V2Ray.Api.Services.UserServices.Dto
 {
     public class CreateUserInput
     {
+        [DataMember]
+        [RegularExpression(@"\b[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)\b", ErrorMessage = "ایمیل وارد شده معتبر نیست")]
+        public string Email { get; set; }
 
-        public int ServerId { get; set; }
-        [Required]
-        public string FirstName { get; set; }
+        [DataMember]
+        [MinLength(8, ErrorMessage = "طول رمز عبور حداقل 8 کارکتر میباشد")]
+        [MaxLength(32, ErrorMessage = "طول رمز عبور حداکثر 32 کارکتر میباشد")]
+        public string Password { get; set; }
 
-        [Required]
-        public string LastName { get; set; }
-
-        //public string Code { get; set; }
-        [DataMember(IsRequired = false)]
-        public string? Email { get; set; }
-
-        [Required]
-        public string Mobile { get; set; }
-
-        //public string Phone { get; set; }
-
-        public bool IsAdmin { get; set; }
-
-        //[Required]
-        //public string Password { get; set; }
+        [Compare("Password",ErrorMessage ="تکرار رمز عبور اشتباه است")]
+        public string ConfirmPassword { get; set; }
 
 
-        //[Required]
-        //[Compare("Password")]
-        //public string ConfirmPassword { get; set; }
-        [DataMember(IsRequired = false)]
+        public bool IsAdmin { get; set; } = false;
+        [DataMember(IsRequired =false)]
+        public string IP { get; set; }
 
-        [System.Text.Json.Serialization.JsonIgnore]
-        public string? Avatar { get; set; }
+        public bool Enable { get; set; }
 
-        public bool UserState { get; set; }
-
-        [DataMember(IsRequired = false)]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public string? CreatorFullName { get; set; }
-
-        [DataMember(IsRequired = false)]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public int UserKeyId { get; set; }
-
-        [DataMember(IsRequired = false)]
-        [System.Text.Json.Serialization.JsonIgnore]
-        public string? AccessUrl { get; set; }
-
-        public double InitCapacity { get; set; }
     }
 }

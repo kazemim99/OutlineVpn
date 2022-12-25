@@ -47,25 +47,48 @@ namespace V2Ray.Api.Services.UserServices
             _db = db;
             _otpService = otpService;
             _smsServcie = smsServcie;
-            
+
         }
 
-        public async Task Login(LoginDto input)
+
+        public async Task<LoginResultDto> Login(LoginDto input)
         {
             var user = await _db.Users.Include(new[] { "Roles.Role" })
-                 .FirstOrDefaultAsync(a => a.Mobile == input.UserName);
+                 .FirstOrDefaultAsync(a => a.Email == input.Email);
 
             if (user == null)
                 throw new ApiException(AppErrors.UserNotFound, 400);
 
-            if (!user.UserState)
+            if (!user.Enable)
                 throw new ApiException(AppErrors.UserDeactive, 400);
 
-            //if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
-            //    throw new ApiException(AppErrors.WrongPassword);
-            await SendCode(user.Mobile);
-            //SendMail(user.Email);
-           
+            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
+                throw new ApiException(AppErrors.WrongPassword);
+
+            if (user.NeedConfirm)
+            {
+                SendMail(user.Email);
+                return new LoginResultDto
+                {
+                    NeedConfirm = true
+                };
+            }
+
+            var response = new LoginResultDto
+            {
+                JwtToken = new JwtToken()
+                {
+                    Token = GenerateJwtToken(user),
+                },
+                IsAdmin = user.IsAdmin,
+                FreeAccount = user.FreeAccount,
+                FirstName = $"{user.FirstName} ",
+                LastName = $"{user.LastName} ",
+                Id = user.Id,
+            };
+
+            return response;
+
         }
 
         //public async Task AddComplexToUser(AddComplexToUser input)
@@ -91,10 +114,10 @@ namespace V2Ray.Api.Services.UserServices
                 //else
                 //    map.Password = user.Password;
 
-                if (!string.IsNullOrEmpty(map.Avatar))
-                    map.Avatar = input.Avatar;
-                else
-                    map.Avatar = user.Avatar;
+                //if (!string.IsNullOrEmpty(map.Avatar))
+                //    map.Avatar = input.Avatar;
+                //else
+                //    map.Avatar = user.Avatar;
 
 
                 _db.Users.Update(map);
@@ -108,7 +131,7 @@ namespace V2Ray.Api.Services.UserServices
 
         public override async Task InsertAsync(CreateUserInput input)
         {
-            var user = await _db.Users.AnyAsync(a => a.Mobile == input.Mobile);
+            var user = await _db.Users.AnyAsync(a => a.Email == input.Email);
             if (user)
                 throw new ApiException(AppErrors.UserAlreadyExists);
 
@@ -127,8 +150,8 @@ namespace V2Ray.Api.Services.UserServices
             {
                 RoleId = _db.Roles.First(a => a.Title == Policies.User).Id
             });
-            //map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
-
+            map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
+            SendMail(input.Email);
             await _db.AddAsync(map);
             await _db.SaveChangesAsync();
         }
@@ -136,10 +159,10 @@ namespace V2Ray.Api.Services.UserServices
         public async Task ChangeState(int id, string fullName)
         {
             var user = _db.Users.FirstOrDefault(a => a.Id == id);
-            user.UserState = !user.UserState;
+            user.Enable = !user.Enable;
             _db.Update(user);
 
-            var stateString = user.UserState ? "فعال" : "غیر فعال";
+            var stateString = user.Enable ? "فعال" : "غیر فعال";
 
             await _db.SaveChangesAsync();
         }
@@ -148,17 +171,11 @@ namespace V2Ray.Api.Services.UserServices
         {
             var query = _db.Users.AsQueryable();
 
-            if (!filter.FirstName.IsNullOrEmpty())
-                query = query.Where(a => a.FirstName.Contains(filter.FirstName));
-
-            if (!filter.LastName.IsNullOrEmpty())
-                query = query.Where(a => a.LastName.Contains(filter.LastName));
-
-            if (!filter.Mobile.IsNullOrEmpty())
-                query = query.Where(a => a.Mobile.Contains(filter.Mobile));
+            if (!filter.Email.IsNullOrEmpty())
+                query = query.Where(a => a.Email.Contains(filter.FirstName));
 
             if (filter.UserState != null)
-                query = query.Where(a => a.UserState == filter.UserState);
+                query = query.Where(a => a.Enable == filter.UserState);
 
 
             return query;
@@ -166,14 +183,14 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task<GetUserOutput> GetUserByMobile(string mobile)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Mobile == mobile);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == mobile);
             return _mapper.Map<GetUserOutput>(user);
         }
 
         public void SendMail(string mail)
         {
             var otpCode = _otpService.GetCode(mail);
-            //_smsServcie.SendEmail(otpCode, mail);
+            _smsServcie.SendEmail(otpCode, mail);
         }
         public async Task SendCode(string mobile)
         {
@@ -183,12 +200,10 @@ namespace V2Ray.Api.Services.UserServices
             await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode, destinationAddress = mobile });
         }
 
-        public async Task<LoginResultDto> VerifyCode(string code, string mobile)
+        public async Task<LoginResultDto> VerifyCode(string code, string email)
         {
-            try
-            {
-                _otpService.VerifyCode(mobile, code);
-                var user =await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Mobile ==  mobile);
+                _otpService.VerifyCode(email, code);
+                var user = await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Email == email);
                 var response = new LoginResultDto
                 {
                     JwtToken = new JwtToken()
@@ -196,23 +211,20 @@ namespace V2Ray.Api.Services.UserServices
                         Token = GenerateJwtToken(user),
                     },
                     IsAdmin = user.IsAdmin,
+                    NeedConfirm = user.NeedConfirm,
                     FreeAccount = user.FreeAccount,
-                    UserName = user.Mobile,
                     FirstName = $"{user.FirstName} ",
                     LastName = $"{user.LastName} ",
                     Id = user.Id,
                 };
+                user.NeedConfirm = false;
+                _db.Users.Update(user);
                 return response;
-            }
-            catch (Exception ex)
-            {
-                throw new ApiException(ex);
-            }
         }
 
-        public async Task ChangePasswordAsync(string mobile, string password)
+        public async Task ChangePasswordAsync(string email, string password)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Mobile == mobile);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == email);
 
             //user.Password = BCrypt.Net.BCrypt.HashPassword(password);
             _db.Update(user);
@@ -252,7 +264,7 @@ namespace V2Ray.Api.Services.UserServices
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userInfo.Mobile),
+                new Claim(JwtRegisteredClaimNames.Sub, userInfo.Email),
                 new Claim("fullName", $"{userInfo.FirstName} {userInfo.LastName}"),
                 new Claim("UserId", userInfo.Id.ToString()),
                 new Claim("FreeAccount", userInfo.FreeAccount.ToString()),
@@ -270,7 +282,7 @@ namespace V2Ray.Api.Services.UserServices
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddDays(365),
+            expires: DateTime.Now.AddDays(7),
             signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

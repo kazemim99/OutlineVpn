@@ -25,12 +25,12 @@ namespace V2Ray.Api.Services.sms.Rahyab
         public void SendEmail(string code, string to)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Power Box", "powerbox.ir98@gmail.com"));
+            message.From.Add(new MailboxAddress("IranV2Ray", "iranv2ray@gmail.com"));
             message.To.Add(new MailboxAddress("pritom", to));
             message.Subject = "کد ورود";
             message.Body = new TextPart("plain")
             {
-                Text = $"کد ورود شما به پاور باکس : {code}",
+                Text = $"کد ورود شما به  IranV2Ray : {code}",
             };
             using (var client = new SmtpClient())
             {
