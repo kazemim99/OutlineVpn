@@ -12,9 +12,9 @@ namespace V2Ray.Api.Services.Server.Mapping
 
             CreateMap<V2Server, GetServerOutput>();
 
-            CreateMap<CreateServerInput, V2Server>();
+            CreateMap<CreateServerInput, V2Server>().ForMember(a => a.Swapped, c => c.MapFrom(b => !b.Swapped));
 
-            CreateMap<UpdateServerInput, V2Server>();
+            CreateMap<UpdateServerInput, V2Server>().ForMember(a => a.Swapped, c => c.MapFrom(b => !b.Swapped)); ;
         }
 
     }

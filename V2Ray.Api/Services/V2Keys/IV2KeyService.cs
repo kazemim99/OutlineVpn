@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.V2Keys
         V2KeyFilterInput>
     {
         Task ChangeState(int id);
-        Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient);
+        Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient,bool swap = false);
         Task<Pagination<GetV2KeyListOutput>> GetAllFromXUIServerAsync(V2KeyFilterInput paging);
         Task SwapServerKeysAsync(SwapServerKeysInput input);
     }

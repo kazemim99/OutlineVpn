@@ -77,7 +77,7 @@ namespace V2Ray.Api
             {
                 options.Limits.MaxRequestBodySize = int.MaxValue; // if don't set default value is: 30 MB
             });
-
+            services.AddHttpClient();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
                     {

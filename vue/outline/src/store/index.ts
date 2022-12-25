@@ -26,7 +26,6 @@ export default new Vuex.Store({
       state.roles = roles;
     },
     setUserDetails(state, userDetails: any) {
-      alert(userDetails);
       state.userDetails = userDetails;
       console.log(userDetails);
     },
