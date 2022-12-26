@@ -156,7 +156,7 @@ namespace V2Ray.Api.Services.UserServices
             await _db.SaveChangesAsync();
         }
 
-        public async Task ChangeState(int id, string fullName)
+        public async Task ChangeState(int id)
         {
             var user = _db.Users.FirstOrDefault(a => a.Id == id);
             user.Enable = !user.Enable;
@@ -172,7 +172,7 @@ namespace V2Ray.Api.Services.UserServices
             var query = _db.Users.AsQueryable();
 
             if (!filter.Email.IsNullOrEmpty())
-                query = query.Where(a => a.Email.Contains(filter.FirstName));
+                query = query.Where(a => a.Email.Contains(filter.Email));
 
             if (filter.UserState != null)
                 query = query.Where(a => a.Enable == filter.UserState);
@@ -248,7 +248,7 @@ namespace V2Ray.Api.Services.UserServices
 
 
 
-        public async Task IsDelete(int id, string fullName)
+        public async Task IsDelete(int id)
         {
             var user = await _db.Users.FirstAsync(a => a.Id == id);
             user.IsDeleted = true;

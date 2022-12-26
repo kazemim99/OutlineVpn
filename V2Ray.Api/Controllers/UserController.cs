@@ -96,7 +96,17 @@ namespace V2Ray.Api.Controllers
 
             return new ApiResponse();
         }
-
+        /// <summary>
+        /// ویرایش پروفایل یک کاربر
+        /// </summary>
+        ///
+        [Authorize]
+        [HttpPut("chage-state/{id}")]
+        public async Task<ApiResponse> ChangeState([FromForm] int id)
+        {
+          await  _service.ChangeState(id);
+            return new ApiResponse();
+        }
 
         /// <summary>
         /// دریافت اطلاعات یک کاربر
@@ -118,7 +128,6 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Profile()
         {
             var result = await _service.GetById(UserId);
-            //result.RemainigCapacity = _outline.Capacity(result.Mobile);
             return new ApiResponse(result);
         }
         /// <summary>

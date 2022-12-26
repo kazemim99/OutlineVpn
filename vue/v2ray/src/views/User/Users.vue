@@ -11,17 +11,7 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template width="25" v-slot:item.complexes="{ item }">
-        <v-chip
-          v-for="col in item.complexes"
-          :key="col"
-          class="ma-2"
-          color="green"
-          text-color="white"
-        >
-          {{ col }}
-        </v-chip>
-      </template>
+     
       <template v-slot:item.userState="{ item }">
         <v-switch
           v-model="item.userState"
@@ -30,11 +20,7 @@
           :label="`${item.userState ? 'فعال' : 'غیر فعال'}`"
         ></v-switch>
       </template>
-
-
-      <template  v-slot:item.sendaccesskey="{ item }">
-        <v-icon  medium class="mr-2" @click="sendAccessKey(item.id)">mdi-recycle</v-icon>
-      </template>
+      
 
       <template  v-slot:item.edit="{ item }">
         <v-icon v-can="'Member_Edit'" medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
@@ -59,25 +45,25 @@
           <v-toolbar-title>لیست کاربران</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:header.firstName="{ header }">
+      <template v-slot:header.email="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="firstName ? 'primary' : ''"
+              <v-icon small :color="email ? 'primary' : ''"
                 >mdi-filter</v-icon
               >
             </v-btn>
           </template>
           <div style="background-color: white; width: 280px">
             <v-text-field
-              v-model="firstName"
+              v-model="email"
               class="pa-4"
               type="text"
               label="جستجو"
             ></v-text-field>
             <v-btn
-              @click="firstName = ''"
+              @click="email = ''"
               small
               text
               color="primary"
@@ -87,62 +73,7 @@
           </div>
         </v-menu>
       </template>
-
-      <template v-slot:header.lastName="{ header }">
-        {{ header.text }}
-        <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="lastName ? 'primary' : ''"
-                >mdi-filter</v-icon
-              >
-            </v-btn>
-          </template>
-          <div style="background-color: white; width: 280px">
-            <v-text-field
-              v-model="lastName"
-              class="pa-4"
-              type="text"
-              label="جستجو"
-            ></v-text-field>
-            <v-btn
-              @click="lastName = ''"
-              small
-              text
-              color="primary"
-              class="ml-2 mb-2"
-              >پاک کردن</v-btn
-            >
-          </div>
-        </v-menu>
-      </template>
-
-      <template v-slot:header.mobile="{ header }">
-        {{ header.text }}
-        <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="mobile ? 'primary' : ''">mdi-filter</v-icon>
-            </v-btn>
-          </template>
-          <div style="background-color: white; width: 280px">
-            <v-text-field
-              v-model="mobile"
-              class="pa-4"
-              type="text"
-              label="جستجو"
-            ></v-text-field>
-            <v-btn
-              @click="mobile = ''"
-              small
-              text
-              color="primary"
-              class="ml-2 mb-2"
-              >پاک کردن</v-btn
-            >
-          </div>
-        </v-menu>
-      </template>
+   
     </v-data-table>
     <v-pagination
       v-model="options.page"
@@ -185,17 +116,15 @@ export default {
       userState: null,
       firstName: null,
       lastName: null,
-      mobile: null,
+      email: null,
       userList: [],
-      complexes: [],
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
 
       headers: [
         { text: "نام", value: "firstName", sortable: true },
         { text: "نام خانوادگی", value: "lastName", sortable: true },
-        { text: "کد", value: "code", sortable: true },
-        { text: "نام کاربری", value: "mobile", sortable: false },
+        { text: "نام کاربری", value: "email", sortable: false },
         { text: "وضعیت", value: "userState", sortable: true },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
@@ -210,24 +139,11 @@ export default {
       },
       deep: true,
     },
-    firstName: function () {
-      if (this.firstName.length > 2 || this.firstName.length === 0)
-        this.options.page = 1;
-      this.options.firstName = this.firstName;
+    email: function () {
 
-      this.getUsers();
-    },
-    lastName: function () {
-      if (this.lastName.length > 2 || this.lastName.length === 0)
+      if (this.email.length > 2 || this.email.length === 0)
         this.options.page = 1;
-      this.options.lastName = this.lastName;
-
-      this.getUsers();
-    },
-    mobile: function () {
-      if (this.mobile.length > 2 || this.mobile.length === 0)
-        this.options.page = 1;
-      this.options.mobile = this.mobile;
+      this.options.email = this.email;
 
       this.getUsers();
     },
