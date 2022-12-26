@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.OTP
 
         public string GetCode(string key, int? stepWindowSeconds = null)
         {
-            key = key.TrimStart(new[] { '0' });
+            //key = key.TrimStart(new[] { '0' });
 
             if (_settings.Sandbox) return _settings.SandboxCode;
 
@@ -30,7 +30,7 @@ namespace V2Ray.Api.Services.OTP
             }
             else
             {
-                key = key.TrimStart(new[] { '0' });
+                //key = key.TrimStart(new[] { '0' });
                 var totp = GetTotp(key);
 
                 var result = totp.VerifyTotp(code, out long timeStepMatched,

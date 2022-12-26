@@ -116,7 +116,6 @@ namespace V2Ray.Api.Services.V2Keys
                         item.expiryTime = input.ExpireDate.ToGeo().ToTimeStamp();
                         item.down = 0;
                         item.up = 0;
-                        item.remark = input.Remark?.ToUpper();
                         if (item == null)
                             throw new Exception();
                         var result = await GenerateKey(server, item, httpClient);
@@ -155,7 +154,7 @@ namespace V2Ray.Api.Services.V2Keys
             item.id = null;
 
             item.port = swap ? item.port : GeneratePort(_db);
-            var newRemark = swap ? item.remark : $"{server.Title}_{item.port}_{item.remark}";
+            var newRemark = swap ? item.remark : $"iranv2ray.com";
             item.remark = newRemark;
             output.Remark = item.remark;
             var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
@@ -271,11 +270,11 @@ namespace V2Ray.Api.Services.V2Keys
             var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderBy(a => a.remark).Take(3);
             Objs = new List<Obj>();
             var vless = root.First(a => a.protocol == "vless");
-            var shadow = root.First(a => a.protocol == "shadowsocks");
-            var trojan = root.First(a => a.protocol == "trojan");
+            //var shadow = root.First(a => a.protocol == "shadowsocks");
+            //var trojan = root.First(a => a.protocol == "trojan");
             Objs.Add(vless);
-            Objs.Add(shadow);
-            Objs.Add(trojan);
+            //Objs.Add(shadow);
+            //Objs.Add(trojan);
             return Objs;
         }
         public async Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient, bool swap = false)

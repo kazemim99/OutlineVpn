@@ -21,8 +21,9 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
 
         public bool IsAdmin { get; set; } = false;
+
         [DataMember(IsRequired =false)]
-        public string IP { get; set; }
+        public string? IP { get; set; }
 
         public bool Enable { get; set; }
 

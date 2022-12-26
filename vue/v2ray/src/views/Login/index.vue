@@ -44,6 +44,7 @@
                     :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
                     autocomplete="off"
                     v-model="loginForm.confirmPassword"
+                    :rules="register  ? confirmPasswordRules : []"
                     prepend-icon="mdi-lock"
                     name="confirmPassword"
                     label="تکرار رمز عبور"
@@ -121,11 +122,12 @@ export default class extends Vue {
   ];
   private confirmPasswordRules = [
     (value) =>
-      !!value || ("لطفا تکرار رمز عبور را وارد نمایید" && this.register),
+      !!value || ("لطفا تکرار رمز عبور را وارد نمایید"),
     (value) =>
-      (value === this.loginForm.password && this.register) ||
+      (value === this.loginForm.password) ||
       "تکرار رمز عبور اشتباه است",
   ];
+
   private registerShow() {
     this.register = true;
 

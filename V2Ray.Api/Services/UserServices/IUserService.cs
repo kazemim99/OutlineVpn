@@ -16,11 +16,11 @@ namespace V2Ray.Api.Services.UserServices
     {
         Task<LoginResultDto> Login(LoginDto input);
 
-        Task IsDelete(int id, string fullName);
+        Task IsDelete(int id);
 
         //Task AddComplexToUser(AddComplexToUser input);
 
-        Task ChangeState(int id, string fullName);
+        Task ChangeState(int id);
 
         Task<GetUserOutput> GetUserByMobile(string mobile);
 

@@ -7,10 +7,6 @@ namespace V2Ray.Api.Services.UserServices.Dto
 {
     public class UserFilterInput : PaginationModelInput
     {
-        [DataMember(IsRequired = false)]
-        public string? Mobile { get; set; }
-
-
 
         [DataMember(IsRequired = false)]
         public string? FirstName { get; set; }
@@ -28,7 +24,7 @@ namespace V2Ray.Api.Services.UserServices.Dto
         public bool? IsAdmin { get; set; }
 
         [DataMember(IsRequired = false)]
-        public string Email { get;  set; }
+        public string? Email { get;  set; }
     }
 
 }
