@@ -12,12 +12,12 @@
       class="elevation-1"
     >
      
-      <template v-slot:item.userState="{ item }">
+      <template v-slot:item.enable="{ item }">
         <v-switch
-          v-model="item.userState"
+          v-model="item.enable"
           flat
           @change="changeUserState(item)"
-          :label="`${item.userState ? 'فعال' : 'غیر فعال'}`"
+          :label="`${item.enable ? 'فعال' : 'غیر فعال'}`"
         ></v-switch>
       </template>
       
@@ -113,7 +113,7 @@ export default {
       totalUsers: 0,
       switchLoading: null,
       pages: 0,
-      userState: null,
+      enable: null,
       firstName: null,
       lastName: null,
       email: null,
@@ -125,7 +125,7 @@ export default {
         { text: "نام", value: "firstName", sortable: true },
         { text: "نام خانوادگی", value: "lastName", sortable: true },
         { text: "نام کاربری", value: "email", sortable: false },
-        { text: "وضعیت", value: "userState", sortable: true },
+        { text: "وضعیت", value: "enable", sortable: true },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
         { text: "", value: "sendaccesskey", sortable: false },
@@ -154,15 +154,16 @@ export default {
 
   methods: {
     async changeUserState(item) {
+      console.log(item);
       this.switchLoading = "warning";
       await request
         .put(`/user/change-state/${item.id}`)
         .then(() => {
-          console.log(item.userState);
+          console.log(item.enable);
         })
         .catch((error) => {
           alert(error);
-          this.userState = !this.userState;
+          this.enable = !this.enable;
         })
         .finally(() => {
           this.loading = false;
@@ -196,29 +197,6 @@ export default {
       });
     },
 
-    sendAccessKey(id) {
-      Vue.swal({
-        title: "ایا مطمئن  هستید",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "بله ,ارسال شود",
-        cancelButtonText: "انصراف",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          request
-            .get(`/user/sendAccessKey/${id}`)
-            .then(() => {
-              Vue.swal("", "پیام با موفقیت ارسال گردید", "success");
-            })
-            .finally(() => {
-              this.uploadLoading = false;
-            });
-        }
-      });
-    },
-
     next(page) {
       this.options.page = page;
       this.getUsers();
@@ -227,7 +205,7 @@ export default {
       this.options = event;
     },
     GetSelectedState(state) {
-      this.userState = state;
+      this.enable = state;
     },
 
     async getUsers() {

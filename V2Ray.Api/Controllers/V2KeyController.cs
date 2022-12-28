@@ -41,6 +41,16 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
+        [HttpGet("user-key-details")]
+        [Authorize]
+
+        public async Task<ApiResponse> UserKeyDetails()
+        {
+            //filter.UserId = UserId;
+            //filter.IsAdmin = IsAdmin;
+            var result = await _v2KeyService.UserKeyDetails(UserId);
+            return new ApiResponse(result);
+        }
 
         [HttpPost]
         [Authorize]

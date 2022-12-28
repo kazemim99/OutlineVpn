@@ -59,7 +59,6 @@ export default class extends Vue {
   private valid = false;
   private codeSent = false;
   private loading = false;
-  private mobile = "";
   private code = "";
 
   private async verifyCode() {
@@ -70,7 +69,7 @@ export default class extends Vue {
         this.loading = false;
         return;
       }
-      await UserModule.VerifyCode({ code: this.code, mobile: UserModule.email });
+      await UserModule.VerifyCode({ code: this.code, email: UserModule.email });
       this.loading = false;
       console.log(UserModule.verfied)
       if (UserModule.verfied){

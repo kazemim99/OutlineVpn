@@ -80,6 +80,7 @@ namespace V2Ray.Api.Services.UserServices
                 {
                     Token = GenerateJwtToken(user),
                 },
+                NeedConfirm = user.NeedConfirm,
                 IsAdmin = user.IsAdmin,
                 FreeAccount = user.FreeAccount,
                 FirstName = $"{user.FirstName} ",
@@ -174,8 +175,8 @@ namespace V2Ray.Api.Services.UserServices
             if (!filter.Email.IsNullOrEmpty())
                 query = query.Where(a => a.Email.Contains(filter.Email));
 
-            if (filter.UserState != null)
-                query = query.Where(a => a.Enable == filter.UserState);
+            if (filter.Enable != null)
+                query = query.Where(a => a.Enable == filter.Enable);
 
 
             return query;
@@ -219,6 +220,7 @@ namespace V2Ray.Api.Services.UserServices
                 };
                 user.NeedConfirm = false;
                 _db.Users.Update(user);
+            _db.SaveChanges();
                 return response;
         }
 

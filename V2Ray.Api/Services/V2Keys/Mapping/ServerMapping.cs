@@ -14,9 +14,13 @@ namespace V2Ray.Api.Services.V2Keys.Mapping
                 .ForMember(a => a.Capacity, c => c.MapFrom(a => a.Capacity.GigaByteToBytes()));
                 
 
-            CreateMap<CreateV2KeyInput, V2Key>().ForMember(a=>a.ExpireDate,c=>c.MapFrom(b=>b.ExpireDate.ToTimeStamp()));
+            CreateMap<CreateV2KeyInput, V2Key>().
+                ForMember(a => a.V2ServerId, c => c.MapFrom(b => b.ServerId)).
+                ForMember(a=>a.ExpireDate,c=>c.MapFrom(b=>b.ExpireDate.ToTimeStamp()));
 
-            CreateMap<UpdateV2KeyInput, V2Key>();
+            CreateMap<UpdateV2KeyInput, V2Key>().
+                ForMember(a => a.V2ServerId, c => c.MapFrom(b => b.ServerId)).
+                ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToTimeStamp()));
         }
 
     }

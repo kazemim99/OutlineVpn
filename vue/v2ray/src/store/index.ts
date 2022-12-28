@@ -15,10 +15,6 @@ export default new Vuex.Store({
     },
     roles: [],
     permissions: [],
-    complexes: [],
-    complexRoles: [],
-    selectedComplexName: "",
-    selectedComplexId: null,
   },
   mutations: {
 
@@ -27,7 +23,6 @@ export default new Vuex.Store({
     },
     setUserDetails(state, userDetails: any) {
       state.userDetails = userDetails;
-      console.log(userDetails);
     },
     setUserStates(state, userStates: any) {
       state.userStates = userStates;
@@ -35,13 +30,6 @@ export default new Vuex.Store({
 
   },
   actions: {
-
-
-    getComplexRoles({ commit }) {
-      request.get(`/complexRole/roles`).then((response) => {
-        commit("setComplexRoles", response.data.result);
-      });
-    },
 
     getRoles({ commit }) {
       request.get("/userRoleAndPermission/roles").then((response) => {

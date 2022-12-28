@@ -22,6 +22,8 @@ namespace V2Ray.Api.Controllers
 
 
 
+      
+
         [HttpGet("users")]
         [Authorize]
 
@@ -101,8 +103,8 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         ///
         [Authorize]
-        [HttpPut("chage-state/{id}")]
-        public async Task<ApiResponse> ChangeState([FromForm] int id)
+        [HttpPut("change-state/{id}")]
+        public async Task<ApiResponse> ChangeState([FromRoute] int id)
         {
           await  _service.ChangeState(id);
             return new ApiResponse();

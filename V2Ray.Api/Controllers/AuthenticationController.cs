@@ -97,8 +97,8 @@ namespace V2Ray.Api.Controllers
             try
             {
 
-                if (!Regex.IsMatch(mobile, @"^09[0-9]{9}$"))
-                    throw new ApiException("شماره وارد شده صحیح نیست");
+                if (!Regex.IsMatch(mobile, @"\b[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)\b"))
+                    throw new ApiException("ایمیل وارد شده صحیح نیست");
 
                 var result = await _service.GetUserByMobile(mobile);
                 if (result == null)

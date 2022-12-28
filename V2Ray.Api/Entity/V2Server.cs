@@ -16,6 +16,7 @@ namespace V2Ray.Api.Entity
         public int CityId { get; set; }
         public bool IsActive { get; set; }
         public bool Swapped { get;  set; }
+        public bool IsMain { get;  set; }
     }
 
     public class Country : FullAuditEntity<int>, ISoftDelete
@@ -45,8 +46,8 @@ namespace V2Ray.Api.Entity
         public Protocol Protocol { get; set; }
         public string Key { get; set; }
         public bool IsDeleted { get; set; }
-        public int ServerId { get; set; }
-        public V2Server Server { get; set; }
+        public int V2ServerId { get; set; }
+        public V2Server V2Server { get; set; }
         public int? UserId { get; set; }
         public User User { get; set; }
         public int Port { get; internal set; }

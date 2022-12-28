@@ -5,7 +5,11 @@ import {
   getModule,
   Module,
 } from "vuex-module-decorators";
+import  useRoute  from 'vue-router'
+
 import store from "@/store";
+import VueRouter from 'vue-router';
+
 import { getToken, setToken, removeToken } from "@/utils/cookies";
 import {
   login,
@@ -21,9 +25,9 @@ export interface IUserState {
   roles: string[];
   permisiones: string[];
 }
-
 @Module({ namespaced: true, dynamic: true, store, name: "auth" })
 class User extends VuexModule implements IUserState {
+
   public token = getToken() || "";
   public fullName = "";
   public roles: string[] = [];
@@ -47,10 +51,10 @@ class User extends VuexModule implements IUserState {
   }
 
   @Mutation
-  SET_MOBILE(mobile: string) {
-    this.email = mobile;
-  }
 
+  SET_Mail(email: string) {
+    this.email = email;
+  }
   @Mutation
   SET_NEEDCONFIRM(needConfirm: boolean) {
     this.needConfirm = needConfirm;
@@ -66,11 +70,11 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async VerifyCode(verifyModel: { code: string; mobile: string }) {
+  public async VerifyCode(verifyModel: { code: string; email: string }) {
     await veriFyCode(verifyModel)
       .then((a) => {
         this.SET_VERIFIED(true);
-        this.SET_MOBILE(verifyModel.mobile);
+        this.SET_Mail(verifyModel.email);
         const result = a.data.result;
         const token = result.jwtToken.token;
         setToken(`Bearer ${token}`);
@@ -86,12 +90,12 @@ class User extends VuexModule implements IUserState {
 
     await login(userInfo).then((a) => {
       const result = a.data.result;
-
-      this.SET_MOBILE(userInfo.email);
-      this.SET_NEEDCONFIRM(result.NeedConfirm)
+      this.SET_Mail(userInfo.email);
+      this.SET_NEEDCONFIRM(result.needConfirm)
       if (!result.needConfirm) {
         const token = result.jwtToken.token;
         setToken(`Bearer ${token}`);
+        store.commit("setUserDetails", result);
       }
     });
   }
@@ -100,7 +104,7 @@ class User extends VuexModule implements IUserState {
   public async Register(userInfo: { email: string; password: string }) {
 
     await register(userInfo).then((a) => {
-      this.SET_MOBILE(userInfo.email);
+      this.SET_Mail(userInfo.email);
       this.GetCode(userInfo.email)
     });
   }

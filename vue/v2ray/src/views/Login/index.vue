@@ -161,14 +161,13 @@ export default class extends Vue {
     this.loading = true;
     try {
       await UserModule.Login(this.loginForm);
-      this.loading = false;
       if (UserModule.needConfirm) {
         await UserModule.GetCode(this.loginForm.email);
         this.$router.push("/verify-code");
       } else {
-        debugger;
-        this.$router.push("/home");
+        this.$router.push("/home"); 
       }
+      this.loading = false;
     } catch (error) {
       this.loading = false;
     }

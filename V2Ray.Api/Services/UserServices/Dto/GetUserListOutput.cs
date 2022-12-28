@@ -15,6 +15,6 @@
 
         public string[] Complexes { get; set; }
 
-        public bool UserState { get; set; }
+        public bool Enable { get; set; }
     }
 }

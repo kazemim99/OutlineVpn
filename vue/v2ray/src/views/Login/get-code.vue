@@ -12,8 +12,8 @@
                 <v-text-field
                   prepend-icon="mdi-account"
                   name="login"
-                  v-model="mobile"
-                  label="شماره موبایل"
+                  v-model="email"
+                  label="ایمیل"
                   autocomplete="off"
                   :rules="userNameRules"
                   type="text"
@@ -69,7 +69,7 @@ export default class extends Vue {
   private codeSent = false;
   private loading = false;
   private show1 = false;
-  private mobile = "";
+  private email = "";
   private code = "";
 
   private userNameRules = [
@@ -80,7 +80,7 @@ export default class extends Vue {
   private async getCode() {
     this.loading = true;
     try {
-      await UserModule.GetCode(this.mobile);
+      await UserModule.GetCode(this.email);
       this.loading = false;
       this.codeSent = true;
       // this.$router.push("/change-password");
@@ -91,7 +91,7 @@ export default class extends Vue {
   private async verifyCode() {
     this.loading = true;
     try {
-      await UserModule.VerifyCode({ code: this.code, mobile: this.mobile });
+      await UserModule.VerifyCode({ code: this.code, email: this.email });
       this.loading = false;
       if (UserModule.verfied) this.$router.push("/change-password");
     } catch (error) {

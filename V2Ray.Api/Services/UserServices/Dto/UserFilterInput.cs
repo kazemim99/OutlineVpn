@@ -15,7 +15,7 @@ namespace V2Ray.Api.Services.UserServices.Dto
         public string? LastName { get; set; }
 
         [DataMember(IsRequired = false)]
-        public bool? UserState { get; set; }
+        public bool? Enable { get; set; }
 
         [DataMember(IsRequired = false)]
         public int? UserId { get; set; }

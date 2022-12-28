@@ -99,7 +99,7 @@ namespace V2Ray.Api.Services.Server
             {
                 Port = port,
                 Key = key,
-                ServerId = serverId,
+                V2ServerId = serverId,
             });
             _db.SaveChanges();
         }

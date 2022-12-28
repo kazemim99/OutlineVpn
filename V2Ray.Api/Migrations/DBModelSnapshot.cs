@@ -285,12 +285,7 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("UpdaterUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("V2ServerId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("V2ServerId");
 
                     b.ToTable("Users");
                 });
@@ -358,9 +353,6 @@ namespace V2Ray.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ServerId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("State")
                         .HasColumnType("bit");
 
@@ -373,11 +365,14 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("V2ServerId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ServerId");
-
                     b.HasIndex("UserId");
+
+                    b.HasIndex("V2ServerId");
 
                     b.ToTable("V2Keys");
                 });
@@ -407,6 +402,9 @@ namespace V2Ray.Api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMain")
                         .HasColumnType("bit");
 
                     b.Property<string>("Password")
@@ -455,15 +453,6 @@ namespace V2Ray.Api.Migrations
                     b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("V2Ray.Api.Entity.User", b =>
-                {
-                    b.HasOne("V2Ray.Api.Entity.V2Server", "V2Server")
-                        .WithMany()
-                        .HasForeignKey("V2ServerId");
-
-                    b.Navigation("V2Server");
-                });
-
             modelBuilder.Entity("V2Ray.Api.Entity.UserRole", b =>
                 {
                     b.HasOne("V2Ray.Api.Entity.Role", "Role")
@@ -485,19 +474,19 @@ namespace V2Ray.Api.Migrations
 
             modelBuilder.Entity("V2Ray.Api.Entity.V2Key", b =>
                 {
-                    b.HasOne("V2Ray.Api.Entity.V2Server", "Server")
+                    b.HasOne("V2Ray.Api.Entity.User", "User")
+                        .WithMany("V2Keys")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("V2Ray.Api.Entity.V2Server", "V2Server")
                         .WithMany("Keys")
-                        .HasForeignKey("ServerId")
+                        .HasForeignKey("V2ServerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("V2Ray.Api.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Server");
-
                     b.Navigation("User");
+
+                    b.Navigation("V2Server");
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.V2Server", b =>
@@ -529,6 +518,8 @@ namespace V2Ray.Api.Migrations
             modelBuilder.Entity("V2Ray.Api.Entity.User", b =>
                 {
                     b.Navigation("Roles");
+
+                    b.Navigation("V2Keys");
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.V2Server", b =>

@@ -50,8 +50,7 @@ export default {
   },
   methods: {
     getConsumedTraffic() {
-      request.get(`/keys/consumed-traffic`).then((response) => {
-        console.log(response);
+      request.get(`/v2Key/user-key-details`).then((response) => {
         var data = response.data.result;
         this.consumedTraffic = data.consumedTraffic;
         this.initTraffic = data.initTraffic;
