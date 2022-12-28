@@ -40,7 +40,7 @@ namespace V2Ray.Api.Entity
     {
         public string Remark { get; set; }
         public long Capacity { get; set; }
-        public string? ClientKeyId { get; set; }
+        public string ClientKeyId { get; set; }
         public long ExpireDate { get; set; }
         public bool State { get; set; }
         public Protocol Protocol { get; set; }

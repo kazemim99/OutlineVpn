@@ -41,9 +41,19 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
-        [HttpGet("user-key-details")]
+        [HttpGet("generateKey/{count}")]
         [Authorize]
 
+        public async Task<ApiResponse> GenerateKey([FromRoute] int count)
+        {
+            
+            //filter.UserId = UserId;
+            //filter.IsAdmin = IsAdmin;
+            await _v2KeyService.GenerateUserKey(count,UserId);
+            return new ApiResponse();
+        }
+        [HttpGet("user-key-details")]
+        [Authorize]
         public async Task<ApiResponse> UserKeyDetails()
         {
             //filter.UserId = UserId;

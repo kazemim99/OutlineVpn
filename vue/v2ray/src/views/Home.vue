@@ -25,7 +25,9 @@
       </v-col>
     </v-row>
     <div class="text-center mt-10">
-      <v-btn to="/plans" rounded color="primary" dark> خرید ترافیک </v-btn>
+      <v-btn to="/plans" rounded color="primary" @click="getKey()" dark>
+        {{ this.feeAccount ? "دریافت کلید رایگان" : "خرید ترافیک" }}
+      </v-btn>
     </div>
   </div>
 </template>
@@ -37,24 +39,31 @@ import { UserModule } from "@/store/modules/user";
 export default {
   data() {
     return {
-      hasData: false,
-      phone: null,
-      datacollection: null,
-      consumedTraffic: 0,
-      initTraffic: 0,
-      raminingTraffic: 0,
+      keys:[],
+      count:1,
+      userKeyDetails: {
+        freeAccount: false,
+        up: 0,
+        down: 0,
+        total: 0,
+        expireTime: null,
+      },
     };
   },
   mounted() {
     this.getConsumedTraffic();
   },
   methods: {
+    getKey() {
+      request.get(`/v2Key/generateKey/${this.count}`).then((response) => {
+        var data = response.data.result;
+        this.keys = data;
+      });
+    },
     getConsumedTraffic() {
       request.get(`/v2Key/user-key-details`).then((response) => {
         var data = response.data.result;
-        this.consumedTraffic = data.consumedTraffic;
-        this.initTraffic = data.initTraffic;
-        this.raminingTraffic = data.raminingTraffic;
+        this.userKeyDetails = data;
       });
     },
   },

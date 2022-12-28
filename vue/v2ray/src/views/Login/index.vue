@@ -44,12 +44,23 @@
                     :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
                     autocomplete="off"
                     v-model="loginForm.confirmPassword"
-                    :rules="register  ? confirmPasswordRules : []"
+                    :rules="
+                      register
+                        ? confirmPasswordRules.concat(validatePassword2)
+                        : []
+                    "
                     prepend-icon="mdi-lock"
                     name="confirmPassword"
                     label="تکرار رمز عبور"
                   ></v-text-field>
-
+                  <v-row>
+                    <!-- <VueRecaptcha
+                      :sitekey="siteKey"
+                      :load-recaptcha-script="true"
+                      @verify="handleSuccess"
+                      @error="handleError"
+                    ></VueRecaptcha> -->
+                  </v-row>
                   <v-row>
                     <v-spacer></v-spacer>
                     <v-col cols="4">
@@ -70,7 +81,10 @@
                     </v-col>
 
                     <v-col cols="4">
-                      <v-btn v-on:click="registerShow()" color="success"
+                      <v-btn
+                        :loading="loading && register"
+                        v-on:click="registerShow"
+                        color="success"
                         >ثبت نام</v-btn
                       >
                     </v-col>
@@ -86,94 +100,112 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+<script>
 import { UserModule } from "@/store/modules/user";
+// import { VueRecaptcha } from "vue-recaptcha";
 
-@Component({
+export default {
   name: "Login",
   components: {},
-})
-export default class extends Vue {
-  $refs!: {
-    form: HTMLFormElement;
-  };
-  private valid = false;
-  private loading = false;
-  private show1 = false;
-  private show2 = false;
-  private register = false;
-  private loginForm = {
-    email: "",
-    password: "",
-  };
 
-  private userNameRules = [
-    (v: string) => !!v || "نام کاربری الزامی میباشد",
-    (v: string) =>
-      /[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)/.test(
-        v
-      ) ||
-      "ایمیل وارد شده  اشتباه است ایمیلهای مورد تایید gmail,outlook,hotmail,yahoo",
-  ];
-  private passwordRules = [
-    (v: string) => !!v || "رمز عبور   الزامی میباشد",
-    (v: string) => v.length > 7 || "رمز عبور   باید هشت رقم باشد ",
-  ];
-  private confirmPasswordRules = [
-    (value) =>
-      !!value || ("لطفا تکرار رمز عبور را وارد نمایید"),
-    (value) =>
-      (value === this.loginForm.password) ||
-      "تکرار رمز عبور اشتباه است",
-  ];
+  data: () => ({
+    siteKey: "6LcdGLUjAAAAAPqmwHQH5YB1siI6vEgddeqsTOtY",
+    valid: false,
+    loading: false,
+    show1: false,
+    show2: false,
+    register: false,
+    loginForm: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
 
-  private registerShow() {
-    this.register = true;
+    userNameRules: [
+      (v) => !!v || "نام کاربری الزامی میباشد",
+      (v) =>
+        /[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)/.test(
+          v
+        ) ||
+        "ایمیل وارد شده  اشتباه است ایمیلهای مورد تایید gmail,outlook,hotmail,yahoo",
+    ],
+    passwordRules: [
+      (v) => !!v || "رمز عبور   الزامی میباشد",
+      (v) => v.length > 7 || "رمز عبور   باید هشت رقم باشد ",
+    ],
+    confirmPasswordRules: [
+      (value) => !!value || "لطفا تکرار رمز عبور را وارد نمایید",
+    ],
+  }),
+  methods: {
+    validatePassword2(value) {
+      return value == this.loginForm.password || "تکرار رمز عبور اشتباه است";
+    },
+    async handleError() {
+      console.log("b");
+      // Do some validation
+    },
+    async handleSuccess(response) {
+      console.log("a");
+      // Do some validation
+    },
+    async registerShow() {
+      this.loginForm.password = "";
+      this.loginForm.confirmPassword = "";
+      this.register = true;
 
-    this.validationForm();
-    if (!this.valid) return;
+      this.validationForm();
+      if (!this.valid) return;
 
-    this.handleRegister();
-  }
+      this.handleRegister();
+    },
 
-  private loginShow() {
-    this.register = false;
-  }
-  private async handleRegister() {
-    this.validationForm();
-    if (!this.valid) return;
+    async loginShow() {
+      debugger;
+      this.loginForm.password = "";
+      this.loginForm.confirmPassword = "";
+      this.register = false;
+    },
 
-    this.loading = true;
-    try {
-      await UserModule.Register(this.loginForm);
-
-      this.loading = false;
-      this.$router.push("/verify-code");
-    } catch (error) {
-      this.loading = false;
-    }
-  }
-  private async handleLogin() {
-    this.validationForm();
-    if (!this.valid) return;
-
-    this.loading = true;
-    try {
-      await UserModule.Login(this.loginForm);
-      if (UserModule.needConfirm) {
-        await UserModule.GetCode(this.loginForm.email);
-        this.$router.push("/verify-code");
-      } else {
-        this.$router.push("/home"); 
+    async handleRegister() {
+      debugger;
+      if (!this.register) {
+        this.registerShow();
       }
-      this.loading = false;
-    } catch (error) {
-      this.loading = false;
-    }
-  }
-  private validationForm() {
-    this.$refs.form.validate();
-  }
-}
+      this.validationForm();
+      if (!this.valid) return;
+
+      this.loading = true;
+      try {
+        await UserModule.Register(this.loginForm);
+
+        this.loading = false;
+        this.$router.push("/verify-code");
+      } catch (error) {
+        this.loading = false;
+      }
+    },
+    async handleLogin() {
+      this.validationForm();
+      if (!this.valid) return;
+
+      this.loading = true;
+      try {
+        await UserModule.Login(this.loginForm);
+        if (UserModule.needConfirm) {
+          await UserModule.GetCode(this.loginForm.email);
+          this.$router.push("/verify-code");
+        } else {
+          this.$router.push("/home");
+        }
+        this.loading = false;
+      } catch (error) {
+        this.loading = false;
+      }
+    },
+    validationForm() {
+      this.$refs.form.validate();
+    },
+  },
+};
 </script>

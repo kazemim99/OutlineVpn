@@ -38,6 +38,7 @@ namespace V2Ray.Api.Services.V2Keys.Dto
         public string? Key { get;  set; }
         public string? Remark { get;  set; }
     }
+   
     public class CreateV2KeyInput
     {
         [DataMember(IsRequired = false)]
@@ -64,5 +65,6 @@ namespace V2Ray.Api.Services.V2Keys.Dto
 
         [DataMember(IsRequired = false)]
         public string? Key { get; set; }
+        public bool MainServer { get;  set; }
     }
 }

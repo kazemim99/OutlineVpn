@@ -25,7 +25,7 @@
     {
         public const string Mobile = "09123135143";
 
-        public const string Email = "test@powerbox.com";
+        public const string Email = "kazemi.mst@gmail.com";
 
         public const string Phone = "88998899";
 

@@ -26,6 +26,7 @@ namespace V2Ray.Api.Entity
         public string? LastName { get;  set; }
 
         public List<V2Key> V2Keys { get; set; }
-
+        public bool Paid { get;  set; }
+        public long LastUpdatedTraffic { get;  set; }
     }
 }

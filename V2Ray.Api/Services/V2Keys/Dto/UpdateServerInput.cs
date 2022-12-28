@@ -11,5 +11,7 @@
         public long Total { get; set; }
         public long Up { get; set; }
         public long Down { get; set; }
+        public string Key { get;  set; }
+        public string ClientKeyId { get;  set; }
     }
 }
