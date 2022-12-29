@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+
+  redisdb:
+    image: redis:alpine
+
+  posgresdb:
+    image: postgres
+
+  pgadmin:
+    image: dpage/pgadmin4  
+
+  portainer:
+    image: portainer/portainer-ce
+
+  #seq:
+  #  image: datalust/seq:latest
+
+  v2rayapi:
+    image: ${DOCKER_REGISTRY-}v2rayapi
+    restart: always
+    build:
+      context: .
+      dockerfile: V2Ray.Api/Dockerfile
+
+   
+
+#      #Docker Networks
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  portainer_data:
+  postgres_data:
+  pgadmin_data:
+
+

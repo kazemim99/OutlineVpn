@@ -17,6 +17,7 @@ namespace V2Ray.Api.Entity
         public bool IsActive { get; set; }
         public bool Swapped { get;  set; }
         public bool IsMain { get;  set; }
+        public int KeyCount { get; set; }
     }
 
     public class Country : FullAuditEntity<int>, ISoftDelete

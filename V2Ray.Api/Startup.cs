@@ -17,6 +17,7 @@ using V2Ray.Api.Filter;
 using V2Ray.Api.BackgroundJob;
 using V2Ray.Api.Services.JWT;
 using V2Ray.Api.IOC;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace V2Ray.Api
 {
@@ -100,7 +101,7 @@ namespace V2Ray.Api
                .AddDbContext<DB>(options =>
                {
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                   options.UseSqlServer
+                   options.UseNpgsql
                    (Configuration.GetConnectionString("Default"));
                });
 
@@ -117,11 +118,18 @@ namespace V2Ray.Api
                 config.AddPolicy(Policies.Admin, Policies.AdminPolicy());
                 config.AddPolicy(Policies.User, Policies.UserPolicy());
             });
+
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
+
 
             if (!isTest)
             {

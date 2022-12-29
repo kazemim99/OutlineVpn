@@ -1,0 +1,77 @@
+version: '3.4'
+
+services:
+
+  redisdb:
+    container_name: redisdb
+    restart: always    
+    ports:
+        - "6379:6379"
+  #seq:
+  #  container_name: seq
+  #  restart: always   
+  #  environment:
+  #    - ACCEPT_EULA=Y   
+  #    - SEQ_FIRSTRUN_ADMINPASSWORDHASH=!Q@W#E$R5t6y7u8i
+  #  ports:
+  #    - "5341:80"
+  #  volumes:
+  #    - /datadrive:/data
+
+  posgresdb:
+    container_name: posgresdb
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=!Q@W#E
+      - POSTGRES_DB=V2Ray
+    restart: always
+    ports:
+        - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  pgadmin:
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=iranv2ray@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=!Q@W#E
+    restart: always
+    ports:
+        - "5050:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+
+  portainer:
+    container_name: portainer
+    restart: always
+    ports:
+      - "8080:8000"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+  v2rayapi:
+    ports:
+      - 5000:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionString:Default=Server=posgresdb;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E;
+    depends_on:
+      - posgresdb
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+
+  #reverseproxy:
+  # container_name: reverseproxy
+  # image : reverseproxy
+  # build:
+  #    context: ./Nginx
+  #    dockerfile: Nginx.Dockerfile
+  # ports:
+  #    - "80:80"
+  # restart: always
+
+
+

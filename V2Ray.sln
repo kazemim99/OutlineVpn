@@ -5,7 +5,16 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "V2Ray.Api", "V2Ray.Api\V2Ray.Api.csproj", "{0C05C568-8C84-437B-9807-4663D8AE3004}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "V2Ray.Api.Test", "V2Ray.Api.Test\V2Ray.Api.Test.csproj", "{AA257254-4EF3-4503-A5E2-8130C10C27BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "V2Ray.Api.Test", "V2Ray.Api.Test\V2Ray.Api.Test.csproj", "{AA257254-4EF3-4503-A5E2-8130C10C27BA}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{DE4DBEC9-8863-4BAA-968C-8C6F909CAA86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nginx", "Nginx", "{114C34D8-568B-4027-A24D-1F2284625EB0}"
+	ProjectSection(SolutionItems) = preProject
+		Nginx\nginx.conf = Nginx\nginx.conf
+		Nginx\Nginx.Dockerfile = Nginx\Nginx.Dockerfile
+		proxy.conf = proxy.conf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +30,10 @@ Global
 		{AA257254-4EF3-4503-A5E2-8130C10C27BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA257254-4EF3-4503-A5E2-8130C10C27BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA257254-4EF3-4503-A5E2-8130C10C27BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE4DBEC9-8863-4BAA-968C-8C6F909CAA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE4DBEC9-8863-4BAA-968C-8C6F909CAA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE4DBEC9-8863-4BAA-968C-8C6F909CAA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE4DBEC9-8863-4BAA-968C-8C6F909CAA86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -44,26 +44,25 @@ namespace V2Ray.Api.Services.V2Keys.Dto
         [DataMember(IsRequired = false)]
         public string? Remark { get; set; }
 
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
         public int UserId { get; set; }
+
 
         public int Count { get; set; } = 10;
 
         [DataMember(IsRequired = false)]
+        [JsonIgnore]
         public string? ClientKeyId { get; set; }
 
         public int ServerId { get; set; }
 
         public int Capacity { get; set; } = 40;
 
-        public int Port { get; set; }
-
         public DateTime ExpireDate { get; set; } = DateTime.Now.AddDays(30);
 
-        public bool State { get; set; } = true;
-
-        public Protocol Protocol { get; set; }
-
         [DataMember(IsRequired = false)]
+        [JsonIgnore]
         public string? Key { get; set; }
         public bool MainServer { get;  set; }
     }

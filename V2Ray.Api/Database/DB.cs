@@ -13,9 +13,9 @@ namespace V2Ray.Api.Database
             var builder = new DbContextOptionsBuilder<DB>();
 
             //var connectionString = "Data Source=185.55.224.120;Initial Catalog= powerbox_sa;User ID=powerbox_sa;Password=Pa$$w0rd";
-            var connectionString = "Server=.; Database=V2Ray; Trusted_Connection=true;";
+            var connectionString = "Server=posgresdb;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E$R5t6y7u8i";
 
-            builder.UseSqlServer(connectionString);
+            builder.UseNpgsql(connectionString);
             return new DB(builder.Options);
         }
     }
