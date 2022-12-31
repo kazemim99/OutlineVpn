@@ -19,26 +19,21 @@ services:
 
 
 
-  reverseproxy:
-   container_name: reverseproxy
-   image : nginx
-   build:
-      context: ./Nginx
-      dockerfile: Nginx.Dockerfile
-   environment:
-    - NGINX_HOST=localhost
-    - NGINX_PORT=80
+  #reverseproxy:
+  # container_name: reverseproxy
+  # image : nginx
+  # build:
+  #    context: ./Nginx
+  #    dockerfile: Nginx.Dockerfile
+  # environment:
+  #  - NGINX_HOST=localhost
+  #  - NGINX_PORT=80
 
   v2rayapi:
     image:  ${DOCKER_REGISTRY-}v2rayapi
     restart: always
     build:
-      context: .
-      dockerfile: Dockerfile
-
-  
-
-
+      dockerfile: ./Dockerfile
 
 
 volumes:
