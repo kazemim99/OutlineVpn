@@ -15,8 +15,9 @@ RUN dotnet build "V2Ray.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "V2Ray.Api.csproj" -c Release -o /app/publish
-
+run docker build -t v2rayapi .
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_URLS http://*:5000
 ENTRYPOINT ["dotnet", "V2Ray.Api.dll"]
