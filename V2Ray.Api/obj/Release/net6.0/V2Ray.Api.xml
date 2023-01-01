@@ -1,0 +1,438 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>V2Ray.Api</name>
+    </assembly>
+    <members>
+        <member name="T:V2Ray.Api.Controllers.AuthenticationController">
+            <summary>
+            احراز هویت 
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.Login(V2Ray.Api.Services.UserServices.Dto.LoginDto)">
+            <summary>
+            فرم ورود و دریافت کد تایید 
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.RegisterUser(V2Ray.Api.Services.UserServices.Dto.CreateUserInput)">
+            <summary>
+            فرم ثبت نام کاربر 
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.GetCurrentUser">
+            <summary>
+            دریافت اطلاعات کاربری که لاگین کرده 
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.GetCode(System.String)">
+            <summary>
+            دریافت کد تایید از طریق پیامک
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.VerifyCode(V2Ray.Api.ViewModels.VerifyCodeViewModel)">
+            <summary>
+            ارسال کد تایید و دریافت توکن دسترسی
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.ForgetPassword(System.String)">
+             <summary>
+             تغییر رمز عبور کاربر
+             </summary>
+             <param name="input"></param>
+             <returns></returns>
+            
+             
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.ChangePassword(System.String,V2Ray.Api.ViewModels.ChangePasswordViewModel)">
+             <summary>
+             تغییر رمز عبور کاربر
+             </summary>
+             <param name="input"></param>
+             <returns></returns>
+            
+             
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.Logout">
+             <summary>
+             خروج کاربر و حذف توکن
+             </summary>
+             <param name="input"></param>
+             <returns></returns>
+            
+             
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.RefreshToken">
+             <summary>
+             دریافت رفرش توکن
+             </summary>
+             <param name="input"></param>
+             <returns></returns>
+            
+             
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.RefreshToken(V2Ray.Api.Services.UserServices.Dto.RefreshTokenRequest)">
+             <summary>
+             ارسال رفرش توکن و دریافت توکن جدید
+             </summary>
+             <param name="input"></param>
+             <returns></returns>
+            
+             
+        </member>
+        <member name="M:V2Ray.Api.Controllers.CityController.Update(System.Int32,V2Ray.Api.Services.Cities.Dto.UpdateCityInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.CityController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.CityController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.PlanController.Update(System.Int32,V2Ray.Api.Services.PlanServices.Dto.UpdatePlanInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.PlanController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.PlanController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="T:V2Ray.Api.Controllers.PublicDataController">
+             <summary>
+             Api های عمومی
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.PublicDataController.GetFile(System.String)">
+             <summary>
+             نمایش فایلها در قسمت در فرانت با اسفتاده از آدرس
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.UserController.Update(System.Int32,V2Ray.Api.Services.UserServices.Dto.UpdateUserInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.UserController.ChangeState(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.UserController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.UserController.Profile">
+             <summary> 
+             اطلاعات پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.UserController.Profile(V2Ray.Api.Services.UserServices.Dto.UpdateUserInput)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.UserController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2KeyController.Update(System.Int32,V2Ray.Api.Services.V2Keys.Dto.UpdateV2KeyInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2KeyController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2KeyController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2ServerController.Update(System.Int32,V2Ray.Api.Services.Server.Dto.UpdateServerInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2ServerController.ChageState(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2ServerController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2ServerController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Extensions.Mapper.Create``2(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.Dictionary{System.Type,System.Type},System.String[])">
+            <summary>
+            maps Tfrom to Tto
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Extensions.Mapper.Create``2(System.Collections.Generic.IEnumerable{``0},System.String[])">
+            <summary>
+            maps Tfrom to Tto
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Extensions.Mapper.Create``2(``0,System.Collections.Generic.Dictionary{System.Type,System.Type},System.String[])">
+            <summary>
+            maps Tfrom to Tto
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Extensions.Mapper.Create``2(``0,System.String[])">
+            <summary>
+            maps Tfrom to Tto
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Extensions.Mapper.Update``2(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``1},System.Collections.Generic.Dictionary{System.Type,System.Type},System.String[])">
+            <summary>
+            maps Tfrom to Tto
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Extensions.Mapper.Update``2(``0,``1,System.String[])">
+            <summary>
+            Updates propeties of 'to' by 'from' properties
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Extensions.Mapper.Update``2(``0,``1,System.Collections.Generic.Dictionary{System.Type,System.Type},System.String[])">
+            <summary>
+            Updates propeties of 'to' by 'from' properties
+            </summary>
+        </member>
+        <member name="T:V2Ray.Api.Services.sms.Kavenegar.Json.JsonObject">
+            <summary>
+            JsonObject is the base class. JsonString,JsonNumber,JsonBoolean,JsonNullable and JsonArray
+            inherits from JsonObject. A JsonArray object may contain objects of the base class
+            </summary>
+        </member>
+        <member name="T:V2Ray.Api.Services.sms.Kavenegar.Json.Parser">
+            <summary>
+            Contains the façade-style class to perform Json operations
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.Parse(System.String)">
+            <summary>
+            Deserialize a JSON document. This method does not perform a syntax checking so It
+            assumes a valid Json input
+            </summary>
+            <param name="json">A string which contains a valid Json array or object</param>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.SerializeObject(System.String)">
+            <summary>
+            This method performs deserialization of an object(except array)
+            </summary>
+            <returns>JsonObject object as a deserialized JSON object</returns>
+            <param name="json">A string which contains a valid Json object</param>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.CloseBracketObject(System.String)">
+            <summary>
+            Search where is the ending of an object
+            </summary>
+            <returns>the index of the '}' which closes an object</returns>
+            <param name="json">A valid json string ({........)</param>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.CloseBracketArray(System.String)">
+            <summary>
+            Search where is the ending of an array
+            </summary>
+            <returns>he index of the ']' which closes an object</returns>
+            <param name="json">A valid Json string ([.....)</param>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.SerializeArray(System.String)">
+            <summary>
+            Deserialize a Json Array into an object JsonArray
+            </summary>
+            <returns>JsonArray object as a deserialized JSON array</returns>
+            <param name="array">valid JSON array except the brackets</param>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.SafeSubString(System.String,System.Int32,System.Int32)">
+            <summary>
+            Just a safe subString operation
+            </summary>
+            <returns>A subString of the string input parameter text</returns>
+            <param name="text">A string</param>
+            <param name="start">index of starting</param>
+            <param name="length">Length of the subString</param>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.FindNextQuote(System.String,System.Int32)">
+            <summary>
+            Finds the next '"' to close a String field
+            </summary>
+            <returns>The next ' " '</returns>
+            <param name="text">A valid JSON string</param>
+            <param name="index">Index of starting</param>
+        </member>
+        <member name="M:V2Ray.Api.Services.sms.Kavenegar.Json.Parser.SplitElements(System.String)">
+            <summary>
+            Splits the elements of an Array
+            </summary>
+            <returns>The elements in an array of Strings</returns>
+            <param name="arrayText"></param>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Id">
+            <summary>
+            Gets or sets the server ID.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Name">
+            <summary>
+            Gets or sets the server name.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Host">
+            <summary>
+            Gets or sets the server address.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Port">
+            <summary>
+            Gets or sets the server port.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Method">
+            <summary>
+            Gets or sets the method used for the server.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.UserPSK">
+            <summary>
+            Gets or sets the user PSK.
+            For Shadowsocks 2022 without EIH and legacy Shadowsocks,
+            this is the main PSK.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.IdentityPSKs">
+            <summary>
+            Gets or sets the identity PSKs.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginName">
+            <summary>
+            Gets or sets the plugin name.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginVersion">
+            <summary>
+            Gets or sets the required plugin version string.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginOptions">
+            <summary>
+            Gets or sets the plugin options passed as environment variable SS_PLUGIN_OPTIONS.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginArguments">
+            <summary>
+            Gets or sets the plugin startup arguments.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Group">
+            <summary>
+            Gets or sets the node group
+            this server belongs to.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Owner">
+            <summary>
+            Gets or sets the owner of the server.
+            </summary>
+        </member>
+        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Tags">
+            <summary>
+            Gets or sets the list of annotated tags.
+            </summary>
+        </member>
+        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.GetHostPort">
+            <summary>
+            Gets the string representation of host:port.
+            IPv6 addresses are enclosed in square brackets ([]).
+            </summary>
+        </member>
+        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.GetPassword">
+            <summary>
+            Gets the password to the server by combining iPSKs and uPSK.
+            </summary>
+            <returns>The password to the server.</returns>
+        </member>
+        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.ToUri">
+            <summary>
+            Gets an SIP002 URL representing the server.
+            </summary>
+            <returns>An SIP002 URL.</returns>
+        </member>
+        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.TryParse(System.String,ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig@)">
+            <summary>
+            Parses an SIP002 URL into a Shadowsocks server configuration.
+            </summary>
+            <param name="url">The URL to parse.</param>
+            <param name="serverConfig">The parsed server configuration.</param>
+            <returns>Whether the parsing is successful.</returns>
+        </member>
+        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.TryParse(System.Uri,ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig@)">
+            <summary>
+            Parses an SIP002 URI into a Shadowsocks server configuration.
+            </summary>
+            <param name="uri">The URI to parse.</param>
+            <param name="serverConfig">The parsed server configuration.</param>
+            <returns>Whether the parsing is successful.</returns>
+        </member>
+    </members>
+</doc>

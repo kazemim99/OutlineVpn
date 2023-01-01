@@ -1,4 +1,5 @@
-FROM nginx:latest
+# syntax=docker/dockerfile:experimental
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY html /usr/share/nginx/html
+FROM nginx:alpine
+
+COPY nginx.conf /etc/nginx/nginx.conf

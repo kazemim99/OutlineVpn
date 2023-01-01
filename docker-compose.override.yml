@@ -53,14 +53,15 @@ services:
       - portainer_data:/data
 
 
-  #reverseproxy:
-  #   ports:
-  #    - "80:80"
-  #   restart: always
+  reverseproxy:
+    ports:
+       - 80:80
+       - 443:443
+    restart: always
 
   v2rayapi:
     ports:
-      - "8080:80"
+      - "5000:5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionString:Default=Server=posgresdb;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E;
@@ -68,6 +69,7 @@ services:
       - posgresdb
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    restart: always
   
   
 

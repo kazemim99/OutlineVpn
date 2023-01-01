@@ -1,0 +1,51 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "Miscellaneous Files",
+      "ColorIndex": -1
+    },
+    "0c05c568-8c84-437b-9807-4663d8ae3004": {
+      "ProjectGuid": "0c05c568-8c84-437b-9807-4663d8ae3004",
+      "DisplayName": "V2Ray.Api",
+      "ColorIndex": 0
+    },
+    "de4dbec9-8863-4baa-968c-8c6f909caa86": {
+      "ProjectGuid": "de4dbec9-8863-4baa-968c-8c6f909caa86",
+      "DisplayName": "docker-compose",
+      "ColorIndex": 1
+    },
+    "aa257254-4ef3-4503-a5e2-8130c10c27ba": {
+      "ProjectGuid": "aa257254-4ef3-4503-a5e2-8130c10c27ba",
+      "DisplayName": "V2Ray.Api.Test",
+      "ColorIndex": 2
+    },
+    "f63c9805-34fd-4fdc-ac1a-740083328a36": {
+      "ProjectGuid": "f63c9805-34fd-4fdc-ac1a-740083328a36",
+      "DisplayName": "Nginx",
+      "ColorIndex": 3
+    },
+    "114c34d8-568b-4027-a24d-1f2284625eb0": {
+      "ProjectGuid": "114c34d8-568b-4027-a24d-1f2284625eb0",
+      "DisplayName": "Nginx",
+      "ColorIndex": 4
+    },
+    "af7986e1-4587-423b-9922-017c751a1269": {
+      "ProjectGuid": "af7986e1-4587-423b-9922-017c751a1269",
+      "DisplayName": "WebApplication1",
+      "ColorIndex": 5
+    },
+    "a2448de4-50c4-467d-8053-cb2ef4f014be": {
+      "ProjectGuid": "a2448de4-50c4-467d-8053-cb2ef4f014be",
+      "DisplayName": "WebApplication1",
+      "ColorIndex": 6
+    },
+    "8da2fff7-6dc4-47d6-8d5b-84a1dbc6317b": {
+      "ProjectGuid": "8da2fff7-6dc4-47d6-8d5b-84a1dbc6317b",
+      "DisplayName": "Solution Items",
+      "ColorIndex": 7
+    }
+  },
+  "NextColorIndex": 8
+}

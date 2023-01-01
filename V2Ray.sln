@@ -13,7 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nginx", "Nginx", "{114C34D8
 	ProjectSection(SolutionItems) = preProject
 		Nginx\nginx.conf = Nginx\nginx.conf
 		Nginx\Nginx.Dockerfile = Nginx\Nginx.Dockerfile
-		proxy.conf = proxy.conf
 	EndProjectSection
 EndProject
 Global

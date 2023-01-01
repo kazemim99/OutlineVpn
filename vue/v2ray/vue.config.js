@@ -3,7 +3,7 @@ module.exports = {
     headers: { "Access-Control-Allow-Origin": "*" },
     proxy: "https://localhost:7087/",
   },
-  outputDir: "C:/Repos/OutlineVpn/Nginx/html",
+  outputDir: "C:/Repos/OutlineVpn/V2Ray.Api/wwwroot",
   transpileDependencies: ["vuetify"],
   css: {
     loaderOptions: {
