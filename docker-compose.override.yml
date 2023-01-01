@@ -56,12 +56,13 @@ services:
   reverseproxy:
     ports:
        - 80:80
-       - 443:443
     restart: always
 
+
+
   v2rayapi:
-    ports:
-      - "5000:5000"
+    expose:
+      - "5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionString:Default=Server=posgresdb;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E;

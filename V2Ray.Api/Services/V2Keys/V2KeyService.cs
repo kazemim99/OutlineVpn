@@ -232,15 +232,7 @@ namespace V2Ray.Api.Services.V2Keys
             }
             return output;
         }
-
-        public string TelegramSendMessage(string destID, string text)
-        {
-            string urlString = $"https://api.telegram.org/bot{5860902566:AAG0ZhGjjlsVHbdjwxfwM3s_4MwXpiaHeoE}/sendMessage?chat_id={destID}&text={text}";
-
-            WebClient webclient = new WebClient();
-
-            return webclient.DownloadString(urlString);
-        }
+       
         private int GeneratePort(DB db)
         {
             var port = 0;
@@ -254,13 +246,9 @@ namespace V2Ray.Api.Services.V2Keys
             return port;
         }
 
-        private async Task<List<V2Server>> GetActiveServers()
-        {
-            return await _db.V2Servers.Include(a => a.City).Where(a => a.IsActive).ToListAsync();
-        }
 
 
-        public async Task<List<Obj>> GetServerSampleKey(V2Server input, HttpClient httpClient)
+        private async Task<List<Obj>> GetServerSampleKey(V2Server input, HttpClient httpClient)
         {
             if (Objs != null && Objs.Any())
                 return Objs;
@@ -341,18 +329,24 @@ namespace V2Ray.Api.Services.V2Keys
 
         public async Task CreateFreeAcount(int userId, int? count)
         {
-            var userFreeAcount = await _db.Users.Where(a => a.Id == userId).Select(a => a.FreeAccount).FirstOrDefaultAsync();
-            var serverIds = await _db.V2Servers.Where(a => a.IsMain).Select(a => a.Id).ToListAsync();
-            foreach (var item in serverIds)
+            var user = await _db.Users.Where(a => a.Id == userId).FirstOrDefaultAsync();
+            if(!user.FreeAccount)
             {
+                if (!user.Paid)
+                    throw new ApiException("هیچ پرداخت تایید شده ای یافت نگردید");
+            }
+            var server = await _db.V2Servers.Where(a => a.IsActive).Select(a => a.Id).FirstOrDefaultAsync();
+
+            if (server == 0)
+                throw new ApiException("سرور یافت نشد");
+           
                 await this.InsertAsync(new CreateV2KeyInput
                 {
-                    Capacity = userFreeAcount ? 10 : 40,
+                    Capacity = user.FreeAccount ? 10 : 40,
                     Count = 1,
-                    ServerId = item,
+                    ServerId = server,
                     ExpireDate = DateTime.Now.AddDays(30)
                 });
-            }
 
         }
         public async Task<UserKeyDetailsOutput> UserKeyDetails(int userId)

@@ -12,9 +12,8 @@ namespace V2Ray.Api.Controllers
             {
                 return int.Parse(User.Claims.First(x => x.Type == "UserId").Value);
             }
-        } 
-        
-        
+        }
+
         public int FreeAcount
         {
             get

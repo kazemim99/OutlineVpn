@@ -1,7 +1,7 @@
 module.exports = {
   devServer: {
     headers: { "Access-Control-Allow-Origin": "*" },
-    proxy: "https://localhost:7087/",
+    proxy: "https://localhost:7087/api",
   },
   outputDir: "C:/Repos/OutlineVpn/V2Ray.Api/wwwroot",
   transpileDependencies: ["vuetify"],

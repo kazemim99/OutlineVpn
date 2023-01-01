@@ -97,6 +97,7 @@ namespace V2Ray.Api
 
             if (!isTest)
             {
+                var tt = Configuration.GetConnectionString("Default");
                 services
                .AddDbContext<DB>(options =>
                {
@@ -128,8 +129,10 @@ namespace V2Ray.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseForwardedHeaders();
-
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             if (!isTest)
             {

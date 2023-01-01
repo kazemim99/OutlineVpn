@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "v2rayapi",
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "pgadmin": "StartWithoutDebugging",
+        "portainer": "StartWithoutDebugging",
+        "posgresdb": "StartWithoutDebugging",
+        "redisdb": "StartWithoutDebugging",
+        "reverseproxy": "StartWithoutDebugging",
+        "v2rayapi": "StartDebugging"
+      }
+    }
+  }
+}
