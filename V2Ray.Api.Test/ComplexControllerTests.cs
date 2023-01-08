@@ -109,7 +109,7 @@ namespace POD.Test.Integrations
                 a.V2Servers.Where(a => a.Id == serverId).FirstOrDefaultAsync());
 
             apiResponse.Title.Should().Be(server.Title);
-            apiResponse.IP.Should().Be(server.IP);
+            apiResponse.IP.Should().Be(server.IPs);
             apiResponse.Url.Should().Be(server.Url);
             apiResponse.CityId.Should().Be(server.CityId);
          
@@ -161,7 +161,7 @@ namespace POD.Test.Integrations
                 a.V2Servers.Add(new V2Server()
                 {
                     Title = Guid.NewGuid().ToString(),
-                    IP = Guid.NewGuid().ToString(),
+                    IPs = Guid.NewGuid().ToString(),
                     IsActive = i / 3 == 0,
                     Port = new Random().Next(10000, 60000),
                     Password = Guid.NewGuid().ToString(),

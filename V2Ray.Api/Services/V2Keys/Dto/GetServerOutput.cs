@@ -9,7 +9,7 @@ namespace V2Ray.Api.Services.V2Keys.Dto
         public int Id { get; set; }
         public int ServerId { get; set; }
         public int Capacity { get; set; }
-        public int ExpireDate { get; set; }
+        public DateTime ExpireDate { get; set; }
         public bool State { get; set; }
         public Protocol Protocol { get; set; }
     }

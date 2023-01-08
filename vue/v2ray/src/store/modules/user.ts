@@ -5,7 +5,7 @@ import {
   getModule,
   Module,
 } from "vuex-module-decorators";
-import  useRoute  from 'vue-router'
+import useRoute from 'vue-router'
 
 import store from "@/store";
 import VueRouter from 'vue-router';
@@ -14,6 +14,7 @@ import { getToken, setToken, removeToken } from "@/utils/cookies";
 import {
   login,
   getCode,
+  getUser,
   veriFyCode,
   changePassword,
   register,
@@ -106,6 +107,13 @@ class User extends VuexModule implements IUserState {
     await register(userInfo).then((a) => {
       this.SET_Mail(userInfo.email);
       this.GetCode(userInfo.email)
+    });
+  }
+  @Action
+  public async GetUserDetails() {
+    await getUser().then((a) => {
+      const result = a.data.result;
+      store.commit("setUserDetails", result);
     });
   }
   @Action

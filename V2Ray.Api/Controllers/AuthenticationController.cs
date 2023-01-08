@@ -74,15 +74,16 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpPost("me")]
+        [HttpPost("get-current-user")]
         [Authorize]
 
         public async Task<ApiResponse> GetCurrentUser()
         {
-            var result = new GetUserOutput()
+            var user =await _service.GetById(UserId);
+            var result = new UserDetailDto
             {
-                FirstName = "Mostafa",
-                LastName = "Kazemi"
+                NeedConfirm = user.NeedConfirm,
+                FreeAccount = user.FreeAccount
             };
             return new ApiResponse(result);
         }

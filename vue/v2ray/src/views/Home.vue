@@ -2,13 +2,31 @@
   <div class="small">
     <v-row>
       <v-col cols="6">
-        <div class="grey--text mb-2">ترافیک مصرف شده</div>
+        <div class="grey--text mb-2">تاریخ اعتبار</div>
       </v-col>
       <v-col cols="6">
-        <div class="mb-2">{{ this.consumedTraffic }} گیگا بایت</div>
+        <div class="mb-2">{{ this.userKeyDetails.expireTime }}</div>
       </v-col>
     </v-row>
     <v-row>
+      <v-col cols="6">
+        <div class="grey--text mb-2">کد اتصال</div>
+      </v-col>
+      <v-col cols="6">
+        <v-row>
+          <div class="mb-2">{{ this.userKeyDetails.key }}</div>
+          <v-btn
+            rounded
+            color="success"
+            :loading="loading"
+            @click="copyToClipBoard(userKeyDetails.key)"
+            dark
+            >کپی</v-btn
+          >
+        </v-row>
+      </v-col>
+    </v-row>
+    <!-- <v-row>
       <v-col cols="6">
         <div class="grey--text mb-2">ترافیک باقی مانده</div>
       </v-col>
@@ -23,10 +41,16 @@
       <v-col cols="6">
         <div class="mb-2">{{ this.initTraffic }} گیگا بایت</div>
       </v-col>
-    </v-row>
+    </v-row> -->
     <div class="text-center mt-10">
-      <v-btn to="/plans" rounded color="primary" @click="getKey()" dark>
-        {{ this.feeAccount ? "دریافت کلید رایگان" : "خرید ترافیک" }}
+      <v-btn
+        rounded
+        color="primary"
+        :loading="loading"
+        @click="userKeyDetails.freeAccount ? getKey() : buyKey()"
+        dark
+      >
+        {{ userKeyDetails.freeAccount ? "دریافت VPN رایگان" : "تمدید" }}
       </v-btn>
     </div>
   </div>
@@ -39,9 +63,11 @@ import { UserModule } from "@/store/modules/user";
 export default {
   data() {
     return {
-      keys:[],
-      count:1,
+      loading: false,
+      keys: [],
+      count: 1,
       userKeyDetails: {
+        key: "",
         freeAccount: false,
         up: 0,
         down: 0,
@@ -51,16 +77,30 @@ export default {
     };
   },
   mounted() {
-    this.getConsumedTraffic();
+    this.getUserKeyDetails();
   },
   methods: {
-    getKey() {
-      request.get(`/v2Key/generateKey/${this.count}`).then((response) => {
-        var data = response.data.result;
-        this.keys = data;
-      });
+    buyKey() {
+      alert("خرید");
     },
-    getConsumedTraffic() {
+    copyToClipBoard(textToCopy) {
+      navigator.clipboard.writeText(textToCopy);
+    },
+    getKey() {
+      this.loading = true;
+      request
+        .get(`/v2Key/generateKey/${this.count}`)
+        .then((response) => {
+          var data = response.data.result;
+          this.keys = data;
+          this.loading = false;
+          this.getUserKeyDetails();
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+    },
+    getUserKeyDetails() {
       request.get(`/v2Key/user-key-details`).then((response) => {
         var data = response.data.result;
         this.userKeyDetails = data;

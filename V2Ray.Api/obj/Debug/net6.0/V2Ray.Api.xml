@@ -188,7 +188,7 @@
              </summary>
             
         </member>
-        <member name="M:V2Ray.Api.Controllers.V2KeyController.Delete(System.Int32)">
+        <member name="M:V2Ray.Api.Controllers.V2KeyController.Delete(System.Int32,System.Int32)">
              <summary>
              ویرایش پروفایل یک کاربر
              </summary>

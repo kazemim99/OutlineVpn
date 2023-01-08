@@ -256,9 +256,6 @@ namespace V2Ray.Api.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
 
-                    b.Property<bool>("FreeAccount")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("IP")
                         .IsRequired()
                         .HasColumnType("text");
@@ -290,6 +287,9 @@ namespace V2Ray.Api.Migrations
 
                     b.Property<int?>("UpdaterUserId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("UsedFreeAccount")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -330,9 +330,8 @@ namespace V2Ray.Api.Migrations
                     b.Property<long>("Capacity")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ClientKeyId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ClientPort")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -340,8 +339,8 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("integer");
 
-                    b.Property<long>("ExpireDate")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -349,6 +348,9 @@ namespace V2Ray.Api.Migrations
                     b.Property<string>("Key")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("KeyId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Port")
                         .HasColumnType("integer");
@@ -401,7 +403,7 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("IP")
+                    b.Property<string>("IPs")
                         .IsRequired()
                         .HasColumnType("text");
 

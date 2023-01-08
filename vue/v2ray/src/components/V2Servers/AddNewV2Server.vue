@@ -18,7 +18,6 @@
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
-
               <v-col class="d-flex" cols="12" sm="6">
                 <v-select
                   v-model="v2Server.cityId"
@@ -78,30 +77,37 @@
                     required
                   ></v-text-field>
                 </v-col>
-               
               </v-row>
               <v-row>
-                <v-col cols="4" sm="12" md="4">
-                  <v-text-field
-                    autocomplete="false"
-                    v-model="v2Server.ip"
-                    label="آی پی *"
-                    required
-                  ></v-text-field>
+                <v-col cols="12" sm="12" md="4">
+                  <div
+                    v-for="(textField, i) in textFields"
+                    :key="i"
+                    class="text-fields-row"
+                  >
+                    <v-text-field
+                      :label="textField['label' + (i + 1)]"
+                      v-model="textField['value' + (i + 1)]"
+                    ></v-text-field>
+                    <v-btn x-small @click="add(null)" class="primary">+</v-btn>
+                    <v-btn x-small @click="remove(i)" class="error">-</v-btn>
+                  </div>
                 </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="4">
                   <v-switch
                     v-model="v2Server.isActive"
-                    :label="`وضعیت: ${
-                      v2Server.isActive ? 'فعال' : 'غیر فعال'
-                    }`"
+                    :label="`وضعیت: ${v2Server.isActive ? 'فعال' : 'غیر فعال'}`"
+                  ></v-switch>
+                  <v-switch
+                    v-model="v2Server.isMain"
+                    :label="`نوع سرور: ${v2Server.isMain ? 'اصلی' : 'معمولی'}`"
                   ></v-switch>
 
                   <v-switch
                     v-model="v2Server.swapped"
-                    :label="`انتقال جدید: ${
-                      v2Server.swapped ? 'بله' : 'خیر'
-                    }`"
+                    :label="`انتقال جدید: ${v2Server.swapped ? 'بله' : 'خیر'}`"
                   ></v-switch>
                 </v-col>
               </v-row>
@@ -130,39 +136,68 @@ export default Vue.extend({
   data: () => ({
     id: null,
     dialog: false,
+    currentRows: 0,
+    textFields: [],
     cities: [],
     dialogLogo: false,
     valid: true,
     loading: false,
     v2Server: {
-      swapped:false,
+      swapped: false,
       title: "",
-      state : false,
+      state: false,
       isActive: false,
       url: "",
       cityId: 0,
-      ip: "",
+      iPs: [],
       userName: "",
       password: "",
-      port:4152
+      port: 4152,
     },
   }),
   watch: {
     dialog: {
       handler() {
         if (!this.dialog) {
+          if (this.currentRows.length == 0) {
+            this.addEmpty();
+          }
           this.clearData();
+        } else {
+          this.getCities();
         }
+
         if (this.id) this.getV2Server(this.id);
       },
       deep: true,
     },
   },
-  created() {
-    this.getCities();
-  },
+
   methods: {
+    async addEmpty() {
+      this.currentRows++;
+      var tempObj = {};
+
+      tempObj["label" + this.currentRows] = `آی پی ${this.currentRows}`;
+      tempObj["value" + this.currentRows] = "";
+      this.textFields.push(tempObj);
+    },
+    async add(ip) {
+      this.currentRows++;
+      var tempObj = {};
+
+      tempObj["label" + this.currentRows] = `آی پی ${this.currentRows}`;
+      tempObj["value" + this.currentRows] = ip ? ip : "";
+      this.textFields.push(tempObj);
+    },
+
+    async remove(index) {
+      this.currentRows--;
+      this.textFields.splice(index, 1);
+    },
+
     async getV2Server(id) {
+      
       await request.get(`/v2Server/${id}`).then((response) => {
         var data = response.data.result;
         this.v2Server.id = id;
@@ -175,27 +210,34 @@ export default Vue.extend({
         this.v2Server.isActive = data.isActive;
         this.v2Server.userName = data.userName;
         this.v2Server.password = data.password;
+        this.password = data.password;
+
+        data.iPs.forEach((ip) => {
+          this.add(ip);
+        });
       });
     },
-   
+
     async getCities() {
-      await request
-        .get(`city/all-cities`)
-        .then((response) => {
-          var data = response.data.result;
-          console.log(data.result)
-          this.cities = data.result;
-        });
+      await request.get(`city/all-cities`).then((response) => {
+        var data = response.data.result;
+        this.cities = data.result;
+      });
     },
     submit() {
       if (!this.$refs.form.validate()) {
         return;
       }
+
+      this.textFields.forEach((textField, index) => {
+        let re = textField["value" + (index + 1)];
+        this.v2Server.iPs.push(re);
+      });
       this.loading = true;
-      
+
       if (this.id) {
         request
-          .put(`/v2Server/${this.id}`,this.v2Server)
+          .put(`/v2Server/${this.id}`, this.v2Server)
           .then((response) => {
             this.dialog = false;
             this.$emit("reloadV2Servers");
@@ -220,14 +262,21 @@ export default Vue.extend({
     },
 
     clearData() {
+      debugger;
+      for (let index = 0; index < this.currentRows.length; index++) {
+        this.remove(index);
+      }
+      (this.currentRows = 0),
         (this.v2Server.title = ""),
+        (this.textFields = []),
         (this.v2Server.url = ""),
         (this.v2Server.userName = ""),
         (this.v2Server.password = ""),
         (this.v2Server.ip = ""),
+        (this.v2Server.id = null),
         (this.v2Server.cityId = 0),
         (this.v2Server.state = false),
-        (this.v2Server.swapped = false)
+        (this.v2Server.swapped = false);
     },
   },
 });
@@ -242,7 +291,9 @@ export default Vue.extend({
   position: absolute;
   width: 100%;
 }
-
+.text-fields-row {
+  display: flex;
+}
 .card-form-img {
   padding: 0px !important;
 }

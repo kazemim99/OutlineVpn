@@ -43,7 +43,7 @@
           v-can="'Member_Delete'"
           medium
           class="mr-2"
-          @click="deleteItem(item.id)"
+          @click="deleteItem(item.id,item.v2ServerId)"
           >mdi-delete</v-icon
         >
       </template>
@@ -149,12 +149,9 @@ export default {
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
-        { text: "عنوان", value: "title", sortable: true },
-        { text: "شهر", value: "expireDate", sortable: true },
-        { text: "آی پی", value: "primaryCapacity", sortable: false },
-        { text: "وضعیت", value: "state", sortable: false },
-        { text: "ظرفیت استفاده شده", value: "usedCapacity", sortable: false },
-        { text: "کاربر", value: "user", sortable: false },
+        { text: "کلید", value: "key", sortable: true },
+        { text: "آدرس سرور", value: "url", sortable: false },
+        { text: "تاریخ ایجاد", value: "createDate", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
       ],
@@ -200,7 +197,7 @@ export default {
       this.$refs.addV2ServerCom.dialog = true;
       this.$refs.addV2ServerCom.id = item.id;
     },
-    deleteItem(id) {
+    deleteItem(id,v2ServerId) {
       Vue.swal({
         title: "ایا مطمئن  هستید",
         icon: "warning",
@@ -212,9 +209,9 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           request
-            .delete(`/V2Key/${id}`)
+            .delete(`/V2Key/${v2ServerId}/${id}`)
             .then(() => {
-              Vue.swal("", "سرور با موفقیت حذف گردید", "success");
+              Vue.swal("", "کلید با موفقیت حذف گردید", "success");
               this.getV2Keys();
             })
             .finally(() => {

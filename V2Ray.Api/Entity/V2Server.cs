@@ -10,7 +10,7 @@ namespace V2Ray.Api.Entity
         public string Url { get; set; }
         public int Port { get; set; }
         public City City { get; set; }
-        public string IP { get; set; }
+        public string IPs { get; set; }
         public bool IsDeleted { get; set; }
         public List<V2Key> Keys { get; set; }
         public int CityId { get; set; }
@@ -41,8 +41,8 @@ namespace V2Ray.Api.Entity
     {
         public string Remark { get; set; }
         public long Capacity { get; set; }
-        public string ClientKeyId { get; set; }
-        public long ExpireDate { get; set; }
+        public int ClientPort { get; set; }
+        public DateTime ExpireDate { get; set; }
         public bool State { get; set; }
         public Protocol Protocol { get; set; }
         public string Key { get; set; }
@@ -52,5 +52,6 @@ namespace V2Ray.Api.Entity
         public int? UserId { get; set; }
         public User User { get; set; }
         public int Port { get; internal set; }
+        public int KeyId { get;  set; }
     }
 }

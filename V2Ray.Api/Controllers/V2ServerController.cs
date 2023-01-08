@@ -117,8 +117,9 @@ namespace V2Ray.Api.Controllers
             //);
 
             //Console.WriteLine(message.Sid);
-            var result = await _service.GetById(id);
 
+            var result = await _service.GetById(id);
+            result.IPs = result.IP.Split(',').ToList();
             return new ApiResponse(result);
         }
 

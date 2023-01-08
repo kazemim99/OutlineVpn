@@ -101,7 +101,7 @@ import { UserModule } from "@/store/modules/user";
 
 export default class Dashboard extends Vue {
   private drawer = true;
-  private title = "IRAN Outline";
+  private title = "IranV2Ray";
   private fixed = false;
   getNotif() {
     this.$router.push("/device-notifications");
@@ -135,13 +135,13 @@ export default class Dashboard extends Vue {
       permission: "Role_Show",
       to: "/user-roles",
     },
-    {
-      icon: "mdi-currency-usd",
-      title: "پلن ها",
-      adminVisible: this.$store.state.userDetails.isAdmin,
-      permission: "Role_Show",
-      to: "/manage-plans",
-    },
+    // {
+    //   icon: "mdi-currency-usd",
+    //   title: "پلن ها",
+    //   adminVisible: this.$store.state.userDetails.isAdmin,
+    //   permission: "Role_Show",
+    //   to: "/manage-plans",
+    // },
 
     {
       icon: "mdi-server",
@@ -158,13 +158,13 @@ export default class Dashboard extends Vue {
       to: "/v2Keys",
     },
     
-    {
-      icon: "mdi-currency-usd",
-      title: "خرید ترافیک",
-      adminVisible: true,
-      permission: "Member_Show",
-      to: "/buy-traffic",
-    },
+    // {
+    //   icon: "mdi-currency-usd",
+    //   title: "خرید ترافیک",
+    //   adminVisible: true,
+    //   permission: "Member_Show",
+    //   to: "/buy-traffic",
+    // },
     {
       icon: "mdi-account-edit",
       title: "پروفایل",

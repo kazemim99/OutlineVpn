@@ -54,12 +54,14 @@
                     label="تکرار رمز عبور"
                   ></v-text-field>
                   <v-row>
-                    <!-- <VueRecaptcha
-                      :sitekey="siteKey"
-                      :load-recaptcha-script="true"
-                      @verify="handleSuccess"
-                      @error="handleError"
-                    ></VueRecaptcha> -->
+                    <div class="mt-3">
+                      <VueRecaptcha
+                        :sitekey="siteKey"
+                        :load-recaptcha-script="true"
+                        @verify="handleSuccess"
+                        @error="handleError"
+                      ></VueRecaptcha>
+                    </div>
                   </v-row>
                   <v-row>
                     <v-spacer></v-spacer>
@@ -102,14 +104,15 @@
 
 <script>
 import { UserModule } from "@/store/modules/user";
-// import { VueRecaptcha } from "vue-recaptcha";
+import { VueRecaptcha } from "vue-recaptcha";
 
 export default {
   name: "Login",
-  components: {},
+  components: { VueRecaptcha },
 
   data: () => ({
-    siteKey: "6LcdGLUjAAAAAPqmwHQH5YB1siI6vEgddeqsTOtY",
+    siteKey: "6LfYMdwjAAAAACbHDborqW_pxSS3z2Gnm6_CqE-Y",
+    captchaHasError: true,
     valid: false,
     loading: false,
     show1: false,
@@ -143,15 +146,12 @@ export default {
     },
     async handleError() {
       console.log("b");
-      // Do some validation
     },
     async handleSuccess(response) {
       console.log("a");
-      // Do some validation
+      this.captchaHasError = false;
     },
     async registerShow() {
-      this.loginForm.password = "";
-      this.loginForm.confirmPassword = "";
       this.register = true;
 
       this.validationForm();
@@ -161,14 +161,13 @@ export default {
     },
 
     async loginShow() {
-      debugger;
       this.loginForm.password = "";
       this.loginForm.confirmPassword = "";
       this.register = false;
     },
 
     async handleRegister() {
-      debugger;
+      if (this.captchaHasError) return;
       if (!this.register) {
         this.registerShow();
       }
@@ -186,6 +185,7 @@ export default {
       }
     },
     async handleLogin() {
+      if (this.captchaHasError) return;
       this.validationForm();
       if (!this.valid) return;
 

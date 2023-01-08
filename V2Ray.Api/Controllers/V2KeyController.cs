@@ -23,7 +23,8 @@ namespace V2Ray.Api.Controllers
         {
             //filter.V2KeyId = V2KeyId;
             //filter.IsAdmin = IsAdmin;
-            var result = await _v2KeyService.GetAllAsync(filter);
+            filter.SortDesc = true;
+            var result = await _v2KeyService.GetAllAsync(filter, new[] { "V2Server" });
             return new ApiResponse(result);
         }
 
@@ -46,7 +47,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> GenerateKey([FromRoute] int count)
         {
-            
+            count = 1;
             //filter.UserId = UserId;
             //filter.IsAdmin = IsAdmin;
             await _v2KeyService.GenerateUserKey(count,UserId);
@@ -99,10 +100,10 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         ///
         [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<ApiResponse> Delete([FromRoute] int id)
+        [HttpDelete("{serverId}/{keyId}")]
+        public async Task<ApiResponse> Delete([FromRoute] int serverId, [FromRoute] int keyId)
         {
-            await _v2KeyService.SoftDelete(id);
+            await _v2KeyService.DeleteKey(serverId,keyId);
 
             return new ApiResponse();
         }

@@ -114,7 +114,7 @@ namespace V2Ray.Api.Entity
                 {
                     Title = "Frankfurt-B",
                     CityId = db.Cities.First(a => a.Title == "Frankfurt").Id,
-                    IP = "",
+                    IPs = "",
                     Password = "!Q@W3e4r",
                     Port = 4152,
                     UserName = "kazemi.mst",
@@ -144,6 +144,7 @@ namespace V2Ray.Api.Entity
         {
             if (db.Cities.Any())
                 return;
+
             db.Countries.Add(new Country
             {
                 Title = "Germany",

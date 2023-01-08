@@ -14,6 +14,9 @@ namespace V2Ray.Api.Services.Server.Dto
         public bool Swapped { get; set; }
 
         [Required]
+        public List<string> IPs { get; set; }
+
+        [Required]
         public string Password { get; set; }
 
         [Required]
@@ -28,10 +31,10 @@ namespace V2Ray.Api.Services.Server.Dto
         [Required]
         public int CityId { get; set; }
 
-        [Required]
-        public string IP { get; set; }
 
         public bool IsActive { get; set; }
+
+        public bool IsMain { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

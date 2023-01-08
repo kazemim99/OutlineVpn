@@ -11,7 +11,11 @@ export const login = (data: any) =>
     method: "post",
     data,
   });
-
+  export const getUser = () =>
+  request({
+    url: "/authentication/get-user",
+    method: "post",
+  });
 export const register = (data: any) =>
   request({
     url: "/authentication/register",

@@ -53,17 +53,24 @@ namespace V2Ray.Api.Services.V2Keys.Dto
 
         [DataMember(IsRequired = false)]
         [JsonIgnore]
-        public string? ClientKeyId { get; set; }
+        public int ClientPort { get; set; }
 
         public int ServerId { get; set; }
 
         public int Capacity { get; set; } = 40;
 
-        public DateTime ExpireDate { get; set; } = DateTime.Now.AddDays(30);
+        public DateTime ExpireDate { get; set; }
 
         [DataMember(IsRequired = false)]
         [JsonIgnore]
         public string? Key { get; set; }
+
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
+        public int KeyId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
         public bool MainServer { get;  set; }
     }
 }

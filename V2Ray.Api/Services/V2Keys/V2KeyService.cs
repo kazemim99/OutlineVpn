@@ -83,12 +83,13 @@ namespace V2Ray.Api.Services.V2Keys
             httpClient = await GetCookie(server2, true);
             var root2 = await GetServerKeys(server2, httpClient, true);
             var keys = root.Where(c => root2.All(b => b.port != c.port)).ToList();
+            if (!keys.Any()) return;
             int exceptionCount = 0;
             foreach (var item in keys)
             {
                 try
                 {
-                    var result = await GenerateKey(server2, item, httpClient, true);
+                    await GenerateKey(server2, item, httpClient, true);
                 }
                 catch (Exception ex)
                 {
@@ -99,69 +100,146 @@ namespace V2Ray.Api.Services.V2Keys
                 }
             }
             tryAgain = false;
-            server2.Swapped = true;
-            _db.V2Servers.Update(server2);
-            await _db.SaveChangesAsync();
+            if (exceptionCount == 0)
+            {
+                server2.Swapped = true;
+                _db.V2Servers.Update(server2);
+                await _db.SaveChangesAsync();
+            }
+            else
+            {
+                throw new ApiException($"تعداد {exceptionCount} سرور جابجا نشد");
 
+            }
         }
+
+        public async Task DeleteKey( int serverId,int keyId)
+        {
+            var server = _db.V2Servers.FirstOrDefault(a => a.Id == serverId);
+            var key = _db.V2Keys.First(a => a.Id == keyId);
+            if (key == null)
+                throw new ApiException("کلید یافت نشد");
+
+            var ips = server.IPs.Split(',').ToList();
+            var httpClient = await GetCookie(server);
+
+            foreach (var ip in ips)
+            {
+                var result = await httpClient.PostAsync($"https://{ip}:{server.Port}/xui/inbound/del/{key.KeyId}", null);
+                result.EnsureSuccessStatusCode();
+                var tt = await result.Content.ReadAsStringAsync();
+            }
+            _db.V2Keys.Remove(key);
+            _db.SaveChanges();
+        }
+
+        public async Task UpdateKey(int keyId,int serverId,DateTime expireDate,bool enable)
+        {
+            var server = _db.V2Servers.FirstOrDefault(a => a.Id == serverId);
+            var key = _db.V2Keys.First(a => a.Id == keyId);
+            key.ExpireDate = expireDate;
+            key.State = enable;
+            if (key == null)
+                throw new ApiException("کلید یافت نشد");
+
+            var ips = server.IPs.Split(',').ToList();
+
+            var httpClient = await GetCookie(server);
+            var keys = await FetchKeysFromServer(server, httpClient);
+            var keyModified = keys.obj.First(a => a.id == keyId);
+            keyModified.enable = enable;
+            keyModified.expiryTime = expireDate.ToGeo().ToTimeStamp();
+            foreach (var ip in ips)
+            {
+                await GenerateKey(server, keyModified, httpClient);
+            }
+            _db.V2Keys.Update(key);
+            _db.SaveChanges();
+        }
+
         public override async Task InsertAsync(CreateV2KeyInput input)
         {
-
-            var server = _db.V2Servers.First(a => a.Id == input.ServerId && a.IsMain == input.MainServer);
-            var httpClient = await GetCookie(server);
-            var sampleKeys = await GetServerSampleKey(server, httpClient);
-            for (int i = 0; i < input.Count; i++)
+            try
             {
-                foreach (var item in sampleKeys)
+                var server = _db.V2Servers.FirstOrDefault(a => a.Id == input.ServerId);
+                if (input.MainServer)
                 {
-                    try
-                    {
-                        item.total = GigaByteToBytes(input.Capacity);
-                        item.expiryTime = input.ExpireDate.ToGeo().ToTimeStamp();
-                        item.down = 0;
-                        item.up = 0;
-                        if (item == null)
-                            throw new Exception();
-                        var result = await GenerateKey(server, item, httpClient);
-                        input.Key = result.Key;
-                        input.ClientKeyId = result.ClientKeyId;
-                        input.Remark = result.Remark;
-                        await base.InsertAsync(input);
-                    }
-                    catch (Exception ex)
-                    {
-                        continue;
-                    }
-
+                    server = _db.V2Servers.First(a => a.IsMain);
                 }
-            }
+                var ips = server.IPs.Split(',').ToList();
 
+                string guid = "";
+                int port = 0;
+                int _keyId = 0;
+                Obj? obj = null;
+                foreach (var ip in ips)
+                {
+                    server.IPs = ip;
+                    var httpClient = await GetCookie(server);
+                    var sampleKey = GetServerSampleKey(server, httpClient, out _keyId);
+                    for (int i = 0; i < input.Count; i++)
+                    {
+                        try
+                        {
+                            if (guid.IsNullOrEmpty())
+                            {
+                                guid = Guid.NewGuid().ToString();
+                                sampleKey.settings = Regex.Replace(sampleKey.settings,
+                                                                  @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
+                                                                  @$"{guid}",
+                                                                  RegexOptions.IgnoreCase);
+                            }
+                            if (port == 0)
+                            {
+                                port = GeneratePort(_db);
+                                sampleKey.port = port;
+                            }
+                            sampleKey.id = null;
+                            sampleKey.remark = "iranv2ray.com";
+                            sampleKey.total = GigaByteToBytes(input.Capacity);
+                            //sampleKey.expiryTime = input.ExpireDate.ToTimeStamp();
+                            sampleKey.down = 0;
+                            sampleKey.up = 0;
+                            if (sampleKey == null)
+                                throw new Exception();
+                            await GenerateKey(server, sampleKey, httpClient);
+                            if (obj == null)
+                            {
+                                obj = new Obj();
+                                obj = sampleKey;
+                                input.ClientPort = sampleKey.port;
+                                input.Remark = sampleKey.remark;
+                                input.ServerId = server.Id;
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                var set = JsonConvert.DeserializeObject<Setting>(obj.settings);
+                var key = $"{obj.protocol}://{set.clients.First().id}@{server.Url}:{obj.port}";
+                key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{obj.remark}";
+                await File.AppendAllLinesAsync("keys.txt", new List<string>());
+                input.Key = key;
+                input.KeyId = _keyId++;
+                await base.InsertAsync(input);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
-        private async Task<GenerateKeyOutput> GenerateKey(V2Server server, Obj item, HttpClient httpClient, bool swap = false)
+        private async Task GenerateKey(V2Server server, Obj item, HttpClient httpClient, bool swap = false)
         {
-
-
-            var output = new GenerateKeyOutput();
-            string guid = "";
-            if (!swap)
-            {
-                guid = Guid.NewGuid().ToString();
-                item.settings = Regex.Replace(item.settings,
-                                                  @"[({]?[a-fA-F0-9]{8}[-]?([a-fA-F0-9]{4}[-]?){3}[a-fA-F0-9]{12}[})]?",
-                                                  @$"{guid}",
-                                                  RegexOptions.IgnoreCase);
-            }
-
-            item.id = null;
-            item.port = swap ? item.port : GeneratePort(_db);
-            var newRemark = swap ? item.remark : $"iranv2ray.com";
-            item.remark = newRemark;
-            output.Remark = item.remark;
             var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
 
-            var http = "https";
-            var result = await httpClient.PostAsync($"{http}://{server.IP}:{server.Port}/xui/inbound/add", formContent);
+            var result = await httpClient.PostAsync($"https://{server.IPs}:{server.Port}/xui/inbound/add", formContent);
             result.EnsureSuccessStatusCode();
 
             var tt = await result.Content.ReadAsStringAsync();
@@ -179,60 +257,8 @@ namespace V2Ray.Api.Services.V2Keys
                 }
             }
 
-            if (!swap)
-            {
-                string key = "";
-                if (item.protocol == Protocol.vless.ToString())
-                {
-                    var set = JsonConvert.DeserializeObject<Setting>(item.settings);
-                    if (set != null && set.clients != null && set.clients.Any())
-                    {
-                        guid = swap ? set.clients.First().id : guid;
-                        output.ClientKeyId = set.clients.First().id;
-                    }
-                    key = $"{item.protocol}://{guid}@{server.Url}:{item.port}";
-
-                    key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
-
-                }
-                //else if (item.protocol == Protocol.shadowsocks.ToString())
-                //{
-                //    var set = JsonConvert.DeserializeObject<ShadowSetting>(item.settings);
-                //    output.ClientKeyId = set.password;
-                //    var serverConfig = new ShadowsocksServerConfig()
-                //    {
-                //        UserPSK = set.password,
-                //        Method = set.method,
-                //        Host = server.Url,
-                //        Port = item.port,
-                //        Name = item.remark,
-                //    };
-                //    var ssUriString = serverConfig.ToUri().AbsoluteUri;
-                //    key = ssUriString;
-
-                //}
-                //else
-                //{
-                //    var set = JsonConvert.DeserializeObject<Setting>(item.settings);
-                //    var clientPass = set.clients.First().password;
-                //    if (set != null && set.clients != null && set.clients.Any())
-                //    {
-                //        guid = swap ? set.clients.First().id : guid;
-                //        output.ClientKeyId = set.clients.First().id;
-                //    }
-                //    key = $"{item.protocol}://{clientPass}@{server.Url}:{item.port}";
-                //    key += $"?type=tcp&security=xtls&flow=xtls-rprx-direct#{item.remark}";
-
-                //}
-                output.Key = key;
-                await File.AppendAllLinesAsync("keys.txt", new List<string>
-            {
-                key
-            });
-            }
-            return output;
         }
-       
+
         private int GeneratePort(DB db)
         {
             var port = 0;
@@ -248,47 +274,38 @@ namespace V2Ray.Api.Services.V2Keys
 
 
 
-        private async Task<List<Obj>> GetServerSampleKey(V2Server input, HttpClient httpClient)
+        private  Obj GetServerSampleKey(V2Server input, HttpClient httpClient, out int keyId)
         {
-            if (Objs != null && Objs.Any())
-                return Objs;
-
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var re = await httpClient.PostAsJsonAsync($"https://{input.IP}:{input.Port}/xui/inbound/list", new { });
-            var ttt = await re.Content.ReadAsStringAsync();
-            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderBy(a => a.remark).Take(3);
-            Objs = new List<Obj>();
-            var vless = root.First(a => a.protocol == "vless");
-            //var shadow = root.First(a => a.protocol == "shadowsocks");
-            //var trojan = root.First(a => a.protocol == "trojan");
-            Objs.Add(vless);
-            //Objs.Add(shadow);
-            //Objs.Add(trojan);
-            return Objs;
+            var re =  httpClient.PostAsJsonAsync($"https://{input.IPs}:{input.Port}/xui/inbound/list", new { }).Result;
+            var ttt =  re.Content.ReadAsStringAsync().Result;
+            var obj = JsonConvert.DeserializeObject<Root>(ttt).obj;
+             keyId = obj.OrderByDescending(a => a.id).First().id.Value;
+            return obj.OrderBy(a => a.remark).First();
         }
         public async Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient, bool swap = false)
         {
-            string ttt = await FetchKeysFromServer(input, httpClient, swap);
-            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.OrderBy(a => a.remark).ToList();
+            var root = await FetchKeysFromServer(input, httpClient);
+            var objs = root.obj.OrderBy(a => a.remark).Where(a => a.protocol.Contains("vless") || a.protocol.Contains("trojan")).ToList();
 
-            return root;
+            return objs;
         }
 
         public async Task<Obj> GetServerKey(V2Server input, HttpClient httpClient, string clientId)
         {
-            string ttt = await FetchKeysFromServer(input, httpClient, false);
-            var root = JsonConvert.DeserializeObject<Root>(ttt).obj.FirstOrDefault(a => a.client.ToString().Trim().Contains(clientId));
+            var root = await FetchKeysFromServer(input, httpClient);
+            var obj = root.obj.OrderByDescending(a => a.id).FirstOrDefault(a => a.settings.ToString().Trim().Contains(clientId));
 
-            return root;
+            return obj;
         }
 
-        private static async Task<string> FetchKeysFromServer(V2Server input, HttpClient httpClient, bool swap)
+        private static async Task<Root> FetchKeysFromServer(V2Server input, HttpClient httpClient)
         {
-            var url = !swap ? $"https://{input.Url}" : $"http://{input.IP}";
+            var url = $"https://{input.IPs}";
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var re = await httpClient.PostAsJsonAsync($"{url}:{input.Port}/xui/inbound/list", new { }); ;
             var ttt = await re.Content.ReadAsStringAsync();
-            return ttt;
+            return JsonConvert.DeserializeObject<Root>(ttt);
         }
 
         private long GigaByteToBytes(long gigateBytes)
@@ -313,9 +330,9 @@ namespace V2Ray.Api.Services.V2Keys
             handler.CookieContainer = cookies;
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromSeconds(10);
-            Thread.Sleep(2);
-            var url = $"https://{input.IP}:{input.Port}/login";
-            var response = await client.PostAsync(url, formContent);
+
+            var url = $"https://{input.IPs}";
+            var response = await client.PostAsync($"{url}:{input.Port}/login", formContent);
             cookies.Add(new Uri("https://" + input.Url), new Cookie("domain", $"{input.Url}"));
 
             //var responseCookies = cookies.GetCookies(uri).Cast<Cookie>().ToList();
@@ -330,7 +347,7 @@ namespace V2Ray.Api.Services.V2Keys
         public async Task CreateFreeAcount(int userId, int? count)
         {
             var user = await _db.Users.Where(a => a.Id == userId).FirstOrDefaultAsync();
-            if(!user.FreeAccount)
+            if (!user.UsedFreeAccount)
             {
                 if (!user.Paid)
                     throw new ApiException("هیچ پرداخت تایید شده ای یافت نگردید");
@@ -339,61 +356,26 @@ namespace V2Ray.Api.Services.V2Keys
 
             if (server == 0)
                 throw new ApiException("سرور یافت نشد");
-           
-                await this.InsertAsync(new CreateV2KeyInput
-                {
-                    Capacity = user.FreeAccount ? 10 : 40,
-                    Count = 1,
-                    ServerId = server,
-                    ExpireDate = DateTime.Now.AddDays(30)
-                });
+
+            await this.InsertAsync(new CreateV2KeyInput
+            {
+                Capacity = user.UsedFreeAccount ? 10 : 40,
+                Count = 1,
+                ServerId = server,
+                ExpireDate = DateTime.UtcNow.AddDays(30)
+            });
 
         }
         public async Task<UserKeyDetailsOutput> UserKeyDetails(int userId)
         {
             var keyDetailsOutput = new UserKeyDetailsOutput();
-            var keyUser = await _db.V2Keys.Select(a => new { a.ClientKeyId, a.V2Server, a.UserId, a.User.FreeAccount, a.Key, a.User.LastUpdatedTraffic }).Where(a => a.UserId == userId).FirstOrDefaultAsync();
+            var keyUser = await _db.V2Keys.FirstOrDefaultAsync(a => a.UserId == userId);
             if (keyUser == null)
-                throw new ApiException("چنین کاربری یافت نگردید");
-            if (keyUser.LastUpdatedTraffic < DateTime.Now.AddHours(6).ToTimeStamp() && _userDetail.Any(a => a.Key == keyUser.ClientKeyId))
-            {
-                _ = _userDetail.TryGetValue(keyDetailsOutput.Key, out var _output);
-                if (_output != null)
-                    return _output;
-            }
+                return keyDetailsOutput;
 
-            if (keyUser != null && keyUser.V2Server != null)
-            {
-                int up = 0;
-                int down = 0;
-                int total = 0;
-                _db.V2Servers.Where(a => a.IsMain).ToList().ForEach(async a =>
-                {
-                    var httpClient = await GetCookie(a);
-                    var keyDetails = await GetServerKey(keyUser.V2Server, httpClient, keyUser.ClientKeyId);
-                    up += keyDetails.up.ByteToGigaByte();
-                    down += keyDetails.down.ByteToGigaByte();
-                    total += keyDetails.total.ByteToGigaByte();
-                });
-                var httpClient = await GetCookie(keyUser.V2Server);
-                var keyDetails = await GetServerKey(keyUser.V2Server, httpClient, keyUser.ClientKeyId);
-                keyDetailsOutput.FreeAccount = keyUser.FreeAccount;
-                keyDetailsOutput.Up = up;
-                keyDetailsOutput.Down = down;
-                keyDetailsOutput.Total = total;
-                keyDetailsOutput.ExpireTime = Convert.ToInt64(keyDetails.expiryTime).TimeStampToDateTime().ToPeString();
-                keyDetailsOutput.Key = keyUser.Key;
-                keyDetailsOutput.ClientKeyId = keyUser.ClientKeyId;
-            }
-            if (_userDetail.Any(a => a.Key == keyDetailsOutput.Key))
-            {
-                _userDetail.Remove(keyDetailsOutput.Key);
-            }
-            _userDetail.Add(keyDetailsOutput.Key, keyDetailsOutput);
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Id == userId);
-            user.LastUpdatedTraffic = DateTime.Now.ToTimeStamp();
-            _db.Update(keyUser);
-            await _db.SaveChangesAsync();
+            keyDetailsOutput.ExpireTime = keyUser.ExpireDate.ToPeString();
+            keyDetailsOutput.Key = keyUser.Key;
+
             return keyDetailsOutput;
         }
 
@@ -402,7 +384,7 @@ namespace V2Ray.Api.Services.V2Keys
             var user = await _db.Users.FirstOrDefaultAsync(a => a.Id == userId);
             if (user == null)
                 throw new ApiException("کاربر یافت نشد");
-            if (user.FreeAccount && !user.Paid)
+            if (user.UsedFreeAccount && !user.Paid)
             {
                 throw new ApiException("شما باید مبلغ ترافیک را پرداخت نمایید");
             }
@@ -411,20 +393,20 @@ namespace V2Ray.Api.Services.V2Keys
                 Capacity = 40,
                 MainServer = true,
                 Count = count,
-                ExpireDate = DateTime.Now.AddMonths(30),
+                ExpireDate = DateTime.UtcNow.AddDays(30),
                 UserId = userId,
             };
-            if (user.FreeAccount)
+            if (!user.UsedFreeAccount)
             {
                 key.Capacity = 5;
                 key.Count = 1;
-                key.ExpireDate = DateTime.Now.AddDays(7);
+                key.ExpireDate = DateTime.UtcNow.AddDays(7);
             }
-            user.FreeAccount = true;
+            await InsertAsync(key);
+            user.UsedFreeAccount = true;
             user.Paid = false;
             _db.Update(user);
             await _db.SaveChangesAsync();
-            await InsertAsync(key);
 
         }
     }

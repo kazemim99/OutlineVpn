@@ -9,7 +9,7 @@ namespace V2Ray.Api.Entity
         {
 
         }
-        public bool FreeAccount { get; set; }
+        public bool UsedFreeAccount { get; set; }
         public string Email { get; set; }
         public string? Avatar { get; set; }
         public string  IP { get; set; }

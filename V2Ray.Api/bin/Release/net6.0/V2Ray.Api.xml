@@ -323,6 +323,23 @@
             <returns>The elements in an array of Strings</returns>
             <param name="arrayText"></param>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:PerfectMoney.FetchPerfectMoneyPageParameters(System.String,System.String[])" -->
+        <member name="M:PerfectMoney.Parseperfectmoney(System.String)">
+            <summary>
+            Parses a table returned by Perfect Money server
+            </summary>
+            <param name="s">Full page text</param>
+            <returns>A list of hashes which are lines of a table returned by Perfect Money</returns>
+        </member>
+        <member name="M:PerfectMoney.FetchPerfectMoneyPageList(System.String,System.String[])">
+            <summary>
+            Get a response from Perfect Money, parse it and check if it is a
+            CSV table.
+            </summary>
+            <param name="method">Perfect Money API method</param>
+            <param name="args">Argument pairs: title, value, title, value ...</param>
+            <returns>A list of hashes which are table lines</returns>
+        </member>
         <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Id">
             <summary>
             Gets or sets the server ID.
