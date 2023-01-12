@@ -219,7 +219,7 @@ namespace V2Ray.Api
                 c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "PowerBox",
+                    Title = "IranV2Ray",
                     Version = "v1-0-0"
                 });
                 c.UseAllOfToExtendReferenceSchemas();
