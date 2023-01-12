@@ -56,6 +56,7 @@ services:
   reverseproxy:
     ports:
        - 80:80
+       - 443:433
     restart: always
 
 
