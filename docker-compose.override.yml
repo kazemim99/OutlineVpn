@@ -59,7 +59,10 @@ services:
        - 443:433
     restart: always
 
-
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
 
   v2rayapi:
     expose:
