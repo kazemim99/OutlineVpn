@@ -83,7 +83,7 @@
                   required
                 ></v-text-field>
               </v-col> -->
-              <v-col cols="4" sm="12" md="4">
+              <!-- <v-col cols="4" sm="12" md="4">
                 <v-col>
                   <v-file-input
                     v-model="user.avatar"
@@ -112,7 +112,7 @@
                     style="border: 1px dashed #ccc; max-height: 300px"
                   />
                 </v-col>
-              </v-col>
+              </v-col> -->
             </v-row>
           </v-container>
         </v-form>

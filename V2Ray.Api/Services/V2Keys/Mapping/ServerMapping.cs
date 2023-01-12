@@ -18,9 +18,11 @@ namespace V2Ray.Api.Services.V2Keys.Mapping
 
 
             CreateMap<CreateV2KeyInput, V2Key>().
+                ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToTimeStamp())).
                 ForMember(a => a.V2ServerId, c => c.MapFrom(b => b.ServerId));
 
             CreateMap<UpdateV2KeyInput, V2Key>().
+                ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToTimeStamp())).
                 ForMember(a => a.V2ServerId, c => c.MapFrom(b => b.ServerId));
         }
 

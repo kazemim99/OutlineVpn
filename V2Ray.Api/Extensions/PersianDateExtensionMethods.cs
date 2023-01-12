@@ -91,8 +91,9 @@ namespace V2Ray.Api.Extensions
 
         public static DateTime ToDateTime(this long stamp)
         {
+            var time = Convert.ToInt64(stamp.ToString().Substring(0 ,stamp.ToString().Length - 3));
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(stamp).ToLocalTime();
+            dateTime = dateTime.AddSeconds(time).ToLocalTime();
             return dateTime;
         }
     }

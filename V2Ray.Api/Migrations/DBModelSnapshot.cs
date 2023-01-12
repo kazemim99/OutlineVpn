@@ -339,8 +339,8 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("ExpireDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("ExpireDate")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");

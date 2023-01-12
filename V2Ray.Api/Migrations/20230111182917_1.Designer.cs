@@ -12,8 +12,8 @@ using V2Ray.Api.Database;
 namespace V2Ray.Api.Migrations
 {
     [DbContext(typeof(DB))]
-    [Migration("20230107171230_7")]
-    partial class _7
+    [Migration("20230111182917_1")]
+    partial class _1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -341,8 +341,8 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("ExpireDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("ExpireDate")
+                        .HasColumnType("bigint");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");

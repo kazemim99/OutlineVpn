@@ -18,7 +18,7 @@
           <v-btn
             rounded
             color="success"
-            :loading="loading"
+            v-if="this.userKeyDetails.key"
             @click="copyToClipBoard(userKeyDetails.key)"
             dark
             >کپی</v-btn
@@ -47,10 +47,10 @@
         rounded
         color="primary"
         :loading="loading"
-        @click="userKeyDetails.freeAccount ? getKey() : buyKey()"
+        @click="!userKeyDetails.freeAccount ? getKey() : buyKey()"
         dark
       >
-        {{ userKeyDetails.freeAccount ? "دریافت VPN رایگان" : "تمدید" }}
+        {{ !userKeyDetails.freeAccount ? "دریافت VPN رایگان" : "تمدید" }}
       </v-btn>
     </div>
   </div>

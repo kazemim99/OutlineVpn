@@ -42,7 +42,7 @@ namespace V2Ray.Api.Entity
         public string Remark { get; set; }
         public long Capacity { get; set; }
         public int ClientPort { get; set; }
-        public DateTime ExpireDate { get; set; }
+        public long ExpireDate { get; set; }
         public bool State { get; set; }
         public Protocol Protocol { get; set; }
         public string Key { get; set; }
