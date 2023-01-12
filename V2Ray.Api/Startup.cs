@@ -55,6 +55,12 @@ namespace V2Ray.Api
             services.AddMvcCore().AddNewtonsoftJson().AddDataAnnotations()
             .AddApiExplorer();
 
+            Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
+               .Enrich.FromLogContext()
+               .WriteTo.File(new RenderedCompactJsonFormatter(), "logs/log.ndjson")
+               .WriteTo.Seq("http://localhost:5341")
+               .CreateLogger();
+
             services.BindAppSettings(Configuration);
             services.AddHostedService<UpdateUserUsageLockerState>();
             services.AddCors(options =>
@@ -152,16 +158,16 @@ namespace V2Ray.Api
             app.UseStaticFiles();
             if (!isTest)
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                app.UseStaticFiles(new StaticFileOptions()
-                {
-                    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
-                    RequestPath = new PathString("/Resources")
-                });
+                //var path = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
+                //if (!Directory.Exists(path))
+                //{
+                //    Directory.CreateDirectory(path);
+                //}
+                //app.UseStaticFiles(new StaticFileOptions()
+                //{
+                //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                //    RequestPath = new PathString("/Resources")
+                //});
             }
             app.UseRouting();
 

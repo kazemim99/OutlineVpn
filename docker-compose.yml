@@ -14,8 +14,8 @@ services:
   portainer:
     image: portainer/portainer-ce
 
-  #seq:
-  #  image: datalust/seq:latest
+  seq:
+    image: datalust/seq:latest
 
   reverseproxy:
     image: reverseproxy

@@ -8,16 +8,16 @@ services:
     ports:
         - "6379:6379"
 
-  #seq:
-  #  container_name: seq
-  #  restart: always   
-  #  environment:
-  #    - ACCEPT_EULA=Y   
-  #    - SEQ_FIRSTRUN_ADMINPASSWORDHASH=!Q@W#E$R5t6y7u8i
-  #  ports:
-  #    - "5341:5341"
-  #  volumes:
-  #    - /datadrive:/data
+  seq:
+    container_name: seq
+    hostname: seq
+    restart: always   
+    environment:
+      - ACCEPT_EULA=Y   
+    ports:
+      - "5341:80"
+    volumes:
+      - /datadrive:/data
 
   posgresdb:
     container_name: posgresdb
@@ -56,7 +56,6 @@ services:
   reverseproxy:
     ports:
        - 80:80
-       - 443:443
     restart: always
 
 
