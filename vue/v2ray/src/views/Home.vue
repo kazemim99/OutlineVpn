@@ -1,18 +1,18 @@
 <template>
   <div class="small">
     <v-row>
-      <v-col cols="6">
+      <v-col md="6" sm="3">
         <div class="grey--text mb-2">تاریخ اعتبار</div>
       </v-col>
-      <v-col cols="6">
+      <v-col md="6" sm="6">
         <div class="mb-2">{{ this.userKeyDetails.expireTime }}</div>
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6">
+      <v-col md="6" sm="3">
         <div class="grey--text mb-2">کد اتصال</div>
       </v-col>
-      <v-col cols="6">
+      <v-col md="6" sm="6">
         <v-row>
           <div class="mb-2">{{ this.userKeyDetails.key }}</div>
           <v-btn
@@ -53,6 +53,27 @@
         {{ !userKeyDetails.freeAccount ? "دریافت VPN رایگان" : "تمدید" }}
       </v-btn>
     </div>
+    <v-row>
+        <v-col v-for="card in cards" class="mt-10 p-10" :key="card.id" cols="12" sm="4" md="3">
+          <v-hover v-slot="{ hover }">
+            <v-card
+              :href="card.url"
+              :elevation="hover ? 16 : 2"
+              :class="{ 'on-hover': hover }"
+              style="background-color: #00b894; cursor: pointer"
+            >
+              <v-img :src="card.image" height="150"> </v-img>
+              <v-card-actions>
+                <span
+                  style="text-align: center"
+                  class="text-h6 white--text d-inline-block"
+                  v-text="card.name"
+                ></span>
+              </v-card-actions>
+            </v-card>
+          </v-hover>
+        </v-col>
+      </v-row>
   </div>
 </template>
 
@@ -63,6 +84,38 @@ import { UserModule } from "@/store/modules/user";
 export default {
   data() {
     return {
+      cards: [
+        {
+          name: "دانلود مستقیم برنامه",
+          url: "https://github.com/2dust/v2rayNG/releases/download/1.7.34/v2rayNG_1.7.34.apk",
+          image: require("@/assets/images/apk.png"),
+        },
+        {
+          name: "دانلود گوگل استور",
+          url: "https://play.google.com/store/apps/details?id=com.v2ray.ang&hl=en&gl=US",
+          image: require("@/assets/images/google.png"),
+        },
+        {
+          name: "دانلود اپ استور",
+          url: "https://apps.apple.com/us/app/fair-vpn/id1533873488",
+          image: require("@/assets/images/appstore.png"),
+        },
+        // {
+        //   name: "(بزودی) ویندوز",
+        //   url: "",
+        //   image: require("@/assets/images/appstore.png"),
+        // },
+        // {
+        //   name: "مک (بزودی)",
+        //   url: "",
+        //   image: require("@/assets/images/appstore.png"),
+        // },
+        // {
+        //   name: "لینوکس (بزودی)",
+        //   url: "",
+        //   image: require("@/assets/images/appstore.png"),
+        // },
+      ],
       loading: false,
       keys: [],
       count: 1,
