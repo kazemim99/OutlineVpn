@@ -140,6 +140,11 @@ namespace V2Ray.Api
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
+            if (!_env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
+
             if (!isTest)
             {
              
