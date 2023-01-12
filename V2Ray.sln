@@ -11,8 +11,10 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nginx", "Nginx", "{114C34D8-568B-4027-A24D-1F2284625EB0}"
 	ProjectSection(SolutionItems) = preProject
+		Nginx\cert.crt = Nginx\cert.crt
 		Nginx\nginx.conf = Nginx\nginx.conf
 		Nginx\Nginx.Dockerfile = Nginx\Nginx.Dockerfile
+		Nginx\private.key = Nginx\private.key
 	EndProjectSection
 EndProject
 Global
