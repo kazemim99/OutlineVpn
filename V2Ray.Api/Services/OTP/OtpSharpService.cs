@@ -18,6 +18,7 @@ namespace V2Ray.Api.Services.OTP
 
             if (_settings.Sandbox) return _settings.SandboxCode;
 
+            
             var totp = GetTotp(key);
             return totp.ComputeTotp();
         }

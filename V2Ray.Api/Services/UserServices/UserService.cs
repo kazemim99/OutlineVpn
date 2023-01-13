@@ -153,6 +153,7 @@ namespace V2Ray.Api.Services.UserServices
             });
             map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
             SendMail(input.Email);
+            map.NeedConfirm = true;
             await _db.AddAsync(map);
             await _db.SaveChangesAsync();
         }
