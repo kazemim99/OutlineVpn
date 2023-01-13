@@ -17,12 +17,8 @@ services:
   seq:
     image: datalust/seq:latest
 
-  reverseproxy:
-    image: reverseproxy
-    container_name: reverseproxy
-    build:
-      context: ./Nginx
-      dockerfile: Nginx.Dockerfile
+  nginx:
+    image: nginx:alpine
     restart: always
 
   #reverseproxy:
@@ -39,7 +35,8 @@ services:
     image:  ${DOCKER_REGISTRY-}v2rayapi
     restart: always
     depends_on:
-       - reverseproxy
+       - posgresdb
+       - nginx
     build:
       context: .
       dockerfile: V2Ray.Api/Dockerfile

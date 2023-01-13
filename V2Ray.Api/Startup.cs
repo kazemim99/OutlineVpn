@@ -140,10 +140,10 @@ namespace V2Ray.Api
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
-            if (!_env.IsDevelopment())
-            {
-                app.UseHttpsRedirection();
-            }
+            //if (!_env.IsDevelopment())
+            //{
+            //    app.UseHttpsRedirection();
+            //}
 
             if (!isTest)
             {
@@ -219,7 +219,7 @@ namespace V2Ray.Api
                 c.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "PowerBox",
+                    Title = "IranV2Ray",
                     Version = "v1-0-0"
                 });
                 c.UseAllOfToExtendReferenceSchemas();

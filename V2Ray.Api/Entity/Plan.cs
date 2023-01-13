@@ -1,4 +1,6 @@
-﻿namespace V2Ray.Api.Entity
+﻿using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
+
+namespace V2Ray.Api.Entity
 {
     public class Plan : FullAuditEntity<int>, ISoftDelete
     {
@@ -10,5 +12,13 @@
         public string Image { get; set; }
         public bool IsDeleted { get; set; }
         public int TrafficCapacity { get; set; }
+    } 
+    public class DisConnectReport : FullAuditEntity<int>, ISoftDelete
+    {
+        public string UserId { get; set; }
+        public OperatorEnum Operator { get; set; }
+        public OSEnum OS { get; set; }
+        public string Despriction { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

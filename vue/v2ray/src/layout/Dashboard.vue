@@ -74,10 +74,10 @@
       <v-toolbar-title v-text="title" />
       <v-spacer></v-spacer>
 
-      <v-btn icon @click="getNotif()">
+      <!-- <v-btn icon @click="getNotif()">
         <v-icon>mdi-bell-ring</v-icon>
         <v-badge color="green" content="15"> </v-badge>
-      </v-btn>
+      </v-btn> -->
 
       <v-btn icon @click="logout">
         <v-icon>mdi-logout</v-icon>
