@@ -21,8 +21,8 @@ services:
     image: reverseproxy
     container_name: reverseproxy
     build:
-      context: .
-      dockerfile: Nginx/Nginx.Dockerfile
+      context: ./Nginx
+      dockerfile: Nginx.Dockerfile
     restart: always
 
   #reverseproxy:
