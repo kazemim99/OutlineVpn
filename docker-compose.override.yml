@@ -15,7 +15,7 @@ services:
     environment:
       - ACCEPT_EULA=Y   
     ports:
-      - "5341:80"
+      - "5341:5341"
     volumes:
       - /datadrive:/data
 
@@ -57,7 +57,7 @@ services:
     container_name: ngnix
     ports:
        - 80:80
-       - 443:433
+       - 443:443
     restart: always
     volumes:
       - ./Nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -77,7 +77,7 @@ services:
 
   v2rayapi:
     expose:
-      - "5000" 
+      - "5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionString:Default=Server=posgresdb;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E;

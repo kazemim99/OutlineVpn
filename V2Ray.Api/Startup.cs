@@ -38,7 +38,7 @@ namespace V2Ray.Api
             Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
               .Enrich.FromLogContext()
               .WriteTo.File(new RenderedCompactJsonFormatter(), "logs/log.ndjson")
-              .WriteTo.Seq("http://localhost:5341")
+              .WriteTo.Seq("http://45.77.65.140:5341")
               .CreateLogger();
 
             isTest = Configuration.GetSection("IsTest").Value == "True";
