@@ -198,7 +198,7 @@ namespace V2Ray.Api.Services.UserServices
             if (_otpService.Sandbox) return;
 
             var otpCode = _otpService.GetCode(mobile);
-            await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode, destinationAddress = mobile });
+            //await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode, destinationAddress = mobile });
         }
 
         public async Task<LoginResultDto> VerifyCode(string code, string email)

@@ -104,7 +104,7 @@ namespace V2Ray.Api.Controllers
                 var result = await _service.GetUserByMobile(mobile);
                 if (result == null)
                     throw new ApiException("چنین کاربری یافت نشد");
-                await _service.SendCode(mobile);
+                //await _service.SendCode(mobile);
                 _service.SendMail(result.Email);
 
 
