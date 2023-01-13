@@ -53,7 +53,7 @@ services:
       - portainer_data:/data
 
 
-  reverseproxy:
+  nginx:
     ports:
        - 80:80
        - 443:433
