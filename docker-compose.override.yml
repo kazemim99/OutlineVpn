@@ -54,6 +54,7 @@ services:
 
 
   nginx:
+    container_name: ngnix
     ports:
        - 80:80
        - 443:433
