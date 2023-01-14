@@ -54,26 +54,33 @@
       </v-btn>
     </div>
     <v-row>
-        <v-col v-for="card in cards" class="mt-10 p-10" :key="card.id" cols="12" sm="4" md="3">
-          <v-hover v-slot="{ hover }">
-            <v-card
-              :href="card.url"
-              :elevation="hover ? 16 : 2"
-              :class="{ 'on-hover': hover }"
-              style="background-color: #00b894; cursor: pointer"
-            >
-              <v-img :src="card.image" height="150"> </v-img>
-              <v-card-actions>
-                <span
-                  style="text-align: center"
-                  class="text-h6 white--text d-inline-block"
-                  v-text="card.name"
-                ></span>
-              </v-card-actions>
-            </v-card>
-          </v-hover>
-        </v-col>
-      </v-row>
+      <v-col
+        v-for="card in cards"
+        class="mt-10 p-10"
+        :key="card.id"
+        cols="12"
+        sm="4"
+        md="3"
+      >
+        <v-hover v-slot="{ hover }">
+          <v-card
+            :href="card.url"
+            :elevation="hover ? 16 : 2"
+            :class="{ 'on-hover': hover }"
+            style="background-color: #00b894; cursor: pointer"
+          >
+            <v-img :src="card.image" height="150"> </v-img>
+            <v-card-actions>
+              <span
+                style="text-align: center"
+                class="text-h6 white--text d-inline-block"
+                v-text="card.name"
+              ></span>
+            </v-card-actions>
+          </v-card>
+        </v-hover>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -137,7 +144,14 @@ export default {
       alert("خرید");
     },
     copyToClipBoard(textToCopy) {
-      navigator.clipboard.writeText(textToCopy);
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          alert("کد کپی شد");
+        })
+        .catch(() => {
+          alert("خطا در کپی");
+        });
     },
     getKey() {
       this.loading = true;

@@ -48,7 +48,7 @@ class User extends VuexModule implements IUserState {
 
   @Mutation
   SET_VERIFIED(result: boolean) {
-    this.verfied = true;
+    this.verfied = result;
   }
 
   @Mutation
@@ -74,6 +74,7 @@ class User extends VuexModule implements IUserState {
   public async VerifyCode(verifyModel: { code: string; email: string }) {
     await veriFyCode(verifyModel)
       .then((a) => {
+        debugger;
         this.SET_VERIFIED(true);
         this.SET_Mail(verifyModel.email);
         const result = a.data.result;
@@ -106,7 +107,7 @@ class User extends VuexModule implements IUserState {
 
     await register(userInfo).then((a) => {
       this.SET_Mail(userInfo.email);
-      this.GetCode(userInfo.email)
+      // this.GetCode(userInfo.email)
     });
   }
   @Action

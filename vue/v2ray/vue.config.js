@@ -1,5 +1,6 @@
 module.exports = {
   devServer: {
+    socket: 'socket',
     headers: { "Access-Control-Allow-Origin": "*" },
     proxy: "https://localhost:7087/",
   },

@@ -64,7 +64,23 @@
                     </div>
                   </v-row>
                   <v-row>
+                    <v-col cols="4">
+                      <router-link to="/get-code" class="d-flex justify-end"
+                        >فراموشی رمز ؟</router-link
+                      >
+                    </v-col>
+                  </v-row>
+                  <v-row>
                     <v-spacer></v-spacer>
+
+                    <v-col cols="3">
+                      <v-btn
+                        :loading="loading && register"
+                        v-on:click="registerShow"
+                        color="success"
+                        >ثبت نام</v-btn
+                      >
+                    </v-col>
                     <v-col cols="4">
                       <v-btn
                         :loading="loading"
@@ -79,15 +95,6 @@
                         v-on:click="loginShow()"
                         color="primary"
                         >انصراف</v-btn
-                      >
-                    </v-col>
-
-                    <v-col cols="4">
-                      <v-btn
-                        :loading="loading && register"
-                        v-on:click="registerShow"
-                        color="success"
-                        >ثبت نام</v-btn
                       >
                     </v-col>
                   </v-row>
@@ -193,7 +200,7 @@ export default {
       try {
         await UserModule.Login(this.loginForm);
         if (UserModule.needConfirm) {
-          await UserModule.GetCode(this.loginForm.email);
+          // await UserModule.GetCode(this.loginForm.email);
           this.$router.push("/verify-code");
         } else {
           this.$router.push("/home");

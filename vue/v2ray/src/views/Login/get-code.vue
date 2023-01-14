@@ -72,9 +72,13 @@ export default class extends Vue {
   private email = "";
   private code = "";
 
-  private userNameRules = [
-    (v: string) => !!v || "نام کاربری الزامی میباشد",
-    (v: string) => /^(09|9)+([0-9]){9}$/.test(v) || "شماره موبایل اشتباه است",
+  userNameRules = [
+    (v) => !!v || "نام کاربری الزامی میباشد",
+    (v) =>
+      /[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)/.test(
+        v
+      ) ||
+      "ایمیل وارد شده  اشتباه است ایمیلهای مورد تایید gmail,outlook,hotmail,yahoo",
   ];
 
   private async getCode() {

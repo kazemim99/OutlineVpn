@@ -11,19 +11,23 @@ using System.Threading.Tasks;
 using V2Ray.Api.Database;
 using V2Ray.Api.Extensions;
 using V2Ray.Api.Services.sms;
+using V2Ray.Api.Services.Settings;
+using Microsoft.Extensions.Options;
 
 namespace V2Ray.Api.Services.sms.Rahyab
 {
     public class SmsService : IRahyabSmsSender
     {
         private readonly DB _db;
-
-        public SmsService(DB db)
+        IOptions<OtpSettings> settings;
+        public SmsService(DB db, IOptions<OtpSettings> settings)
         {
             _db = db;
+            this.settings = settings;
         }
         public void SendEmail(string code, string to)
         {
+            if (settings.Value.Sandbox) return;
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("IranV2Ray", "iranv2ray@gmail.com"));
             message.To.Add(new MailboxAddress("pritom", to));
