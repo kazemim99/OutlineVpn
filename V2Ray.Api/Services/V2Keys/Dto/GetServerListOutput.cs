@@ -13,6 +13,8 @@
         public string ClientId { get;  set; }
         public string Url { get;  set; }
         public string CreateDate { get;  set; }
-        public object V2ServerId { get; set; }
+        public int V2ServerId { get; set; }
+        public string Email { get;  set; }
+        public string IP { get; internal set; }
     }
 }

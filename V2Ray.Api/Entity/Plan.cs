@@ -12,13 +12,19 @@ namespace V2Ray.Api.Entity
         public string Image { get; set; }
         public bool IsDeleted { get; set; }
         public int TrafficCapacity { get; set; }
-    } 
-    public class DisConnectReport : FullAuditEntity<int>, ISoftDelete
+    }
+    public class ProblemReport : FullAuditEntity<int>, ISoftDelete
     {
-        public string UserId { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
         public OperatorEnum Operator { get; set; }
         public OSEnum OS { get; set; }
         public string Despriction { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted
+        {
+            get; set;
+
+        }
+        public ProblemReportEnum State { get;  set; }
     }
 }

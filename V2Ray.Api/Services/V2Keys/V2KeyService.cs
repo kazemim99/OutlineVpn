@@ -129,12 +129,11 @@ namespace V2Ray.Api.Services.V2Keys
             _db.SaveChanges();
         }
 
-        public async Task UpdateKey(int keyId, int serverId, DateTime expireDate, bool enable)
+        public async Task UpdateKey(int keyId, DateTime? expireDate, bool enable)
         {
-            var server = _db.V2Servers.FirstOrDefault(a => a.Id == serverId);
+            var server = _db.V2Servers.FirstOrDefault(a => a.IsMain);
             var key = _db.V2Keys.First(a => a.Id == keyId);
-            key.ExpireDate = expireDate.ToTimeStamp();
-            key.State = enable;
+            
             if (key == null)
                 throw new ApiException("کلید یافت نشد");
 
@@ -143,8 +142,15 @@ namespace V2Ray.Api.Services.V2Keys
             var httpClient = await GetCookie(server);
             var keys = await FetchKeysFromServer(server, httpClient);
             var keyModified = keys.obj.First(a => a.id == keyId);
+
             keyModified.enable = enable;
-            keyModified.expiryTime = expireDate.ToGeo().ToTimeStamp();
+            key.State = enable;
+
+            if (enable && expireDate != null)
+            {
+                key.ExpireDate = expireDate.Value.ToTimeStamp();
+                keyModified.expiryTime = expireDate.Value.ToGeo().ToTimeStamp();
+            }
             foreach (var ip in ips)
             {
                 await GenerateKey(server, keyModified, httpClient);
@@ -337,9 +343,9 @@ namespace V2Ray.Api.Services.V2Keys
 
             return client;
         }
-        public Task ChangeState(int id)
+        public async Task ChangeState(int id,bool state)
         {
-            throw new NotImplementedException();
+            await UpdateKey(id,null, state);
         }
 
         public async Task CreateFreeAcount(int userId, int? count)
@@ -393,6 +399,7 @@ namespace V2Ray.Api.Services.V2Keys
                 {
                     throw new ApiException("اعتبار قبلی شما به پایان نرسیده");
                 }
+
                 var key = new CreateV2KeyInput()
                 {
                     Capacity = 40,
@@ -406,6 +413,11 @@ namespace V2Ray.Api.Services.V2Keys
                     key.Capacity = 5;
                     key.Count = 1;
                     key.ExpireDate = DateTime.UtcNow.AddDays(7);
+                }
+                if (user.V2Keys.Any())
+                {
+                    var getKey = user.V2Keys.First();
+                    await UpdateKey(getKey.Id, DateTime.Now.AddDays(7), true);
                 }
                 await InsertAsync(key);
                 user.UsedFreeAccount = false;

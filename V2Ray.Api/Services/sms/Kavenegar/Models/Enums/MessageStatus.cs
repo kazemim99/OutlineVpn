@@ -1,20 +1,39 @@
+﻿using System.ComponentModel;
+
 namespace V2Ray.Api.Services.sms.Kavenegar.Models.Enums
 {
-    public enum OSEnum
+    public enum OSEnum : int
     {
-        Android,
+        [Description("اندروید")]
+        Android = 1,
+        [Description("آیفون")]
         IOS,
+        [Description("ویندوز")]
         Window,
+        [Description("لینوکس")]
         Linux,
-        Max,
+        [Description("مک")]
+        Mac,
+        [Description("سایز")]
+
         Others
     }
-    public enum OperatorEnum
+    public enum ProblemReportEnum
     {
-        Irancell,
+        Sended = 1,
+        Answerd = 2
+    }
+    public enum OperatorEnum : int
+    {
+        [Description("ایرانسل")]
+        Irancell = 1,
+        [Description("همراه اول")]
         MCI,
+        [Description("رایتل")]
         Rightel,
+        [Description("وای فای")]
         Wifi,
+        [Description("سایز")]
         Others
     }
     public enum MessageStatus

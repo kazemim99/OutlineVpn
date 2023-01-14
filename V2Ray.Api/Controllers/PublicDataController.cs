@@ -1,7 +1,10 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using V2Ray.Api.Extensions;
+using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
 using V2Ray.Api.Services.UserServices;
+using V2Ray.Api.Shared;
 
 namespace V2Ray.Api.Controllers
 {
@@ -22,21 +25,27 @@ namespace V2Ray.Api.Controllers
             _userService = userService;
         }
 
-        /// <summary>
-        /// لیست وضعیتها کاربر
-        /// </summary>
-        ///
-        //[HttpGet("user-states")]
-        //[Authorize]
-        //public ApiResponse UserStates()
-        //{
-        //    var result = Enum.GetValues(typeof(UserStateEnum))
-        //        .Cast<UserStateEnum>()
-        //        .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
-        //    return new ApiResponse(result);
-        //}
+        
+        [HttpGet("get-os")]
+        [Authorize]
+        public ApiResponse GetOS()
+        {
+            var result = Enum.GetValues(typeof(OSEnum))
+                .Cast<OSEnum>()
+                .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
+            return new ApiResponse(result);
+        }
 
 
+        [HttpGet("get-operations")]
+        [Authorize]
+        public ApiResponse GetOpreations()
+        {
+            var result = Enum.GetValues(typeof(OperatorEnum))
+                .Cast<OperatorEnum>()
+                .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
+            return new ApiResponse(result);
+        }
 
         /// <summary>
         /// نمایش فایلها در قسمت در فرانت با اسفتاده از آدرس

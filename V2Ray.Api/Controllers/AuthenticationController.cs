@@ -52,6 +52,7 @@ namespace V2Ray.Api.Controllers
         [AllowAnonymous]
         public async Task<ApiResponse> Login([FromBody] LoginDto login)
         {
+            
           var result =  await _service.Login(login);
             return new ApiResponse(result);
         }

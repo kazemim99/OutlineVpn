@@ -43,7 +43,7 @@
           v-can="'Member_Delete'"
           medium
           class="mr-2"
-          @click="deleteItem(item.id,item.v2ServerId)"
+          @click="deleteItem(item.id, item.v2ServerId)"
           >mdi-delete</v-icon
         >
       </template>
@@ -68,7 +68,6 @@
                   />
                 </v-col>
               </v-row>
-             
             </template>
           </v-col>
           <v-spacer></v-spacer>
@@ -149,9 +148,10 @@ export default {
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
-        { text: "کلید", value: "key", sortable: true },
-        { text: "آدرس سرور", value: "url", sortable: false },
+        { text: "ایمیل", value: "email", sortable: true },
+        { text: "آی پی", value: "iP", sortable: false },
         { text: "تاریخ ایجاد", value: "createDate", sortable: false },
+        { text: "تاریخ انقضا", value: "expireDate", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
       ],
@@ -197,7 +197,7 @@ export default {
       this.$refs.addV2ServerCom.dialog = true;
       this.$refs.addV2ServerCom.id = item.id;
     },
-    deleteItem(id,v2ServerId) {
+    deleteItem(id, v2ServerId) {
       Vue.swal({
         title: "ایا مطمئن  هستید",
         icon: "warning",

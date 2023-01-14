@@ -1,5 +1,9 @@
 <template>
   <div class="small">
+    <v-col cols="12">
+      <AddProblmeReport ref="addProblemReportCom" />
+    </v-col>
+    <v-spacer></v-spacer>
     <v-row>
       <v-col md="6" sm="3">
         <div class="grey--text mb-2">تاریخ اعتبار</div>
@@ -10,7 +14,7 @@
     </v-row>
     <v-row>
       <v-col md="6" sm="3">
-        <div class="grey--text mb-2">کد اتصال</div>
+        <div class="grey--text mb-2">کانفیگ سرور</div>
       </v-col>
       <v-col md="6" sm="6">
         <v-row>
@@ -50,7 +54,7 @@
         @click="!userKeyDetails.freeAccount ? getKey() : buyKey()"
         dark
       >
-        {{ !userKeyDetails.freeAccount ? "دریافت VPN رایگان" : "تمدید" }}
+        {{ !userKeyDetails.freeAccount ? "دریافت سرور رایگان" : "تمدید" }}
       </v-btn>
     </div>
     <v-row>
@@ -87,8 +91,12 @@
 <script>
 import request from "@/utils/request";
 import { UserModule } from "@/store/modules/user";
+import AddProblmeReport from "@/components/common/ProblemReport.vue";
 
 export default {
+  components: {
+    AddProblmeReport,
+  },
   data() {
     return {
       cards: [
@@ -162,6 +170,9 @@ export default {
           this.keys = data;
           this.loading = false;
           this.getUserKeyDetails();
+          alert(
+            "سرور ساخته شده در صورت عدم مشاهده بعد از 15 ثانیه صفحه را رفرش کنید"
+          );
         })
         .catch(() => {
           this.loading = false;

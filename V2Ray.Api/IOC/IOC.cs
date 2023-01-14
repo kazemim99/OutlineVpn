@@ -11,6 +11,7 @@ using V2Ray.Api.Services.PlanServices;
 using V2Ray.Api.Services.sms.Rahyab;
 using V2Ray.Api.Services.Cities;
 using V2Ray.Api.Services.V2Keys;
+using V2Ray.Api.Services.ProblemReports;
 
 namespace V2Ray.Api.IOC
 {
@@ -27,6 +28,7 @@ namespace V2Ray.Api.IOC
             services.AddScoped<IServerService, ServerService>();
             services.AddScoped<ICitieservice, CitieService>();
             services.AddScoped<IV2KeyService, V2KeyService>();
+            services.AddScoped<IProblemReportservice, ProblemReportservice>();
 
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 

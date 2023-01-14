@@ -18,6 +18,7 @@ using V2Ray.Api.Entity;
 using V2Ray.Api.Extensions;
 using V2Ray.Api.Common;
 using V2Ray.Api.Services.sms.Rahyab;
+using V2Ray.Api.Services.V2Keys;
 
 namespace V2Ray.Api.Services.UserServices
 {
@@ -39,15 +40,16 @@ namespace V2Ray.Api.Services.UserServices
         private readonly IOtpService _otpService;
 
         private readonly IRahyabSmsSender _smsServcie;
+        private readonly IV2KeyService _v2KeyService;
 
-        public UserService(DB db, IMapper mapper, IConfiguration config, IOtpService otpService, IRahyabSmsSender smsServcie) : base(mapper, db)
+        public UserService(DB db, IMapper mapper, IConfiguration config, IOtpService otpService, IRahyabSmsSender smsServcie, IV2KeyService v2KeyService) : base(mapper, db)
         {
             _config = config;
             _mapper = mapper;
             _db = db;
             _otpService = otpService;
             _smsServcie = smsServcie;
-
+            _v2KeyService = v2KeyService;
         }
 
 
@@ -160,9 +162,16 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task ChangeState(int id)
         {
-            var user = _db.Users.FirstOrDefault(a => a.Id == id);
+            var user = _db.Users.Include(a=>a.V2Keys).FirstOrDefault(a => a.Id == id);
             user.Enable = !user.Enable;
             _db.Update(user);
+
+            if (user.V2Keys.Any())
+            {
+                var key = user.V2Keys.First();
+                await _v2KeyService.ChangeState(key.Id,!key.State);
+
+            }
 
             var stateString = user.Enable ? "فعال" : "غیر فعال";
 

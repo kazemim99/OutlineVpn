@@ -27,7 +27,7 @@ namespace V2Ray.Api.Database
         }
 
         public DbSet<Plan> Plans { get; set; }
-        public DbSet<DisConnectReport> DisCounnectReports { get; set; }
+        public DbSet<ProblemReport> ProblemReports { get; set; }
         public DbSet<FailedSms> FailedSms { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }

@@ -13,12 +13,13 @@ namespace V2Ray.Api.Services.V2Keys
         GetV2KeyListOutput,
         V2KeyFilterInput>
     {
-        Task ChangeState(int id);
+        Task ChangeState(int id,bool state);
         Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient,bool swap = false);
         Task<Pagination<GetV2KeyListOutput>> GetAllFromXUIServerAsync(V2KeyFilterInput paging);
         Task SwapServerKeysAsync(SwapServerKeysInput input);
         Task<UserKeyDetailsOutput> UserKeyDetails(int userId);
         Task GenerateUserKey(int count, int userId);
         Task DeleteKey(int keyId, int serverId);
+        Task UpdateKey(int keyId, DateTime? expireDate, bool enable);
     }
 }
