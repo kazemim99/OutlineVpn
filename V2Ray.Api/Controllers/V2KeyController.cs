@@ -24,7 +24,7 @@ namespace V2Ray.Api.Controllers
             //filter.V2KeyId = V2KeyId;
             //filter.IsAdmin = IsAdmin;
             filter.SortDesc = true;
-            var result = await _v2KeyService.GetAllAsync(filter, new[] { "V2Server" });
+            var result = await _v2KeyService.GetAllAsync(filter, new[] { "V2Server","User" });
             return new ApiResponse(result);
         }
 
