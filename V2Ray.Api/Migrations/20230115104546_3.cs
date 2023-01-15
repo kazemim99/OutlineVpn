@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace V2Ray.Api.Migrations
 {
-    public partial class _4 : Migration
+    public partial class _3 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,8 +19,7 @@ namespace V2Ray.Api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    UserId1 = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
                     Operator = table.Column<int>(type: "integer", nullable: false),
                     OS = table.Column<int>(type: "integer", nullable: false),
                     Despriction = table.Column<string>(type: "text", nullable: false),
@@ -35,17 +34,17 @@ namespace V2Ray.Api.Migrations
                 {
                     table.PrimaryKey("PK_ProblemReports", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProblemReports_Users_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_ProblemReports_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProblemReports_UserId1",
+                name: "IX_ProblemReports_UserId",
                 table: "ProblemReports",
-                column: "UserId1");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

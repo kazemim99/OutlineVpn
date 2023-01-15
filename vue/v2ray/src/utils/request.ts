@@ -25,11 +25,13 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
+    debugger;
+
     if(error.response.data.detail){
       Vue.swal("خطا", error.response.data.detail, "error");
     }else{
 
-    let message = error.response.data.responseException.exceptionMessage;
+    let message = error.response.data;
     if (message.errors) {
       const result = Object.keys(message.errors).map((key) => [
         key,
