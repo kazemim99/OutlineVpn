@@ -176,11 +176,11 @@ namespace V2Ray.Api.Services.V2Keys
                 Obj? obj = null;
                 foreach (var ip in ips)
                 {
-                    int keyCreated = 0;
+                    bool keyCreated = false;
                     server.IPs = ip;
                     var httpClient = await GetCookie(server);
                     var sampleKey = GetServerSampleKey(server, httpClient, out _keyId);
-                    for (int i = 0; i < input.Count; i++)
+                    for (int i = 0; i <= input.Count; i++)
                     {
                         try
                         {
@@ -204,7 +204,7 @@ namespace V2Ray.Api.Services.V2Keys
                                 throw new Exception();
                             await GenerateKey(server, sampleKey, httpClient);
 
-                            if (keyCreated < 1)
+                            if (!keyCreated)
                             {
                                 obj = new Obj();
                                 obj = sampleKey;
@@ -226,7 +226,7 @@ namespace V2Ray.Api.Services.V2Keys
                             continue;
                         }
                     }
-                    keyCreated++;
+                    keyCreated =true;
                 }
 
 
