@@ -174,9 +174,10 @@ namespace V2Ray.Api.Services.V2Keys
                 int port = 0;
                 int _keyId = 0;
                 Obj? obj = null;
+                bool keyCreated = false;
+
                 foreach (var ip in ips)
                 {
-                    bool keyCreated = false;
                     server.IPs = ip;
                     var httpClient = await GetCookie(server);
                     var sampleKey = GetServerSampleKey(server, httpClient, out _keyId);
