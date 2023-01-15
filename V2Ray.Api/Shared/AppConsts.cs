@@ -10,7 +10,7 @@
 
         public static string WrongPassword = "رمز عبور اشتباه است";
 
-        public static string UserAlreadyExists = "کاربری با این شماره قبلا ثبت گردیده";
+        public static string UserAlreadyExists = "کاربری با این ایمیل قبلا ثبت گردیده";
 
         public static string NotMatchPass = "تکرار رمز عبور اشتباه است";
 
