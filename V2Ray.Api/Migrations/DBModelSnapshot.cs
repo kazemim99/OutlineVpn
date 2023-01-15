@@ -233,18 +233,14 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("UpdaterUserId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId1")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("ProblemReports");
+                    b.ToTable("ProblemReports", (string)null);
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.Role", b =>
@@ -518,8 +514,8 @@ namespace V2Ray.Api.Migrations
             modelBuilder.Entity("V2Ray.Api.Entity.ProblemReport", b =>
                 {
                     b.HasOne("V2Ray.Api.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
+                        .WithMany("ProblemReports")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -590,6 +586,8 @@ namespace V2Ray.Api.Migrations
 
             modelBuilder.Entity("V2Ray.Api.Entity.User", b =>
                 {
+                    b.Navigation("ProblemReports");
+
                     b.Navigation("Roles");
 
                     b.Navigation("V2Keys");

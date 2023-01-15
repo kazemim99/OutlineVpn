@@ -10,7 +10,15 @@ namespace V2Ray.Api.Entity.Configurations
             builder.HasQueryFilter(a => !a.IsDeleted);
         }
     }
-
+    public class ProblemReportConfig : IEntityTypeConfiguration<ProblemReport>
+    {
+        public void Configure(EntityTypeBuilder<ProblemReport> builder)
+        {
+            builder.ToTable("ProblemReports");
+            builder.HasQueryFilter(a => !a.IsDeleted);
+            builder.HasOne(a => a.User).WithMany(a => a.ProblemReports).HasForeignKey(c => c.UserId);
+        }
+    }
     public class RoleConfig : IEntityTypeConfiguration<Role>
     {
         public void Configure(EntityTypeBuilder<Role> builder)

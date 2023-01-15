@@ -30,7 +30,7 @@ namespace V2Ray.Api.Services.ProblemReports
         private readonly IMapper _mapper;
         public ProblemReportservice(IMapper mapper, DB db) : base(mapper, db)
         {
-
+            _db = db;
         }
         public override async Task InsertAsync(CreateProblemReportInput input)
         {

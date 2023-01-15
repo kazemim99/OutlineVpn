@@ -122,7 +122,7 @@ export default {
           // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
         })
         .catch((e) => {
-          alert("لطفا فرم را  ارسال نمایید ");
+          console.log(e)
         })
         .finally(() => {
           this.loading = false;

@@ -12,8 +12,8 @@ using V2Ray.Api.Database;
 namespace V2Ray.Api.Migrations
 {
     [DbContext(typeof(DB))]
-    [Migration("20230114202957_4")]
-    partial class _4
+    [Migration("20230115104546_3")]
+    partial class _3
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -235,18 +235,14 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("UpdaterUserId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId1")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("ProblemReports");
+                    b.ToTable("ProblemReports", (string)null);
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.Role", b =>
@@ -520,8 +516,8 @@ namespace V2Ray.Api.Migrations
             modelBuilder.Entity("V2Ray.Api.Entity.ProblemReport", b =>
                 {
                     b.HasOne("V2Ray.Api.Entity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
+                        .WithMany("ProblemReports")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -592,6 +588,8 @@ namespace V2Ray.Api.Migrations
 
             modelBuilder.Entity("V2Ray.Api.Entity.User", b =>
                 {
+                    b.Navigation("ProblemReports");
+
                     b.Navigation("Roles");
 
                     b.Navigation("V2Keys");
