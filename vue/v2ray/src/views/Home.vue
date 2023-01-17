@@ -36,7 +36,7 @@
       </v-col>
       <v-col cols="6">
         <v-btn class="mb-2" :loading="loading1" @click="getTraffic()">
-          {{ this.traffic }}
+          {{ this.down }} گیگ
         </v-btn>
       </v-col>
     </v-row>
@@ -45,7 +45,7 @@
         <div class="grey--text mb-2">ترافیک شما :</div>
       </v-col>
       <v-col cols="6">
-        <div class="mb-2">{{ this.userKeyDetails.traffic }} گیگا بایت</div>
+        <div class="mb-2">{{ this.userKeyDetails.traffic }}  گیگ</div>
       </v-col>
     </v-row>
     <div class="text-center mt-10">
@@ -136,13 +136,12 @@ export default {
       loading: false,
       loading1: false,
       keys: [],
-      traffic: "مشاهده",
+      down: "مشاهده",
       count: 1,
       userKeyDetails: {
         key: "",
         freeAccount: false,
         up: 0,
-        down: 0,
         traffic: 0,
         expireTime: null,
       },
@@ -160,14 +159,14 @@ export default {
       request
         .get(`/v2Key/getUsedTraffic`)
         .then((response) => {
-          var data = response.data.result;
+          var data = response.data.message;
+          debugger;
           this.loading1 = false;
-          this.traffic = data;
+          this.down = data;
         })
         .catch(() => {
           this.loading = false;
           this.loading1 = false;
-
         });
     },
     copyToClipBoard(textToCopy) {

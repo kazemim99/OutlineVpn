@@ -139,7 +139,6 @@ export default class Dashboard extends Vue {
     {
       icon: "mdi-sync",
       title: "گزارش مشکل",
-      adminVisible: this.$store.state.userDetails.isAdmin,
       to: "/problem-reports",
     },
     {
