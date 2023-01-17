@@ -24,26 +24,12 @@ namespace V2Ray.Api.Controllers
             _service = service;
         }
 
-        [HttpGet("all-cities")]
-        [Authorize]
-        public async Task<ApiResponse> Filter()
-        {
-            //filter.ProblemReportId = ProblemReportId;
-            //filter.IsAdmin = IsAdmin;
-            var result = await _service.GetAllAsync(new ProblemReportFilterInput
-            {
-                ItemsPerPage = 100
-            });
-            return new ApiResponse(result);
-        }
-
-        [HttpGet("Cities")]
+       
+        [HttpGet]
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] ProblemReportFilterInput filter)
         {
-            //filter.ProblemReportId = ProblemReportId;
-            //filter.IsAdmin = IsAdmin;
-            var result = await _service.GetAllAsync(filter);
+            var result = await _service.GetAllAsync(filter, new[] { "User" });
             return new ApiResponse(result);
         }
 
@@ -57,6 +43,19 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateProblemReportInput input)
         {
             await _service.UpdateAsync(id, input);
+
+            return new ApiResponse();
+        }
+        /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("sendAnswer/{id:int}")]
+        [Authorize]
+
+        public async Task<ApiResponse> SendAnswer([FromRoute] int id, [FromBody] SendAnswerInput model)
+        {
+            await _service.SendAnswerAsync(id, model);
 
             return new ApiResponse();
         }

@@ -20,7 +20,9 @@ namespace V2Ray.Api.Services.sms.Kavenegar.Models.Enums
     }
     public enum ProblemReportEnum
     {
+        [Description("در حال بررسی")]
         Sended = 1,
+        [Description("پاسخ داده شد")]
         Answerd = 2
     }
     public enum OperatorEnum : int

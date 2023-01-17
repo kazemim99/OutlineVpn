@@ -14,7 +14,7 @@ namespace V2Ray.Api.Entity
             var isTest = db.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
             if (!isTest)
             {
-                db.Database.EnsureCreated();
+                db.Database.Migrate();
             }
             else
             {

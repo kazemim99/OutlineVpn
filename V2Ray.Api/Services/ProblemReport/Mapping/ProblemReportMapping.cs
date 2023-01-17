@@ -12,6 +12,8 @@ namespace V2Ray.Api.Services.ProblemReports.Mapping
         {
             CreateMap<ProblemReport, GetProblemReportListOutput>()
                .ForMember(a => a.Operator, c => c.MapFrom(b => b.Operator.GetDescription()))
+               .ForMember(a => a.OS, c => c.MapFrom(b => b.OS.GetDescription()))
+               .ForMember(a => a.State, c => c.MapFrom(b => b.State.GetDescription()))
                .ForMember(a => a.UserName, c => c.MapFrom(b => b.User.Email));
 
             CreateMap<ProblemReport, GetProblemReportOutput>()

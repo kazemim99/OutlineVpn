@@ -10,14 +10,14 @@ namespace V2Ray.Api.Extensions
 
 
 
-        public static int GigaByteToBytes(this long gig)
+        public static long GigaByteToBytes(this int gig)
         {
-            return Convert.ToInt32(gig / 1024d / 1024d / 1024d);
+            return Convert.ToInt64(gig * 1024d * 1024d * 1024d);
         }
 
         public static int ByteToGigaByte(this long bytes)
         {
-            return Convert.ToInt32(bytes * 1024d * 1024d * 1024d);
+            return Convert.ToInt32(bytes / 1024d / 1024d / 1024d);
         }
         public static DateTime TimeStampToDateTime(this long date)
         {
@@ -73,6 +73,13 @@ namespace V2Ray.Api.Extensions
         {
             PersianCalendar pc = new PersianCalendar();
             DateTime dt = new DateTime(date.Year, date.Month, date.Day, pc);
+            return dt;
+        }
+
+        public static DateTime ToPersianDate(this DateTime date)
+        {
+            PersianCalendar pc = new PersianCalendar();
+            DateTime dt = new DateTime(pc.GetYear(date), pc.GetMonth(date), pc.GetDayOfMonth(date));
             return dt;
         }
 

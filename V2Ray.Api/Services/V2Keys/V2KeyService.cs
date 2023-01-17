@@ -37,9 +37,9 @@ namespace V2Ray.Api.Services.V2Keys
             var server = _db.V2Servers.First(a => a.Id == input.ServerId);
             List<Obj> root = new List<Obj>();
 
-            var httpClient = await GetCookie(server);
+            var httpClient = await GetCookie(server.UserName, server.Password, "", server.Url, server.Port);
             if (!root.Any())
-                root = await GetServerKeys(server, httpClient);
+                root = await GetServerKeys(server.IPs,2, httpClient);
 
             var result = root.Select(a =>
             {
@@ -71,13 +71,13 @@ namespace V2Ray.Api.Services.V2Keys
         {
             var server = _db.V2Servers.First(a => a.Id == input.FromServerId);
             List<Obj> root = new List<Obj>();
-            var httpClient = await GetCookie(server);
+            var httpClient = await GetCookie(server.UserName, server.Password, server.IPs, server.Url, server.Port);
             if (!root.Any())
-                root = GetServerKeys(server, httpClient).Result.ToList();
+                root = GetServerKeys(server.IPs,server.Port, httpClient).Result.ToList();
 
             var server2 = _db.V2Servers.First(a => a.Id == input.ToServerId);
-            httpClient = await GetCookie(server2, true);
-            var root2 = await GetServerKeys(server2, httpClient, true);
+            httpClient = await GetCookie(server.UserName, server.Password, server.IPs, server.Url, server.Port);
+            var root2 = await GetServerKeys(server2.IPs,server.Port, httpClient);
             var keys = root.Where(c => root2.All(b => b.port != c.port)).ToList();
             if (!keys.Any()) return;
             int exceptionCount = 0;
@@ -85,7 +85,7 @@ namespace V2Ray.Api.Services.V2Keys
             {
                 try
                 {
-                    await GenerateKey(server2, item, httpClient, true);
+                    await GenerateKey(server2.IPs,server2.Port, item, httpClient, true);
                 }
                 catch (Exception ex)
                 {
@@ -117,44 +117,55 @@ namespace V2Ray.Api.Services.V2Keys
                 throw new ApiException("کلید یافت نشد");
 
             var ips = server.IPs.Split(',').ToList();
-            var httpClient = await GetCookie(server);
-
+            var removeFromAllServers =0;
             foreach (var ip in ips)
             {
+                var httpClient = await GetCookie(server.UserName, server.Password, ip, server.Url, server.Port);
                 var result = await httpClient.PostAsync($"https://{ip}:{server.Port}/xui/inbound/del/{key.KeyId}", null);
                 result.EnsureSuccessStatusCode();
                 var tt = await result.Content.ReadAsStringAsync();
+                removeFromAllServers++;
             }
+            if (removeFromAllServers != ips.Count)
+                throw new ApiException("در تمام سرورها اعمال نشد");
+
             _db.V2Keys.Remove(key);
             _db.SaveChanges();
         }
 
-        public async Task UpdateKey(int keyId, DateTime? expireDate, bool enable)
+        public async Task UpdateKey(int keyId,int traffic, DateTime? expireDate, bool enable)
         {
             var server = _db.V2Servers.FirstOrDefault(a => a.IsMain);
-            var key = _db.V2Keys.First(a => a.Id == keyId);
-            
+            var key = _db.V2Keys.FirstOrDefault(a => a.Id == keyId);
+
             if (key == null)
                 throw new ApiException("کلید یافت نشد");
 
             var ips = server.IPs.Split(',').ToList();
 
-            var httpClient = await GetCookie(server);
-            var keys = await FetchKeysFromServer(server, httpClient);
-            var keyModified = keys.obj.First(a => a.id == keyId);
+            var httpClient = await GetCookie(server.UserName, server.Password, ips.First(), server.Url, server.Port);
+            var keys = await FetchKeysFromServer(ips.First(),server.Port, httpClient);
+            
+            var keyModified = keys.obj.First(a => a.id == key.KeyId);
 
             keyModified.enable = enable;
             key.State = enable;
-
+            key.Traffic = traffic;
+            keyModified.total = traffic.GigaByteToBytes();
             if (enable && expireDate != null)
             {
-                key.ExpireDate = expireDate.Value.ToTimeStamp();
+                key.ExpireDate = expireDate.Value.ToGeo().ToTimeStamp();
                 keyModified.expiryTime = expireDate.Value.ToGeo().ToTimeStamp();
             }
+            var ipsCount = 0;
             foreach (var ip in ips)
             {
-                await GenerateKey(server, keyModified, httpClient);
+                httpClient = await GetCookie(server.UserName, server.Password, ip, server.Url, server.Port);
+                await UpdateKey(key.KeyId,ip,server.Port, keyModified, httpClient);
+                ipsCount++;
             }
+            if (ipsCount != ips.Count)
+                throw new ApiException("در تمام سرورها اعمال نشد");
             _db.V2Keys.Update(key);
             _db.SaveChanges();
         }
@@ -179,9 +190,9 @@ namespace V2Ray.Api.Services.V2Keys
                 foreach (var ip in ips)
                 {
                     server.IPs = ip;
-                    var httpClient = await GetCookie(server);
+                    var httpClient = await GetCookie(server.UserName, server.Password, ip, server.Url, server.Port);
                     var sampleKey = GetServerSampleKey(server, httpClient, out _keyId);
-                    for (int i = 0; i <= input.Count; i++)
+                    for (int i = 1; i <= input.Count; i++)
                     {
                         try
                         {
@@ -197,13 +208,13 @@ namespace V2Ray.Api.Services.V2Keys
                             sampleKey.port = port;
                             sampleKey.id = null;
                             sampleKey.remark = "iranv2ray.com";
-                            sampleKey.total = GigaByteToBytes(input.Capacity);
+                            sampleKey.total = GigaByteToBytes(input.Traffic);
                             sampleKey.expiryTime = input.ExpireDate.ToTimeStamp();
                             sampleKey.down = 0;
                             sampleKey.up = 0;
                             if (sampleKey == null)
                                 throw new Exception();
-                            await GenerateKey(server, sampleKey, httpClient);
+                            await GenerateKey(ip,server.Port, sampleKey, httpClient);
 
                             if (!keyCreated)
                             {
@@ -227,7 +238,7 @@ namespace V2Ray.Api.Services.V2Keys
                             continue;
                         }
                     }
-                    keyCreated =true;
+                    keyCreated = true;
                 }
 
 
@@ -239,11 +250,34 @@ namespace V2Ray.Api.Services.V2Keys
             }
         }
 
-        private async Task GenerateKey(V2Server server, Obj item, HttpClient httpClient, bool swap = false)
+        private async Task UpdateKey(int keyId,string ip, int port, Obj item, HttpClient httpClient, bool swap = false)
         {
             var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
 
-            var result = await httpClient.PostAsync($"https://{server.IPs}:{server.Port}/xui/inbound/add", formContent);
+            var result = await httpClient.PostAsync($"https://{ip}:{port}/xui/inbound/update/{keyId}", formContent);
+            result.EnsureSuccessStatusCode();
+
+            var tt = await result.Content.ReadAsStringAsync();
+
+            var serverResponse = JsonConvert.DeserializeObject<ServerResponse>(tt);
+            if (!serverResponse.success)
+            {
+                if (serverResponse.msg.Contains(item.port.ToString()))
+                {
+
+                }
+                else
+                {
+                    throw new ApiException(serverResponse.msg);
+                }
+            }
+
+        }
+        private async Task GenerateKey(string ip,int port, Obj item, HttpClient httpClient, bool swap = false)
+        {
+            var formContent = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
+
+            var result = await httpClient.PostAsync($"https://{ip}:{port}/xui/inbound/update", formContent);
             result.EnsureSuccessStatusCode();
 
             var tt = await result.Content.ReadAsStringAsync();
@@ -288,27 +322,27 @@ namespace V2Ray.Api.Services.V2Keys
             keyId = key.id.Value;
             return key;
         }
-        public async Task<List<Obj>> GetServerKeys(V2Server input, HttpClient httpClient, bool swap = false)
+        public async Task<List<Obj>> GetServerKeys(string ip,int serverPort, HttpClient httpClient)
         {
-            var root = await FetchKeysFromServer(input, httpClient);
+            var root = await FetchKeysFromServer(ip, serverPort, httpClient);
             var objs = root.obj.OrderBy(a => a.remark).Where(a => a.protocol.Contains("vless")).ToList();
 
             return objs;
         }
 
-        public async Task<Obj> GetServerKey(V2Server input, HttpClient httpClient, string clientId)
+        public async Task<Obj> GetServerKey(string ip,int keyPort,int serverPort, HttpClient httpClient)
         {
-            var root = await FetchKeysFromServer(input, httpClient);
-            var obj = root.obj.OrderByDescending(a => a.id).FirstOrDefault(a => a.settings.ToString().Trim().Contains(clientId));
+            var root = await FetchKeysFromServer(ip,serverPort, httpClient);
+            var obj = root.obj.OrderByDescending(a => a.id).FirstOrDefault(a => a.port == keyPort);
 
             return obj;
         }
 
-        private static async Task<Root> FetchKeysFromServer(V2Server input, HttpClient httpClient)
+        private static async Task<Root> FetchKeysFromServer(string ip,int port, HttpClient httpClient)
         {
-            var url = $"https://{input.IPs}";
+            var url = $"https://{ip}";
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var re = await httpClient.PostAsJsonAsync($"{url}:{input.Port}/xui/inbound/list", new { }); ;
+            var re = await httpClient.PostAsJsonAsync($"{url}:{port}/xui/inbound/list", new { }); ;
             var ttt = await re.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<Root>(ttt);
         }
@@ -318,15 +352,15 @@ namespace V2Ray.Api.Services.V2Keys
             return gigateBytes * Convert.ToInt64(Math.Pow(1024, 3));
         }
 
-        private async Task<HttpClient> GetCookie(V2Server input, bool swap = false)
+        private async Task<HttpClient> GetCookie(string userName, string password, string ip, string url, int port, bool swap = false)
         {
             //input.Url = swap ? input.IP : input.Url;
 
 
             var formContent = new FormUrlEncodedContent(new[]
 {
-    new KeyValuePair<string, string>("username", input.UserName),
-    new KeyValuePair<string, string>("password",input.Password)
+    new KeyValuePair<string, string>("username", userName),
+    new KeyValuePair<string, string>("password",password)
 });
             CookieContainer cookies = new CookieContainer();
             HttpClientHandler handler = new HttpClientHandler();
@@ -336,40 +370,46 @@ namespace V2Ray.Api.Services.V2Keys
             HttpClient client = new HttpClient(handler);
             client.Timeout = TimeSpan.FromSeconds(10);
 
-            var url = $"https://{input.IPs}";
-            var response = await client.PostAsync($"{url}:{input.Port}/login", formContent);
-            cookies.Add(new Uri("https://" + input.Url), new Cookie("domain", $"{input.Url}"));
+            ip = $"https://{ip}";
+            var response = await client.PostAsync($"{ip}:{port}/login", formContent);
+            cookies.Add(new Uri("https://" + url), new Cookie("domain", $"{url}"));
 
             //var responseCookies = cookies.GetCookies(uri).Cast<Cookie>().ToList();
 
             return client;
         }
-        public async Task ChangeState(int id,bool state)
+        public async Task ChangeState(int id, bool state)
         {
-            await UpdateKey(id,null, state);
+            var key = _db.V2Keys.First(a => a.Id == id);
+            await UpdateKey(id,key.Traffic, null, state);
         }
 
-        public async Task CreateFreeAcount(int userId, int? count)
+        public async Task<int> GetUsedTraffic(int userId)
         {
-            var user = await _db.Users.Where(a => a.Id == userId).FirstOrDefaultAsync();
-            if (!user.UsedFreeAccount)
+            var keyUser = _db.V2Keys.FirstOrDefault(a => a.UserId == userId);
+            if (keyUser == null)
+                throw new ApiException("برای این کاربر کلیدی یافت نشد");
+
+
+            string guid = "";
+            int port = 0;
+            int _keyId = 0;
+            Obj? obj = null;
+            bool keyCreated = false;
+
+            int up = 0;
+            int down = 0;
+            int total = 0;
+            var server = _db.V2Servers.First(c => c.IsMain);
+            var ips = server.IPs.Split(',');
+            foreach (var ip in ips)
             {
-                if (!user.Paid)
-                    throw new ApiException("هیچ پرداخت تایید شده ای یافت نگردید");
+                var httpClient = await GetCookie(server.UserName, server.Password, ip, server.Url, server.Port);
+                var keyDetails = await GetServerKey(ip,keyUser.Port,server.Port, httpClient);
+                total += keyDetails.total.ByteToGigaByte();
             }
-            var server = await _db.V2Servers.Where(a => a.IsActive).Select(a => a.Id).FirstOrDefaultAsync();
 
-            if (server == 0)
-                throw new ApiException("سرور یافت نشد");
-
-            await this.InsertAsync(new CreateV2KeyInput
-            {
-                Capacity = user.UsedFreeAccount ? 10 : 40,
-                Count = 1,
-                ServerId = server,
-                ExpireDate = DateTime.UtcNow.AddDays(30)
-            });
-
+            return total;
         }
         public async Task<UserKeyDetailsOutput> UserKeyDetails(int userId)
         {
@@ -380,7 +420,7 @@ namespace V2Ray.Api.Services.V2Keys
 
             keyDetailsOutput.ExpireTime = keyUser.ExpireDate.ToDateTime().ToPeString();
             keyDetailsOutput.Key = keyUser.Key;
-
+            keyDetailsOutput.Traffic = keyUser.Traffic;
             return keyDetailsOutput;
         }
 
@@ -403,7 +443,7 @@ namespace V2Ray.Api.Services.V2Keys
 
                 var key = new CreateV2KeyInput()
                 {
-                    Capacity = 40,
+                    Traffic = 40,
                     MainServer = true,
                     Count = count,
                     ExpireDate = DateTime.UtcNow.AddDays(30),
@@ -411,19 +451,20 @@ namespace V2Ray.Api.Services.V2Keys
                 };
                 if (!user.UsedFreeAccount)
                 {
-                    key.Capacity = 5;
+                    key.Traffic = 5;
                     key.Count = 1;
                     key.ExpireDate = DateTime.UtcNow.AddDays(7);
                 }
                 if (user.V2Keys.Any())
                 {
                     var getKey = user.V2Keys.First();
-                    await UpdateKey(getKey.Id, DateTime.Now.AddDays(7), true);
+                    await UpdateKey(getKey.Id,key.Traffic, DateTime.Now.AddDays(7), true);
                 }
+
                 await InsertAsync(key);
                 user.UsedFreeAccount = false;
                 user.Paid = true;
-                _db.Update(user);
+                _db.Users.Update(user);
                 await _db.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -431,5 +472,7 @@ namespace V2Ray.Api.Services.V2Keys
                 throw;
             }
         }
+
+        
     }
 }

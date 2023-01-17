@@ -40,5 +40,14 @@ namespace V2Ray.Api.Services.ProblemReports
             
             await base.InsertAsync(input);
         }
+
+        public async Task SendAnswerAsync(int id, SendAnswerInput input)
+        {
+            var answer =await _db.ProblemReports.FirstAsync(a => a.Id == id);
+            answer.Answer = input.Answer;
+            answer.State = ProblemReportEnum.Answerd;
+            _db.ProblemReports.Update(answer);
+            _db.SaveChanges();
+        }
     }
 }

@@ -30,22 +30,24 @@
         </v-row>
       </v-col>
     </v-row>
-    <!-- <v-row>
+    <v-row>
       <v-col cols="6">
-        <div class="grey--text mb-2">ترافیک باقی مانده</div>
+        <div class="grey--text mb-2">حجم اولیه :</div>
       </v-col>
       <v-col cols="6">
-        <div class="mb-2">{{ this.raminingTraffic }} گیگا بایت</div>
+        <v-btn class="mb-2" :loading="loading1" @click="getTraffic()">
+          {{ this.traffic }}
+        </v-btn>
       </v-col>
     </v-row>
     <v-row>
       <v-col cols="6">
-        <div class="grey--text mb-2">ترافیک خریداری شده</div>
+        <div class="grey--text mb-2">ترافیک :</div>
       </v-col>
       <v-col cols="6">
-        <div class="mb-2">{{ this.initTraffic }} گیگا بایت</div>
+        <div class="mb-2">{{ this.userKeyDetails.traffic }} گیگا بایت</div>
       </v-col>
-    </v-row> -->
+    </v-row>
     <div class="text-center mt-10">
       <v-btn
         rounded
@@ -132,14 +134,16 @@ export default {
         // },
       ],
       loading: false,
+      loading1: false,
       keys: [],
+      traffic: "مشاهده",
       count: 1,
       userKeyDetails: {
         key: "",
         freeAccount: false,
         up: 0,
         down: 0,
-        total: 0,
+        traffic: 0,
         expireTime: null,
       },
     };
@@ -150,6 +154,18 @@ export default {
   methods: {
     buyKey() {
       alert("خرید");
+    },
+    getTraffic() {
+      request
+        .get(`/v2Key/getUsedTraffic`)
+        .then((response) => {
+          var data = response.data.result;
+          this.loading1 = false;
+          this.traffic = data;
+        })
+        .catch(() => {
+          this.loading = false;
+        });
     },
     copyToClipBoard(textToCopy) {
       navigator.clipboard

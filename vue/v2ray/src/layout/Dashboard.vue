@@ -120,6 +120,7 @@ export default class Dashboard extends Vue {
       adminVisible: this.$store.state.userDetails.isAdmin,
       to: "/swaps",
     },
+   
     {
       icon: "mdi-account",
       title: "مدیریت کاربران",
@@ -135,14 +136,12 @@ export default class Dashboard extends Vue {
       permission: "Role_Show",
       to: "/user-roles",
     },
-    // {
-    //   icon: "mdi-currency-usd",
-    //   title: "پلن ها",
-    //   adminVisible: this.$store.state.userDetails.isAdmin,
-    //   permission: "Role_Show",
-    //   to: "/manage-plans",
-    // },
-
+    {
+      icon: "mdi-sync",
+      title: "گزارش مشکل",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      to: "/problem-reports",
+    },
     {
       icon: "mdi-server",
       title: "سرورها",
@@ -172,6 +171,7 @@ export default class Dashboard extends Vue {
       to: "/profile",
       adminVisible: true,
     },
+  
   ];
   get currentUser() {
     return UserModule.fullName;

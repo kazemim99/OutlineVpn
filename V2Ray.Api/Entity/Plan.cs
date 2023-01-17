@@ -25,6 +25,8 @@ namespace V2Ray.Api.Entity
             get; set;
 
         }
+        public string Answer { get; set; }
+
         public ProblemReportEnum State { get;  set; }
     }
 }

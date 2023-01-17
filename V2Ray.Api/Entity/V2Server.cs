@@ -40,10 +40,10 @@ namespace V2Ray.Api.Entity
     public class V2Key : FullAuditEntity<int>, ISoftDelete
     {
         public string Remark { get; set; }
-        public long Capacity { get; set; }
+        public int Traffic { get; set; }
         public int ClientPort { get; set; }
         public long ExpireDate { get; set; }
-        public bool State { get; set; }
+        public bool State { get; set; } = true;
         public Protocol Protocol { get; set; }
         public string Key { get; set; }
         public bool IsDeleted { get; set; }

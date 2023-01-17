@@ -11,5 +11,6 @@ namespace V2Ray.Api.Services.ProblemReports
         GetProblemReportListOutput,
         ProblemReportFilterInput>
     {
+        Task SendAnswerAsync(int id, SendAnswerInput input);
     }
 }

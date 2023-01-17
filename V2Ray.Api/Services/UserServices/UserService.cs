@@ -163,8 +163,7 @@ namespace V2Ray.Api.Services.UserServices
         public async Task ChangeState(int id)
         {
             var user = _db.Users.Include(a=>a.V2Keys).FirstOrDefault(a => a.Id == id);
-            user.Enable = !user.Enable;
-            _db.Update(user);
+            
 
             if (user.V2Keys.Any())
             {
@@ -174,7 +173,8 @@ namespace V2Ray.Api.Services.UserServices
             }
 
             var stateString = user.Enable ? "فعال" : "غیر فعال";
-
+            user.Enable = !user.Enable;
+            _db.Update(user);
             await _db.SaveChangesAsync();
         }
 

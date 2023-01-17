@@ -36,7 +36,7 @@ where TPage : PaginationModelInput
             var result = query
                  .OrderBy(input.OrderBy ?? "id-desc")
                  .Skip(skip)
-                 .Take(input.ItemsPerPage);
+                 .Take(input.ItemsPerPage).ToList();
             pagination.Result = _mapper.Map<List<TOut>>(result);
             return pagination;
         }

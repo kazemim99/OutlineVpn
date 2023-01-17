@@ -18,7 +18,9 @@ namespace V2Ray.Api.Services.V2Keys.Mapping
                 .ForMember(a => a.CreateDate, c => c.MapFrom(b => b.CreatedAt.ToPeString("yyyy/MM/dd")));
 
             CreateMap<V2Key, GetV2KeyOutput>()
-                .ForMember(a => a.Capacity, c => c.MapFrom(a => a.Capacity.GigaByteToBytes()));
+                .ForMember(a => a.Traffic, c => c.MapFrom(a => a.Traffic))
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(a => a.ExpireDate.ToDateTime().ToPersianDate()))
+                .ForMember(a => a.ServerId, c => c.MapFrom(a => a.V2ServerId));
 
 
             CreateMap<CreateV2KeyInput, V2Key>().

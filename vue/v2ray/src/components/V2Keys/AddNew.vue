@@ -41,7 +41,7 @@
               <v-row>
                 <v-col cols="6" sm="12" md="6">
                   <v-text-field
-                    v-model="v2Key.capacity"
+                    v-model="v2Key.traffic"
                     label="ترافیک *"
                     placeholder=" "
                     autocomplete="false"
@@ -94,7 +94,7 @@ export default Vue.extend({
     loading: false,
     v2Key: {
       serverId :0,
-      capacity: "",
+      traffic: 0,
       expireDate : null,
       state: true,
       count: 1,
@@ -127,7 +127,7 @@ export default Vue.extend({
         var data = response.data.result;
         this.v2Key.id = id;
         this.v2Key.serverId = data.serverId;
-        this.v2Key.capacity = data.capacity;
+        this.v2Key.traffic = data.traffic;
         this.v2Key.expireDate = data.expireDate;
         this.v2Key.state = data.state;
       });
@@ -169,7 +169,7 @@ export default Vue.extend({
       this.selectedComplexId = null;
 
         (this.v2Key.serverId = 0),
-        (this.v2Key.capacity = 40),
+        (this.v2Key.traffic = 40),
         (this.v2Key.expireDate = ""),
         (this.v2Key.count =1),
         (this.v2Key.state = true)

@@ -17,6 +17,8 @@ namespace V2Ray.Api.Controllers
             _v2KeyService = service;
         }
 
+
+
         [HttpGet("filter")]
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] V2KeyFilterInput filter)
@@ -25,6 +27,14 @@ namespace V2Ray.Api.Controllers
             //filter.IsAdmin = IsAdmin;
             filter.SortDesc = true;
             var result = await _v2KeyService.GetAllAsync(filter, new[] { "V2Server","User" });
+            return new ApiResponse(result);
+        }
+
+        [HttpGet("getUsedTraffic")]
+        [Authorize]
+        public async Task<ApiResponse> GetUsedTraffic()
+        {
+            var result = await _v2KeyService.GetUsedTraffic(UserId);
             return new ApiResponse(result);
         }
 
@@ -37,7 +47,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateV2KeyInput input)
         {
-            await _v2KeyService.UpdateAsync(id, input);
+            await _v2KeyService.UpdateKey(id,input.Traffic, input.ExpireDate,input.State);
 
             return new ApiResponse();
         }

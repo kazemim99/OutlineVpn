@@ -20,7 +20,7 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/views/Home.vue'),
         meta: { requireAuth: true }
       },
-     
+
       {
         path: '/swaps',
         name: 'Swap',
@@ -38,6 +38,11 @@ const routes: Array<RouteConfig> = [
         name: 'ManagPlans',
         component: () => import('@/views/Plans/ManagePlans.vue'),
         meta: { requireAuth: true }
+      },
+      {
+        path: "/problem-reports",
+        name: "ProblemReports",
+        component: () => import("@/views/ProblemReports/index.vue"),
       },
 
       {
@@ -66,7 +71,7 @@ const routes: Array<RouteConfig> = [
         component: () => import("@/views/Plans/index.vue"),
         meta: { requireAuth: true }
       },
-    
+
       {
         path: "/v2servers",
         name: "V2Servers",
@@ -79,10 +84,10 @@ const routes: Array<RouteConfig> = [
         component: () => import("@/views/V2Keys/index.vue"),
         meta: { requireAuth: true }
       },
-    
+
     ]
   },
- 
+
   {
     path: "/login",
     name: "Login",
@@ -115,7 +120,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const isLoggedIn = getToken();
   const isAdmin = store.state.userDetails;
-  if (to.matched.some((record) => record.meta.requireAuth ) && !isLoggedIn) {
+  if (to.matched.some((record) => record.meta.requireAuth) && !isLoggedIn) {
     next({ path: '/login', query: { returnUrl: to.path } });
   }
 

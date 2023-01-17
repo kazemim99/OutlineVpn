@@ -4,80 +4,61 @@
 
     <v-data-table
       :headers="headers"
-      :items="v2Keys"
+      :items="problemReportList"
       :loading="loading"
-      :server-items-length="totalV2Keys"
+      :server-items-length="totalProblemReports"
       item-key="id"
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.isActive="{ item }">
-        <v-switch
-          v-model="item.isActive"
-          flat
-          @change="changeState(item)"
-          :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
-        ></v-switch>
-      </template>
-
-      <template v-slot:item.edit="{ item }">
+      <template
+        v-if="this.$store.state.userDetails.isAdmin"
+        v-slot:item.edit="{ item }"
+      >
         <v-icon
           v-can="'Member_Edit'"
           medium
           class="mr-2"
-          @click="editItem(item)"
+          @click="openAnswer(item.id)"
           >mdi-pencil</v-icon
         >
       </template>
 
-      <template v-slot:item.delete="{ item }">
-        <v-icon
-          v-can="'Member_Delete'"
+      <template v-slot:item.show="{ item }">
+        <v-btn
+          v-if="item.answer"
           medium
           class="mr-2"
-          @click="deleteItem(item.id, item.v2KeyId)"
-          >mdi-delete</v-icon
+          @click="getAnswer(item.answer)"
+          >مشاهده پاسخ</v-btn
         >
       </template>
 
       <template v-slot:top>
         <v-toolbar flat>
-          <v-col cols="12">
-            <template right>
-              <v-row>
-                <v-col class="d-flex" cols="3" sm="6">
-                  <AddNew
-                    v-can="'Member_Create'"
-                    ref="addV2KeyCom"
-                    @reloadV2Keys="getV2Keys"
-                  />
-                </v-col>
-              </v-row>
-            </template>
-          </v-col>
           <v-spacer></v-spacer>
           <v-divider class="mx-4" inset vertical></v-divider>
 
-          <v-toolbar-title>لیست سرور ها</v-toolbar-title>
+          <v-toolbar-title>لیست پیامها</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:header.title="{ header }">
+      <template v-slot:heade.email="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="title ? 'primary' : ''">mdi-filter</v-icon>
+              <v-icon small :color="email ? 'primary' : ''">mdi-filter</v-icon>
             </v-btn>
           </template>
           <div style="background-color: white; width: 280px">
             <v-text-field
-              v-model="title"
+              v-model="email"
               class="pa-4"
               type="text"
               label="جستجو"
             ></v-text-field>
             <v-btn
-              @click="title = ''"
+              @click="email = ''"
               small
               text
               color="primary"
@@ -98,14 +79,12 @@
 </template>
 <script>
 import request from "@/utils/request";
-import AddNew from "@/components/V2Keys/AddNew.vue";
 import Breadcrump from "@/components/common/Breadcrump.vue";
 import Vue from "vue";
 
 export default {
-  name: "V2Keys",
+  name: "ProblemReports",
   components: {
-    AddNew,
     Breadcrump,
   },
   data() {
@@ -117,69 +96,82 @@ export default {
           href: "/",
         },
         {
-          text: "کلیدها",
+          text: "گزارش مشکل",
           disabled: true,
         },
       ],
-      totalV2Keys: 0,
+      problemReport: {},
+      totalProblemReports: 0,
       switchLoading: null,
       pages: 0,
-      serverid: 0,
-      isActive: null,
-      title: null,
-      v2Keys: [],
+      enable: null,
+      firstName: null,
+      lastName: null,
+      email: null,
+      model: {
+        answer: "",
+      },
+      problemReportList: [],
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
+
       headers: [
-        { text: "ایمیل", value: "email", sortable: true },
-        { text: "آی پی", value: "iP", sortable: false },
-        { text: "تاریخ ایجاد", value: "createDate", sortable: false },
-        { text: "تاریخ انقضا", value: "expireDate", sortable: false },
+        { text: "نام کاربری", value: "userName", sortable: true },
+        { text: "اپراتور", value: "operator", sortable: true },
+        { text: "سیستم عامل", value: "os", sortable: false },
+        { text: "وضعیت", value: "state", sortable: true },
         { text: "", value: "edit", sortable: false },
-        { text: "", value: "delete", sortable: false },
+        { text: "", value: "show", sortable: false },
       ],
     };
   },
   watch: {
     options: {
       handler() {
-        this.getV2Keys();
+        this.getProblemReports();
       },
       deep: true,
     },
-    title: function () {
-      if (this.title.length > 2 || this.title.length === 0)
+    email: function () {
+      if (this.email.length > 2 || this.email.length === 0)
         this.options.page = 1;
-      this.options.title = this.title;
+      this.options.email = this.email;
 
-      this.getV2Keys();
+      this.getProblemReports();
     },
   },
-  created() {
-    this.getV2Keys();
+  mounted() {
+    this.getProblemReports();
   },
 
   methods: {
-    async changeState(item) {
-      this.switchLoading = "warning";
-      await request
-        .put(`/v2Key/change-state/${item.id}`)
+    async openAnswer(id) {
+      debugger;
+      let answer = prompt("پاسخ", "");
+      if (answer != null) {
+        this.model.answer = answer;
+        this.sendAnwer(id);
+      }
+    },
+    async sendAnwer(id) {
+      request
+        .put(`/ProblemReport/sendAnswer/${id}`, this.model)
         .then(() => {
-          console.log(item.isActive);
-        })
-        .catch((error) => {
-          alert(error);
-          this.isActive = !this.isActive;
+          Vue.swal("", "پاسخ با موفقیت ارسال شد", "success");
+          this.getProblemReports();
         })
         .finally(() => {
-          this.loading = false;
+          this.uploadLoading = false;
         });
     },
     async editItem(item) {
-      this.$refs.addV2KeyCom.dialog = true;
-      this.$refs.addV2KeyCom.id = item.id;
+      this.$refs.addProblemReportCom.dialog = true;
+      this.$refs.addProblemReportCom.problemReportId = item.id;
     },
-    deleteItem(id, v2KeyId) {
+    getAnswer(answer) {
+      Vue.swal("",`${answer}`);
+    },
+    deleteItem(id) {
       Vue.swal({
         title: "ایا مطمئن  هستید",
         icon: "warning",
@@ -191,10 +183,10 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           request
-            .delete(`/V2Key/${v2KeyId}/${id}`)
+            .delete(`/problemReport/${id}`)
             .then(() => {
-              Vue.swal("", "کلید با موفقیت حذف گردید", "success");
-              this.getV2Keys();
+              Vue.swal("", "کاربر با موفقیت حذف گردید", "success");
+              this.getProblemReports();
             })
             .finally(() => {
               this.uploadLoading = false;
@@ -205,16 +197,16 @@ export default {
 
     next(page) {
       this.options.page = page;
-      this.V2Keys();
+      this.getProblemReports();
     },
     handler(event) {
       this.options = event;
     },
     GetSelectedState(state) {
-      this.state = state;
+      this.enable = state;
     },
 
-    async getV2Keys() {
+    async getProblemReports() {
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
       this.loading = true;
 
@@ -227,11 +219,11 @@ export default {
 
       this.loading = true;
       await request
-        .get("/v2Key/filter?" + filterQuery)
+        .get("/problemReport/?" + filterQuery)
         .then((response) => {
           var data = response.data.result;
-          this.v2Keys = data.result;
-          this.totalV2Keys = data.totalItems;
+          this.problemReportList = data.result;
+          this.totalProblemReports = data.totalItems;
           this.pages = data.pageCount;
         })
         .catch((error) => {

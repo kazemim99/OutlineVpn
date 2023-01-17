@@ -7,7 +7,7 @@ using static V2Ray.Api.Services.Server.ServerService;
 namespace V2Ray.Api.Services.V2Keys.Dto
 {
 
-    public class SwapServerKeysInput:IValidatableObject     
+    public class SwapServerKeysInput : IValidatableObject
     {
         [Required]
         public int FromServerId { get; set; }
@@ -34,11 +34,11 @@ namespace V2Ray.Api.Services.V2Keys.Dto
 
     public class GenerateKeyOutput
     {
-        public string? ClientKeyId { get;  set; }
-        public string? Key { get;  set; }
-        public string? Remark { get;  set; }
+        public string? ClientKeyId { get; set; }
+        public string? Key { get; set; }
+        public string? Remark { get; set; }
     }
-   
+
     public class CreateV2KeyInput
     {
         [DataMember(IsRequired = false)]
@@ -48,8 +48,8 @@ namespace V2Ray.Api.Services.V2Keys.Dto
         [JsonIgnore]
         public int UserId { get; set; }
 
-
-        public int Count { get; set; } = 10;
+        public bool State { get; set; }
+        public int Count { get; set; }
 
         [DataMember(IsRequired = false)]
         [JsonIgnore]
@@ -57,7 +57,7 @@ namespace V2Ray.Api.Services.V2Keys.Dto
 
         public int ServerId { get; set; }
 
-        public int Capacity { get; set; } = 40;
+        public int Traffic { get; set; }
 
         public DateTime ExpireDate { get; set; }
 
@@ -71,6 +71,6 @@ namespace V2Ray.Api.Services.V2Keys.Dto
 
         [DataMember(IsRequired = false)]
         [JsonIgnore]
-        public bool MainServer { get;  set; }
+        public bool MainServer { get; set; }
     }
 }
