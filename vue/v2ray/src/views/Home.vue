@@ -32,7 +32,7 @@
     </v-row>
     <v-row>
       <v-col cols="6">
-        <div class="grey--text mb-2">حجم اولیه :</div>
+        <div class="grey--text mb-2">ترافیک مصرف شده :</div>
       </v-col>
       <v-col cols="6">
         <v-btn class="mb-2" :loading="loading1" @click="getTraffic()">
@@ -42,7 +42,7 @@
     </v-row>
     <v-row>
       <v-col cols="6">
-        <div class="grey--text mb-2">ترافیک :</div>
+        <div class="grey--text mb-2">ترافیک شما :</div>
       </v-col>
       <v-col cols="6">
         <div class="mb-2">{{ this.userKeyDetails.traffic }} گیگا بایت</div>
@@ -156,6 +156,7 @@ export default {
       alert("خرید");
     },
     getTraffic() {
+      this.loading1 = true;
       request
         .get(`/v2Key/getUsedTraffic`)
         .then((response) => {
@@ -165,6 +166,8 @@ export default {
         })
         .catch(() => {
           this.loading = false;
+          this.loading1 = false;
+
         });
     },
     copyToClipBoard(textToCopy) {

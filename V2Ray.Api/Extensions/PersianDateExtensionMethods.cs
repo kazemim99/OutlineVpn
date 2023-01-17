@@ -15,9 +15,10 @@ namespace V2Ray.Api.Extensions
             return Convert.ToInt64(gig * 1024d * 1024d * 1024d);
         }
 
-        public static int ByteToGigaByte(this long bytes)
-        {
-            return Convert.ToInt32(bytes / 1024d / 1024d / 1024d);
+        public static double ByteToGigaByte(this long bytes)
+        { 
+        var result = bytes / 1024d / 1024d / 1024d;
+            return result;
         }
         public static DateTime TimeStampToDateTime(this long date)
         {

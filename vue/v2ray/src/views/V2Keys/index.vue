@@ -35,7 +35,7 @@
           v-can="'Member_Delete'"
           medium
           class="mr-2"
-          @click="deleteItem(item.id, item.v2KeyId)"
+          @click="deleteItem(item.id)"
           >mdi-delete</v-icon
         >
       </template>
@@ -179,7 +179,7 @@ export default {
       this.$refs.addV2KeyCom.dialog = true;
       this.$refs.addV2KeyCom.id = item.id;
     },
-    deleteItem(id, v2KeyId) {
+    deleteItem(id) {
       Vue.swal({
         title: "ایا مطمئن  هستید",
         icon: "warning",
@@ -191,7 +191,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           request
-            .delete(`/V2Key/${v2KeyId}/${id}`)
+            .delete(`/V2Key/${id}`)
             .then(() => {
               Vue.swal("", "کلید با موفقیت حذف گردید", "success");
               this.getV2Keys();

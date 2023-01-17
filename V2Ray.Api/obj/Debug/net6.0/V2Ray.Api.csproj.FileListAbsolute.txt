@@ -1,3 +1,10 @@
+C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.AssemblyReference.cache
+C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfoInputs.cache
+C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfo.cs
+C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.CoreCompileInputs.cache
+C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cs
+C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cache
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\V2Ray.Api.staticwebassets.runtime.json
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\V2Ray.Api.exe
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\appsettings.Development.json
@@ -78,12 +85,6 @@ C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Sy
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
-C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.GeneratedMSBuildEditorConfig.editorconfig
-C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfoInputs.cache
-C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfo.cs
-C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.CoreCompileInputs.cache
-C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cs
-C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cache
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\staticwebassets.build.json
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\staticwebassets.development.json
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\scopedcss\bundle\V2Ray.Api.styles.css
@@ -92,4 +93,3 @@ C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\ref\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.xml
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.genruntimeconfig.cache
-C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.AssemblyReference.cache

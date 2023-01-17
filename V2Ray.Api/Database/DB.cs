@@ -13,7 +13,7 @@ namespace V2Ray.Api.Database
             var builder = new DbContextOptionsBuilder<DB>();
 
             //var connectionString = "Data Source=185.55.224.120;Initial Catalog= powerbox_sa;User ID=powerbox_sa;Password=Pa$$w0rd";
-            var connectionString = "Server=localhost;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E";
+            var connectionString = "Server=45.77.65.140;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E";
 
             builder.UseNpgsql(connectionString);
             return new DB(builder.Options);

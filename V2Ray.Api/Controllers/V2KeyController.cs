@@ -110,10 +110,10 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         ///
         [Authorize]
-        [HttpDelete("{serverId}/{keyId}")]
-        public async Task<ApiResponse> Delete([FromRoute] int serverId, [FromRoute] int keyId)
+        [HttpDelete("{keyId}")]
+        public async Task<ApiResponse> Delete([FromRoute] int keyId)
         {
-            await _v2KeyService.DeleteKey(serverId,keyId);
+            await _v2KeyService.DeleteKey(keyId);
 
             return new ApiResponse();
         }

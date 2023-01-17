@@ -19,8 +19,8 @@ namespace V2Ray.Api.Services.V2Keys
         Task SwapServerKeysAsync(SwapServerKeysInput input);
         Task<UserKeyDetailsOutput> UserKeyDetails(int userId);
         Task GenerateUserKey(int count, int userId);
-        Task DeleteKey(int keyId, int serverId);
+        Task DeleteKey(int keyId);
         Task UpdateKey(int keyId, int traffic, DateTime? expireDate, bool enable);
-        Task<int> GetUsedTraffic(int userId);
+        Task<string> GetUsedTraffic(int userId);
     }
 }
