@@ -26,7 +26,7 @@ namespace V2Ray.Api.Controllers
             _userService = userService;
         }
 
-        
+
         [HttpGet("get-os")]
         [Authorize]
         public ApiResponse GetOS()
@@ -36,7 +36,32 @@ namespace V2Ray.Api.Controllers
                 .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
             return new ApiResponse(result);
         }
-        
+
+        [HttpGet("add-ssh")]
+        public ApiResponse GetOS(string username, string password)
+        {
+            var connectionInfo = new Renci.SshNet.PasswordConnectionInfo("45.77.65.140", 22000, "root", "!Q@W#E$R5t6y7u8i");
+
+            using (var ssh = new Renci.SshNet.SshClient(connectionInfo))
+            {
+                ssh.Connect();
+                var date = DateTime.Now.AddMonths(1).ToString("d");
+                var command = ssh.CreateCommand("useradd " + username  + "-s /bin/false");
+                 command.Execute();
+
+                command = ssh.CreateCommand("echo '" + username + ":" + password + "' >> create.txt");
+                var sss = command.Execute();
+                command = ssh.CreateCommand("passwd < create.txt");
+                command.Execute();
+                //command = ssh.CreateCommand("rm create.txt");
+                //command.Execute();
+
+                ssh.Disconnect();
+            }
+            return new ApiResponse();
+        }
+        //Console.WriteLine(ShellHelper.Bash($"echo -e \"{password}\n{password}\n\" | sudo passwd {user}"));
+
 
         [HttpGet("get-operations")]
         [Authorize]
