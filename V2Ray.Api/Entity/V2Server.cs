@@ -19,7 +19,7 @@ namespace V2Ray.Api.Entity
         public bool IsMain { get;  set; }
         public int KeyCount { get; set; }
     }
-    public class SSHKeyInfo:AuditEntity<int>
+    public class SSHKey:AuditEntity<int>
     {
         public string UserName { get; set; }
         public string Password { get; set; }

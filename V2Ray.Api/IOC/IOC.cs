@@ -12,6 +12,7 @@ using V2Ray.Api.Services.sms.Rahyab;
 using V2Ray.Api.Services.Cities;
 using V2Ray.Api.Services.V2Keys;
 using V2Ray.Api.Services.ProblemReports;
+using V2Ray.Api.Services.SSHKeys;
 
 namespace V2Ray.Api.IOC
 {
@@ -29,6 +30,7 @@ namespace V2Ray.Api.IOC
             services.AddScoped<ICitieservice, CitieService>();
             services.AddScoped<IV2KeyService, V2KeyService>();
             services.AddScoped<IProblemReportservice, ProblemReportservice>();
+            services.AddScoped<ISSHKeyService, SSHKeyService>();
 
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 

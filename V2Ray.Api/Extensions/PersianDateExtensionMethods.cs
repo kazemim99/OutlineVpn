@@ -22,9 +22,9 @@ namespace V2Ray.Api.Extensions
         }
         public static DateTime TimeStampToDateTime(this long date)
         {
-            date /= 1000; // Divide by 1,000 because we need milliseconds, not microseconds.
 
-            return DateTimeOffset.FromUnixTimeMilliseconds(date).DateTime;
+            var dt = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(Math.Round(1372061224000 / 1000d)).ToLocalTime();
+            return dt;
         }
         public static CultureInfo GetPersianCulture()
         {

@@ -98,7 +98,6 @@ import { UserModule } from "@/store/modules/user";
 @Component({
   name: "Dashboard",
 })
-
 export default class Dashboard extends Vue {
   private drawer = true;
   private title = "IranV2Ray";
@@ -120,7 +119,7 @@ export default class Dashboard extends Vue {
       adminVisible: this.$store.state.userDetails.isAdmin,
       to: "/swaps",
     },
-   
+
     {
       icon: "mdi-account",
       title: "مدیریت کاربران",
@@ -128,7 +127,7 @@ export default class Dashboard extends Vue {
       permission: "Member_Show",
       to: "/users",
     },
-    
+
     {
       icon: "mdi-account-key ",
       title: "نقش ها",
@@ -153,9 +152,9 @@ export default class Dashboard extends Vue {
       title: "کلیدها",
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "ApiUrl_Show",
-      to: "/v2Keys",
+      to: "/sshkeys",
     },
-    
+
     // {
     //   icon: "mdi-currency-usd",
     //   title: "خرید ترافیک",
@@ -170,7 +169,6 @@ export default class Dashboard extends Vue {
       to: "/profile",
       adminVisible: true,
     },
-  
   ];
   get currentUser() {
     return UserModule.fullName;

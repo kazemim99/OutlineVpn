@@ -1,47 +1,43 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using V2Ray.Api.Services.V2Keys;
-using V2Ray.Api.Services.V2Keys.Dto;
+using V2Ray.Api.Services.SSHKeys.Dto;
+using V2Ray.Api.Services.SSHKeys;
 
 namespace V2Ray.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class V2KeyController : CustomBaseController
+    public class SSHKeyController : CustomBaseController
     {
-        private readonly IV2KeyService _v2KeyService;
+        private readonly ISSHKeyService _service;
 
-        public V2KeyController(IV2KeyService service)
+        public SSHKeyController(ISSHKeyService service)
         {
-            _v2KeyService = service;
+            _service = service;
         }
 
-
-
-        [HttpGet("filter")]
+        [HttpGet("all-sshkeys")]
         [Authorize]
-        public async Task<ApiResponse> Filter([FromQuery] V2KeyFilterInput filter)
+        public async Task<ApiResponse> Filter()
         {
-            //filter.V2KeyId = V2KeyId;
+            //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;
-            filter.SortDesc = true;
-            var result = await _v2KeyService.GetAllAsync(filter, new[] { "V2Server", "User" });
+            var result = await _service.GetAllAsync(new SSHKeyFilterInput
+            {
+                ItemsPerPage = 100
+            });
             return new ApiResponse(result);
         }
-
-        [HttpGet("getUsedTraffic")]
+        [HttpGet("sshkeys")]
         [Authorize]
-        public async Task<ApiResponse> GetUsedTraffic()
+        public async Task<ApiResponse> Filter([FromQuery] SSHKeyFilterInput filter)
         {
-            var result = await _v2KeyService.GetUsedTraffic(UserId);
+            //filter.SSHKeyId = SSHKeyId;
+            //filter.IsAdmin = IsAdmin;
+            var result = await _service.GetAllAsync(filter);
             return new ApiResponse(result);
         }
-
-
-      
-
-
 
         /// <summary>
         /// ویرایش یک کاربر 
@@ -50,49 +46,32 @@ namespace V2Ray.Api.Controllers
         [HttpPut("{id:int}")]
         [Authorize]
 
-        public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateV2KeyInput input)
+        public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateSSHKeyInput input)
         {
-            await _v2KeyService.UpdateKey(id, input.Traffic, input.ExpireDate, input.State);
+            await _service.UpdateAsync(id, input);
 
             return new ApiResponse();
         }
 
-        [HttpGet("generateKey/{count}")]
-        [Authorize]
 
-        public async Task<ApiResponse> GenerateKey([FromRoute] int count)
-        {
-            count = 1;
-            //filter.UserId = UserId;
-            //filter.IsAdmin = IsAdmin;
-            await _v2KeyService.GenerateUserKey(count, UserId);
-            return new ApiResponse();
-        }
-        [HttpGet("user-key-details")]
+
+        [HttpPost("create-test-ssh")]
         [Authorize]
-        public async Task<ApiResponse> UserKeyDetails()
+        public async Task<ApiResponse> Create()
         {
-            //filter.UserId = UserId;
-            //filter.IsAdmin = IsAdmin;
-            var result = await _v2KeyService.UserKeyDetails(UserId);
-            return new ApiResponse(result);
+            await _service.GenerateSshFromClient(UserId);
+            return new ApiResponse();
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<ApiResponse> Create([FromBody] CreateV2KeyInput input)
+        public async Task<ApiResponse> Create([FromBody] CreateSSHKeyInput input)
         {
             input.UserId = UserId;
-            await _v2KeyService.InsertAsync(input);
+            await _service.GenerateSshFromAdmin(input);
             return new ApiResponse();
         }
-        [HttpPost("SwapServerKeys")]
-        [Authorize]
-        public async Task<ApiResponse> SwapServerKeys([FromBody] SwapServerKeysInput input)
-        {
-            await _v2KeyService.SwapServerKeysAsync(input);
-            return new ApiResponse();
-        }
+
 
         /// <summary>
         /// دریافت اطلاعات یک کاربر
@@ -102,12 +81,12 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-            var result = await _v2KeyService.GetById(id);
+           var result =   await _service.GetById(id);
 
             return new ApiResponse(result);
         }
 
-
+        
 
 
         /// <summary>
@@ -115,10 +94,10 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         ///
         [Authorize]
-        [HttpDelete("{keyId}")]
-        public async Task<ApiResponse> Delete([FromRoute] int keyId)
+        [HttpDelete("{id}")]
+        public async Task<ApiResponse> Delete([FromRoute] int id)
         {
-            await _v2KeyService.DeleteKey(keyId);
+            await _service.DeleteFromVPS(id);
 
             return new ApiResponse();
         }
@@ -143,7 +122,8 @@ namespace V2Ray.Api.Controllers
         //    return new ApiResponse(root);
         //}
 
-
+      
+      
     }
-
+   
 }

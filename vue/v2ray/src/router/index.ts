@@ -44,6 +44,11 @@ const routes: Array<RouteConfig> = [
         name: "ProblemReports",
         component: () => import("@/views/ProblemReports/index.vue"),
       },
+      {
+        path: "/sshkeys",
+        name: "SSHKeys",
+        component: () => import("@/views/SSHKeys/index.vue"),
+      },
 
       {
         path: "/profile",
