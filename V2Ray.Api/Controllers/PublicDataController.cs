@@ -37,30 +37,38 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(result);
         }
 
-        [HttpGet("add-ssh")]
-        public ApiResponse GetOS(string username, string password)
-        {
-            var connectionInfo = new Renci.SshNet.PasswordConnectionInfo("45.77.65.140", 22000, "root", "!Q@W#E$R5t6y7u8i");
+        //[HttpGet("add-ssh")]
+        //public ApiResponse GetOS(string username)
+        //{
+        //    var connectionInfo = new PasswordConnectionInfo("45.77.140.25", 22000, "root", "!Q@W#E$R5t6y7u8i");
+        //    string password = CreatePassword(8);
 
-            using (var ssh = new Renci.SshNet.SshClient(connectionInfo))
-            {
-                ssh.Connect();
-                var date = DateTime.Now.AddMonths(1).ToString("d");
-                var command = ssh.CreateCommand("useradd " + username  + "-s /bin/false");
-                 command.Execute();
+        //    using (var ssh = new SshClient(connectionInfo))
+        //    {
+        //        ssh.Connect();
+        //        var date = DateTime.Now.AddMonths(1).ToString("d");
+        //        var command = ssh.CreateCommand($"useradd -m -p $(openssl passwd -1 {password}) -s /bin/bash -G sudo {username}");
+        //         command.Execute();
+                
+        //        //command = ssh.CreateCommand("rm create.txt");
+        //        //command.Execute();
 
-                command = ssh.CreateCommand("echo '" + username + ":" + password + "' >> create.txt");
-                var sss = command.Execute();
-                command = ssh.CreateCommand("passwd < create.txt");
-                command.Execute();
-                //command = ssh.CreateCommand("rm create.txt");
-                //command.Execute();
-
-                ssh.Disconnect();
-            }
-            return new ApiResponse();
-        }
+        //        ssh.Disconnect();
+        //    }
+        //    return new ApiResponse();
+        //}
         //Console.WriteLine(ShellHelper.Bash($"echo -e \"{password}\n{password}\n\" | sudo passwd {user}"));
+        public string CreatePassword(int length)
+        {
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder res = new StringBuilder();
+            Random rnd = new Random();
+            while (0 < length--)
+            {
+                res.Append(valid[rnd.Next(valid.Length)]);
+            }
+            return res.ToString();
+        }
 
 
         [HttpGet("get-operations")]

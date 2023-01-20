@@ -37,6 +37,17 @@ namespace V2Ray.Api.Controllers
             var result = await _v2KeyService.GetUsedTraffic(UserId);
             return new ApiResponse(result);
         }
+         
+        
+        [HttpGet("getUsedTraffic")]
+        [Authorize]
+        public async Task<ApiResponse> GenerateSSH()
+        {
+            var result = await _v2KeyService.GenerateSsh(UserId);
+            return new ApiResponse(result);
+        }
+
+
 
         /// <summary>
         /// ویرایش یک کاربر 

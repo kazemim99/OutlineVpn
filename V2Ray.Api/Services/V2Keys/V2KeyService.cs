@@ -2,6 +2,7 @@
 using AutoWrapper.Wrappers;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Renci.SshNet;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -111,7 +112,7 @@ namespace V2Ray.Api.Services.V2Keys
 
         public async Task DeleteKey(int keyId)
         {
-            var key = _db.V2Keys.Include(a=>a.V2Server).First(a => a.Id == keyId);
+            var key = _db.V2Keys.Include(a => a.V2Server).First(a => a.Id == keyId);
             var server = key.V2Server;
 
             if (key == null)
@@ -193,7 +194,7 @@ namespace V2Ray.Api.Services.V2Keys
                     {
                         server.IPs = ip;
                         var httpClient = await GetCookie(server.UserName, server.Password, ip, server.Url, server.Port);
-                         sampleKey = GetServerSampleKey(server, httpClient, out _keyId);
+                        sampleKey = GetServerSampleKey(server, httpClient, out _keyId);
 
                         try
                         {
@@ -225,7 +226,7 @@ namespace V2Ray.Api.Services.V2Keys
                             continue;
                         }
                     }
-                 
+
                     input.ClientPort = sampleKey.port;
                     input.Remark = sampleKey.remark;
                     input.ServerId = server.Id;
@@ -407,7 +408,7 @@ namespace V2Ray.Api.Services.V2Keys
                 total += keyDetails.down.ByteToGigaByte();
             }
 
-            return String.Format("{0:0.00}", total) ;
+            return String.Format("{0:0.00}", total);
         }
         public async Task<UserKeyDetailsOutput> UserKeyDetails(int userId)
         {
@@ -471,6 +472,73 @@ namespace V2Ray.Api.Services.V2Keys
             }
         }
 
+        public GenerateSSHOutput GenerateSsh(int userId,bool isAdmin = false)
+        {
+            var user = _db.Users.First(a => a.Id == userId);
+            var connectionInfo = new PasswordConnectionInfo("45.77.140.25", 22000, "root", "!Q@W#E$R5t6y7u8i");
+            string password = CreatePassword(8);
+            string username = user.Email.Split("@")[0];
+            if(isAdmin)
+                expiredate = 
+            var expireDate = !_db.SSHKeyInfos.Any() ? DateTime.UtcNow.AddDays(3) : throw new Exception("شما قبلا از اکانت تست استفاده کرده اید");
+            using (var ssh = new SshClient(connectionInfo))
+            {
+                ssh.Connect();
+                var date = DateTime.Now.AddMonths(1).ToString("d");
+                var command = ssh.CreateCommand($"useradd -m -p $(openssl passwd -1 {password}) -s /bin/bash -G sudo {username}");
+                command.Execute();
 
+                //command = ssh.CreateCommand("rm create.txt");
+                //command.Execute();
+
+                ssh.Disconnect();
+            }
+            _db.SSHKeyInfos.Add(new SSHKeyInfo
+            {
+                Password = password,
+                UserName = username,
+                UserId = userId,
+                ExpireDate = DateTime.Now.AddDays(3),
+
+            });
+            return new GenerateSSHOutput
+            {
+                Password = password,
+                UserName = username,
+            };
+        }
+
+        public static string GenerateName(int len)
+        {
+            Random r = new Random();
+            string[] consonants = { "b", "c", "d", "f", "g", "h", "j", "k", "l", "m", "l", "n", "p", "q", "r", "s", "sh", "zh", "t", "v", "w", "x" };
+            string[] vowels = { "a", "e", "i", "o", "u", "ae", "y" };
+            string Name = "";
+            Name += consonants[r.Next(consonants.Length)].ToUpper();
+            Name += vowels[r.Next(vowels.Length)];
+            int b = 2; //b tells how many times a new letter has been added. It's 2 right now because the first two letters are already in the name.
+            while (b < len)
+            {
+                Name += consonants[r.Next(consonants.Length)];
+                b++;
+                Name += vowels[r.Next(vowels.Length)];
+                b++;
+            }
+
+            return Name;
+
+
+        }
+        public string CreatePassword(int length)
+        {
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder res = new StringBuilder();
+            Random rnd = new Random();
+            while (0 < length--)
+            {
+                res.Append(valid[rnd.Next(valid.Length)]);
+            }
+            return res.ToString();
+        }
     }
 }

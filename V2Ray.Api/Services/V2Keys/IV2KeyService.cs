@@ -22,5 +22,6 @@ namespace V2Ray.Api.Services.V2Keys
         Task DeleteKey(int keyId);
         Task UpdateKey(int keyId, int traffic, DateTime? expireDate, bool enable);
         Task<string> GetUsedTraffic(int userId);
+        Task<GenerateSSHOutput> GenerateSsh(int userId);
     }
 }

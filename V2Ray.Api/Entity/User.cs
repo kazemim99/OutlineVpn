@@ -24,7 +24,7 @@ namespace V2Ray.Api.Entity
         public bool NeedConfirm { get;  set; }
         public string? FirstName { get;  set; }
         public string? LastName { get;  set; }
-
+        public List<SSHKeyInfo> SSHKeyInfos { get; set; }
         public List<V2Key> V2Keys { get; set; }
         public bool Paid { get;  set; }
         public List<ProblemReport> ProblemReports { get;  set; }

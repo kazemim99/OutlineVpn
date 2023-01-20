@@ -14,4 +14,9 @@
         public string ClientKeyId { get;  set; }
         public int Traffic { get;  set; }
     }
+    public class GenerateSSHOutput
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
+    }
 }
