@@ -29,13 +29,13 @@ namespace V2Ray.Api.Controllers
             });
             return new ApiResponse(result);
         }
-        [HttpGet("sshkeys")]
+        [HttpGet("filter")]
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] SSHKeyFilterInput filter)
         {
             //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;
-            var result = await _service.GetAllAsync(filter);
+            var result = await _service.GetAllAsync(filter, new[] {"User"});
             return new ApiResponse(result);
         }
 
@@ -55,12 +55,20 @@ namespace V2Ray.Api.Controllers
 
 
 
-        [HttpPost("create-test-ssh")]
+        [HttpGet("create-test-ssh")]
         [Authorize]
         public async Task<ApiResponse> Create()
         {
             await _service.GenerateSshFromClient(UserId);
             return new ApiResponse();
+        } 
+        
+        [HttpGet("user-key-details")]
+        [Authorize]
+        public async Task<ApiResponse> KeyDetails()
+        {
+            var result =await _service.GetUserSSHKey(UserId);
+            return new ApiResponse(result);
         }
 
         [HttpPost]
@@ -81,7 +89,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-           var result =   await _service.GetById(id);
+           var result =   await _service.GetById(id, new[] {"User"});
 
             return new ApiResponse(result);
         }
@@ -97,7 +105,7 @@ namespace V2Ray.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ApiResponse> Delete([FromRoute] int id)
         {
-            await _service.DeleteFromVPS(id);
+            await _service.Delete(id);
 
             return new ApiResponse();
         }

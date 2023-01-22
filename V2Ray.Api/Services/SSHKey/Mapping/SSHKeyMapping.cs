@@ -11,19 +11,23 @@ namespace V2Ray.Api.Services.SSHKeys.Mapping
         {
             CreateMap<SSHKey, GetSSHKeyListOutput>()
                 .ForMember(a => a.Email, c => c.MapFrom(b => b.User.Email))
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToPeString("yyyy/MM/dd")))
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToDateTime().ToPeString("yyyy/MM/dd")))
                 .ForMember(a => a.CreatedAt, c => c.MapFrom(b => b.User.CreatedAt.ToPeString("yyyy/MM/dd")));
 
             CreateMap<SSHKey, GetSSHKeyOutput>()
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToPersianDate()));
+                .ForMember(a => a.Email, c => c.MapFrom(b => b.User.Email))
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToDateTime().ToPeString("yyyy/MM/dd")))
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToDateTime().ToPeString("yyyy/MM/dd")));
 
 
             CreateMap<CreateSSHKeyInput, SSHKey>()
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => DateTime.SpecifyKind(b.ExpireDate.ToGeo(), DateTimeKind.Utc)));
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo().ToTimeStamp()));
 
             CreateMap<UpdateSSHKeyInput, SSHKey>()
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => DateTime.SpecifyKind(b.ExpireDate.ToGeo(), DateTimeKind.Utc)));
-            CreateMap<UpdateSSHKeyInput, CreateSSHKeyInput>();
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo().ToTimeStamp()));
+
+            CreateMap<UpdateSSHKeyInput, CreateSSHKeyInput>()
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo().ToTimeStamp()));
         }
 
     }

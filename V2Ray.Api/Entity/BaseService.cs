@@ -52,10 +52,20 @@ namespace V2Ray.Api.Entity
 
         public virtual async Task UpdateAsync(TKey id, TUpdate input, params string[] include)
         {
+            try
+            {
+
             var map = _mapper.Map<TUpdate, TEntity>(input);
             map.Id = id;
             _db.Entry(map).State = EntityState.Modified;
             await _db.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task SoftDelete(TKey id)

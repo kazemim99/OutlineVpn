@@ -73,7 +73,7 @@ import Vue from "vue";
 import request from "@/utils/request";
 
 export default Vue.extend({
-  name: "AddNewV2Key",
+  name: "AddNewSSHKey",
 
   data: () => ({
     id: null,
@@ -92,17 +92,15 @@ export default Vue.extend({
       handler() {
         if (!this.dialog) {
           this.clearData();
-        } else {
-          this.getServers();
-        }
-        if (this.id) this.getV2Key(this.id);
+        } 
+        if (this.id) this.getSSHKey(this.id);
       },
       deep: true,
     },
   },
 
   methods: {
-    async getV2Key(id) {
+    async getSSHKey(id) {
       await request.get(`/sshKey/${id}`).then((response) => {
         var data = response.data.result;
         this.sshKey.id = id;
@@ -122,7 +120,7 @@ export default Vue.extend({
           .put(`/sshKey/${this.id}`, this.sshKey)
           .then((response) => {
             this.dialog = false;
-            this.$emit("reloadV2Keys");
+            this.$emit("reloadSSHKeys");
             this.clearData();
             // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
           })
@@ -134,7 +132,7 @@ export default Vue.extend({
           .post("/sshKey", this.sshKey)
           .then((response) => {
             this.dialog = false;
-            this.$emit("reloadV2Keys");
+            this.$emit("reloadSSHKeys");
             // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
           })
           .finally(() => {

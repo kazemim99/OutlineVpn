@@ -6,24 +6,44 @@
     <v-spacer></v-spacer>
     <v-row>
       <v-col md="6" sm="3">
-        <div class="grey--text mb-2">تاریخ اعتبار</div>
+        <div class="grey--text mb-2">تاریخ اعتبار :</div>
       </v-col>
       <v-col md="6" sm="6">
         <div class="mb-2">{{ this.userKeyDetails.expireTime }}</div>
       </v-col>
     </v-row>
+
     <v-row>
       <v-col md="6" sm="3">
-        <div class="grey--text mb-2">کانفیگ سرور</div>
+        <div class="grey--text mb-2">آدرس سرور (Hostname/IP) :</div>
       </v-col>
       <v-col md="6" sm="6">
+        <div class="mb-2">{{ this.userKeyDetails.hostName }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col md="6" sm="3">
+        <div class="grey--text mb-2">پروت (Port) :</div>
+      </v-col>
+      <v-col md="6" sm="6">
+        <div class="mb-2">{{ this.userKeyDetails.port }}</div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col md="6" sm="3">
+        <div class="grey--text mb-2">نام کاربری (Username) :</div>
+      </v-col>
+      <v-col md="3" sm="6">
         <v-row>
-          <div class="mb-2">{{ this.userKeyDetails.key }}</div>
+          <div>{{ this.userKeyDetails.userName }}</div>
           <v-btn
+          small
             rounded
             color="success"
-            v-if="this.userKeyDetails.key"
-            @click="copyToClipBoard(userKeyDetails.key)"
+            v-if="this.userKeyDetails.userName"
+            @click="copyToClipBoard(userKeyDetails.userName)"
             dark
             >کپی</v-btn
           >
@@ -31,23 +51,27 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6">
-        <div class="grey--text mb-2">ترافیک مصرف شده :</div>
+      <v-col md="3" sm="3">
+        <div class="grey--text mb-2">رمز عبور (Password) :</div>
       </v-col>
-      <v-col cols="6">
-        <v-btn class="mb-2" :loading="loading1" @click="getTraffic()">
-          {{ this.down }} گیگ
-        </v-btn>
+      <v-col md="3" sm="3">
+        <v-row>
+          <v-col md="6" sm="6">
+            <div>{{ this.userKeyDetails.password }}</div>
+            <v-btn
+              rounded
+              small
+              color="success"
+              v-if="this.userKeyDetails.userName"
+              @click="copyToClipBoard(userKeyDetails.password)"
+              dark
+              >کپی</v-btn
+            >
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="6">
-        <div class="grey--text mb-2">ترافیک شما :</div>
-      </v-col>
-      <v-col cols="6">
-        <div class="mb-2">{{ this.userKeyDetails.traffic }}  گیگ</div>
-      </v-col>
-    </v-row>
+
     <div class="text-center mt-10">
       <v-btn
         rounded
@@ -87,41 +111,45 @@
         </v-hover>
       </v-col>
     </v-row>
+    <div>
+      <Toturial />
+    </div>
   </div>
 </template>
 
 <script>
 import request from "@/utils/request";
-import { UserModule } from "@/store/modules/user";
 import AddProblmeReport from "@/components/common/ProblemReport.vue";
+import Toturial from "@/components/Home/Toturial.vue";
 
 export default {
   components: {
     AddProblmeReport,
+    Toturial,
   },
   data() {
     return {
       cards: [
         {
-          name: "دانلود مستقیم برنامه",
-          url: "https://github.com/2dust/v2rayNG/releases/download/1.7.34/v2rayNG_1.7.34.apk",
+          name: "دانلود مستقیم",
+          url: "@/assets/files/NetModSyna-VPNClient_1.11.3.apk",
           image: require("@/assets/images/apk.png"),
         },
         {
-          name: "دانلود گوگل استور",
-          url: "https://play.google.com/store/apps/details?id=com.v2ray.ang&hl=en&gl=US",
+          name: " گوگل استور",
+          url: "https://play.google.com/store/apps/details?id=com.netmod.syna&hl=en&gl=US",
           image: require("@/assets/images/google.png"),
         },
         {
           name: "دانلود اپ استور",
-          url: "https://apps.apple.com/us/app/fair-vpn/id1533873488",
+          url: "https://app.appleapps.ir/id/688128/",
           image: require("@/assets/images/appstore.png"),
         },
-        // {
-        //   name: "(بزودی) ویندوز",
-        //   url: "",
-        //   image: require("@/assets/images/appstore.png"),
-        // },
+        {
+          name: "ویندوز",
+          url: "@/assets/files/NetMod_x86(Latest)",
+          image: require("@/assets/images/windows.png"),
+        },
         // {
         //   name: "مک (بزودی)",
         //   url: "",
@@ -182,22 +210,18 @@ export default {
     getKey() {
       this.loading = true;
       request
-        .get(`/v2Key/generateKey/${this.count}`)
+        .get(`/sshkey/create-test-ssh`)
         .then((response) => {
           var data = response.data.result;
-          this.keys = data;
           this.loading = false;
           this.getUserKeyDetails();
-          alert(
-            "سرور ساخته شده در صورت عدم مشاهده بعد از 15 ثانیه صفحه را رفرش کنید"
-          );
         })
         .catch(() => {
           this.loading = false;
         });
     },
     getUserKeyDetails() {
-      request.get(`/v2Key/user-key-details`).then((response) => {
+      request.get(`/sshKey/user-key-details`).then((response) => {
         var data = response.data.result;
         this.userKeyDetails = data;
       });

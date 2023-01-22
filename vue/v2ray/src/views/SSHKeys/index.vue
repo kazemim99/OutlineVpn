@@ -124,11 +124,11 @@ export default {
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
-        { text: "نام کاربری", value: "UserName", sortable: true },
-        { text: "رمز عبور", value: "Password", sortable: false },
-        { text: "تاریخ انقضا", value: "ExpireDate", sortable: false },
-        { text: "تاریخ ثبت نام", value: "CreatedAt", sortable: false },
-        { text: "ایمیل", value: "Email", sortable: false },
+        { text: "نام کاربری", value: "userName", sortable: true },
+        { text: "رمز عبور", value: "password", sortable: false },
+        { text: "تاریخ انقضا", value: "expireDate", sortable: false },
+        { text: "تاریخ ثبت نام", value: "createdAt", sortable: false },
+        { text: "ایمیل", value: "email", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
       ],
@@ -207,7 +207,7 @@ export default {
 
       this.loading = true;
       await request
-        .get("/sshKey/filter?" + filterQuery)
+        .get("/sshkey/filter?" + filterQuery)
         .then((response) => {
           var data = response.data.result;
           this.sshKeys = data.result;

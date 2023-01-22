@@ -28,20 +28,23 @@ namespace V2Ray.Api.Services.SSHKeys
     {
         private readonly DB _db;
 
+
+
         private readonly IMapper _mapper;
         public SSHKeyService(IMapper mapper, DB db) : base(mapper, db)
         {
+            _db = db;
+            _mapper = mapper;
 
         }
-        public async Task DeleteFromVPS(int id)
+        public async Task DeleteFromVPS(string username)
         {
-            var user = await _db.SSHKeyInfos.FirstAsync(a => a.Id == id);
             var connectionInfo = GetConnectionInfo();
             using (var ssh = new SshClient(connectionInfo))
             {
                 ssh.Connect();
                 var date = DateTime.Now.AddMonths(1).ToString("d");
-                var command = ssh.CreateCommand($"deluser --remove-home {user.UserName}");
+                var command = ssh.CreateCommand($"deluser --remove-home {username}");
                 command.Execute();
 
                 //command = ssh.CreateCommand("rm create.txt");
@@ -52,7 +55,10 @@ namespace V2Ray.Api.Services.SSHKeys
         }
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
         {
-            await DeleteFromVPS(id);
+            var user = await _db.SSHKeyInfos.Where(a => a.Id == id).Select( c => new { c.Password ,c.UserName,c.UserId}).FirstAsync();
+            input.Password = user.Password;
+            input.UserId = user.UserId;
+            await DeleteFromVPS(user.UserName);
             var map = _mapper.Map<CreateSSHKeyInput>(input);
             CreateSSHUser(map);
             await base.UpdateAsync(id, input, include);
@@ -62,7 +68,7 @@ namespace V2Ray.Api.Services.SSHKeys
             try
             {
 
-           
+
                 input.Password = CreatePassword(8);
                 CreateSSHUser(input);
                 await base.InsertAsync(input);
@@ -74,7 +80,7 @@ namespace V2Ray.Api.Services.SSHKeys
             }
         }
 
-        public async Task<GenerateSSHOutput> GenerateSshFromClient(int userId)
+        public async Task GenerateSshFromClient(int userId)
         {
             var user = await _db.Users.Include(a => a.SSHKeyInfos).FirstAsync(a => a.Id == userId);
             if (user.SSHKeyInfos.Any())
@@ -88,16 +94,20 @@ namespace V2Ray.Api.Services.SSHKeys
                 UserName = user.Email.Split('@')[0]
             };
             CreateSSHUser(input);
-
+        }
+        public async Task<GenerateSSHOutput> GetUserSSHKey(int userId)
+        {
+            var user = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.UserId == userId);
+            if (user == null)
+                return new GenerateSSHOutput();
             return new GenerateSSHOutput
             {
-                UserName = input.UserName,
-                Password = input.Password,
+                UserName = user.UserName,
+                Password = user.Password,
                 HostName = "iranv2ray.com",
                 Port = 1027,
-                ExpireDate = input.ExpireDate.ToPersianDate().ToPeString()
+                ExpireDate = user.ExpireDate.TimeStampToDateTime().ToPeString()
             };
-
         }
         private void CreateSSHUser(CreateSSHKeyInput input)
         {
@@ -106,7 +116,8 @@ namespace V2Ray.Api.Services.SSHKeys
             using var ssh = new SshClient(connectionInfo);
             ssh.Connect();
             var date = DateTime.Now.AddMonths(1).ToString("d");
-            var command = ssh.CreateCommand($"useradd -m -p $(openssl passwd -1 {input.Password}) -s /bin/bash -G sudo {input.UserName}");
+            var comm = $"useradd -m -p $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
+            var command = ssh.CreateCommand(comm);
             command.Execute();
 
             //command = ssh.CreateCommand("rm create.txt");
@@ -122,14 +133,14 @@ namespace V2Ray.Api.Services.SSHKeys
 
         private string CreatePassword(int length)
         {
-            const string valid = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
+            const string valid = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890";
             StringBuilder res = new();
             Random rnd = new();
             while (0 < length--)
             {
                 res.Append(valid[rnd.Next(valid.Length)]);
             }
-            return res.ToString();
+            return res.ToString().Trim();
         }
     }
 }

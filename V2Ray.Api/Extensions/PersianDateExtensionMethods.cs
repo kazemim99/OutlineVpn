@@ -93,7 +93,7 @@ namespace V2Ray.Api.Extensions
         public static long  ToTimeStamp(this DateTime dateTime)
         {
             var epoch = new DateTimeOffset(dateTime).ToUnixTimeSeconds();
-            epoch = Convert.ToInt64(epoch + "754");
+            epoch = Convert.ToInt64(epoch+"754");
             return epoch;
         }
 

@@ -290,8 +290,8 @@ namespace V2Ray.Api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("ExpireDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<long>("ExpireDate")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Password")
                         .IsRequired()
