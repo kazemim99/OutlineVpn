@@ -94,6 +94,8 @@ namespace V2Ray.Api.Services.SSHKeys
                 UserName = user.Email.Split('@')[0]
             };
             CreateSSHUser(input);
+            await base.InsertAsync(input);
+            
         }
         public async Task<GenerateSSHOutput> GetUserSSHKey(int userId)
         {
