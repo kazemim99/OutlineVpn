@@ -1,6 +1,67 @@
 <template>
   <v-row justify="center">
-    <v-img src="~@/assets/images/avatar.jpeg"></v-img>
+    <v-row justify="right">
+      <v-col md="12">
+        <h1>آموزش استفاده :</h1>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col md="12">
+        <p>نکته : در صورت درخواست دسترسی توسط برنامه هیچ دسترسی به برنامه ندهید</p>
+      </v-col>
+    </v-row>
+    <br />
+    <br />
+    <br />
+    <v-row>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/1.jpg"></v-img>
+      </v-col>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/2.jpg"></v-img>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/3.jpg"></v-img>
+      </v-col>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/4.jpg"></v-img>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/5.jpg"></v-img>
+      </v-col>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/6.jpg"></v-img>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center">
+      <v-col md="7" sm="12">
+        <v-img width="70%" src="~@/assets/images/toturial/7.jpg"></v-img>
+      </v-col>
+      <v-col md="5" sm="12">
+        <v-img src="~@/assets/images/toturial/8.jpg"></v-img>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/9.jpg"></v-img>
+      </v-col>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/10.jpg"></v-img>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col md="6" sm="12">
+        <v-img src="~@/assets/images/toturial/11.jpg"></v-img>
+      </v-col>
+    </v-row>
   </v-row>
 </template>
 

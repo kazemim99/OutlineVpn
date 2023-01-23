@@ -104,7 +104,7 @@ namespace V2Ray.Api.Services.SSHKeys
             {
                 UserName = user.UserName,
                 Password = user.Password,
-                HostName = "iranv2ray.com",
+                HostName = "ssh1.iranv2ray.com",
                 Port = 1027,
                 ExpireDate = user.ExpireDate.TimeStampToDateTime().ToPeString()
             };
