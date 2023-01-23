@@ -7,8 +7,14 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import acl from '../src/acl.js';
 import './assets/sass/main.scss';
 import VueCompositionAPI from '@vue/composition-api'
+import VueAnalytics from 'vue-analytics';
 
 Vue.config.productionTip = false
+
+Vue.use(VueAnalytics, {
+  id: 'G-3XBRYQCHQ4',
+  router
+});
 
 Vue.use(VueCompositionAPI)
 

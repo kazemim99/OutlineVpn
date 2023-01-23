@@ -21,6 +21,7 @@
     "raw-loader": "^0.5.1",
     "serve": "^14.1.2",
     "vue": "^2.6.11",
+    "vue-analytics": "^5.22.1",
     "vue-chartjs": "^3.5.1",
     "vue-class-component": "^7.2.3",
     "vue-i18n": "^8.22.2",
