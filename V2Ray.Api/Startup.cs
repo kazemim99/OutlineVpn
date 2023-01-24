@@ -135,15 +135,15 @@ namespace V2Ray.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            //});
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
-            //if (!_env.IsDevelopment())
-            //{
-            //    app.UseHttpsRedirection();
-            //}
+            if (!_env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             if (!isTest)
             {
