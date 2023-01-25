@@ -1,16 +1,16 @@
 ﻿using FizzWare.NBuilder;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using POD.Test.Integrations.Fixtures;
-using POD.Test.Integrations.Utils;
 using System.ComponentModel;
 using System.Net;
 using V2Ray.Api.Database;
 using V2Ray.Api.Entity;
 using V2Ray.Api.Extensions;
 using V2Ray.Api.Services.Server.Dto;
+using V2Ray.Api.Test.Fixtures;
+using V2Ray.Api.Test.Utils;
 
-namespace POD.Test.Integrations
+namespace V2Ray.Api.Test
 {
     public class ServerControllerTests : IntegrationTest
     {
@@ -50,10 +50,10 @@ namespace POD.Test.Integrations
         {
             var city = await UsingDbContextAsync(a =>
                 a.Cities.FirstOrDefaultAsync(a => a.Title == "Frankfurt"));
-         //Arrange
-         var serverInput = Builder<CreateServerInput>
-                .CreateNew()
-                .With(a=>a.CityId = city.Id).Build();
+            //Arrange
+            var serverInput = Builder<CreateServerInput>
+                   .CreateNew()
+                   .With(a => a.CityId = city.Id).Build();
 
             //Act
             var apiResponse = await _client.PostAsJsonAsync($"{baseApi}", serverInput);
@@ -72,7 +72,7 @@ namespace POD.Test.Integrations
         [Description("بعنوان ادمین میخواهم یک سرور را ویرایش کنم")]
         public async Task Modify_exist_server(int userId)
         {
-            var server = await UsingDbContextAsync(a =>a.V2Servers.LastOrDefaultAsync());
+            var server = await UsingDbContextAsync(a => a.V2Servers.LastOrDefaultAsync());
             //Arrange
             var serverInput = Builder<UpdateServerInput>
                    .CreateNew().Build();
@@ -112,7 +112,7 @@ namespace POD.Test.Integrations
             apiResponse.IP.Should().Be(server.IPs);
             apiResponse.Url.Should().Be(server.Url);
             apiResponse.CityId.Should().Be(server.CityId);
-         
+
         }
 
         [Theory]
@@ -141,7 +141,7 @@ namespace POD.Test.Integrations
                 await _client.DeserializeApiResponse<Pagination<GetServerListOutput>>(queryString);
 
             //Assert
-            var serverex = await UsingDbContextAsync(a => a.V2Servers.Include(new[] { "City.Country"})
+            var serverex = await UsingDbContextAsync(a => a.V2Servers.Include(new[] { "City.Country" })
                 .WhereIf(!string.IsNullOrEmpty(name), a => a.Title.Contains(name))
                 .OrderBy(userFilter.OrderBy)
                 .ToListAsync());
@@ -167,16 +167,16 @@ namespace POD.Test.Integrations
                     Password = Guid.NewGuid().ToString(),
                     UserName = Guid.NewGuid().ToString(),
                     Url = Guid.NewGuid().ToString(),
-                City = new City()
-                {
-                    Title =$"City_{i}",
-                    Country = new Country()
+                    City = new City()
                     {
-                        Flag = Guid.NewGuid().ToString(),
-                        Title   =Guid.NewGuid().ToString()
+                        Title = $"City_{i}",
+                        Country = new Country()
+                        {
+                            Flag = Guid.NewGuid().ToString(),
+                            Title = Guid.NewGuid().ToString()
+                        }
                     }
-                }
-                   
+
                 }); ; ;
             }
         }

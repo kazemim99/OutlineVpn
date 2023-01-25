@@ -146,6 +146,52 @@ namespace V2Ray.Api.Migrations
                     b.ToTable("FailedSms");
                 });
 
+            modelBuilder.Entity("V2Ray.Api.Entity.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("CreatorUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("TranactionNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("UpdaterUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders", (string)null);
+                });
+
             modelBuilder.Entity("V2Ray.Api.Entity.Plan", b =>
                 {
                     b.Property<int>("Id")
@@ -544,6 +590,17 @@ namespace V2Ray.Api.Migrations
                     b.Navigation("Country");
                 });
 
+            modelBuilder.Entity("V2Ray.Api.Entity.Order", b =>
+                {
+                    b.HasOne("V2Ray.Api.Entity.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("V2Ray.Api.Entity.ProblemReport", b =>
                 {
                     b.HasOne("V2Ray.Api.Entity.User", "User")
@@ -630,6 +687,8 @@ namespace V2Ray.Api.Migrations
 
             modelBuilder.Entity("V2Ray.Api.Entity.User", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("ProblemReports");
 
                     b.Navigation("Roles");

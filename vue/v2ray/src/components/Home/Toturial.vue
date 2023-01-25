@@ -7,61 +7,98 @@
     </v-row>
     <v-row>
       <v-col md="12">
-        <p>نکته : در صورت درخواست دسترسی توسط برنامه هیچ دسترسی به برنامه ندهید</p>
+        <p>
+          برای آیفون باید از NapsternetV و برای ویندوز از Netmode Syna باید
+          استفاده کنید
+        </p>
+        <p>برای اندروید از هر دو برنامه میتوان استفاده کرد</p>
+        <p>دوستان لینوکسی میتونن از sshuttle استفاده کنن</p>
+        <p>sudo apt-get install sshuttle</p>
+        <p>sudo sshuttle -p port -r user@remote_host 0.0.0.0/0 --dns</p>
+        <p>
+          نکته : در صورت درخواست دسترسی توسط برنامه هیچ دسترسی به برنامه ندهید
+        </p>
       </v-col>
     </v-row>
     <br />
     <br />
+    <h3>آموزش اتصال با NapsternetV</h3>
+    <v-col md="6" sm="12">
+      <v-img contain src="~@/assets/images//toturial/NapsternetV/1.jpg"></v-img>
+    </v-col>
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/2.jpg"></v-img>
+    </v-col>
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/3.jpg"></v-img>
+    </v-col>
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/4.jpg"></v-img>
+    </v-col>
+
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/5.jpg"></v-img>
+    </v-col>
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/6.jpg"></v-img>
+    </v-col>
+
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/7.jpg"></v-img>
+    </v-col>
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/8.jpg"></v-img>
+    </v-col>
+
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/9.jpg"></v-img>
+    </v-col>
+    <v-col md="6" sm="12">
+      <v-img src="~@/assets/images/toturial/NapsternetV/10.jpg"></v-img>
+    </v-col>
+
     <br />
-    <v-row>
+    <br />
+      <h3>آموزش اتصال با Netmode</h3>
+      <br />
+      <br />
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/1.jpg"></v-img>
       </v-col>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/2.jpg"></v-img>
       </v-col>
-    </v-row>
-    <v-row>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/3.jpg"></v-img>
       </v-col>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/4.jpg"></v-img>
       </v-col>
-    </v-row>
 
-    <v-row>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/5.jpg"></v-img>
       </v-col>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/6.jpg"></v-img>
       </v-col>
-    </v-row>
 
-    <v-row justify="center">
       <v-col md="7" sm="12">
         <v-img width="70%" src="~@/assets/images/toturial/7.jpg"></v-img>
       </v-col>
       <v-col md="5" sm="12">
         <v-img src="~@/assets/images/toturial/8.jpg"></v-img>
       </v-col>
-    </v-row>
 
-    <v-row>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/9.jpg"></v-img>
       </v-col>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/10.jpg"></v-img>
       </v-col>
-    </v-row>
 
-    <v-row>
       <v-col md="6" sm="12">
         <v-img src="~@/assets/images/toturial/11.jpg"></v-img>
       </v-col>
-    </v-row>
   </v-row>
 </template>
 

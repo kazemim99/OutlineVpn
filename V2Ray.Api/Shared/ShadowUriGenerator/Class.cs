@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
-namespace ShadowsocksUriGenerator.Protocols.Shadowsocks;
+namespace V2Ray.Api.Shared.ShadowUriGenerator;
 
 public class ShadowsocksServerConfig
 {

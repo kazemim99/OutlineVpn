@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace POD.Test.Integrations.Fixtures
+namespace V2Ray.Api.Test.Fixtures
 {
     public class IntegrationTestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {

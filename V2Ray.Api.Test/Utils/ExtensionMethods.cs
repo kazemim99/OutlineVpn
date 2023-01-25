@@ -7,7 +7,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace POD.Test.Integrations.Utils
+namespace V2Ray.Api.Test.Utils
 {
     public static class ExtensionMethods
     {
@@ -26,7 +26,7 @@ namespace POD.Test.Integrations.Utils
         {
             var properties = from p in obj.GetType().GetProperties()
                              where !string.IsNullOrEmpty(p.GetValue(obj, null)?.ToString())
-                             && p.PropertyType != typeof(Int32[])
+                             && p.PropertyType != typeof(int[])
                              select p.Name.ToLower() + "=" + HttpUtility.UrlEncode(p.GetValue(obj, null)?.ToString());
 
             var queryString = string.Join("&", properties.ToArray());

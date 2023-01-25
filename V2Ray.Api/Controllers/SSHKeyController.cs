@@ -1,8 +1,8 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using V2Ray.Api.Services.SSHKeys.Dto;
-using V2Ray.Api.Services.SSHKeys;
+using V2Ray.Api.Services.SSHKeyServices;
+using V2Ray.Api.Services.SSHKeyServices.Dto;
 
 namespace V2Ray.Api.Controllers
 {

@@ -6,4 +6,6 @@ namespace V2Ray.Api.Entity
     {
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
+
+
 }

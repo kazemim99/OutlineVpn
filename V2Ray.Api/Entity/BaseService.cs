@@ -16,9 +16,9 @@ namespace V2Ray.Api.Entity
         where TKey : IEquatable<TKey>
         where TOut : EntityDto<TKey>
     {
-        private readonly IMapper _mapper;
+        protected readonly IMapper _mapper;
 
-        private readonly DB _db;
+        protected readonly DB _db;
 
         protected BaseService(IMapper mapper, DB db)
         {

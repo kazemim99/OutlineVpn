@@ -11,8 +11,8 @@ using V2Ray.Api.Services.PlanServices;
 using V2Ray.Api.Services.sms.Rahyab;
 using V2Ray.Api.Services.Cities;
 using V2Ray.Api.Services.V2Keys;
-using V2Ray.Api.Services.ProblemReports;
-using V2Ray.Api.Services.SSHKeys;
+using V2Ray.Api.Services.ProblemReportServices;
+using V2Ray.Api.Services.SSHKeyServices;
 
 namespace V2Ray.Api.IOC
 {

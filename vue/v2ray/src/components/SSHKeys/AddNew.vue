@@ -47,12 +47,11 @@
                     required
                   ></v-text-field>
                 </v-col> -->
-              <v-col cols="6" sm="12" md="6">
-                <label>تاریخ :</label>
-                <date-picker v-model="sshKey.expireDate" simple />
-              </v-col>
-            </v-row>
-
+                <v-col cols="6" sm="12" md="6">
+                  <label>تاریخ :</label>
+                  <date-picker v-model="sshKey.expireDate" simple />
+                </v-col>
+              </v-row>
             </v-container>
           </v-form>
         </v-card-text>
@@ -74,6 +73,7 @@ import request from "@/utils/request";
 
 export default Vue.extend({
   name: "AddNewSSHKey",
+  props: ["dialog"],
 
   data: () => ({
     id: null,
@@ -92,7 +92,7 @@ export default Vue.extend({
       handler() {
         if (!this.dialog) {
           this.clearData();
-        } 
+        }
         if (this.id) this.getSSHKey(this.id);
       },
       deep: true,

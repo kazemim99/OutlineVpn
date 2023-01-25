@@ -10,4 +10,5 @@ namespace V2Ray.Api.Services.sms.Kavenegar.Models.Enums
 
         AppMemory = 3
     }
+    
 }

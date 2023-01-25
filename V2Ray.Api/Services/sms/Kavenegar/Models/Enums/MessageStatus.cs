@@ -2,6 +2,19 @@
 
 namespace V2Ray.Api.Services.sms.Kavenegar.Models.Enums
 {
+
+    public enum OrderStateEnum:int
+    {
+        [Description("تایید شده")]
+
+        Confirmed = 1,
+        [Description("نام  معتبر")]
+
+        Invalid = 2,
+        [Description("در انتظار تایید")]
+
+        Waiting = 3
+    }
     public enum OSEnum : int
     {
         [Description("اندروید")]

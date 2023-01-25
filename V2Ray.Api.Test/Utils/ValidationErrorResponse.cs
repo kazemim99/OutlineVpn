@@ -1,4 +1,4 @@
-﻿namespace POD.Test.Integrations.Utils
+﻿namespace V2Ray.Api.Test.Utils
 {
     public class ValidationErrorResponse<T>
     {

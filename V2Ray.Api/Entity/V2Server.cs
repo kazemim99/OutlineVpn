@@ -26,6 +26,7 @@ namespace V2Ray.Api.Entity
         public long ExpireDate { get; set; }
         public User User { get; set; }
         public int UserId { get; set; }
+        public int Port { get; set; }
     }
     public class Country : FullAuditEntity<int>, ISoftDelete
     {

@@ -18,13 +18,13 @@ using V2Ray.Api.Services.sms.Rahyab;
 using V2Ray.Api.Services.UserServices;
 using V2Ray.Api.Services.UserServices.Mapping;
 
-namespace POD.Test.Integrations.Fixtures
+namespace V2Ray.Api.Test.Fixtures
 {
     public class ApiWebApplicationFactory : WebApplicationFactory<Startup>
     {
         public IConfiguration Configuration { get; private set; }
-        public IConfigurationSection ConfigSection ;
-        public  OtpSettings OtpSettings = new OtpSettings();
+        public IConfigurationSection ConfigSection;
+        public OtpSettings OtpSettings = new OtpSettings();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

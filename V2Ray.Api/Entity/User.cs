@@ -28,5 +28,6 @@ namespace V2Ray.Api.Entity
         public List<V2Key> V2Keys { get; set; }
         public bool Paid { get;  set; }
         public List<ProblemReport> ProblemReports { get;  set; }
+        public List<Order> Orders { get;  set; }
     }
 }

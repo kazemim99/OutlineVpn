@@ -8,8 +8,8 @@ using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
 using V2Ray.Api.Services.Cities.Dto;
 using V2Ray.Api.Services.Cities;
-using V2Ray.Api.Services.ProblemReports;
-using V2Ray.Api.Services.ProblemReports.Dto;
+using V2Ray.Api.Services.ProblemReportServices.Dto;
+using V2Ray.Api.Services.ProblemReportServices;
 
 namespace V2Ray.Api.Controllers
 {

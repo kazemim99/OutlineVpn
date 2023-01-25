@@ -73,14 +73,16 @@
     </v-row>
     <div class="text-center mt-10">
       <v-btn
+        v-if="!userKeyDetails.userName"
         rounded
         color="primary"
         :loading="loading"
-        @click="!userKeyDetails.freeAccount ? getKey() : buyKey()"
+        @click="getKey()"
         dark
       >
-        {{ !userKeyDetails.freeAccount ? "دریافت سرور رایگان" : "تمدید" }}
+        "دریافت سرور رایگان"
       </v-btn>
+      <AddOrder ref="addOrderCom" />
     </div>
     <v-row>
       <v-col
@@ -89,7 +91,7 @@
         :key="card.id"
         cols="12"
         sm="4"
-        md="3"
+        md="4"
       >
         <v-hover v-slot="{ hover }">
           <v-card
@@ -114,7 +116,7 @@
     </v-row>
     <div>
       <br /><br />
-      
+
       <Toturial />
     </div>
   </div>
@@ -124,41 +126,48 @@
 import request from "@/utils/request";
 import AddProblmeReport from "@/components/common/ProblemReport.vue";
 import Toturial from "@/components/Home/Toturial.vue";
+import AddOrder from "@/components/Home/Order.vue";
 
 export default {
   components: {
     AddProblmeReport,
     Toturial,
+    AddOrder,
   },
   data() {
     return {
       cards: [
-        {
-          fileName: "netmode.apk",
-          name: "دانلود مستقیم",
-          url: "/files/NetModSyna-VPNClient_1.11.3.apk",
-          image: require("@/assets/images/apk.png"),
-        },
-        {
-          fileName: "netmode.apk",
+        // {
+        //   fileName: "",
+        //   name: " دانلود مستقیم برای اندروید (NapsternetV)",
+        //   url: "/files/NapsternetV.apk",
+        //   image: require("@/assets/images/apk.png"),
+        // },
+        // {
+        //   fileName: "netmode.apk",
+        //   name: "  (NapsternetV) گوگل استور",
+        //   url: "https://play.google.com/store/apps/details?id=com.napsternetlabs.napsternetv&hl=en&gl=US",
+        //   image: require("@/assets/images/google.png"),
+        // },
+        // {
+        //   fileName: "netmode.apk",
 
-          name: " گوگل استور",
-          url: "https://play.google.com/store/apps/details?id=com.netmod.syna&hl=en&gl=US",
-          image: require("@/assets/images/google.png"),
-        },
-        {
-          fileName: "netmode.apk",
-
-          name: "دانلود اپ استور",
-          url: "https://app.appleapps.ir/id/688128/",
-          image: require("@/assets/images/appstore.png"),
-        },
-        {
-          fileName: "netmode.exe",
-          name: "ویندوز",
-          url: "/files/NetMod_x86(Latest).exe",
-          image: require("@/assets/images/windows.png"),
-        },
+        //   name: "دانلود اپ استور (NapsternetV)",
+        //   url: "https://apps.apple.com/us/app/napsternetv/id1629465476",
+        //   image: require("@/assets/images/appstore.png"),
+        // },
+        // {
+        //   fileName: "netmode.apk",
+        //   name: "دانلود مستقیم (Netmode Syna)",
+        //   url: "/files/NetModSyna-VPNClient_1.11.3.apk",
+        //   image: require("@/assets/images/apk.png"),
+        // },
+        // {
+        //   fileName: "netmode.exe",
+        //   name: "ویندوز",
+        //   url: "/files/NetMod_x86(Latest).exe",
+        //   image: require("@/assets/images/windows.png"),
+        // },
         // {
         //   name: "مک (بزودی)",
         //   url: "",
@@ -176,7 +185,6 @@ export default {
       down: "مشاهده",
       count: 1,
       userKeyDetails: {
-        freeAccount: false,
         expireTime: null,
       },
     };
@@ -186,7 +194,7 @@ export default {
   },
   methods: {
     buyKey() {
-      alert("خرید");
+      this.$refs.addUserCom.dialog = true;
     },
     getTraffic() {
       this.loading1 = true;
@@ -241,6 +249,10 @@ export default {
   max-width: 600px;
   margin: 150px auto;
 }
+.v-dialog {
+  font-family: arial, sans-serif;
+}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;

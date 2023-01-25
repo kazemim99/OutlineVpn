@@ -135,6 +135,14 @@ export default class Dashboard extends Vue {
       permission: "Role_Show",
       to: "/user-roles",
     },
+
+    {
+      icon: "mdi-account-key ",
+      title: "فاکتورها",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      permission: "Role_Show",
+      to: "/orders",
+    },
     {
       icon: "mdi-sync",
       title: "گزارش مشکل",

@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 using V2Ray.Api.Database;
 using Xunit;
 
-namespace POD.Test.Integrations.Fixtures
+namespace V2Ray.Api.Test.Fixtures
 {
     public abstract class IntegrationTest : IClassFixture<ApiWebApplicationFactory>
     {
