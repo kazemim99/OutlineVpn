@@ -1,10 +1,4 @@
 C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\CoverletSourceRootsMapping
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.csproj.AssemblyReference.cache
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\MvcTestingAppManifest.json
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.GeneratedMSBuildEditorConfig.editorconfig
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.AssemblyInfoInputs.cache
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.AssemblyInfo.cs
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.csproj.CoreCompileInputs.cache
 C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\testhost.dll
 C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\V2Ray.Api.deps.json
 C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\V2Ray.Api.runtimeconfig.json
@@ -472,6 +466,12 @@ C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\runtimes\browser\lib\net6.0\
 C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\V2Ray.Api.xml
+C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.csproj.AssemblyReference.cache
+C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\MvcTestingAppManifest.json
+C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.AssemblyInfoInputs.cache
+C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.AssemblyInfo.cs
+C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.csproj.CoreCompileInputs.cache
 C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.csproj.CopyComplete
 C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.dll
 C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\ref\V2Ray.Api.Test.dll
