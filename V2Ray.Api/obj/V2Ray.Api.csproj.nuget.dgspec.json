@@ -154,7 +154,7 @@
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[5.5.0, )"
+              "version": "[6.2.3, )"
             },
             "Swashbuckle.AspNetCore.Annotations": {
               "target": "Package",

@@ -131,7 +131,7 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = getToken();
   const isAdmin = store.state.userDetails;
   if (to.matched.some((record) => record.meta.requireAuth) && !isLoggedIn) {
-    next({ path: '/login', query: { returnUrl: to.path } });
+    next({ path: '/login', query: { returnUrl:to.path } });
   }
 
   next();
