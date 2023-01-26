@@ -73,8 +73,6 @@ import request from "@/utils/request";
 
 export default Vue.extend({
   name: "AddNewSSHKey",
-  props: ["dialog"],
-
   data: () => ({
     id: null,
     dialog: false,

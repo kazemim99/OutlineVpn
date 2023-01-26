@@ -137,47 +137,47 @@ export default {
   data() {
     return {
       cards: [
-        // {
-        //   fileName: "",
-        //   name: " دانلود مستقیم برای اندروید (NapsternetV)",
-        //   url: "/files/NapsternetV.apk",
-        //   image: require("@/assets/images/apk.png"),
-        // },
-        // {
-        //   fileName: "netmode.apk",
-        //   name: "  (NapsternetV) گوگل استور",
-        //   url: "https://play.google.com/store/apps/details?id=com.napsternetlabs.napsternetv&hl=en&gl=US",
-        //   image: require("@/assets/images/google.png"),
-        // },
-        // {
-        //   fileName: "netmode.apk",
+        {
+          fileName: "",
+          name: " دانلود مستقیم برای اندروید (NapsternetV)",
+          url: "/files/NapsternetV.apk",
+          image: require("@/assets/images/apk.png"),
+        },
+        {
+          fileName: "netmode.apk",
+          name: "  (NapsternetV) گوگل استور",
+          url: "https://play.google.com/store/apps/details?id=com.napsternetlabs.napsternetv&hl=en&gl=US",
+          image: require("@/assets/images/google.png"),
+        },
+        {
+          fileName: "netmode.apk",
 
-        //   name: "دانلود اپ استور (NapsternetV)",
-        //   url: "https://apps.apple.com/us/app/napsternetv/id1629465476",
-        //   image: require("@/assets/images/appstore.png"),
-        // },
-        // {
-        //   fileName: "netmode.apk",
-        //   name: "دانلود مستقیم (Netmode Syna)",
-        //   url: "/files/NetModSyna-VPNClient_1.11.3.apk",
-        //   image: require("@/assets/images/apk.png"),
-        // },
-        // {
-        //   fileName: "netmode.exe",
-        //   name: "ویندوز",
-        //   url: "/files/NetMod_x86(Latest).exe",
-        //   image: require("@/assets/images/windows.png"),
-        // },
-        // {
-        //   name: "مک (بزودی)",
-        //   url: "",
-        //   image: require("@/assets/images/appstore.png"),
-        // },
-        // {
-        //   name: "لینوکس (بزودی)",
-        //   url: "",
-        //   image: require("@/assets/images/appstore.png"),
-        // },
+          name: "دانلود اپ استور (NapsternetV)",
+          url: "https://apps.apple.com/us/app/napsternetv/id1629465476",
+          image: require("@/assets/images/appstore.png"),
+        },
+        {
+          fileName: "netmode.apk",
+          name: "دانلود مستقیم (Netmode Syna)",
+          url: "/files/NetModSyna-VPNClient_1.11.3.apk",
+          image: require("@/assets/images/apk.png"),
+        },
+        {
+          fileName: "netmode.exe",
+          name: "ویندوز",
+          url: "/files/NetMod_x86(Latest).exe",
+          image: require("@/assets/images/windows.png"),
+        },
+        {
+          name: "مک (بزودی)",
+          url: "",
+          image: require("@/assets/images/appstore.png"),
+        },
+        {
+          name: "لینوکس (بزودی)",
+          url: "",
+          image: require("@/assets/images/appstore.png"),
+        },
       ],
       loading: false,
       loading1: false,

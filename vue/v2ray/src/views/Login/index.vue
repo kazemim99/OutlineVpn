@@ -155,6 +155,7 @@ export default {
       console.log("b");
     },
     async handleSuccess(response) {
+  debugger;
       console.log("a");
       this.captchaHasError = false;
     },
