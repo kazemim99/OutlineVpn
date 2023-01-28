@@ -1,15 +1,11 @@
 <template>
   <div class="small">
-    <v-col cols="12">
-      <AddProblmeReport ref="addProblemReportCom" />
-    </v-col>
-    <v-spacer></v-spacer>
     <v-row>
       <v-col md="6" sm="3">
         <div class="grey--text mb-2">تاریخ اعتبار :</div>
       </v-col>
       <v-col md="6" sm="6">
-        <div class="mb-2">{{ this.userKeyDetails.expireTime }}</div>
+        <div class="mb-2">{{ this.userKeyDetails.expireDate }}</div>
       </v-col>
     </v-row>
 
@@ -73,16 +69,25 @@
     </v-row>
     <div class="text-center mt-10">
       <v-btn
-        v-if="!userKeyDetails.userName"
+        v-if="userKeyDetails.userName == null"
         rounded
         color="primary"
         :loading="loading"
         @click="getKey()"
         dark
       >
-        "دریافت سرور رایگان"
+        دریافت سرور 3 روزه رایگان
       </v-btn>
-      <AddOrder ref="addOrderCom" />
+      <v-row v-else>
+        <v-col cols="6">
+          <AddOrder ref="addOrderCom" />
+        </v-col>
+        <v-col cols="2">
+          <AddProblmeReport ref="addProblemReportCom" />
+        </v-col>
+      </v-row>
+
+      <v-spacer></v-spacer>
     </div>
     <v-row>
       <v-col
@@ -140,7 +145,7 @@ export default {
         {
           fileName: "",
           name: " دانلود مستقیم برای اندروید (NapsternetV)",
-          url: "/files/NapsternetV.apk",
+          url: "https://iranoutline.tk/files/NapsternetV.apk",
           image: require("@/assets/images/apk.png"),
         },
         {
@@ -159,24 +164,14 @@ export default {
         {
           fileName: "netmode.apk",
           name: "دانلود مستقیم (Netmode Syna)",
-          url: "/files/NetModSyna-VPNClient_1.11.3.apk",
+          url: "https://iranoutline.tk/files/NetModSyna-VPNClient_1.11.3.apk",
           image: require("@/assets/images/apk.png"),
         },
         {
           fileName: "netmode.exe",
           name: "ویندوز",
-          url: "/files/NetMod_x86(Latest).exe",
+          url: "https://iranoutline.tk/files/NetMod_x86(Latest).exe",
           image: require("@/assets/images/windows.png"),
-        },
-        {
-          name: "مک (بزودی)",
-          url: "",
-          image: require("@/assets/images/appstore.png"),
-        },
-        {
-          name: "لینوکس (بزودی)",
-          url: "",
-          image: require("@/assets/images/appstore.png"),
         },
       ],
       loading: false,
@@ -185,7 +180,7 @@ export default {
       down: "مشاهده",
       count: 1,
       userKeyDetails: {
-        expireTime: null,
+        expireDate: null,
       },
     };
   },
@@ -202,7 +197,6 @@ export default {
         .get(`/v2Key/getUsedTraffic`)
         .then((response) => {
           var data = response.data.message;
-          debugger;
           this.loading1 = false;
           this.down = data;
         })

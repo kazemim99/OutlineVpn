@@ -9,7 +9,7 @@ namespace V2Ray.Api.Entity
         public int Amount { get; set; }
         public string CardNumber { get; set; }
         public OrderStateEnum Status { get; set; }
-        public long TranactionNumber { get; set; }
+        public string TranactionNumber { get; set; }
 
         public bool IsDeleted
         {

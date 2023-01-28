@@ -137,14 +137,13 @@ export default class Dashboard extends Vue {
     },
 
     {
-      icon: "mdi-account-key ",
-      title: "فاکتورها",
-      adminVisible: this.$store.state.userDetails.isAdmin,
+      icon: "mdi-currency-usd ",
+      title: "تراکنش ها",
       permission: "Role_Show",
       to: "/orders",
     },
     {
-      icon: "mdi-sync",
+      icon: "mdi-alert-box",
       title: "گزارش مشکل",
       to: "/problem-reports",
     },

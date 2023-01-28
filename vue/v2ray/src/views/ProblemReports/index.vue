@@ -146,7 +146,6 @@ export default {
 
   methods: {
     async openAnswer(id) {
-      debugger;
       let answer = prompt("پاسخ", "");
       if (answer != null) {
         this.model.answer = answer;

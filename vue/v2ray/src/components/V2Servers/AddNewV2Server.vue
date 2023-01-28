@@ -262,7 +262,6 @@ export default Vue.extend({
     },
 
     clearData() {
-      debugger;
       for (let index = 0; index < this.currentRows.length; index++) {
         this.remove(index);
       }

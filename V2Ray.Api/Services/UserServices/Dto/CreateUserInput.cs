@@ -27,5 +27,8 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
         public bool Enable { get; set; }
 
+        [Required]
+        public string LoginToken { get; set; }
+
     }
 }

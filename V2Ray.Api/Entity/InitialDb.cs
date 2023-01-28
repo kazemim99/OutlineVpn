@@ -31,6 +31,7 @@ namespace V2Ray.Api.Entity
         {
             try
             {
+
                 CreateUser(db);
                 CreateCity(db);
                 CreateServer(db);
@@ -166,7 +167,9 @@ namespace V2Ray.Api.Entity
             });
             db.SaveChanges();
         }
-        private static void CreateUser<T>(T db) where T : DB
+      
+            
+            private static void CreateUser<T>(T db) where T : DB
         {
             if (db.Users.Any())
                 return;

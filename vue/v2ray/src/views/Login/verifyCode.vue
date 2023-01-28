@@ -73,15 +73,12 @@ export default class extends Vue {
         return;
       }
       await UserModule.VerifyCode({ code: this.code, email: UserModule.email });
-      debugger;
       this.loading = false;
       if (UserModule.verfied) {
-        debugger;
         if (UserModule.isAdmin) this.$router.push("/");
         else this.$router.push("/home");
       }
     } catch (error) {
-      debugger;
       this.loading = false;
     }
   }

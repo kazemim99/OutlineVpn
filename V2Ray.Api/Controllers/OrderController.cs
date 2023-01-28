@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using V2Ray.Api.Services.Orders.Dto;
 using V2Ray.Api.Services.Orders;
+using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
 
 namespace V2Ray.Api.Controllers
 {
@@ -10,29 +11,22 @@ namespace V2Ray.Api.Controllers
     [Route("api/[controller]")]
     public class OrderController : CustomBaseController
     {
-        private readonly IOrderservice _service;
+        private readonly IOrderService _service;
 
-        public OrderController(IOrderservice service)
+        public OrderController(IOrderService service)
         {
             _service = service;
         }
 
-        [HttpGet("all-orders")]
-        [Authorize]
-        public async Task<ApiResponse> Filter()
-        {
-            var result = await _service.GetAllAsync(new OrderFilterInput
-            {
-                ItemsPerPage = 100
-            });
-            return new ApiResponse(result);
-        }
-
-        [HttpGet("orders")]
+        [HttpGet("filter")]
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] OrderFilterInput filter)
         {
-            var result = await _service.GetAllAsync(filter);
+            if (!IsAdmin)
+            {
+                filter.UserId = UserId;
+            }
+            var result = await _service.GetAllAsync(filter, "User");
             return new ApiResponse(result);
         }
 
@@ -50,11 +44,26 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
+        /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("change-state/{id}/{emai}/{stateId:int}")]
+        [Authorize]
+
+        public async Task<ApiResponse> Update([FromRoute] int id,[FromRoute] string email, [FromRoute] OrderStateEnum stateId)
+        {
+            await _service.ChangeStatus(id,email, stateId);
+
+            return new ApiResponse();
+        }
+
 
         [HttpPost]
         [Authorize]
         public async Task<ApiResponse> Create([FromBody] CreateOrderInput input)
         {
+            input.UserId = UserId;
             await _service.InsertAsync(input);
             return new ApiResponse();
         }

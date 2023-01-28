@@ -12,13 +12,16 @@ namespace V2Ray.Api.Services.Orders.Mapping
         public OrderMapping()
         {
             CreateMap<Order, GetOrderListOutput>()
-                .ForMember(a=>a.Statuses , c=>c.MapFrom(b=> GetOptions()))
-                .ForMember(a=>a.Email , c=>c.MapFrom(b=> b.User.Email))
-                .ForMember(a=>a.StateId , c=>c.MapFrom(b=> b.Status));
+                .ForMember(a => a.Statuses, c => c.MapFrom(b => GetOptions()))
+                .ForMember(a => a.Email, c => c.MapFrom(b => b.User.Email))
+                .ForMember(a => a.CreateAt, c => c.MapFrom(b => b.CreatedAt.ToPeString("yyyy/MM/dd")))
+                .ForMember(a => a.StateId, c => c.MapFrom(b => b.Status))
+                .ForMember(a => a.StatusString, c => c.MapFrom(b => b.Status.GetDescription()));
 
             CreateMap<Order, GetOrderOutput>();
 
-            CreateMap<CreateOrderInput, Order>();
+            CreateMap<CreateOrderInput, Order>()
+                .ForMember(a => a.Status, c => c.MapFrom(b => OrderStateEnum.Waiting));
 
             CreateMap<UpdateOrderInput, Order>();
         }

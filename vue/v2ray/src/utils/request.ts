@@ -25,8 +25,6 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
-    debugger;
-
     if(error.response.data.detail){
       Vue.swal("خطا", error.response.data.detail, "error");
     }else{

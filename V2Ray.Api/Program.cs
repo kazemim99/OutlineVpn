@@ -24,7 +24,10 @@ namespace V2Ray.Api
             //{
             //    Log.Information("Application starting...");
             //    throw new Exception(Directory.GetCurrentDirectory());
-            CreateHostBuilder(args).Build().Run();
+            var build = CreateHostBuilder(args).Build();
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+             build.Run();
             //}
             //catch (Exception ex)
             //{

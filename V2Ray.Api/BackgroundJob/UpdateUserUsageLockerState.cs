@@ -1,4 +1,5 @@
 ﻿using V2Ray.Api.Database;
+using V2Ray.Api.Services.SSHKeyServices;
 
 namespace V2Ray.Api.BackgroundJob
 {
@@ -15,7 +16,7 @@ namespace V2Ray.Api.BackgroundJob
 
         public Task StartAsync(CancellationToken stoppingToken)
         { // remove expired refresh tokens from
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(50));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(20));
             return Task.CompletedTask;
         }
 
@@ -23,11 +24,14 @@ namespace V2Ray.Api.BackgroundJob
         {
             try
             {
-                using var scope = _scopeFactory.CreateScope();
-                var _db = scope.ServiceProvider.GetRequiredService<DB>();
-                //var _smsService = scope.ServiceProvider.GetRequiredService<IRahyabSmsSender>();
-
-                _db.SaveChanges();
+                //using var scope = _scopeFactory.CreateScope();
+                //var _db = scope.ServiceProvider.GetRequiredService<DB>();
+                //var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
+                //var expiresKey = _db.SSHKeyInfos.Where(a => a.ExpireDate <= DateTime.Now);
+                //foreach (var item in expiresKey)
+                //{
+                //  //await  sSHKeyService.DeleteFromVPS(item.UserName);
+                //}
             }
             catch (Exception ex) { }
         }

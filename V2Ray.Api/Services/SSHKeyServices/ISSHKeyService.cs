@@ -16,5 +16,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task GenerateSshFromAdmin(CreateSSHKeyInput input);
         Task GenerateSshFromClient(int userId);
         Task<GenerateSSHOutput> GetUserSSHKey(int userId);
+        Task ChargeOneMonth(string email);
     }
 }

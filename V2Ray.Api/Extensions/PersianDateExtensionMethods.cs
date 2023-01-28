@@ -65,11 +65,6 @@ namespace V2Ray.Api.Extensions
             return _Culture;
         }
 
-        public static string ToPeString(this DateTime? date, string format = "yyyy/MM/dd")
-        {
-            return date?.ToString(format, GetPersianCulture());
-        }
-
         public static DateTime ToGeo(this DateTime date)
         {
             PersianCalendar pc = new PersianCalendar();

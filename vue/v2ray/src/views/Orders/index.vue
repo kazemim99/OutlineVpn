@@ -11,53 +11,33 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.isActive="{ item }">
-        <v-switch
-          v-model="item.isActive"
-          flat
-          @change="changeState(item)"
-          :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
-        ></v-switch>
+      <template v-slot:item.statuses="{ item }">
+        <v-select
+          v-model="stateId"
+          @change="changeState(item.id, item.email)"
+          :items="item.statuses"
+          item-value="id"
+          item-text="text"
+        ></v-select>
       </template>
 
-      <template v-slot:item.edit="{ item }">
-        <v-icon
-          v-can="'Member_Edit'"
-          medium
-          class="mr-2"
-          @click="editItem(item)"
-          >mdi-pencil</v-icon
-        >
-      </template>
-
-      <template v-slot:item.delete="{ item }">
-        <v-icon
-          v-can="'Member_Delete'"
-          medium
-          class="mr-2"
-          @click="deleteItem(item.id)"
-          >mdi-delete</v-icon
-        >
-      </template>
-
-     
-      <template v-slot:header.title="{ header }">
+      <template v-slot:header.email="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="title ? 'primary' : ''">mdi-filter</v-icon>
+              <v-icon small :color="email ? 'primary' : ''">mdi-filter</v-icon>
             </v-btn>
           </template>
           <div style="background-color: white; width: 280px">
             <v-text-field
-              v-model="title"
+              v-model="email"
               class="pa-4"
               type="text"
               label="جستجو"
             ></v-text-field>
             <v-btn
-              @click="title = ''"
+              @click="email = ''"
               small
               text
               color="primary"
@@ -83,6 +63,7 @@ import Vue from "vue";
 
 export default {
   name: "Orders",
+  computed: {},
   components: {
     Breadcrump,
   },
@@ -99,6 +80,7 @@ export default {
           disabled: true,
         },
       ],
+      stateId: 0,
       totalOrders: 0,
       switchLoading: null,
       pages: 0,
@@ -110,14 +92,14 @@ export default {
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "ایمیل", value: "email", sortable: true },
-        { text: "آی پی", value: "iP", sortable: false },
-        { text: "تاریخ ایجاد", value: "createDate", sortable: false },
-        { text: "تاریخ انقضا", value: "expireDate", sortable: false },
-        { text: "", value: "edit", sortable: false },
-        { text: "", value: "delete", sortable: false },
+        { text: "تاریخ واریز", value: "createAt", sortable: false },
+        { text: "شماره کارت", value: "cardNumber", sortable: false },
+        { text: "شماره تراکنش", value: "tranactionNumber", sortable: false },
+        { text: "وضعیت", value: "statusString", sortable: false },
       ],
     };
   },
+
   watch: {
     options: {
       handler() {
@@ -133,21 +115,30 @@ export default {
       this.getOrders();
     },
   },
+  mounted() {
+    if (this.$store.state.userDetails.isAdmin) {
+      this.headers.push({
+        text: "وضعیت",
+        value: "statuses",
+        sortable: false,
+        widh: "150",
+      });
+    }
+  },
   created() {
     this.getOrders();
   },
 
   methods: {
-    async changeState(item) {
+    async changeState(id, email) {
       this.switchLoading = "warning";
       await request
-        .put(`/order/change-state/${item.id}`)
+        .put(`/order/change-state/${id}/${email}/${this.stateId}`)
         .then(() => {
-          console.log(item.isActive);
+          this.getOrders();
         })
         .catch((error) => {
           alert(error);
-          this.isActive = !this.isActive;
         })
         .finally(() => {
           this.loading = false;

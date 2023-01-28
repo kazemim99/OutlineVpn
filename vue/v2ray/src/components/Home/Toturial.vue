@@ -71,9 +71,8 @@
       <v-col cols="12">
         <h3>آموزش اتصال با Netmode</h3>
       </v-col>
-      <!-- <br />
       <br />
-      <div>
+      <br />
         <v-col md="6" sm="12">
           <v-img src="~@/assets/images/toturial/1.jpg"></v-img>
         </v-col>
@@ -94,24 +93,9 @@
           <v-img src="~@/assets/images/toturial/6.jpg"></v-img>
         </v-col>
 
-        <v-col md="7" sm="12">
+        <v-col md="6" sm="12">
           <v-img width="70%" src="~@/assets/images/toturial/7.jpg"></v-img>
         </v-col>
-        <v-col md="5" sm="12">
-          <v-img src="~@/assets/images/toturial/8.jpg"></v-img>
-        </v-col>
-
-        <v-col md="6" sm="12">
-          <v-img src="~@/assets/images/toturial/9.jpg"></v-img>
-        </v-col>
-        <v-col md="6" sm="12">
-          <v-img src="~@/assets/images/toturial/10.jpg"></v-img>
-        </v-col>
-
-        <v-col md="6" sm="12">
-          <v-img src="~@/assets/images/toturial/11.jpg"></v-img>
-        </v-col>
-      </div> -->
     </v-row>
   </v-container>
 </template>
