@@ -19,6 +19,7 @@ using V2Ray.Api.Extensions;
 using V2Ray.Api.Common;
 using V2Ray.Api.Services.sms.Rahyab;
 using V2Ray.Api.Services.V2Keys;
+using Newtonsoft.Json;
 
 namespace V2Ray.Api.Services.UserServices
 {
@@ -55,6 +56,8 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task<LoginResultDto> Login(LoginDto input)
         {
+           await RecaptchaResult(input.LoginToken);
+
             var user = await _db.Users.Include(new[] { "Roles.Role" })
                  .FirstOrDefaultAsync(a => a.Email == input.Email);
 
@@ -134,6 +137,7 @@ namespace V2Ray.Api.Services.UserServices
 
         public override async Task InsertAsync(CreateUserInput input)
         {
+           await  RecaptchaResult(input.LoginToken);
             var user = await _db.Users.AnyAsync(a => a.Email == input.Email);
             if (user)
                 throw new ApiException(AppErrors.UserAlreadyExists);
@@ -160,15 +164,76 @@ namespace V2Ray.Api.Services.UserServices
             await _db.SaveChangesAsync();
         }
 
+        private async Task RecaptchaResult(string loginToken)
+        {
+            var dictionary = new Dictionary<string, string>
+
+
+                    {
+
+
+                        { "secret", "6LfYMdwjAAAAAOCmbjG8IWUbhltnlgthqtRytW0O" },
+
+
+                        { "response", loginToken }
+
+
+                    };
+
+
+
+
+            var postContent = new FormUrlEncodedContent(dictionary);
+
+
+
+
+            HttpResponseMessage recaptchaResponse = null;
+
+
+            string stringContent = "";
+
+
+
+
+            // Call recaptcha api and validate the token
+
+
+            using (var http = new HttpClient())
+
+
+            {
+
+
+                recaptchaResponse = await http.PostAsync("https://www.google.com/recaptcha/api/siteverify", postContent);
+
+
+                stringContent = await recaptchaResponse.Content.ReadAsStringAsync();
+
+
+            }
+            if (string.IsNullOrEmpty(stringContent))
+            {
+                throw new ApiException("خطا در احراز هویت کپچا");
+            }
+            var googleReCaptchaResponse = JsonConvert.DeserializeObject<ReCaptchaResponse>(stringContent);
+
+            if (!recaptchaResponse.IsSuccessStatusCode  || !googleReCaptchaResponse.Success)
+
+            {
+                throw new ApiException("خطا در احراز هویت کپچا");
+            }
+        }
+
         public async Task ChangeState(int id)
         {
-            var user = _db.Users.Include(a=>a.V2Keys).FirstOrDefault(a => a.Id == id);
-            
+            var user = _db.Users.Include(a => a.V2Keys).FirstOrDefault(a => a.Id == id);
+
 
             if (user.V2Keys.Any())
             {
                 var key = user.V2Keys.First();
-                await _v2KeyService.ChangeState(key.Id,!key.State);
+                await _v2KeyService.ChangeState(key.Id, !key.State);
 
             }
 
@@ -213,25 +278,25 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task<LoginResultDto> VerifyCode(string code, string email)
         {
-                _otpService.VerifyCode(email, code);
-                var user = await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Email == email);
-                var response = new LoginResultDto
+            _otpService.VerifyCode(email, code);
+            var user = await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Email == email);
+            var response = new LoginResultDto
+            {
+                JwtToken = new JwtToken()
                 {
-                    JwtToken = new JwtToken()
-                    {
-                        Token = GenerateJwtToken(user),
-                    },
-                    IsAdmin = user.IsAdmin,
-                    NeedConfirm = user.NeedConfirm,
-                    FreeAccount = user.UsedFreeAccount,
-                    FirstName = $"{user.FirstName} ",
-                    LastName = $"{user.LastName} ",
-                    Id = user.Id,
-                };
-                user.NeedConfirm = false;
-                _db.Users.Update(user);
+                    Token = GenerateJwtToken(user),
+                },
+                IsAdmin = user.IsAdmin,
+                NeedConfirm = user.NeedConfirm,
+                FreeAccount = user.UsedFreeAccount,
+                FirstName = $"{user.FirstName} ",
+                LastName = $"{user.LastName} ",
+                Id = user.Id,
+            };
+            user.NeedConfirm = false;
+            _db.Users.Update(user);
             _db.SaveChanges();
-                return response;
+            return response;
         }
 
         public async Task ChangePasswordAsync(string email, string password)

@@ -7,6 +7,7 @@
         public string Password { get; set; }
         public string ExpireDate { get; set; }
         public string CreatedAt { get; set; }
+        public int Port { get; set; }
         public string Email
         {
             get; set;

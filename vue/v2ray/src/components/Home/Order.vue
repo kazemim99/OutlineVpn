@@ -10,6 +10,9 @@
           لطفا مبلغ 50 هزار تومان به این شماره کارت واریز کنید, سپس فرم را تکمیل
           و ارسال نمایید</v-card-text
         >
+        <v-col md="12" sm="12">
+          <v-img src="~@/assets/images/creaditCard.jpg"></v-img>
+        </v-col>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-container>
             <v-row>
@@ -27,7 +30,7 @@
             <v-row>
               <v-col cols="6" sm="12" md="6">
                 <v-text-field
-                  v-model="order.transactionNumber"
+                  v-model="order.tranactionNumber"
                   label="َشماره تراکنش *"
                   placeholder=" "
                   autocomplete="false"
@@ -61,8 +64,12 @@ export default {
       dialog: false,
       valid: true,
       order: {},
-      TransactionNumberRules: [(v) => !!v || "شماره تراکنش"],
-      CardNumberRules: [(v) => !!v || "شماره کارت"],
+      TransactionNumberRules: [(v) => !!v || "شماره تراکنش را وارد نمایید"],
+      CardNumberRules: [
+        (v) => !!v || "شماره کارت",
+        (v) => (v && v.length > 15) || "شماره کارت اشتباه است",
+        (v) => (v && v.length < 17) || "شماره کارت اشتباه است",
+      ],
     };
   },
   methods: {
@@ -73,9 +80,10 @@ export default {
       this.loading = true;
 
       request
-        .post("/order", this.model)
+        .post("/order", this.order)
         .then((response) => {
           this.dialog = false;
+          alert("اطلاعات شما ارسال و پس از تایید اکانت شما تمدید خواهد شد");
           // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
         })
         .finally(() => {

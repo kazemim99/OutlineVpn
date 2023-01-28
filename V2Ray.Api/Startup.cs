@@ -114,7 +114,7 @@ namespace V2Ray.Api
 
                 services.AddHostedService<JwtRefreshTokenCache>();
                 services.AddLogging();
-             
+
             }
             InitializeContainer(services);
 
@@ -135,19 +135,32 @@ namespace V2Ray.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
 
+            if (_env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+
+                app.UseHttpsRedirection();
+
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.DefaultModelsExpandDepth(0);
+                });
+            }
             if (!_env.IsDevelopment())
             {
-                app.UseHttpsRedirection();
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                });
+               
             }
 
             if (!isTest)
             {
-             
+
                 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions
                 {
                     UseApiProblemDetailsException = true,
@@ -188,12 +201,7 @@ namespace V2Ray.Api
 
             app.EnsureMigrationOfContext<DB>(_env.EnvironmentName);
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                c.DefaultModelsExpandDepth(0);
-            });
+           
 
             var defaultFilesOptions = new DefaultFilesOptions();
             defaultFilesOptions.DefaultFileNames.Clear();
@@ -234,7 +242,7 @@ namespace V2Ray.Api
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath, false);
-                
+
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
    {
      new OpenApiSecurityScheme

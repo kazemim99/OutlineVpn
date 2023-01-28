@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Renci.SshNet;
 using V2Ray.Api.Extensions;
+using V2Ray.Api.Services.sms;
 using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
 using V2Ray.Api.Services.UserServices;
 using V2Ray.Api.Shared;
@@ -19,11 +20,12 @@ namespace V2Ray.Api.Controllers
     public class PublicDataController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IRahyabSmsSender _rahyab;
 
-
-        public PublicDataController(IUserService userService)
+        public PublicDataController(IUserService userService, IRahyabSmsSender rahyab)
         {
             _userService = userService;
+            _rahyab = rahyab;
         }
 
 
@@ -35,6 +37,14 @@ namespace V2Ray.Api.Controllers
                 .Cast<OSEnum>()
                 .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
             return new ApiResponse(result);
+        }
+        [HttpGet("send-mail")]
+
+        public ApiResponse SendMail()
+        {
+            _rahyab.SendEmail("2222", "kazemi.mst@gmail.com");
+            return new ApiResponse();
+
         }
 
         //[HttpGet("add-ssh")]
@@ -49,7 +59,7 @@ namespace V2Ray.Api.Controllers
         //        var date = DateTime.Now.AddMonths(1).ToString("d");
         //        var command = ssh.CreateCommand($"useradd -m -p $(openssl passwd -1 {password}) -s /bin/bash -G sudo {username}");
         //         command.Execute();
-                
+
         //        //command = ssh.CreateCommand("rm create.txt");
         //        //command.Execute();
 

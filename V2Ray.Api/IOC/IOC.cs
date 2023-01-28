@@ -13,6 +13,7 @@ using V2Ray.Api.Services.Cities;
 using V2Ray.Api.Services.V2Keys;
 using V2Ray.Api.Services.ProblemReportServices;
 using V2Ray.Api.Services.SSHKeyServices;
+using V2Ray.Api.Services.Orders;
 
 namespace V2Ray.Api.IOC
 {
@@ -31,6 +32,7 @@ namespace V2Ray.Api.IOC
             services.AddScoped<IV2KeyService, V2KeyService>();
             services.AddScoped<IProblemReportservice, ProblemReportservice>();
             services.AddScoped<ISSHKeyService, SSHKeyService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 

@@ -74,7 +74,6 @@ class User extends VuexModule implements IUserState {
   public async VerifyCode(verifyModel: { code: string; email: string }) {
     await veriFyCode(verifyModel)
       .then((a) => {
-        debugger;
         this.SET_VERIFIED(true);
         this.SET_Mail(verifyModel.email);
         const result = a.data.result;

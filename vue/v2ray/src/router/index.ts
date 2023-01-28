@@ -102,6 +102,19 @@ const routes: Array<RouteConfig> = [
     path: "/login",
     name: "Login",
     component: () => import("@/views/Login/index.vue"),
+    meta: {
+      title: 'فیلتر شکن - فروش فیلتر شکن - فیلتر شکن ایفون , اندروید , کامپیوتر , ویندوز',
+      metaTags: [
+        {
+          name: 'description',
+          content: 'فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته'
+        },
+        {
+          property: 'og:description',
+          content: 'فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته'
+        }
+      ]
+    }
   },
   {
     path: "/get-code",
@@ -131,7 +144,7 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = getToken();
   const isAdmin = store.state.userDetails;
   if (to.matched.some((record) => record.meta.requireAuth) && !isLoggedIn) {
-    next({ path: '/login', query: { returnUrl:to.path } });
+    next({ path: '/login', query: { returnUrl: to.path } });
   }
 
   next();

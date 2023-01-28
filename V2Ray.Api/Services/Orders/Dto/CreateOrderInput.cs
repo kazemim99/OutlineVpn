@@ -9,12 +9,13 @@ namespace V2Ray.Api.Services.Orders.Dto
     {
         [JsonIgnore]
         public int UserId { get; set; }
-        [Required]
-        public int Amount { get; set; }
+        [JsonIgnore]
+        public int Amount { get; set; } = 50000;
         [Required]
         public string CardNumber { get; set; }
-       
+
         [Required]
-        public long TranactionNumber { get; set; }
+        [StringLength(maximumLength:20,ErrorMessage ="طول شماره تراکنش نامعتبر است ",MinimumLength =5)]
+        public string TranactionNumber { get; set; }
     }
 }

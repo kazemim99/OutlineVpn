@@ -2,14 +2,14 @@ version: '3.4'
 
 services:
 
-  redisdb:
-    image: redis:alpine
+  #redisdb:
+  #  image: redis:alpine
 
   posgresdb:
     image: postgres
 
-  pgadmin:
-    image: dpage/pgadmin4  
+  #pgadmin:
+  #  image: dpage/pgadmin4  
 
   portainer:
     image: portainer/portainer-ce
@@ -45,6 +45,6 @@ services:
 volumes:
   portainer_data:
   postgres_data:
-  pgadmin_data:
+  #pgadmin_data:
 
 

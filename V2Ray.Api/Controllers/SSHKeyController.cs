@@ -34,7 +34,7 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Filter([FromQuery] SSHKeyFilterInput filter)
         {
             //filter.SSHKeyId = SSHKeyId;
-            //filter.IsAdmin = IsAdmin;
+            //filter.IsAdmin = IsAdmin;~
             var result = await _service.GetAllAsync(filter, new[] {"User"});
             return new ApiResponse(result);
         }

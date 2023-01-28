@@ -6,11 +6,12 @@ namespace V2Ray.Api.Services.Orders.Dto
     public class GetOrderListOutput
     {
         public string Id { get; set; }
-        public int Email { get; set; }
-        public int CreateAt { get; set; }
+        public string Email { get; set; }
+        public string CreateAt { get; set; }
         public string CardNumber { get; set; }
-        public long TranactionNumber { get; set; }
+        public string TranactionNumber { get; set; }
         public int StateId { get; set; }
+        public string StatusString { get; set; }
         public List<OptionItem> Statuses { get; set; }
     }
 }

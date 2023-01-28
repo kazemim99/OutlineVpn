@@ -39,7 +39,7 @@ namespace V2Ray.Api.Services.sms.Rahyab
             using (var client = new SmtpClient())
             {
                 client.Connect("smtp.gmail.com", 587, false);
-                client.Authenticate("powerbox.ir98", "xfjsiqpukvgsqzgh");
+                client.Authenticate("iranv2ray", "btqavixwahasdahd");
 
                 client.Send(message);
                 client.Disconnect(true);

@@ -11,8 +11,6 @@
       :options.sync="options"
       class="elevation-1"
     >
-    
-
       <template v-slot:item.edit="{ item }">
         <v-icon
           v-can="'Member_Edit'"
@@ -126,6 +124,7 @@ export default {
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
+        { text: "پورت", value: "port", sortable: false },
         { text: "تاریخ انقضا", value: "expireDate", sortable: false },
         { text: "تاریخ ثبت نام", value: "createdAt", sortable: false },
         { text: "ایمیل", value: "email", sortable: false },
@@ -154,7 +153,6 @@ export default {
   },
 
   methods: {
-   
     async editItem(item) {
       this.$refs.addSSHKeyCom.dialog = true;
       this.$refs.addSSHKeyCom.id = item.id;

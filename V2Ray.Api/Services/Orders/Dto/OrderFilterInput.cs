@@ -10,6 +10,7 @@ namespace V2Ray.Api.Services.Orders.Dto
     {
         public string? Title { get; set; }
         public OrderStateEnum Status { get; set; }
+        public int? UserId { get;  set; }
     }
 
 }

@@ -126,6 +126,7 @@ export default {
     show2: false,
     register: false,
     loginForm: {
+      loginToken: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -152,11 +153,10 @@ export default {
       return value == this.loginForm.password || "تکرار رمز عبور اشتباه است";
     },
     async handleError() {
-      console.log("b");
+      alert("خطا");
     },
     async handleSuccess(response) {
-  debugger;
-      console.log("a");
+      this.loginForm.loginToken = response;
       this.captchaHasError = false;
     },
     async registerShow() {
