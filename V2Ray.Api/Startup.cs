@@ -176,16 +176,16 @@ namespace V2Ray.Api
             app.UseStaticFiles();
             if (!isTest)
             {
-                //var path = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
-                //if (!Directory.Exists(path))
-                //{
-                //    Directory.CreateDirectory(path);
-                //}
-                //app.UseStaticFiles(new StaticFileOptions()
-                //{
-                //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
-                //    RequestPath = new PathString("/Resources")
-                //});
+                var path = Path.Combine(Directory.GetCurrentDirectory(), @"Resources");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                    RequestPath = new PathString("/Resources")
+                });
             }
             app.UseRouting();
 

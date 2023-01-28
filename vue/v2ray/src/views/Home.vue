@@ -145,7 +145,7 @@ export default {
         {
           fileName: "",
           name: " دانلود مستقیم برای اندروید (NapsternetV)",
-          url: "https://iranv2ray.com/files/NapsternetV.apk",
+          url: "https://iranv2ray.com/NapsternetV.apk",
           image: require("@/assets/images/apk.png"),
         },
         {
@@ -164,13 +164,13 @@ export default {
         {
           fileName: "netmode.apk",
           name: "دانلود مستقیم (Netmode Syna)",
-          url: "https://iranv2ray.com/files/NetModSyna-VPNClient_1.11.3.apk",
+          url: "https://iranv2ray.com/NetModSyna-VPNClient_1.11.3.apk",
           image: require("@/assets/images/apk.png"),
         },
         {
           fileName: "netmode.exe",
           name: "ویندوز (Netmode Syna)",
-          url: "https://iranv2ray.com/files/NetMod_x86(Latest).exe",
+          url: "https://iranv2ray.com/NetMod_x86(Latest).exe",
           image: require("@/assets/images/windows.png"),
         },
       ],
