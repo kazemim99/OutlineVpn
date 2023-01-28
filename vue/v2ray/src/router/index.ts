@@ -143,6 +143,10 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   const isLoggedIn = getToken();
   const isAdmin = store.state.userDetails;
+  // const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta && r.meta.title);
+
+  // if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
+
   if (to.matched.some((record) => record.meta.requireAuth) && !isLoggedIn) {
     next({ path: '/login', query: { returnUrl: to.path } });
   }
