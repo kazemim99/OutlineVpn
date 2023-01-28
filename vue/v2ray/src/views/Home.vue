@@ -86,7 +86,6 @@
           <AddProblmeReport ref="addProblemReportCom" />
         </v-col>
       </v-row>
-
       <v-spacer></v-spacer>
     </div>
     <v-row>
@@ -100,8 +99,7 @@
       >
         <v-hover v-slot="{ hover }">
           <v-card
-            target="_blank"
-            :download="card.fileName"
+            download
             :href="card.url"
             :elevation="hover ? 16 : 2"
             :class="{ 'on-hover': hover }"
@@ -145,7 +143,7 @@ export default {
         {
           fileName: "",
           name: " دانلود مستقیم برای اندروید (NapsternetV)",
-          url: "https://iranv2ray.com/NapsternetV.apk",
+          url: "/files/NapsternetV.apk",
           image: require("@/assets/images/apk.png"),
         },
         {
@@ -164,13 +162,13 @@ export default {
         {
           fileName: "netmode.apk",
           name: "دانلود مستقیم (Netmode Syna)",
-          url: "https://iranv2ray.com/NetModSyna-VPNClient_1.11.3.apk",
+          url: "/files/NetModSyna-VPNClient_1.11.3.apk",
           image: require("@/assets/images/apk.png"),
         },
         {
           fileName: "netmode.exe",
           name: "ویندوز (Netmode Syna)",
-          url: "https://iranv2ray.com/NetMod_x86(Latest).exe",
+          url: "/files/NetMod_x86(Latest).exe",
           image: require("@/assets/images/windows.png"),
         },
       ],
