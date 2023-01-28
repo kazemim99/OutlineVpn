@@ -8,6 +8,7 @@ namespace V2Ray.Api.Services.ProblemReportServices.Dto
     public class ProblemReportFilterInput : PaginationModelInput
     {
         public string? CreatedAt { get; set; }
+        public int? UserId { get;  set; }
     }
 
 }

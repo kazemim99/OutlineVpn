@@ -49,5 +49,15 @@ namespace V2Ray.Api.Services.ProblemReportServices
             _db.ProblemReports.Update(answer);
             _db.SaveChanges();
         }
+
+        public override IQueryable<ProblemReport> Filter(ProblemReportFilterInput filter)
+        {
+            var query = _db.ProblemReports.AsQueryable();
+
+            if (filter.UserId != null)
+                query = query.Where(a => a.UserId == filter.UserId);
+
+            return query;
+        }
     }
 }

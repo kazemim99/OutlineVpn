@@ -29,6 +29,10 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] ProblemReportFilterInput filter)
         {
+            if (!IsAdmin)
+            {
+                filter.UserId = UserId;
+            }
             var result = await _service.GetAllAsync(filter, new[] { "User" });
             return new ApiResponse(result);
         }

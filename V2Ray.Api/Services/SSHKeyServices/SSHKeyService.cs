@@ -90,7 +90,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 Password = CreatePassword(8),
                 Port = 1027,
-                ExpireDate = DateTime.Now.AddDays(3),
+                ExpireDate = DateTime.Now.AddDays(3).ToPersianDate(),
                 UserId = userId,
                 UserName = user.Email.Split('@')[0]
             };
@@ -109,7 +109,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 Password = user.Password,
                 HostName = "ssh1.iranv2ray.com",
                 Port = user.Port,
-                ExpireDate = user.ExpireDate.ToPeString()
+                ExpireDate = user.ExpireDate.ToPeString("yyyy/MM/dd")
             };
         }
         private void CreateSSHUser(CreateSSHKeyInput input, bool isUpdate)

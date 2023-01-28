@@ -11,24 +11,21 @@
           و ارسال نمایید</v-card-text
         >
         <v-col md="12" sm="12">
-          <v-img src="~@/assets/images/creaditCard.jpg"></v-img>
+          <v-img src="~@/assets/images/maskancart.jpg"></v-img>
         </v-col>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-container>
-            <v-row>
-              <v-col cols="6" sm="12" md="6">
+              <v-col sm="12" md="12">
                 <v-text-field
                   v-model="order.cardNumber"
-                  label="َشماره کارت *"
+                  label="َشماره کارت شما *"
                   placeholder=" "
                   autocomplete="false"
                   :rules="CardNumberRules"
                   required
                 ></v-text-field>
               </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6" sm="12" md="6">
+              <v-col sm="12" md="12">
                 <v-text-field
                   v-model="order.tranactionNumber"
                   label="َشماره تراکنش *"
@@ -38,7 +35,6 @@
                   required
                 ></v-text-field>
               </v-col>
-            </v-row>
           </v-container>
         </v-form>
         <v-card-actions>
