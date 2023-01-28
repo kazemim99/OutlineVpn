@@ -19,7 +19,16 @@ import VueMeta from "vue-meta";
     meta: [
       { charset: 'utf-8' },
       { name: 'description', content: 'فروش فیلتر شکن با سه روز مهلت تست و پشتیبانی همه روزه بدون قطعی و پر سرعت برای اندروید , ایفون, ویندوز و لینوکس' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { property: "og:site_name", content: "iranv2ray.com" },
+      {
+        property: "og:description",
+        content:
+          "فروش فیلتر شکن پر سرعت برای اندرودید , ایفون , لینوکس , اندروید , ویندوز و کامپیوتر",
+      },
+      { property: "og:type", content: "site" },
+      { property: "og:url", content: "https://iranv2ray.com" },
+      { property: "og:image", content: "~@/assets/images/siteimage.png" },
     ]
   },
 })
