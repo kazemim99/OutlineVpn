@@ -253,7 +253,6 @@ namespace V2Ray.Api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Answer")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
@@ -263,7 +262,6 @@ namespace V2Ray.Api.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Despriction")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
@@ -274,6 +272,9 @@ namespace V2Ray.Api.Migrations
 
                     b.Property<int>("Operator")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("ReturnMoney")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("State")
                         .HasColumnType("integer");

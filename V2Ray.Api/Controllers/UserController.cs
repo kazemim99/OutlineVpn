@@ -1,6 +1,7 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using V2Ray.Api.Common;
 using V2Ray.Api.Services.sms;
 using V2Ray.Api.Services.sms.Rahyab;
 using V2Ray.Api.Services.UserServices;
@@ -9,6 +10,8 @@ using V2Ray.Api.Services.UserServices.Dto;
 namespace V2Ray.Api.Controllers
 {
     [ApiController]
+    [Authorize(Policy = Policies.Admin)]
+
     [Route("api/[controller]")]
     public class UserController : CustomBaseController
     {

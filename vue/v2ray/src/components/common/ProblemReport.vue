@@ -2,7 +2,15 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn color="error" dark v-bind="attrs" v-on="on" style="margin-bottom: 51px;"> گزارش قطعی </v-btn>
+        <v-btn
+          color="error"
+          dark
+          v-bind="attrs"
+          v-on="on"
+          style="margin-bottom: 20px"
+        >
+          گزارش قطعی
+        </v-btn>
       </template>
       <v-card>
         <v-card-title>
@@ -39,10 +47,18 @@
                 <v-col cols="6" sm="6">
                   <v-textarea
                     outlined
+                    v-model="model.despriction"
                     name="input-7-4"
                     label="توضیحات"
                     placeholder="با دادن توضیحات بیشتر ما را در رفع هرچه بهتر مشکل یاری کنید"
                   ></v-textarea>
+                </v-col>
+
+                <v-col cols="6" sm="6">
+                  <v-switch
+                    v-model="model.returnMony"
+                    :label="`بازگشت وجه؟ : ${model.returnMony ? 'بله' : 'خیر'}`"
+                  ></v-switch>
                 </v-col>
               </v-row>
             </v-container>
@@ -122,7 +138,7 @@ export default {
           // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
         })
         .catch((e) => {
-          console.log(e)
+          console.log(e);
         })
         .finally(() => {
           this.loading = false;

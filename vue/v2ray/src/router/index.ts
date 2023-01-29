@@ -2,106 +2,123 @@ import { getToken } from "@/utils/cookies";
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Dashboard from '@/layout/Dashboard.vue'
+import MainMenu from '@/layout/MainMenu.vue'
 import store from "@/store";
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: '/',
+    path: '/dashboard/',
     name: 'Dashboard',
     component: Dashboard,
-    redirect: '/home',
+    redirect: '/buy-vpn',
     meta: { requireAuth: true },
     children: [
       {
-        path: '/home',
-        name: 'Home',
-        component: () => import('@/views/Home.vue'),
+        path: 'buy-vpn',
+        name: 'BuyKey',
+        component: () => import('@/views/HomePage/getKey.vue'),
         meta: { requireAuth: true }
       },
 
       {
-        path: '/swaps',
+        path: 'swaps',
         name: 'Swap',
         component: () => import('@/views/Swaps/swap.vue'),
         meta: { requireAuth: true }
       },
       {
-        path: '/users',
+        path: 'users',
         name: 'User',
         component: () => import('@/views/User/Users.vue'),
         meta: { requireAuth: true }
       },
       {
-        path: '/manage-plans',
+        path: 'manage-plans',
         name: 'ManagPlans',
         component: () => import('@/views/Plans/ManagePlans.vue'),
         meta: { requireAuth: true }
       },
       {
-        path: "/problem-reports",
+        path: "problem-reports",
         name: "ProblemReports",
         component: () => import("@/views/ProblemReports/index.vue"),
       },
       {
-        path: "/orders",
+        path: "orders",
         name: "Orders",
         component: () => import("@/views/Orders/index.vue"),
       },
+
       {
-        path: "/sshkeys",
+        path: "phone-toturial",
+        name: "IPhoneAndroidToturial",
+        component: () => import("@/views/HomePage/IPhoneAndroidToturial.vue"),
+        meta: { requireAuth: true },
+      },
+      {
+        path: "windows-toturial",
+        name: "Windows",
+        meta: { requireAuth: true },
+
+        component: () => import("@/views/HomePage/Windows.vue"),
+      },
+      {
+        path: "linux-toturial",
+        name: "Linux",
+        meta: { requireAuth: true },
+
+        component: () => import("@/views/HomePage/Linux.vue"),
+      },
+      {
+        path: "sshkeys",
         name: "SSHKeys",
+        meta: { requireAuth: true },
         component: () => import("@/views/SSHKeys/index.vue"),
       },
 
       {
-        path: "/profile",
-        name: "DeviceReport",
+        path: "profile",
+        name: "Profile",
         component: () => import("@/views/User/Profile.vue"),
         meta: { requireAuth: true }
       },
 
-      {
-        path: "/checkout/:id",
-        name: "Checkout",
-        component: () => import("@/views/Plans/Checkout.vue"),
-        meta: { requireAuth: true }
-      },
+      // {
+      //   path: "checkout/:id",
+      //   name: "Checkout",
+      //   component: () => import("@/views/Plans/Checkout.vue"),
+      //   meta: { requireAuth: true }
+      // },
 
-      {
-        path: "/buy-traffic",
-        name: "BuyTraffic",
-        component: () => import("@/views/Plans/index.vue"),
-        meta: { requireAuth: true }
-      },
-      {
-        path: "/plans",
-        name: "Plans",
-        component: () => import("@/views/Plans/index.vue"),
-        meta: { requireAuth: true }
-      },
+      // {
+      //   path: "plans",
+      //   name: "Plans",
+      //   component: () => import("@/views/Plans/index.vue"),
+      //   meta: { requireAuth: true }
+      // },
 
-      {
-        path: "/v2servers",
-        name: "V2Servers",
-        component: () => import("@/views/V2Servers/index.vue"),
-        meta: { requireAuth: true }
-      },
-      {
-        path: "/v2Keys",
-        name: "v2Keys",
-        component: () => import("@/views/V2Keys/index.vue"),
-        meta: { requireAuth: true }
-      },
+      // {
+      //   path: "v2servers",
+      //   name: "V2Servers",
+      //   component: () => import("@/views/V2Servers/index.vue"),
+      //   meta: { requireAuth: true }
+      // },
+      // {
+      //   path: "v2Keys",
+      //   name: "v2Keys",
+      //   component: () => import("@/views/V2Keys/index.vue"),
+      //   meta: { requireAuth: true }
+      // },
 
     ]
   },
-
   {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/Login/index.vue"),
+
+    path: '/',
+    name: 'Home',
+    component: () => import('@/views/Home.vue'),
     meta: {
       title: 'فیلتر شکن - فروش فیلتر شکن - فیلتر شکن ایفون , اندروید , کامپیوتر , ویندوز',
       metaTags: [
@@ -117,11 +134,16 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
+    path: "/login",
+    name: "Login",
+    component: () => import("@/views/Login/index.vue"),
+
+  },
+  {
     path: "/get-code",
     name: "GetCode",
     component: () => import("@/views/Login/get-code.vue"),
   },
-
   {
     path: "/verify-code",
     name: "VerifyCode",

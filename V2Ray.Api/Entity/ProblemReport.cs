@@ -8,13 +8,14 @@ namespace V2Ray.Api.Entity
         public User User { get; set; }
         public OperatorEnum Operator { get; set; }
         public OSEnum OS { get; set; }
-        public string Despriction { get; set; }
+        public string? Despriction { get; set; }
+        public bool ReturnMoney { get; set; }
         public bool IsDeleted
         {
             get; set;
 
         }
-        public string Answer { get; set; }
+        public string? Answer { get; set; }
 
         public ProblemReportEnum State { get; set; }
     }

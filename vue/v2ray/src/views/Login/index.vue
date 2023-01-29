@@ -124,15 +124,6 @@ export default {
           "فروش فیلتر شکن پر سرعت برای اندرودید , ایفون , لینوکس , اندروید , ویندوز و کامپیوتر",
       },
       { property: "og:title", content: "ایران وی توی ری : فروش فیلتر شکن" },
-      { property: "og:site_name", content: "iranv2ray.com" },
-      {
-        property: "og:description",
-        content:
-          "فروش فیلتر شکن پر سرعت برای اندرودید , ایفون , لینوکس , اندروید , ویندوز و کامپیوتر",
-      },
-      { property: "og:type", content: "site" },
-      { property: "og:url", content: "https://iranv2ray.com" },
-      { property: "og:image", content: "~@/assets/images/siteimage.png" },
     ],
   },
   data: () => ({
@@ -222,7 +213,7 @@ export default {
           // await UserModule.GetCode(this.loginForm.email);
           this.$router.push("/verify-code");
         } else {
-          this.$router.push("/home");
+          this.$router.push("/dashboard/buy-vpn");
         }
         this.loading = false;
       } catch (error) {

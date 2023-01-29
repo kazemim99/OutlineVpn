@@ -109,7 +109,7 @@ export default class Dashboard extends Vue {
     {
       icon: "mdi-home",
       title: "صفحه اصلی",
-      to: "/home",
+      to: "/dashboard/buy-vpn",
       adminVisible: true,
       permission: "Home_Show",
     },
@@ -117,7 +117,7 @@ export default class Dashboard extends Vue {
       icon: "mdi-sync",
       title: "انتقال",
       adminVisible: this.$store.state.userDetails.isAdmin,
-      to: "/swaps",
+      to: "/dashboard/swaps",
     },
 
     {
@@ -125,7 +125,7 @@ export default class Dashboard extends Vue {
       title: "مدیریت کاربران",
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "Member_Show",
-      to: "/users",
+      to: "/dashboard/users",
     },
 
     {
@@ -133,33 +133,48 @@ export default class Dashboard extends Vue {
       title: "نقش ها",
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "Role_Show",
-      to: "/user-roles",
+      to: "/dashboard/user-roles",
     },
 
     {
       icon: "mdi-currency-usd ",
       title: "تراکنش ها",
       permission: "Role_Show",
-      to: "/orders",
+      to: "/dashboard/orders",
+    },
+    {
+      icon: "mdi-alert-box",
+      title: "آموزش اتصال با ایفون و اندروید",
+      to: "/dashboard/phone-toturial",
+    },
+    {
+      icon: "mdi-alert-box",
+      title: "آموزش اتصال ویندوز",
+      to: "/dashboard/windows-toturial",
+    },
+    {
+      icon: "mdi-alert-box",
+      title: "اموزش اتصال لینوکس",
+      to: "/dashboard/linux-toturial",
     },
     {
       icon: "mdi-alert-box",
       title: "گزارش مشکل",
-      to: "/problem-reports",
+      to: "/dashboard/problem-reports",
     },
     {
       icon: "mdi-server",
       title: "سرورها",
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "ApiUrl_Show",
-      to: "/v2servers",
+      to: "/dashboard/v2servers",
     },
     {
       icon: "mdi-key",
       title: "کلیدها",
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "ApiUrl_Show",
-      to: "/sshkeys",
+      to: "/dashboard/sshkeys",
     },
 
     // {
@@ -173,7 +188,7 @@ export default class Dashboard extends Vue {
       icon: "mdi-account-edit",
       title: "پروفایل",
       permission: "Profile_Show",
-      to: "/profile",
+      to: "/dashboard/profile",
       adminVisible: true,
     },
   ];

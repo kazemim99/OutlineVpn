@@ -28,7 +28,7 @@ import VueMeta from "vue-meta";
       },
       { property: "og:type", content: "site" },
       { property: "og:url", content: "https://iranv2ray.com" },
-      { property: "og:image", content: "~@/assets/images/siteimage.png" },
+      { property: "og:image", content: "<%= BASE_URL %>siteimage.png" },
     ]
   },
 })

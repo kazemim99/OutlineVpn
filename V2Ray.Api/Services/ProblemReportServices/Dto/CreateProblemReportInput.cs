@@ -19,6 +19,7 @@ namespace V2Ray.Api.Services.ProblemReportServices.Dto
 
         [StringLength(300, ErrorMessage = "حداکثر طول توضیحات 300 کارکتر میباشد", MinimumLength = 0)]
         public string? Despriction { get; set; }
+        public bool ReturnMoney { get;  set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

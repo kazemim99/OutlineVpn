@@ -24,14 +24,14 @@ namespace V2Ray.Api.BackgroundJob
         {
             try
             {
-                //using var scope = _scopeFactory.CreateScope();
-                //var _db = scope.ServiceProvider.GetRequiredService<DB>();
-                //var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
-                //var expiresKey = _db.SSHKeyInfos.Where(a => a.ExpireDate <= DateTime.Now);
-                //foreach (var item in expiresKey)
-                //{
-                //  //await  sSHKeyService.DeleteFromVPS(item.UserName);
-                //}
+                using var scope = _scopeFactory.CreateScope();
+                var _db = scope.ServiceProvider.GetRequiredService<DB>();
+                var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
+                var expiresKey = _db.SSHKeyInfos.Where(a => a.ExpireDate <= DateTime.Now);
+                foreach (var item in expiresKey)
+                {
+                    await  sSHKeyService.DeleteFromVPS(item.UserName);
+                }
             }
             catch (Exception ex) { }
         }

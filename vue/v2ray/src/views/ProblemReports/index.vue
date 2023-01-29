@@ -120,6 +120,7 @@ export default {
         { text: "اپراتور", value: "operator", sortable: true },
         { text: "سیستم عامل", value: "os", sortable: false },
         { text: "وضعیت", value: "state", sortable: true },
+        { text: "بازگشت وجه", value: "returnMoney", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "show", sortable: false },
       ],

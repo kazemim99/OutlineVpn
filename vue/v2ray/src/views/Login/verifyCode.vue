@@ -75,8 +75,7 @@ export default class extends Vue {
       await UserModule.VerifyCode({ code: this.code, email: UserModule.email });
       this.loading = false;
       if (UserModule.verfied) {
-        if (UserModule.isAdmin) this.$router.push("/");
-        else this.$router.push("/home");
+        this.$router.push("/dashboard/buy-vpn");
       }
     } catch (error) {
       this.loading = false;
