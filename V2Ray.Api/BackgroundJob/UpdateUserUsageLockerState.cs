@@ -27,7 +27,7 @@ namespace V2Ray.Api.BackgroundJob
                 using var scope = _scopeFactory.CreateScope();
                 var _db = scope.ServiceProvider.GetRequiredService<DB>();
                 var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
-                var expiresKey = _db.SSHKeyInfos.Where(a => a.ExpireDate <= DateTime.Now);
+                var expiresKey = _db.SSHKeyInfos.Where(a => a.ExpireDate.Date < DateTime.Now.Date);
                 foreach (var item in expiresKey)
                 {
                     await  sSHKeyService.DeleteFromVPS(item.UserName);

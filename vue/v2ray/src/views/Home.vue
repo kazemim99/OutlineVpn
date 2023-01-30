@@ -22,21 +22,21 @@
     <v-container>
       <div>
         <v-row>
-          <div class="text-h3">فروش فیلتر شکن</div>
+          <div class="text-h3">فروش فیلتر شکن(تضمین بازگشت وجه)</div>
         </v-row>
         <br />
         <br />
         <v-row>
-           جهت دریافت فیلتر شکن رایگان به صفحه 
+          جهت دریافت فیلتر شکن رایگان به صفحه
           <a small class="mb-0" color="primary" text href="/login"> ثبت نام </a>
-           بروید 
+          بروید
         </v-row>
       </div>
     </v-container>
     <br />
     <v-container>
       <v-row dense>
-        <v-col cols="4">
+        <v-col md="4" sm="12">
           <v-card class="mx-auto" max-width="344">
             <v-img src="/phone.jpg" height="200px"></v-img>
 
@@ -62,7 +62,7 @@
             </v-expand-transition>
           </v-card>
         </v-col>
-        <v-col cols="4">
+        <v-col md="4" sm="12">
           <v-card class="mx-auto" max-width="344">
             <v-img src="/windows.jpg" height="200px"></v-img>
 
@@ -87,7 +87,7 @@
             </v-expand-transition>
           </v-card>
         </v-col>
-        <v-col cols="4">
+        <v-col md="4" sm="12">
           <v-card class="mx-auto" max-width="344">
             <v-img src="/linux.jpg" height="200px"></v-img>
 

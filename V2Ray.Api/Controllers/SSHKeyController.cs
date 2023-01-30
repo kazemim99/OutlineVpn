@@ -35,6 +35,7 @@ namespace V2Ray.Api.Controllers
         {
             //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;~
+            filter.SortDesc = true;
             var result = await _service.GetAllAsync(filter, new[] {"User"});
             return new ApiResponse(result);
         }
