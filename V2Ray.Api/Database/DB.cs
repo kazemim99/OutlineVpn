@@ -2,20 +2,27 @@
 using Microsoft.EntityFrameworkCore.Design;
 using V2Ray.Api.Entity;
 using V2Ray.Api.Entity.Configurations;
+using static V2Ray.Api.Entity.SSHKey;
 
 namespace V2Ray.Api.Database
 {
 
     public class DesignDBFactory : IDesignTimeDbContextFactory<DB>
     {
+        private readonly IConfiguration _configuration;
+        public DesignDBFactory(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public DB CreateDbContext(string[] args)
         {
             var builder = new DbContextOptionsBuilder<DB>();
 
+            var connectionString = _configuration.GetConnectionString("Default");
             //var connectionString = "Data Source=185.55.224.120;Initial Catalog= powerbox_sa;User ID=powerbox_sa;Password=Pa$$w0rd";
-            var connectionString = "Server=posgresdb;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E";
+            //var connectionString = "Server=.; Database=V2Ray;Integrated Security=True";
 
-            builder.UseNpgsql(connectionString);
+            builder.UseSqlServer(connectionString);
             return new DB(builder.Options);
         }
     }

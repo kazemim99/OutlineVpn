@@ -118,8 +118,8 @@ export default {
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "عنوان", value: "title", sortable: true },
-        { text: "شهر", value: "city", sortable: true },
         { text: "آی پی", value: "ip", sortable: false },
+        { text: "آدرس", value: "url", sortable: false },
         { text: "وضعیت", value: "isActive", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },

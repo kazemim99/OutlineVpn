@@ -18,16 +18,18 @@
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
-              <!-- <v-col class="d-flex" cols="12" sm="6">
-                <v-select
-                  v-model="sshKey.serverId"
-                  :items="servers"
-                  item-value="id"
-                  item-text="title"
-                  label="ُسرور"
-                  solo
-                ></v-select>
-              </v-col> -->
+              <v-row>
+                <v-col class="d-flex" cols="12" sm="12">
+                  <v-select
+                    v-model="sshKey.serverId"
+                    :items="servers"
+                    item-value="id"
+                    item-text="title"
+                    label="ُسرور"
+                    solo
+                  ></v-select>
+                </v-col>
+              </v-row>
               <v-row>
                 <v-col cols="6" sm="12" md="6">
                   <v-text-field
@@ -38,15 +40,14 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <!-- <v-col cols="6" sm="12" md="6">
+                <v-col cols="6" sm="12" md="6">
                   <v-text-field
                     v-model="sshKey.password"
-                    label="رمز *"
+                    label="رمز"
                     placeholder=" "
                     autocomplete="false"
-                    required
                   ></v-text-field>
-                </v-col> -->
+                </v-col>
                 <v-col cols="6" sm="12" md="6">
                   <label>تاریخ :</label>
                   <date-picker v-model="sshKey.expireDate" simple />
@@ -81,6 +82,8 @@ export default Vue.extend({
     valid: true,
     loading: false,
     sshKey: {
+      serverId: 0,
+      password: null,
       userName: "",
       expireDate: "",
     },
@@ -90,6 +93,8 @@ export default Vue.extend({
       handler() {
         if (!this.dialog) {
           this.clearData();
+        } else {
+          this.getServers();
         }
         if (this.id) this.getSSHKey(this.id);
       },
@@ -98,10 +103,18 @@ export default Vue.extend({
   },
 
   methods: {
+    async getServers() {
+      await request.get(`/v2Server/all-servers`).then((response) => {
+        var data = response.data.result;
+        this.servers = data.result;
+      });
+    },
     async getSSHKey(id) {
       await request.get(`/sshKey/${id}`).then((response) => {
         var data = response.data.result;
         this.sshKey.id = id;
+        this.sshKey.serverId = data.serverId;
+        this.sshKey.password = data.password;
         this.sshKey.userName = data.userName;
         this.sshKey.expireDate = data.expireDate;
       });

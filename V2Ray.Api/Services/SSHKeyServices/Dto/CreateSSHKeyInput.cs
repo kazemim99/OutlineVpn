@@ -8,11 +8,11 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
     public class CreateSSHKeyInput
     {
         public string UserName { get; set; }
-        [JsonIgnore]
         public string? Password { get; set; }
         [JsonIgnore]
         public int Port { get; set; }
         public DateTime ExpireDate { get; set; }
         public int UserId { get; set; }
+        public int ServerId { get; set; }
     }
 }

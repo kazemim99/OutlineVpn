@@ -25,8 +25,6 @@ namespace V2Ray.Api
             //    Log.Information("Application starting...");
             //    throw new Exception(Directory.GetCurrentDirectory());
             var build = CreateHostBuilder(args).Build();
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
              build.Run();
             //}
             //catch (Exception ex)
@@ -48,7 +46,8 @@ namespace V2Ray.Api
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
-                    webBuilder.UseKestrel().UseContentRoot(Directory.GetCurrentDirectory());
+                    webBuilder.UseIISIntegration()
+                    .UseContentRoot(Directory.GetCurrentDirectory());
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseWebRoot(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"));
                 });

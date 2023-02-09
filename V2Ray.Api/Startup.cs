@@ -108,7 +108,7 @@ namespace V2Ray.Api
                .AddDbContext<DB>(options =>
                {
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                   options.UseNpgsql
+                   options.UseSqlServer
                    (Configuration.GetConnectionString("Default"));
                });
 

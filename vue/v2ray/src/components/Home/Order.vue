@@ -6,15 +6,13 @@
       </template>
       <v-card>
         <v-card-title class="text-h5"> </v-card-title>
+
         <v-card-text>
-          لطفا مبلغ 50 هزار تومان به این شماره کارت واریز کنید, سپس فرم را تکمیل
-          و ارسال نمایید</v-card-text
-        >
-        <v-col md="12" sm="12">
-          <v-img src="~@/assets/images/maskancart.jpg"></v-img>
-        </v-col>
+        </v-card-text>
+        
+
         <v-form ref="form" v-model="valid" lazy-validation>
-          <v-container>
+          <!-- <v-container>
               <v-col sm="12" md="12">
                 <v-text-field
                   v-model="order.cardNumber"
@@ -35,7 +33,7 @@
                   required
                 ></v-text-field>
               </v-col>
-          </v-container>
+          </v-container> -->
         </v-form>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -58,6 +56,7 @@ export default {
   data() {
     return {
       dialog: false,
+      loading: false,
       valid: true,
       order: {},
       TransactionNumberRules: [(v) => !!v || "شماره تراکنش را وارد نمایید"],
@@ -69,6 +68,9 @@ export default {
     };
   },
   methods: {
+    goTo(url) {
+      window.location.href = url;
+    },
     submit() {
       if (!this.$refs.form.validate()) {
         return;

@@ -9,22 +9,13 @@ namespace V2Ray.Api.Services.Server.Mapping
     {
         public V2ServerMapping()
         {
-            CreateMap<V2Server, GetServerListOutput>().ForMember(a => a.City, c => c.MapFrom(b => b.City.Title));
+            CreateMap<V2Server, GetServerListOutput>();
 
-            CreateMap<V2Server, GetServerOutput>().ForMember(a => a.IP, c => c.MapFrom(b => b.IPs)).ForMember(a => a.IPs, c => c.Ignore());
+            CreateMap<V2Server, GetServerOutput>();
 
-            CreateMap<CreateServerInput, V2Server>()
-                .ForMember(a => a.Swapped, c => c.MapFrom(b => !b.Swapped))
-                .ForMember(a => a.IPs, c => c.MapFrom(b => string.Join(',', b.IPs.Where(c => !c.IsNullOrEmpty()))));
+            CreateMap<CreateServerInput, V2Server>();
 
-            CreateMap<UpdateServerInput, V2Server>()
-                .ForMember(a => a.Swapped, c => c.MapFrom(b => !b.Swapped))
-                .ForMember(a => a.IPs, c => c.MapFrom(b => string.Join(',', b.IPs.Where(c => !c.IsNullOrEmpty()))));
-        }
-
-        public string[] ToWordsList(string words)
-        {
-            return words.Split(",");
+            CreateMap<UpdateServerInput, V2Server>();
         }
 
     }

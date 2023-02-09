@@ -10,9 +10,7 @@ namespace V2Ray.Api.Services.Server.Dto
         public string Title { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public int CityId { get; set; }
         public string IP { get; set; }
-        public List<string> IPs { get; set; }
         public bool IsActive { get; set; }
         public string? Url { get; set; }
     }

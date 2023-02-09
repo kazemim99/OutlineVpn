@@ -39,12 +39,13 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
         public async Task DeleteFromVPS(string username)
         {
-            var connectionInfo = GetConnectionInfo();
+            var sshKey = _db.SSHKeyInfos.Where(a => a.UserName == username).Select(c => c.ServerId).FirstOrDefault();
+            var connectionInfo =await GetConnectionInfo(sshKey.Value);
             using (var ssh = new SshClient(connectionInfo))
             {
                 ssh.Connect();
                 var date = DateTime.Now.AddMonths(1).ToString("d");
-                var command = ssh.CreateCommand($"deluser --remove-home {username}");
+                var command = ssh.CreateCommand($"deluser --remove-home {username} && deluser {username}");
                 command.Execute();
 
                 //command = ssh.CreateCommand("rm create.txt");
@@ -56,7 +57,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
         {
             var user = await _db.SSHKeyInfos.Where(a => a.Id == id).Select(c => new { c.Password, c.UserName, c.UserId }).FirstAsync();
-            input.Password = user.Password;
+            input.Password = input.Password;
             input.UserId = user.UserId;
             await DeleteFromVPS(user.UserName);
             var map = _mapper.Map<CreateSSHKeyInput>(input);
@@ -68,7 +69,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             try
             {
 
-                input.Password = CreatePassword(8);
+                input.Password = input.Password.IsNullOrEmpty() ? CreatePassword(8):input.Password;
                 input.Port = 1027;
                 CreateSSHUser(input, false);
                 await base.InsertAsync(input);
@@ -98,23 +99,46 @@ namespace V2Ray.Api.Services.SSHKeyServices
             await base.InsertAsync(input);
 
         }
+
+        public async Task ChangeState(int id)
+        {
+            var keyInfo =await _db.SSHKeyInfos.FirstOrDefaultAsync(a=>a.Id == id);
+            keyInfo.Enable = !keyInfo.Enable;
+            if (!keyInfo.Enable)
+            {
+                await DeleteFromVPS(keyInfo.UserName);
+            }
+            else
+            {
+                CreateSSHUser(new CreateSSHKeyInput
+                {
+                    UserName = keyInfo.UserName,
+                    ExpireDate = keyInfo.ExpireDate,
+                    Password = keyInfo.Password,
+                    Port = 1027
+                },false);
+            }
+            _db.Update(keyInfo);
+            _db.SaveChanges();
+
+        }
         public async Task<GenerateSSHOutput> GetUserSSHKey(int userId)
         {
-            var user = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.UserId == userId);
+            var user = await _db.SSHKeyInfos.Include("V2Server").FirstOrDefaultAsync(a => a.UserId == userId);
             if (user == null)
                 return new GenerateSSHOutput();
             return new GenerateSSHOutput
             {
                 UserName = user.UserName,
                 Password = user.Password,
-                HostName = "ssh1.iranv2ray.com",
-                Port = user.Port,
+                HostName = user.V2Server.Url,
+                Port = user.V2Server.Port,
                 ExpireDate = user.ExpireDate.ToPeString("yyyy/MM/dd")
             };
         }
-        private void CreateSSHUser(CreateSSHKeyInput input, bool isUpdate)
+        private async void CreateSSHUser(CreateSSHKeyInput input, bool isUpdate)
         {
-            var connectionInfo = GetConnectionInfo();
+            var connectionInfo =await GetConnectionInfo(input.ServerId);
 
             using var ssh = new SshClient(connectionInfo);
             ssh.Connect();
@@ -123,25 +147,28 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             if (!isUpdate)
             {
-                var addPort = $"echo -e '{input.UserName}  hard    maxlogins   1' >> /etc/security/limits.conf";
-                var addPortCommand = ssh.CreateCommand(addPort);
-                addPortCommand.Execute();
+                //var addPort = $"echo -e '{input.UserName}  hard    maxlogins   1' >> /etc/security/limits.conf";
+                //var addPortCommand = ssh.CreateCommand(addPort);
+                //addPortCommand.Execute();
             }
-            var date = DateTime.Now.AddMonths(1).ToString("d");
-            var comm = $"useradd -m -p $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
+            //var date = DateTime.Now.AddMonths(1).ToString("d");
+            var comm = $"useradd -m -p  $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
             var command = ssh.CreateCommand(comm);
             command.Execute();
 
 
-            command = ssh.CreateCommand("systemctl restart ssh.service");
-            command.Execute();
+            //command = ssh.CreateCommand("systemctl restart ssh.service");
+            //command.Execute();
 
             ssh.Disconnect();
         }
 
-        private static PasswordConnectionInfo GetConnectionInfo()
+        private async  Task<PasswordConnectionInfo> GetConnectionInfo(int serverId)
         {
-            return new PasswordConnectionInfo("ssh1.iranv2ray.com", 1027, "root", "!Q@W#E$R5t6y7u8i");
+            var sshKey =await _db.V2Servers.Where(a=>a.Id == serverId)
+                .FirstOrDefaultAsync();
+
+            return new PasswordConnectionInfo(sshKey.Url, sshKey.Port, sshKey.UserName, sshKey.Password);
         }
 
         private string CreatePassword(int length)
@@ -149,6 +176,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
             const string valid = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890";
             StringBuilder res = new();
             Random rnd = new();
+            res.Append("Va");
+
             while (0 < length--)
             {
                 res.Append(valid[rnd.Next(valid.Length)]);
@@ -168,6 +197,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
             key.ExpireDate = DateTime.Now.AddMonths(1);
             _db.SSHKeyInfos.Update(key);
             _db.SaveChanges();
+        }
+
+        public override IQueryable<SSHKey> Filter(SSHKeyFilterInput filter)
+        {
+            var query = _db.SSHKeyInfos.AsQueryable();
+
+            if (filter.UserName != null )
+                query = query.Where(a => a.UserName.Contains(filter.UserName));
+
+            return query;
         }
         //private int GeneratePort(DB db)
         //{

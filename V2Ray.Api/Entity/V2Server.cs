@@ -1,4 +1,5 @@
-﻿using static V2Ray.Api.Services.Server.ServerService;
+﻿using static V2Ray.Api.Entity.SSHKey;
+using static V2Ray.Api.Services.Server.ServerService;
 
 namespace V2Ray.Api.Entity
 {
@@ -7,17 +8,12 @@ namespace V2Ray.Api.Entity
         public string UserName { get; set; }
         public string Password { get; set; }
         public string Title { get; set; }
+        public string IP { get; set; }
         public string Url { get; set; }
         public int Port { get; set; }
-        public City City { get; set; }
-        public string IPs { get; set; }
         public bool IsDeleted { get; set; }
-        public List<V2Key> Keys { get; set; }
-        public int CityId { get; set; }
-        public bool IsActive { get; set; }
-        public bool Swapped { get;  set; }
-        public bool IsMain { get;  set; }
-        public int KeyCount { get; set; }
+        public bool IsActive { get;  set; }
+        public List<SSHKey> SSHKeys { get; set; }
     }
     public class SSHKey:AuditEntity<int>
     {
@@ -27,13 +23,16 @@ namespace V2Ray.Api.Entity
         public User User { get; set; }
         public int UserId { get; set; }
         public int Port { get; set; }
-    }
+        public bool Enable { get;  set; }
+        public int? ServerId { get; set; }
+        public V2Server V2Server { get; set; }
     public class Country : FullAuditEntity<int>, ISoftDelete
     {
         public string Title { get; set; }
         public string Flag { get; set; }
         public List<City> Cities { get; set; }
         public bool IsDeleted { get; set; }
+      }
     }
 
     public class City : FullAuditEntity<int>, ISoftDelete

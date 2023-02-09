@@ -29,7 +29,7 @@ namespace V2Ray.Api.IOC
             services.AddScoped<IPlanService, PlanService>();
             services.AddScoped<IServerService, ServerService>();
             services.AddScoped<ICitieservice, CitieService>();
-            services.AddScoped<IV2KeyService, V2KeyService>();
+            //services.AddScoped<IV2KeyService, V2KeyService>();
             services.AddScoped<IProblemReportservice, ProblemReportservice>();
             services.AddScoped<ISSHKeyService, SSHKeyService>();
             services.AddScoped<IOrderService, OrderService>();

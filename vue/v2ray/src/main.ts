@@ -7,20 +7,10 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import acl from '../src/acl.js';
 import './assets/sass/main.scss';
 import VueCompositionAPI from '@vue/composition-api'
-import VueAnalytics from 'vue-analytics';
-import VueMeta from 'vue-meta'
 
-Vue.use(VueMeta, {
-  // optional pluginOptions
-  refreshOnceOnNavigation: true
-})
 
 Vue.config.productionTip = false
 
-Vue.use(VueAnalytics, {
-  id: 'G-ZKHHCFXE95',
-  router
-});
 
 Vue.use(VueCompositionAPI)
 

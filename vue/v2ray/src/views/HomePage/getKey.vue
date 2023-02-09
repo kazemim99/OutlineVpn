@@ -96,10 +96,14 @@
         </v-list-item-content>
       </v-list-item>
       <v-card-actions>
-        <AddOrder ref="addOrderCom" />
+        <!-- <AddOrder ref="addOrderCom" /> -->
         <AddProblmeReport ref="addProblemReportCom" />
       </v-card-actions>
-
+      جهت خرید اشتراک یا پشتیبانی به این شماره پیام بدین
+      <v-col  md="6" sm="6">
+        <a large style="margin: auto" text color="success" href="tel:09123135143"
+          >09123135143</a>
+      </v-col>
       <v-card-subtitle class="pb-0">
         در صورت عدم رضایت بعد از ده روز در قسمت گزارش قطعی گزینه بازگشت وجه را
         بزنید تا مبلغ به حسابی که با آن پرداخت کرده ایید واریز شود
@@ -140,12 +144,12 @@
   <script>
 import request from "@/utils/request";
 import AddProblmeReport from "@/components/common/ProblemReport.vue";
-import AddOrder from "@/components/Home/Order.vue";
+// import AddOrder from "@/components/Home/Order.vue";
 
 export default {
   components: {
     AddProblmeReport,
-    AddOrder,
+    // AddOrder,
   },
   data() {
     return {

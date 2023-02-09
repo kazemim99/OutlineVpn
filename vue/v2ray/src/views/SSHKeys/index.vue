@@ -11,24 +11,23 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.edit="{ item }">
-        <v-icon
-          v-can="'Member_Edit'"
-          medium
-          class="mr-2"
-          @click="editItem(item)"
-          >mdi-pencil</v-icon
-        >
+      <template v-slot:item.enable="{ item }">
+        <v-switch
+          v-model="item.enable"
+          flat
+          @change="enableKey(item.id)"
+          :label="`${item.enable ? 'فعال' : 'غیر فعال'}`"
+        ></v-switch>
       </template>
 
       <template v-slot:item.delete="{ item }">
-        <v-icon
-          v-can="'Member_Delete'"
-          medium
-          class="mr-2"
-          @click="deleteItem(item.id)"
+        <v-icon medium class="mr-2" @click="deleteItem(item.id)"
           >mdi-delete</v-icon
         >
+      </template>
+
+      <template v-slot:item.edit="{ item }">
+        <v-icon medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       </template>
 
       <template v-slot:top>
@@ -52,23 +51,25 @@
           <v-toolbar-title>لیست سرور ها</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:header.title="{ header }">
+      <template v-slot:header.userName="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="title ? 'primary' : ''">mdi-filter</v-icon>
+              <v-icon small :color="userName ? 'primary' : ''"
+                >mdi-filter</v-icon
+              >
             </v-btn>
           </template>
           <div style="background-color: white; width: 280px">
             <v-text-field
-              v-model="title"
+              v-model="userName"
               class="pa-4"
               type="text"
               label="جستجو"
             ></v-text-field>
             <v-btn
-              @click="title = ''"
+              @click="userName = ''"
               small
               text
               color="primary"
@@ -117,17 +118,16 @@ export default {
       pages: 0,
       serverid: 0,
       isActive: null,
-      title: null,
+      userName: null,
       sshKeys: [],
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
-        { text: "پورت", value: "port", sortable: false },
+        { text: "سرور", value: "serverName", sortable: false },
         { text: "تاریخ انقضا", value: "expireDate", sortable: false },
-        { text: "تاریخ ثبت نام", value: "createdAt", sortable: false },
-        { text: "ایمیل", value: "email", sortable: false },
+        { text: "وضعیت", value: "enable", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
       ],
@@ -140,10 +140,10 @@ export default {
       },
       deep: true,
     },
-    title: function () {
-      if (this.title.length > 2 || this.title.length === 0)
+    userName: function () {
+      if (this.userName.length > 2 || this.userName.length === 0)
         this.options.page = 1;
-      this.options.title = this.title;
+      this.options.userName = this.userName;
 
       this.getSSHKeys();
     },
@@ -156,6 +156,12 @@ export default {
     async editItem(item) {
       this.$refs.addSSHKeyCom.dialog = true;
       this.$refs.addSSHKeyCom.id = item.id;
+    },
+
+    async enableKey(id) {
+      request.put(`/SSHKey/change-state/${id}`).then(() => {
+        this.getSSHKeys();
+      });
     },
     deleteItem(id) {
       Vue.swal({

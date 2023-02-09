@@ -43,6 +43,13 @@ namespace V2Ray.Api.Entity.Configurations
             builder.HasQueryFilter(a => !a.IsDeleted);
         }
     }
+    public class SSHKeyConfig : IEntityTypeConfiguration<SSHKey>
+    {
+        public void Configure(EntityTypeBuilder<SSHKey> builder)
+        {
+            builder.HasOne(a => a.V2Server).WithMany(c=>c.SSHKeys).HasForeignKey(b=>b.ServerId).IsRequired(false);
+        }
+    }
     public class UserConfig : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)

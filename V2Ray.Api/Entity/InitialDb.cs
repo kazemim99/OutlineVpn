@@ -2,6 +2,7 @@
 using V2Ray.Api.Common;
 using V2Ray.Api.Database;
 using V2Ray.Api.Shared;
+using static V2Ray.Api.Entity.SSHKey;
 
 namespace V2Ray.Api.Entity
 {
@@ -111,18 +112,34 @@ namespace V2Ray.Api.Entity
             //}
             if (!db.V2Servers.Any(a => a.Title != "Frankfurt-B"))
             {
-                db.V2Servers.Add(new V2Server
+                var obj = new V2Server
                 {
+                    IP = "1",
                     Title = "Frankfurt-B",
-                    CityId = db.Cities.First(a => a.Title == "Frankfurt").Id,
-                    IPs = "",
-                    Password = "!Q@W3e4r",
-                    Port = 4152,
-                    UserName = "kazemi.mst",
+                    Password = "!Q@W#E$R5t6y7u8i",
+                    Port = 1027,
+                    UserName = "root",
                     IsActive = true,
-                    Url = "gre.iranoutline.tk",
-                });
+                    Url = "ssh1.iranv2ray.com",
+                };
+                db.V2Servers.Add(obj);
+                db.SaveChanges();
+                var serverId = obj.Id;
+
+                if (db.SSHKeyInfos.Any(c => c.ServerId == null))
+                {
+                    var keyInfos = db.SSHKeyInfos.Where(c => c.ServerId == null);
+                    foreach (var item in keyInfos)
+                    {
+                        item.ServerId = serverId;
+                        db.Update(item);
+                    }
+                    db.SaveChanges();
+                }
             }
+          
+
+          
             //if (!db.V2Servers.Any(a=>a.Title == "Frankfurt-A"))
             //{
             //    db.V2Servers.Add(new V2Server
@@ -138,10 +155,9 @@ namespace V2Ray.Api.Entity
             //        Url = "gra.irantrojan.ml",
             //    });
             //}
-            db.SaveChanges();
-               
+
         }
-            private static void CreateCity<T>(T db) where T : DB
+        private static void CreateCity<T>(T db) where T : DB
         {
             if (db.Cities.Any())
                 return;
@@ -167,19 +183,19 @@ namespace V2Ray.Api.Entity
             });
             db.SaveChanges();
         }
-      
-            
-            private static void CreateUser<T>(T db) where T : DB
+
+
+        private static void CreateUser<T>(T db) where T : DB
         {
             if (db.Users.Any())
                 return;
 
             db.Users.Add(new User
             {
-                IP ="192.168.1.1",
+                IP = "192.168.1.1",
                 IsAdmin = true,
                 Enable = true,
-                NeedConfirm =false,
+                NeedConfirm = false,
                 Password = BCrypt.Net.BCrypt.HashPassword("!Q@W3e4r"),
                 FirstName = DefaultUserConst.FirstName,
                 LastName = DefaultUserConst.LastName,

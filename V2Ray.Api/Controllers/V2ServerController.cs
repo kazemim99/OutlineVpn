@@ -27,13 +27,12 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] ServerFilterInput filter)
         {
-            filter.Swapped = true;
             //filter.ServerId = ServerId;
             //filter.IsAdmin = IsAdmin;
-            var result = await _service.GetAllAsync(filter, new[] { "City.Country"});
+            var result = await _service.GetAllAsync(filter);
             return new ApiResponse(result);
         }
-      
+
         [HttpGet("all-servers")]
         [Authorize]
         public async Task<ApiResponse> AllServers()
@@ -42,25 +41,12 @@ namespace V2Ray.Api.Controllers
             //filter.IsAdmin = IsAdmin;
             var result = await _service.GetAllAsync(new ServerFilterInput
             {
-            ItemsPerPage = 100,
-            Swapped = true,
+                ItemsPerPage = 100
             });
             return new ApiResponse(result);
         }
 
-        [HttpGet("new-servers")]
-        [Authorize]
-        public async Task<ApiResponse> AllNewServers()
-        {
-            //filter.ServerId = ServerId;
-            //filter.IsAdmin = IsAdmin;
-            var result = await _service.GetAllAsync(new ServerFilterInput
-            {
-                ItemsPerPage = 100,
-                Swapped = false
-            });
-            return new ApiResponse(result);
-        }
+
         /// <summary>
         /// ویرایش یک کاربر 
         /// </summary>
@@ -104,22 +90,7 @@ namespace V2Ray.Api.Controllers
         [HttpGet("{id:int}")]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-
-            //string accountSid = "AC068bae005b6bad8c03d29a1b59cc10d7";
-            //string authToken = "a5c121722b9860b12172a7de6ad3d25e";
-
-            //TwilioClient.Init(accountSid, authToken);
-
-            //var message = MessageResource.Create(
-            //    body: "Hi there",
-            //    from: new Twilio.Types.PhoneNumber("+12069445452"),
-            //    to: new Twilio.Types.PhoneNumber("+989123135143")
-            //);
-
-            //Console.WriteLine(message.Sid);
-
             var result = await _service.GetById(id);
-            result.IPs = result.IP.Split(',').ToList();
             return new ApiResponse(result);
         }
 

@@ -9,12 +9,12 @@
           v-on="on"
           style="margin-bottom: 20px"
         >
-          گزارش قطعی
+       گزارش قطعی و پیام
         </v-btn>
       </template>
       <v-card>
         <v-card-title>
-          <span class="text-h5">گزارش قطعی</span>
+          <span class="text-h5">گزارش قطعی یا پیام</span>
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>

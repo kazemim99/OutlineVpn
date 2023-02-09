@@ -99,12 +99,12 @@ const routes: Array<RouteConfig> = [
       //   meta: { requireAuth: true }
       // },
 
-      // {
-      //   path: "v2servers",
-      //   name: "V2Servers",
-      //   component: () => import("@/views/V2Servers/index.vue"),
-      //   meta: { requireAuth: true }
-      // },
+      {
+        path: "v2servers",
+        name: "V2Servers",
+        component: () => import("@/views/V2Servers/index.vue"),
+        meta: { requireAuth: true }
+      },
       // {
       //   path: "v2Keys",
       //   name: "v2Keys",
@@ -118,6 +118,7 @@ const routes: Array<RouteConfig> = [
 
     path: '/',
     name: 'Home',
+    redirect: '/dashboard/buy-vpn',
     component: () => import('@/views/Home.vue'),
     meta: {
       title: 'فیلتر شکن - فروش فیلتر شکن - فیلتر شکن ایفون , اندروید , کامپیوتر , ویندوز',

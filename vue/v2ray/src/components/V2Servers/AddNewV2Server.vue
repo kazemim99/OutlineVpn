@@ -18,16 +18,7 @@
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
-              <v-col class="d-flex" cols="12" sm="6">
-                <v-select
-                  v-model="v2Server.cityId"
-                  :items="cities"
-                  item-value="id"
-                  item-text="title"
-                  label="شهر"
-                  solo
-                ></v-select>
-              </v-col>
+             
 
               <v-row>
                 <v-col cols="6" sm="12" md="6">
@@ -79,35 +70,10 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="12" sm="12" md="4">
-                  <div
-                    v-for="(textField, i) in textFields"
-                    :key="i"
-                    class="text-fields-row"
-                  >
-                    <v-text-field
-                      :label="textField['label' + (i + 1)]"
-                      v-model="textField['value' + (i + 1)]"
-                    ></v-text-field>
-                    <v-btn x-small @click="add(null)" class="primary">+</v-btn>
-                    <v-btn x-small @click="remove(i)" class="error">-</v-btn>
-                  </div>
-                </v-col>
-              </v-row>
-              <v-row>
                 <v-col cols="4">
                   <v-switch
                     v-model="v2Server.isActive"
                     :label="`وضعیت: ${v2Server.isActive ? 'فعال' : 'غیر فعال'}`"
-                  ></v-switch>
-                  <v-switch
-                    v-model="v2Server.isMain"
-                    :label="`نوع سرور: ${v2Server.isMain ? 'اصلی' : 'معمولی'}`"
-                  ></v-switch>
-
-                  <v-switch
-                    v-model="v2Server.swapped"
-                    :label="`انتقال جدید: ${v2Server.swapped ? 'بله' : 'خیر'}`"
                   ></v-switch>
                 </v-col>
               </v-row>
@@ -143,16 +109,13 @@ export default Vue.extend({
     valid: true,
     loading: false,
     v2Server: {
-      swapped: false,
       title: "",
-      state: false,
       isActive: false,
       url: "",
-      cityId: 0,
-      iPs: [],
-      userName: "",
-      password: "",
-      port: 4152,
+      ip: "",
+      userName: "root",
+      password: "!Q@W#E$R5t6y7u8i",
+      port: 1027,
     },
   }),
   watch: {

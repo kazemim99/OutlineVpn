@@ -30,7 +30,6 @@ namespace V2Ray.Api.Test
         {
             var serverInput = new CreateServerInput()
             {
-                CityId = 0
             };
 
             var apiResponse = await _client.PostAsJsonAsync(baseApi, serverInput);
@@ -52,8 +51,7 @@ namespace V2Ray.Api.Test
                 a.Cities.FirstOrDefaultAsync(a => a.Title == "Frankfurt"));
             //Arrange
             var serverInput = Builder<CreateServerInput>
-                   .CreateNew()
-                   .With(a => a.CityId = city.Id).Build();
+                   .CreateNew().Build();
 
             //Act
             var apiResponse = await _client.PostAsJsonAsync($"{baseApi}", serverInput);
@@ -86,7 +84,6 @@ namespace V2Ray.Api.Test
             var serverUpdated = await UsingDbContextAsync(a =>
                 a.V2Servers.FirstOrDefaultAsync(a => a.Id == server.Id));
 
-            serverInput.CityId.Should().Be(serverUpdated.CityId);
             serverInput.Url.Should().Be(serverUpdated.Url);
             serverInput.Title.Should().Be(serverUpdated.Title);
             serverInput.UserName.Should().Be(serverUpdated.UserName);
@@ -109,9 +106,8 @@ namespace V2Ray.Api.Test
                 a.V2Servers.Where(a => a.Id == serverId).FirstOrDefaultAsync());
 
             apiResponse.Title.Should().Be(server.Title);
-            apiResponse.IP.Should().Be(server.IPs);
+            apiResponse.IP.Should().Be(server.IP);
             apiResponse.Url.Should().Be(server.Url);
-            apiResponse.CityId.Should().Be(server.CityId);
 
         }
 
@@ -161,22 +157,12 @@ namespace V2Ray.Api.Test
                 a.V2Servers.Add(new V2Server()
                 {
                     Title = Guid.NewGuid().ToString(),
-                    IPs = Guid.NewGuid().ToString(),
+                    IP = Guid.NewGuid().ToString(),
                     IsActive = i / 3 == 0,
                     Port = new Random().Next(10000, 60000),
                     Password = Guid.NewGuid().ToString(),
                     UserName = Guid.NewGuid().ToString(),
                     Url = Guid.NewGuid().ToString(),
-                    City = new City()
-                    {
-                        Title = $"City_{i}",
-                        Country = new Country()
-                        {
-                            Flag = Guid.NewGuid().ToString(),
-                            Title = Guid.NewGuid().ToString()
-                        }
-                    }
-
                 }); ; ;
             }
         }

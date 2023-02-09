@@ -93,3 +93,5 @@ C:\Repos\OutlineVpn\V2Ray.Api\obj\Release\net6.0\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Release\net6.0\ref\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Release\net6.0\V2Ray.Api.xml
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Release\net6.0\V2Ray.Api.genruntimeconfig.cache
+C:\Repos\OutlineVpn\V2Ray.Api\bin\Release\net6.0\Renci.SshNet.dll
+C:\Repos\OutlineVpn\V2Ray.Api\bin\Release\net6.0\SshNet.Security.Cryptography.dll

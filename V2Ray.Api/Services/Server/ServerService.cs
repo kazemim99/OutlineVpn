@@ -74,8 +74,6 @@ namespace V2Ray.Api.Services.Server
         {
             var query = _db.V2Servers.AsQueryable();
 
-            query = query.Where(a => a.Swapped == filter.Swapped);
-
             if (!filter.Title.IsNullOrEmpty())
                 query = query.Where(a => a.Title.Contains(filter.Title));
 

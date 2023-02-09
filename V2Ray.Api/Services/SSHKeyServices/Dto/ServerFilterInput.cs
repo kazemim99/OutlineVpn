@@ -7,7 +7,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
 {
     public class SSHKeyFilterInput : PaginationModelInput
     {
-        public string? Email { get; set; }
+        public string? UserName { get; set; }
     }
 
 }

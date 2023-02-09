@@ -28,10 +28,11 @@ namespace V2Ray.Api.BackgroundJob
                 var _db = scope.ServiceProvider.GetRequiredService<DB>();
                 var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
                 var expiresKey = _db.SSHKeyInfos.Where(a => a.ExpireDate.Date < DateTime.Now.Date);
-                foreach (var item in expiresKey)
-                {
-                    await  sSHKeyService.DeleteFromVPS(item.UserName);
-                }
+                //foreach (var item in expiresKey)
+                //{
+                //    await  sSHKeyService.DeleteFromVPS(item.UserName);
+                //    await sSHKeyService.ChangeState(item.Id);
+                //}
             }
             catch (Exception ex) { }
         }

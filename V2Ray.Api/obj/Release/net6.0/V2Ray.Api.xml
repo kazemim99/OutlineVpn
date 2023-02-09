@@ -110,6 +110,30 @@
              </summary>
             
         </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.Update(System.Int32,V2Ray.Api.Services.Orders.Dto.UpdateOrderInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.Update(System.Int32,System.String,V2Ray.Api.Services.sms.Kavenegar.Models.Enums.OrderStateEnum)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
         <member name="M:V2Ray.Api.Controllers.PlanController.Update(System.Int32,V2Ray.Api.Services.PlanServices.Dto.UpdatePlanInput)">
              <summary>
              ویرایش یک کاربر 
@@ -128,6 +152,30 @@
              </summary>
             
         </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Update(System.Int32,V2Ray.Api.Services.ProblemReportServices.Dto.UpdateProblemReportInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.SendAnswer(System.Int32,V2Ray.Api.Services.ProblemReportServices.Dto.SendAnswerInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
         <member name="T:V2Ray.Api.Controllers.PublicDataController">
              <summary>
              Api های عمومی
@@ -137,6 +185,30 @@
         <member name="M:V2Ray.Api.Controllers.PublicDataController.GetFile(System.String)">
              <summary>
              نمایش فایلها در قسمت در فرانت با اسفتاده از آدرس
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.SSHKeyController.Update(System.Int32,V2Ray.Api.Services.SSHKeyServices.Dto.UpdateSSHKeyInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.SSHKeyController.ChangeState(System.Int32)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.SSHKeyController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.SSHKeyController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
              </summary>
             
         </member>
@@ -323,6 +395,117 @@
             <returns>The elements in an array of Strings</returns>
             <param name="arrayText"></param>
         </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Id">
+            <summary>
+            Gets or sets the server ID.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Name">
+            <summary>
+            Gets or sets the server name.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Host">
+            <summary>
+            Gets or sets the server address.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Port">
+            <summary>
+            Gets or sets the server port.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Method">
+            <summary>
+            Gets or sets the method used for the server.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.UserPSK">
+            <summary>
+            Gets or sets the user PSK.
+            For Shadowsocks 2022 without EIH and legacy Shadowsocks,
+            this is the main PSK.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.IdentityPSKs">
+            <summary>
+            Gets or sets the identity PSKs.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.PluginName">
+            <summary>
+            Gets or sets the plugin name.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.PluginVersion">
+            <summary>
+            Gets or sets the required plugin version string.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.PluginOptions">
+            <summary>
+            Gets or sets the plugin options passed as environment variable SS_PLUGIN_OPTIONS.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.PluginArguments">
+            <summary>
+            Gets or sets the plugin startup arguments.
+            Null when not using a plugin.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Group">
+            <summary>
+            Gets or sets the node group
+            this server belongs to.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Owner">
+            <summary>
+            Gets or sets the owner of the server.
+            </summary>
+        </member>
+        <member name="P:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.Tags">
+            <summary>
+            Gets or sets the list of annotated tags.
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.GetHostPort">
+            <summary>
+            Gets the string representation of host:port.
+            IPv6 addresses are enclosed in square brackets ([]).
+            </summary>
+        </member>
+        <member name="M:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.GetPassword">
+            <summary>
+            Gets the password to the server by combining iPSKs and uPSK.
+            </summary>
+            <returns>The password to the server.</returns>
+        </member>
+        <member name="M:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.ToUri">
+            <summary>
+            Gets an SIP002 URL representing the server.
+            </summary>
+            <returns>An SIP002 URL.</returns>
+        </member>
+        <member name="M:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.TryParse(System.String,V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig@)">
+            <summary>
+            Parses an SIP002 URL into a Shadowsocks server configuration.
+            </summary>
+            <param name="url">The URL to parse.</param>
+            <param name="serverConfig">The parsed server configuration.</param>
+            <returns>Whether the parsing is successful.</returns>
+        </member>
+        <member name="M:V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig.TryParse(System.Uri,V2Ray.Api.Shared.ShadowUriGenerator.ShadowsocksServerConfig@)">
+            <summary>
+            Parses an SIP002 URI into a Shadowsocks server configuration.
+            </summary>
+            <param name="uri">The URI to parse.</param>
+            <param name="serverConfig">The parsed server configuration.</param>
+            <returns>Whether the parsing is successful.</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:PerfectMoney.FetchPerfectMoneyPageParameters(System.String,System.String[])" -->
         <member name="M:PerfectMoney.Parseperfectmoney(System.String)">
             <summary>
@@ -339,117 +522,6 @@
             <param name="method">Perfect Money API method</param>
             <param name="args">Argument pairs: title, value, title, value ...</param>
             <returns>A list of hashes which are table lines</returns>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Id">
-            <summary>
-            Gets or sets the server ID.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Name">
-            <summary>
-            Gets or sets the server name.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Host">
-            <summary>
-            Gets or sets the server address.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Port">
-            <summary>
-            Gets or sets the server port.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Method">
-            <summary>
-            Gets or sets the method used for the server.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.UserPSK">
-            <summary>
-            Gets or sets the user PSK.
-            For Shadowsocks 2022 without EIH and legacy Shadowsocks,
-            this is the main PSK.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.IdentityPSKs">
-            <summary>
-            Gets or sets the identity PSKs.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginName">
-            <summary>
-            Gets or sets the plugin name.
-            Null when not using a plugin.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginVersion">
-            <summary>
-            Gets or sets the required plugin version string.
-            Null when not using a plugin.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginOptions">
-            <summary>
-            Gets or sets the plugin options passed as environment variable SS_PLUGIN_OPTIONS.
-            Null when not using a plugin.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.PluginArguments">
-            <summary>
-            Gets or sets the plugin startup arguments.
-            Null when not using a plugin.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Group">
-            <summary>
-            Gets or sets the node group
-            this server belongs to.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Owner">
-            <summary>
-            Gets or sets the owner of the server.
-            </summary>
-        </member>
-        <member name="P:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.Tags">
-            <summary>
-            Gets or sets the list of annotated tags.
-            </summary>
-        </member>
-        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.GetHostPort">
-            <summary>
-            Gets the string representation of host:port.
-            IPv6 addresses are enclosed in square brackets ([]).
-            </summary>
-        </member>
-        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.GetPassword">
-            <summary>
-            Gets the password to the server by combining iPSKs and uPSK.
-            </summary>
-            <returns>The password to the server.</returns>
-        </member>
-        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.ToUri">
-            <summary>
-            Gets an SIP002 URL representing the server.
-            </summary>
-            <returns>An SIP002 URL.</returns>
-        </member>
-        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.TryParse(System.String,ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig@)">
-            <summary>
-            Parses an SIP002 URL into a Shadowsocks server configuration.
-            </summary>
-            <param name="url">The URL to parse.</param>
-            <param name="serverConfig">The parsed server configuration.</param>
-            <returns>Whether the parsing is successful.</returns>
-        </member>
-        <member name="M:ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig.TryParse(System.Uri,ShadowsocksUriGenerator.Protocols.Shadowsocks.ShadowsocksServerConfig@)">
-            <summary>
-            Parses an SIP002 URI into a Shadowsocks server configuration.
-            </summary>
-            <param name="uri">The URI to parse.</param>
-            <param name="serverConfig">The parsed server configuration.</param>
-            <returns>Whether the parsing is successful.</returns>
         </member>
     </members>
 </doc>

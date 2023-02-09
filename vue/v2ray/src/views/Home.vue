@@ -116,6 +116,9 @@
     </v-container>
   </div>
 </template>
+
+
+
 <script>
 import request from "@/utils/request";
 
@@ -123,6 +126,9 @@ export default {
   components: {},
   data() {
     return {};
+  },
+  created() {
+    this.$crisp.do("chat:open");
   },
 };
 </script>

@@ -36,7 +36,7 @@ namespace V2Ray.Api.Controllers
             //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;~
             filter.SortDesc = true;
-            var result = await _service.GetAllAsync(filter, new[] {"User"});
+            var result = await _service.GetAllAsync(filter, new[] {"User", "V2Server" });
             return new ApiResponse(result);
         }
 
@@ -50,6 +50,21 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateSSHKeyInput input)
         {
             await _service.UpdateAsync(id, input);
+
+            return new ApiResponse();
+        }
+
+
+         /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("change-state/{id:int}")]
+        [Authorize]
+
+        public async Task<ApiResponse> ChangeState([FromRoute] int id)
+        {
+            await _service.ChangeState(id);
 
             return new ApiResponse();
         }
@@ -90,7 +105,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-           var result =   await _service.GetById(id, new[] {"User"});
+           var result =   await _service.GetById(id, new[] {"User", "V2Server" });
 
             return new ApiResponse(result);
         }
@@ -110,28 +125,6 @@ namespace V2Ray.Api.Controllers
 
             return new ApiResponse();
         }
-        //[HttpPost("DeleteKey")]
-        //public async Task<ApiResponse> DeleteKey(CreateKeyInput input)
-        //{
-
-        //    var httpClient = GetCookie(input);
-        //    var re = await httpClient.PostAsJsonAsync($"https://{input.Url}:{input.Port}/xui/inbound/del/{input.Id}", new { }); ;
-        //    var ttt = await re.Content.ReadAsStringAsync();
-        //    var root = JsonConvert.DeserializeObject<Root>(ttt);
-        //    return new ApiResponse(root);
-        //}
-        //[HttpPost("GetKeys")]
-        //public async Task<ApiResponse> GetKeys(CreateKeyInput input)
-        //{
-
-        //    var httpClient = GetCookie(input);
-        //    var re = await httpClient.PostAsJsonAsync($"https://{input.Url}:{input.Port}/xui/inbound/list", new { }); ;
-        //    var ttt = await re.Content.ReadAsStringAsync();
-        //    var root = JsonConvert.DeserializeObject<Root>(ttt);
-        //    return new ApiResponse(root);
-        //}
-
-      
       
     }
    
