@@ -110,7 +110,7 @@ namespace V2Ray.Api.Entity
             //        Url = "",
             //    });
             //}
-            if (!db.V2Servers.Any(a => a.Title != "Frankfurt-B"))
+            if (!db.V2Servers.Any())
             {
                 var obj = new V2Server
                 {

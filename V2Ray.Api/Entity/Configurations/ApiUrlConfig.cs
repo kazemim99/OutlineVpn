@@ -47,6 +47,7 @@ namespace V2Ray.Api.Entity.Configurations
     {
         public void Configure(EntityTypeBuilder<SSHKey> builder)
         {
+            builder.HasIndex(c => c.UserName).IsUnique();
             builder.HasOne(a => a.V2Server).WithMany(c=>c.SSHKeys).HasForeignKey(b=>b.ServerId).IsRequired(false);
         }
     }

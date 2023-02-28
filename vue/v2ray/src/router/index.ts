@@ -51,26 +51,7 @@ const routes: Array<RouteConfig> = [
         component: () => import("@/views/Orders/index.vue"),
       },
 
-      {
-        path: "phone-toturial",
-        name: "IPhoneAndroidToturial",
-        component: () => import("@/views/HomePage/IPhoneAndroidToturial.vue"),
-        meta: { requireAuth: true },
-      },
-      {
-        path: "windows-toturial",
-        name: "Windows",
-        meta: { requireAuth: true },
-
-        component: () => import("@/views/HomePage/Windows.vue"),
-      },
-      {
-        path: "linux-toturial",
-        name: "Linux",
-        meta: { requireAuth: true },
-
-        component: () => import("@/views/HomePage/Linux.vue"),
-      },
+     
       {
         path: "sshkeys",
         name: "SSHKeys",
@@ -133,6 +114,23 @@ const routes: Array<RouteConfig> = [
         }
       ]
     }
+  },
+  {
+    path: "/phone-toturial",
+    name: "IPhoneAndroidToturial",
+    component: () => import("@/views/HomePage/IPhoneAndroidToturial.vue"),
+  },
+  {
+    path: "/windows-toturial",
+    name: "Windows",
+
+    component: () => import("@/views/HomePage/Windows.vue"),
+  },
+  {
+    path: "/linux-toturial",
+    name: "Linux",
+
+    component: () => import("@/views/HomePage/Linux.vue"),
   },
   {
     path: "/login",

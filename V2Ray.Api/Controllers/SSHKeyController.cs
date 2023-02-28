@@ -17,6 +17,7 @@ namespace V2Ray.Api.Controllers
             _service = service;
         }
 
+        
         [HttpGet("all-sshkeys")]
         [Authorize]
         public async Task<ApiResponse> Filter()
@@ -26,6 +27,19 @@ namespace V2Ray.Api.Controllers
             var result = await _service.GetAllAsync(new SSHKeyFilterInput
             {
                 ItemsPerPage = 100
+            });
+            return new ApiResponse(result);
+        }  
+        
+        [HttpGet("delete-expired")]
+        [Authorize]
+        public async Task<ApiResponse> DeleteExpired()
+        {
+            //filter.SSHKeyId = SSHKeyId;
+            //filter.IsAdmin = IsAdmin;
+            var result = await _service.GetAllAsync(new SSHKeyFilterInput
+            {
+                Expired = true
             });
             return new ApiResponse(result);
         }
@@ -55,7 +69,22 @@ namespace V2Ray.Api.Controllers
         }
 
 
-         /// <summary>
+        /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("recreate/{name}")]
+
+        public async Task<ApiResponse> Recreate([FromRoute] string name)
+        {
+            await _service.Recreate(name);
+
+            return new ApiResponse();
+        }
+
+
+
+        /// <summary>
         /// ویرایش یک کاربر 
         /// </summary>
         ///

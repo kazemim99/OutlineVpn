@@ -11,8 +11,9 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         public string? Password { get; set; }
         [JsonIgnore]
         public int Port { get; set; }
-        public DateTime ExpireDate { get; set; }
+        public DateTime? ExpireDate { get; set; }
         public int UserId { get; set; }
         public int ServerId { get; set; }
+        public int? Count { get; set; }
     }
 }

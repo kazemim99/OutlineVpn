@@ -1,5 +1,11 @@
 <template>
   <div class="small">
+    <v-row justify="right">
+      <v-col md="12">
+        <h1>آموزش استفاده اندروید و آیفون :</h1>
+        <h3>ابتدا برنامه را با توجه به سیستم عامل گوشی خود دانلود کنید</h3>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col
         v-for="card in cards"
@@ -50,8 +56,14 @@ export default {
         {
           fileName: "",
           name: " دانلود مستقیم برای اندروید (NapsternetV)",
-          url: "/files/NapsternetV.apk",
+          url: "https://fastp.playstoreapi.com/download?token=MTAxOTM5NzQzZTg5ZjExZDNlMzY1MjdhYWEzZjI1OTM0ZDZjNDYzY2ExNzFhMmEwZWE2OTgzYjM0NzFk&a=y",
           image: require("@/assets/images/apk.png"),
+        },
+        {
+          fileName: "netmode.apk",
+          name: " اندروید (Netmode syna) ",
+          url: "https://googleapis.apk.services/apk/4409919da6b7e5ebd84e8eedb96f324824b8aa642ab2cf3c602a09ea8f3e40f8846edb48510ff7aa72d0c6bcdb95214f14c0c6f68a0c6ed704595f801115b37cdf6ca5202290f689b666e9be122b307657899683aad126864529cdce3da9bfb30e0266372bf2796269f55c19b4a790ccfadbdf376c6065dd55ffddc96ec091da76477dea977a76a1478a0f0c907b5aecd2d038935fdc726c320e2d2c9224b4ab651960b4879056bb8d7daeedc6fd36d2f83018034bc838d70cc8365ba409eb0ab3406f8b",
+          image: require("@/assets/images/google.png"),
         },
         {
           fileName: "netmode.apk",
@@ -59,6 +71,7 @@ export default {
           url: "https://play.google.com/store/apps/details?id=com.napsternetlabs.napsternetv&hl=en&gl=US",
           image: require("@/assets/images/google.png"),
         },
+
         {
           fileName: "netmode.apk",
 

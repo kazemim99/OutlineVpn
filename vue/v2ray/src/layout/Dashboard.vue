@@ -142,21 +142,21 @@ export default class Dashboard extends Vue {
       permission: "Role_Show",
       to: "/dashboard/orders",
     },
-    {
-      icon: "mdi-alert-box",
-      title: "آموزش اتصال با ایفون و اندروید",
-      to: "/dashboard/phone-toturial",
-    },
-    {
-      icon: "mdi-alert-box",
-      title: "آموزش اتصال ویندوز",
-      to: "/dashboard/windows-toturial",
-    },
-    {
-      icon: "mdi-alert-box",
-      title: "اموزش اتصال لینوکس",
-      to: "/dashboard/linux-toturial",
-    },
+    // {
+    //   icon: "mdi-alert-box",
+    //   title: "آموزش اتصال با ایفون و اندروید",
+    //   to: "/dashboard/phone-toturial",
+    // },
+    // {
+    //   icon: "mdi-alert-box",
+    //   title: "آموزش اتصال ویندوز",
+    //   to: "/dashboard/windows-toturial",
+    // },
+    // {
+    //   icon: "mdi-alert-box",
+    //   title: "اموزش اتصال لینوکس",
+    //   to: "/dashboard/linux-toturial",
+    // },
     {
       icon: "mdi-alert-box",
       title: "گزارش مشکل",

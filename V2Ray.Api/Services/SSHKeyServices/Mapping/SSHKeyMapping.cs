@@ -21,14 +21,14 @@ namespace V2Ray.Api.Services.SSHKeyServices.Mapping
 
             CreateMap<CreateSSHKeyInput, SSHKey>()
                 .ForMember(a => a.Enable, c => c.MapFrom(b => true))
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo()));
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.Value.ToGeo()));
 
             CreateMap<UpdateSSHKeyInput, SSHKey>()
                 .ForMember(a => a.Enable, c => c.MapFrom(b => true))
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo()));
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.Value.ToGeo()));
 
             CreateMap<UpdateSSHKeyInput, CreateSSHKeyInput>()
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo()));
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.Value.ToGeo()));
         }
 
     }

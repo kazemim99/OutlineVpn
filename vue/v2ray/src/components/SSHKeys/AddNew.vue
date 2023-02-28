@@ -31,7 +31,16 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="6" sm="12" md="6">
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    v-model="sshKey.count"
+                    label="تعداد  *"
+                    placeholder=" "
+                    autocomplete="false"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     v-model="sshKey.userName"
                     label="نام کاربری *"
@@ -40,7 +49,7 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="6" sm="12" md="6">
+                <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     v-model="sshKey.password"
                     label="رمز"
@@ -85,7 +94,8 @@ export default Vue.extend({
       serverId: 0,
       password: null,
       userName: "",
-      expireDate: "",
+      expireDate: null,
+      count: 1,
     },
   }),
   watch: {

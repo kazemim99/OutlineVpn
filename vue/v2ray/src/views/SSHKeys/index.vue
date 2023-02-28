@@ -30,6 +30,22 @@
         <v-icon medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       </template>
 
+      <template v-slot:item.copy="{ item }">
+        <v-row>
+          <v-icon
+            medium
+            class="mr-2"
+            @click="
+              copyToClipBoard(
+                `username: ${item.userName} \n password: ${item.password}`
+              )
+            "
+          >
+            mdi-content-copy</v-icon
+          >
+        </v-row>
+      </template>
+
       <template v-slot:top>
         <v-toolbar flat>
           <v-col cols="12">
@@ -41,6 +57,14 @@
                     ref="addSSHKeyCom"
                     @reloadSSHKeys="getSSHKeys"
                   />
+                </v-col>
+                <v-col class="d-flex" cols="3" sm="6">
+                  <v-switch
+                    v-model="expired"
+                    flat
+                    @change="expireKey()"
+                    :label="`${expired ? 'فعال' : 'غیر فعال'}`"
+                  ></v-switch>
                 </v-col>
               </v-row>
             </template>
@@ -116,6 +140,7 @@ export default {
       totalSSHKeys: 0,
       switchLoading: null,
       pages: 0,
+      expired: false,
       serverid: 0,
       isActive: null,
       userName: null,
@@ -126,10 +151,11 @@ export default {
         { text: "نام کاربری", value: "userName", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
         { text: "سرور", value: "serverName", sortable: false },
-        { text: "تاریخ انقضا", value: "expireDate", sortable: false },
-        { text: "وضعیت", value: "enable", sortable: false },
+        { text: "تاریخ انقضا", value: "expireDate", sortable: true },
+        { text: "وضعیت", value: "enable", sortable: true },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
+        { text: "", value: "copy", sortable: false },
       ],
     };
   },
@@ -140,6 +166,7 @@ export default {
       },
       deep: true,
     },
+
     userName: function () {
       if (this.userName.length > 2 || this.userName.length === 0)
         this.options.page = 1;
@@ -153,11 +180,27 @@ export default {
   },
 
   methods: {
+    expireKey() {
+      this.options.page = 1;
+      this.options.expired = this.expired;
+      this.options.sortBy = "enable";
+      this.getSSHKeys();
+    },
     async editItem(item) {
       this.$refs.addSSHKeyCom.dialog = true;
       this.$refs.addSSHKeyCom.id = item.id;
     },
 
+    copyToClipBoard(textToCopy) {
+      navigator.clipboard
+        .writeText(textToCopy)
+        .then(() => {
+          console.log(textToCopy);
+        })
+        .catch(() => {
+          alert("خطا در کپی");
+        });
+    },
     async enableKey(id) {
       request.put(`/SSHKey/change-state/${id}`).then(() => {
         this.getSSHKeys();

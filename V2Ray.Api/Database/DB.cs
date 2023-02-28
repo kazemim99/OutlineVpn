@@ -9,17 +9,11 @@ namespace V2Ray.Api.Database
 
     public class DesignDBFactory : IDesignTimeDbContextFactory<DB>
     {
-        private readonly IConfiguration _configuration;
-        public DesignDBFactory(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
         public DB CreateDbContext(string[] args)
         {
             var builder = new DbContextOptionsBuilder<DB>();
 
-            var connectionString = _configuration.GetConnectionString("Default");
-            //var connectionString = "Data Source=185.55.224.120;Initial Catalog= powerbox_sa;User ID=powerbox_sa;Password=Pa$$w0rd";
+            var connectionString = "Data Source=185.159.153.204 ;Initial Catalog= iranvra1_sa ;User ID=iranvra1_sa;Password=!Q@W#E$R5t6y7u8i";
             //var connectionString = "Server=.; Database=V2Ray;Integrated Security=True";
 
             builder.UseSqlServer(connectionString);

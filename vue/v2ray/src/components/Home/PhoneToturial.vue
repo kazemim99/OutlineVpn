@@ -1,11 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-row justify="right">
-        <v-col md="12">
-          <h1>آموزش استفاده :</h1>
-        </v-col>
-      </v-row>
+    
       <v-col col="12" sm="12">
         <h3>آموزش اتصال با NapsternetV</h3>
         <h4>

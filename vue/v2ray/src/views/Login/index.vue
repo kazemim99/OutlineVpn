@@ -64,11 +64,11 @@
                     </div>
                   </v-row>
                   <v-row>
-                    <v-col cols="4">
+                    <!-- <v-col cols="4">
                       <router-link to="/get-code" class="d-flex justify-end"
                         >فراموشی رمز ؟</router-link
                       >
-                    </v-col>
+                    </v-col> -->
                   </v-row>
                   <v-row>
                     <v-spacer></v-spacer>
@@ -112,6 +112,7 @@
 <script>
 import { UserModule } from "@/store/modules/user";
 import { VueRecaptcha } from "vue-recaptcha";
+import Vue from "vue";
 
 export default {
   name: "Login",
@@ -169,12 +170,19 @@ export default {
       this.captchaHasError = false;
     },
     async registerShow() {
-      this.register = true;
-
-      this.validationForm();
-      if (!this.valid) return;
-
-      this.handleRegister();
+      Vue.swal({
+        title: "جهت دریافت تنظیمات به کانال تلگرامی مراجعه فرمایید",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "رفتن به کانال",
+        cancelButtonText: "انصراف",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = `https://t.me/+GRPLkWQHXD5jNGZk`;
+        }
+      });
     },
 
     async loginShow() {
