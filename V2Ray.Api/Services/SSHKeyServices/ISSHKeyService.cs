@@ -19,5 +19,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task ChargeOneMonth(string email);
         Task ChangeState(int id);
         Task Recreate(string name);
+        Task Swapp();
     }
 }

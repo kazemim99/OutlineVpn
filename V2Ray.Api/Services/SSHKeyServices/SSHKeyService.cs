@@ -37,6 +37,27 @@ namespace V2Ray.Api.Services.SSHKeyServices
             _mapper = mapper;
 
         }
+
+        public async Task Swapp()
+        {
+            var users = await _db.SSHKeyInfos.Where(a => a.Enable && (a.UserName.Contains("user-4"))).ToListAsync();
+          
+
+            foreach (var item in users)
+            {
+                Thread.Sleep(500);
+                
+                var connectionInfo = new PasswordConnectionInfo("ssh1.iranv2ray.com", 1027, "root", "!Q@W#E$R5t6y7u8i");
+                using var ssh = new SshClient(connectionInfo);
+                ssh.Connect();
+
+                var comm = $"useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName}";
+                var command = ssh.CreateCommand(comm);
+                command.Execute();
+                ssh.Disconnect();
+
+            }
+        }
         public async Task DeleteFromVPS(string username)
         {
             var sshKey = await _db.SSHKeyInfos.Where(a => a.UserName == username).Select(c => c.ServerId).FirstOrDefaultAsync();
@@ -76,7 +97,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 input.ExpireDate = input.ExpireDate == null ? DateTime.Now.AddDays(31).ToPersianDate() : input.ExpireDate;
                 for (int i = 0; i < input.Count; i++)
                 {
-                    input.Password = input.Password.IsNullOrEmpty() ? CreatePassword(8) : input.Password;
+                    input.Password = input.Password.IsNullOrEmpty() ? CreatePassword() : input.Password;
                     input.Port = 1027;
                     input.UserName = input.UserName.IsNullOrEmpty() ? GenerateUser() : input.UserName;
                     CreateSSHUser(input, false);
@@ -107,7 +128,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var input = new CreateSSHKeyInput
             {
-                Password = CreatePassword(8),
+                Password = CreatePassword(),
                 Port = 1027,
                 ExpireDate = DateTime.Now.AddDays(3).ToPersianDate(),
                 UserId = userId,
@@ -162,16 +183,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
 
 
-            var connectionInfo = GetConnectionInfo(input.ServerId);
+                var connectionInfo = GetConnectionInfo(input.ServerId);
 
-            using var ssh = new SshClient(connectionInfo);
-            ssh.Connect();
-            
-            var comm = $"useradd -m -p  $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
-            var command = ssh.CreateCommand(comm);
-            command.Execute();
+                using var ssh = new SshClient(connectionInfo);
+                ssh.Connect();
 
-            ssh.Disconnect();
+                var comm = $"useradd -m -p  $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
+                var command = ssh.CreateCommand(comm);
+                command.Execute();
+
+                ssh.Disconnect();
             }
             catch (Exception)
             {
@@ -186,12 +207,13 @@ namespace V2Ray.Api.Services.SSHKeyServices
             return result;
         }
 
-        private string CreatePassword(int length)
+        private string CreatePassword()
         {
-            const string valid = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNOPQRSTUVWXYZ1234567890";
+            int length = 4;
+            const string valid = "1369";
             StringBuilder res = new();
             Random rnd = new();
-            res.Append("Va");
+            res.Append("Vacp");
 
             while (0 < length--)
             {

@@ -54,7 +54,7 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task<LoginResultDto> Login(LoginDto input)
         {
-           await RecaptchaResult(input.LoginToken);
+           //await RecaptchaResult(input.LoginToken);
 
             var user = await _db.Users.Include(new[] { "Roles.Role" })
                  .FirstOrDefaultAsync(a => a.Email == input.Email);
@@ -350,7 +350,7 @@ namespace V2Ray.Api.Services.UserServices
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddDays(7),
+            expires: DateTime.Now.AddDays(70),
             signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

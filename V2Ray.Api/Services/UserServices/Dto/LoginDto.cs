@@ -11,8 +11,8 @@ namespace V2Ray.Api.Services.UserServices.Dto
         [MaxLength(32, ErrorMessage = "طول رمز عبور حداکثر 32 کارکتر میباشد")]
         public string Password { get; set; }
 
-        [Required]
-        public string LoginToken { get; set; }
+        //[Required]
+        //public string LoginToken { get; set; }
     }
 }
 

@@ -53,7 +53,7 @@
                     name="confirmPassword"
                     label="تکرار رمز عبور"
                   ></v-text-field>
-                  <v-row>
+                  <!-- <v-row>
                     <div class="mt-3">
                       <VueRecaptcha
                         :sitekey="siteKey"
@@ -62,7 +62,7 @@
                         @error="handleError"
                       ></VueRecaptcha>
                     </div>
-                  </v-row>
+                  </v-row> -->
                   <v-row>
                     <!-- <v-col cols="4">
                       <router-link to="/get-code" class="d-flex justify-end"
@@ -74,12 +74,12 @@
                     <v-spacer></v-spacer>
 
                     <v-col cols="3">
-                      <v-btn
+                      <!-- <v-btn
                         :loading="loading && register"
                         v-on:click="registerShow"
                         color="success"
                         >ثبت نام</v-btn
-                      >
+                      > -->
                     </v-col>
                     <v-col cols="4">
                       <v-btn
@@ -111,12 +111,12 @@
 
 <script>
 import { UserModule } from "@/store/modules/user";
-import { VueRecaptcha } from "vue-recaptcha";
+// import { VueRecaptcha } from "vue-recaptcha";
 import Vue from "vue";
 
 export default {
   name: "Login",
-  components: { VueRecaptcha },
+  components: {  },
   metaInfo: {
     meta: [
       {
@@ -210,7 +210,7 @@ export default {
       }
     },
     async handleLogin() {
-      if (this.captchaHasError) return;
+      // if (this.captchaHasError) return;
       this.validationForm();
       if (!this.valid) return;
 

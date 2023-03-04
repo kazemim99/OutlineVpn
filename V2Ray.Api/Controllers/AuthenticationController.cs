@@ -52,8 +52,7 @@ namespace V2Ray.Api.Controllers
         [AllowAnonymous]
         public async Task<ApiResponse> Login([FromBody] LoginDto login)
         {
-            
-          var result =  await _service.Login(login);
+            var result = await _service.Login(login);
             return new ApiResponse(result);
         }
         /// <summary>
@@ -80,7 +79,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> GetCurrentUser()
         {
-            var user =await _service.GetById(UserId);
+            var user = await _service.GetById(UserId);
             var result = new UserDetailDto
             {
                 NeedConfirm = user.NeedConfirm,
@@ -150,7 +149,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public ApiResponse ForgetPassword([FromRoute] string email)
         {
-             _service.SendMail(email);
+            _service.SendMail(email);
             return new ApiResponse();
         }
 

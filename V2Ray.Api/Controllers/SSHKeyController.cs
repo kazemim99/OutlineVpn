@@ -82,6 +82,19 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
+        /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("swap")]
+
+        public async Task<ApiResponse> Recreate()
+        {
+            await _service.Swapp();
+
+            return new ApiResponse();
+        }
+
 
 
         /// <summary>
