@@ -70,7 +70,6 @@ namespace V2Ray.Api.Services.UserServices
 
             if (user.NeedConfirm)
             {
-                SendMail(user.Email);
                 return new LoginResultDto
                 {
                     NeedConfirm = true
@@ -156,7 +155,6 @@ namespace V2Ray.Api.Services.UserServices
                 RoleId = _db.Roles.First(a => a.Title == Policies.User).Id
             });
             map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
-            SendMail(input.Email);
             map.NeedConfirm = true;
             await _db.AddAsync(map);
             await _db.SaveChangesAsync();
@@ -254,11 +252,6 @@ namespace V2Ray.Api.Services.UserServices
             return _mapper.Map<GetUserOutput>(user);
         }
 
-        public void SendMail(string mail)
-        {
-            var otpCode = _otpService.GetCode(mail);
-            _smsServcie.SendEmail(otpCode, mail);
-        }
         public async Task SendCode(string mobile)
         {
             if (_otpService.Sandbox) return;

@@ -34,7 +34,6 @@ namespace V2Ray.Api.Entity
             {
 
                 CreateUser(db);
-                CreateCity(db);
                 CreateServer(db);
 
                 //CreateLockerLog(db);
@@ -157,32 +156,7 @@ namespace V2Ray.Api.Entity
             //}
 
         }
-        private static void CreateCity<T>(T db) where T : DB
-        {
-            if (db.Cities.Any())
-                return;
-
-            db.Countries.Add(new Country
-            {
-                Title = "Germany",
-                Flag = "/Images/flags/germany.png",
-                Cities = new List<City>
-                {
-                    new City { Title = "Frankfurt"}
-                }
-            });
-
-            db.Countries.Add(new Country
-            {
-                Title = "France",
-                Flag = "/Images/flags/germany.png",
-                Cities = new List<City>
-                {
-                    new City { Title = "Paris"}
-                }
-            });
-            db.SaveChanges();
-        }
+        
 
 
         private static void CreateUser<T>(T db) where T : DB

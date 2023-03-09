@@ -1,7 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using MimeKit;
-using NETCore.MailKit.Core;
-using V2Ray.Api.Entity;
+﻿using V2Ray.Api.Entity;
 using Serilog;
 using System;
 using System.Linq;
@@ -24,26 +21,6 @@ namespace V2Ray.Api.Services.sms.Rahyab
         {
             _db = db;
             this.settings = settings;
-        }
-        public void SendEmail(string code, string to)
-        {
-            if (settings.Value.Sandbox) return;
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("IranV2Ray", "iranv2ray@gmail.com"));
-            message.To.Add(new MailboxAddress("pritom", to));
-            message.Subject = "کد ورود";
-            message.Body = new TextPart("plain")
-            {
-                Text = $"کد ورود شما به  IranV2Ray : {code}",
-            };
-            using (var client = new SmtpClient())
-            {
-                client.Connect("smtp.gmail.com", 587, false);
-                client.Authenticate("iranv2ray", "btqavixwahasdahd");
-
-                client.Send(message);
-                client.Disconnect(true);
-            }
         }
 
 

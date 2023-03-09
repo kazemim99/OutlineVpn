@@ -38,14 +38,6 @@ namespace V2Ray.Api.Controllers
                 .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
             return new ApiResponse(result);
         }
-        [HttpGet("send-mail")]
-
-        public ApiResponse SendMail()
-        {
-            _rahyab.SendEmail("2222", "kazemi.mst@gmail.com");
-            return new ApiResponse();
-
-        }
 
         //[HttpGet("add-ssh")]
         //public ApiResponse GetOS(string username)

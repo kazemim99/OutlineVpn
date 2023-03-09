@@ -150,6 +150,7 @@ export default {
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
+        { text: "نام ", value: "name", sortable: true },
         { text: "سرور", value: "serverName", sortable: false },
         { text: "تاریخ انقضا", value: "expireDate", sortable: true },
         { text: "وضعیت", value: "enable", sortable: true },

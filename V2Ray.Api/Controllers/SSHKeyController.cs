@@ -50,7 +50,7 @@ namespace V2Ray.Api.Controllers
             //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;~
             filter.SortDesc = true;
-            var result = await _service.GetAllAsync(filter, new[] {"User", "V2Server" });
+            var result = await _service.GetAllAsync(filter, new[] { "V2Server" });
             return new ApiResponse(result);
         }
 
@@ -125,15 +125,13 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> KeyDetails()
         {
-            var result =await _service.GetUserSSHKey(UserId);
-            return new ApiResponse(result);
+            return new ApiResponse();
         }
 
         [HttpPost]
         [Authorize]
         public async Task<ApiResponse> Create([FromBody] CreateSSHKeyInput input)
         {
-            input.UserId = UserId;
             await _service.GenerateSshFromAdmin(input);
             return new ApiResponse();
         }
@@ -147,7 +145,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-           var result =   await _service.GetById(id, new[] {"User", "V2Server" });
+           var result =   await _service.GetById(id, new[] {"V2Server" });
 
             return new ApiResponse(result);
         }

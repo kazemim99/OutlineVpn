@@ -1,101 +1,94 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <DebugType>embedded</DebugType>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-    <UserSecretsId>0aab2226-d758-4448-8fa9-f46d9f645234</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<DebugType>embedded</DebugType>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+		<UserSecretsId>0aab2226-d758-4448-8fa9-f46d9f645234</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>5</WarningLevel>
-    <NoWarn>1701;1702;1591</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<WarningLevel>5</WarningLevel>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <WarningLevel>5</WarningLevel>
-    <NoWarn>1701;1702;1591</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<WarningLevel>5</WarningLevel>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.0" />
-	  <PackageReference Include="AutoWrapper.Core" Version="4.5.0" />
-	  <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
-	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
-	  <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0" />
-	  <PackageReference Include="Serilog" Version="2.11.0" />
-	  <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
-	  <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
-	  <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
-	  <PackageReference Include="Serilog.Sinks.Seq" Version="5.0.1" />
-	  <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-	  <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-	  <PackageReference Include="SSH.NET" Version="2020.0.2" />
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.0" />
-	  <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-	  <PackageReference Include="Otp.NET" Version="1.2.2" />
+		<PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+		<PackageReference Include="AutoWrapper.Core" Version="4.5.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0" />
+		<PackageReference Include="Serilog" Version="2.11.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+		<PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+		<PackageReference Include="Serilog.Sinks.Seq" Version="5.0.1" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+		<PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+		<PackageReference Include="SSH.NET" Version="2020.0.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.2.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+		<PackageReference Include="Otp.NET" Version="1.2.2" />
+
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="NBuilder" Version="6.1.0" />
+		<PackageReference Include="Serilog" Version="2.11.0" />
 
 
-	  <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+	</ItemGroup>
 
-	  <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="6.0.0" />
+	<ItemGroup>
 
-	  <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<Content Include="Resources\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.8" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	  <PackageReference Include="NBuilder" Version="6.1.0" />
-	  <PackageReference Include="Serilog" Version="2.11.0" />
-	  
-	  
-  </ItemGroup>
+		<Content Remove="Resources\NapsternetV.apk" />
 
-  <ItemGroup>
+		<Content Remove="Resources\NetModSyna-VPNClient_1.11.3.apk" />
 
-	  <Content Include="Resources\**">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+		<Content Remove="Resources\NetMod_x86%28Latest%29.exe" />
 
-	  <Content Remove="Resources\NapsternetV.apk" />
+		<EmbeddedResource Include="Resources\NapsternetV.apk" />
 
-	  <Content Remove="Resources\NetModSyna-VPNClient_1.11.3.apk" />
+		<EmbeddedResource Include="Resources\NetModSyna-VPNClient_1.11.3.apk" />
 
-	  <Content Remove="Resources\NetMod_x86%28Latest%29.exe" />
+		<EmbeddedResource Include="Resources\NetMod_x86(Latest).exe" />
 
-	  <EmbeddedResource Include="Resources\NapsternetV.apk" />
-
-	  <EmbeddedResource Include="Resources\NetModSyna-VPNClient_1.11.3.apk" />
-
-	  <EmbeddedResource Include="Resources\NetMod_x86(Latest).exe" />
-
-	  <Content Update="appsettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.Production.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+		<Content Update="appsettings.Development.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="appsettings.Production.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
 </Project>

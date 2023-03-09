@@ -15,8 +15,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task DeleteFromVPS(string userName);
         Task GenerateSshFromAdmin(CreateSSHKeyInput input);
         Task GenerateSshFromClient(int userId);
-        Task<GenerateSSHOutput> GetUserSSHKey(int userId);
-        Task ChargeOneMonth(string email);
+        //Task<GenerateSSHOutput> GetUserSSHKey(int userId);
+        //Task ChargeOneMonth(string email);
         Task ChangeState(int id);
         Task Recreate(string name);
         Task Swapp();

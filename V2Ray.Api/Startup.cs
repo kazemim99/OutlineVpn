@@ -109,7 +109,7 @@ namespace V2Ray.Api
                {
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                    options.UseSqlServer
-                   (Configuration.GetConnectionString("Default"));
+                   (Configuration.GetConnectionString("Default"),c=>c.EnableRetryOnFailure());
                });
 
                 services.AddHostedService<JwtRefreshTokenCache>();

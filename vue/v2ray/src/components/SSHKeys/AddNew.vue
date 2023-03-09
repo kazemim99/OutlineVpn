@@ -20,14 +20,11 @@
             <v-container>
               <v-row>
                 <v-col class="d-flex" cols="12" sm="12">
-                  <v-select
-                    v-model="sshKey.serverId"
-                    :items="servers"
-                    item-value="id"
-                    item-text="title"
-                    label="ُسرور"
-                    solo
-                  ></v-select>
+                  <v-text-field
+                    v-model="sshKey.name"
+                    label="نام "
+                    required
+                  ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
@@ -91,6 +88,7 @@ export default Vue.extend({
     valid: true,
     loading: false,
     sshKey: {
+      name: "",
       serverId: 0,
       password: null,
       userName: "",
@@ -125,6 +123,7 @@ export default Vue.extend({
         this.sshKey.id = id;
         this.sshKey.serverId = data.serverId;
         this.sshKey.password = data.password;
+        this.sshKey.name = data.name;
         this.sshKey.userName = data.userName;
         this.sshKey.expireDate = data.expireDate;
       });
@@ -165,6 +164,7 @@ export default Vue.extend({
     clearData() {
       this.sshKey.id = 0;
       this.sshKey.userName = "";
+      this.sshKey.name = "";
       this.sshKey.expireDate = "";
     },
   },

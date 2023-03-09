@@ -36,8 +36,8 @@ namespace V2Ray.Api.Database
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<V2Server> V2Servers { get; set; }
         public DbSet<V2Key> V2Keys { get; set; }
-        public DbSet<City> Cities { get; set; }
-        public DbSet<Country> Countries { get; set; }
+        //public DbSet<City> Cities { get; set; }
+        //public DbSet<Country> Countries { get; set; }
         public DbSet<SSHKey> SSHKeyInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

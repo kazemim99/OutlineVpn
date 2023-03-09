@@ -20,29 +20,12 @@ namespace V2Ray.Api.Entity
         public string UserName { get; set; }
         public string Password { get; set; }
         public DateTime ExpireDate { get; set; }
-        public User User { get; set; }
-        public int UserId { get; set; }
+        public string Name { get; set; }
         public int Port { get; set; }
         public bool Enable { get;  set; }
         public int? ServerId { get; set; }
         public V2Server V2Server { get; set; }
-    public class Country : FullAuditEntity<int>, ISoftDelete
-    {
-        public string Title { get; set; }
-        public string Flag { get; set; }
-        public List<City> Cities { get; set; }
-        public bool IsDeleted { get; set; }
-      }
-    }
-
-    public class City : FullAuditEntity<int>, ISoftDelete
-    {
-        public string Title { get; set; }
-
-        public bool IsDeleted { get; set; }
-        public int CountryId { get; set; }
-        public Country Country { get; set; }
-        public List<V2Server> V2Servers { get; set; }
+   
     }
     public class V2Key : FullAuditEntity<int>, ISoftDelete
     {

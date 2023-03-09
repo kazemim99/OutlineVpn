@@ -1,5 +1,4 @@
-﻿using MimeKit;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace V2Ray.Api.Services.Settings
