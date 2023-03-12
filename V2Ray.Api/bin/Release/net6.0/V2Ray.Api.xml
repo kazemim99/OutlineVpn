@@ -92,48 +92,6 @@
             
              
         </member>
-        <member name="M:V2Ray.Api.Controllers.CityController.Update(System.Int32,V2Ray.Api.Services.Cities.Dto.UpdateCityInput)">
-             <summary>
-             ویرایش یک کاربر 
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.CityController.Get(System.Int32)">
-             <summary>
-             دریافت اطلاعات یک کاربر
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.CityController.Delete(System.Int32)">
-             <summary>
-             ویرایش پروفایل یک کاربر
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.OrderController.Update(System.Int32,V2Ray.Api.Services.Orders.Dto.UpdateOrderInput)">
-             <summary>
-             ویرایش یک کاربر 
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.OrderController.Update(System.Int32,System.String,V2Ray.Api.Services.sms.Kavenegar.Models.Enums.OrderStateEnum)">
-             <summary>
-             ویرایش یک کاربر 
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.OrderController.Get(System.Int32)">
-             <summary>
-             دریافت اطلاعات یک کاربر
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.OrderController.Delete(System.Int32)">
-             <summary>
-             ویرایش پروفایل یک کاربر
-             </summary>
-            
-        </member>
         <member name="M:V2Ray.Api.Controllers.PlanController.Update(System.Int32,V2Ray.Api.Services.PlanServices.Dto.UpdatePlanInput)">
              <summary>
              ویرایش یک کاربر 
@@ -147,30 +105,6 @@
             
         </member>
         <member name="M:V2Ray.Api.Controllers.PlanController.Delete(System.Int32)">
-             <summary>
-             ویرایش پروفایل یک کاربر
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Update(System.Int32,V2Ray.Api.Services.ProblemReportServices.Dto.UpdateProblemReportInput)">
-             <summary>
-             ویرایش یک کاربر 
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.ProblemReportController.SendAnswer(System.Int32,V2Ray.Api.Services.ProblemReportServices.Dto.SendAnswerInput)">
-             <summary>
-             ویرایش یک کاربر 
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Get(System.Int32)">
-             <summary>
-             دریافت اطلاعات یک کاربر
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Delete(System.Int32)">
              <summary>
              ویرایش پروفایل یک کاربر
              </summary>

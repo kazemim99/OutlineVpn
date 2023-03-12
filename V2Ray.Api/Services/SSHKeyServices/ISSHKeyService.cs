@@ -12,11 +12,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
         GetSSHKeyListOutput,
         SSHKeyFilterInput>
     {
-        Task DeleteFromVPS(string userName);
+        Task DeleteFromVPS(string userName,V2Server server);
         Task GenerateSshFromAdmin(CreateSSHKeyInput input);
-        Task GenerateSshFromClient(int userId);
-        //Task<GenerateSSHOutput> GetUserSSHKey(int userId);
-        //Task ChargeOneMonth(string email);
+        
         Task ChangeState(int id);
         Task Recreate(string name);
         Task Swapp();

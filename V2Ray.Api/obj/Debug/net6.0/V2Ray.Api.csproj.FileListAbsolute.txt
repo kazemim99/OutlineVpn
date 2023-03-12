@@ -13,7 +13,6 @@ C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.D
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\AutoWrapper.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\BCrypt.Net-Core.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Humanizer.dll
-C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\MailKit.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
@@ -22,7 +21,6 @@ C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.DotNet.PlatformAbstract
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
-C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.InMemory.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.SqlServer.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.Extensions.Caching.Memory.dll
@@ -35,15 +33,12 @@ C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.OpenApi.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
-C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\MimeKit.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\FizzWare.NBuilder.dll
-C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\NETCore.MailKit.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Npgsql.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Otp.NET.dll
-C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\BouncyCastle.Crypto.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Serilog.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Serilog.AspNetCore.dll
 C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Serilog.Extensions.Hosting.dll

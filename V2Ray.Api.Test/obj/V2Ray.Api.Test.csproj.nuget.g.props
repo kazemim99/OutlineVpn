@@ -23,7 +23,6 @@
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Pkgxunit_analyzers Condition=" '$(Pkgxunit_analyzers)' == '' ">C:\Users\Mostafa\.nuget\packages\xunit.analyzers\1.0.0</Pkgxunit_analyzers>
     <PkgMicrosoft_Extensions_ApiDescription_Server Condition=" '$(PkgMicrosoft_Extensions_ApiDescription_Server)' == '' ">C:\Users\Mostafa\.nuget\packages\microsoft.extensions.apidescription.server\3.0.0</PkgMicrosoft_Extensions_ApiDescription_Server>
-    <PkgMicrosoft_VisualStudio_Azure_Containers_Tools_Targets Condition=" '$(PkgMicrosoft_VisualStudio_Azure_Containers_Tools_Targets)' == '' ">C:\Users\Mostafa\.nuget\packages\microsoft.visualstudio.azure.containers.tools.targets\1.14.0</PkgMicrosoft_VisualStudio_Azure_Containers_Tools_Targets>
     <PkgFluentAssertions_Analyzers Condition=" '$(PkgFluentAssertions_Analyzers)' == '' ">C:\Users\Mostafa\.nuget\packages\fluentassertions.analyzers\0.17.2</PkgFluentAssertions_Analyzers>
   </PropertyGroup>
 </Project>

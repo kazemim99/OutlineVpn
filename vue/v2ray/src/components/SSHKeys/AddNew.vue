@@ -19,7 +19,17 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
               <v-row>
-                <v-col class="d-flex" cols="12" sm="12">
+                <v-col class="d-flex" cols="6" sm="6">
+                  <v-select
+                    v-model="sshKey.serverId"
+                    :items="servers"
+                    item-value="id"
+                    item-text="title"
+                    label="ُسرور"
+                    solo
+                  ></v-select>
+                </v-col>
+                <v-col class="d-flex" cols="6" sm="6">
                   <v-text-field
                     v-model="sshKey.name"
                     label="نام "
@@ -89,7 +99,7 @@ export default Vue.extend({
     loading: false,
     sshKey: {
       name: "",
-      serverId: 0,
+      serverId: null,
       password: null,
       userName: "",
       expireDate: null,
@@ -126,6 +136,7 @@ export default Vue.extend({
         this.sshKey.name = data.name;
         this.sshKey.userName = data.userName;
         this.sshKey.expireDate = data.expireDate;
+        this.sshKey.count =1;
       });
     },
 
@@ -153,6 +164,8 @@ export default Vue.extend({
           .then((response) => {
             this.dialog = false;
             this.$emit("reloadSSHKeys");
+            this.clearData();
+
             // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
           })
           .finally(() => {
@@ -162,7 +175,9 @@ export default Vue.extend({
     },
 
     clearData() {
-      this.sshKey.id = 0;
+      this.sshKey.id = null;
+      this.sshKey.serverId = null;
+      this.sshKey.password = "";
       this.sshKey.userName = "";
       this.sshKey.name = "";
       this.sshKey.expireDate = "";

@@ -18,7 +18,6 @@
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
-
               <v-col class="d-flex" cols="12" sm="6">
                 <v-select
                   v-model="v2Key.serverId"
@@ -30,14 +29,14 @@
                 ></v-select>
               </v-col>
               <v-col cols="6" sm="12" md="6">
-                  <v-text-field
-                    v-model="v2Key.count"
-                    label="تعداد *"
-                    placeholder=" "
-                    autocomplete="false"
-                    required
-                  ></v-text-field>
-                </v-col>
+                <v-text-field
+                  v-model="v2Key.count"
+                  label="تعداد *"
+                  placeholder=" "
+                  autocomplete="false"
+                  required
+                ></v-text-field>
+              </v-col>
               <v-row>
                 <v-col cols="6" sm="12" md="6">
                   <v-text-field
@@ -51,18 +50,15 @@
 
                 <v-col cols="6" sm="12" md="6">
                   <label>تاریخ :</label>
-                  <date-picker  v-model="v2Key.expireDate" simple />
-
+                  <date-picker v-model="v2Key.expireDate" simple />
                 </v-col>
               </v-row>
               <v-col cols="4">
-                  <v-switch
-                    v-model="v2Key.state"
-                    :label="`وضعیت: ${
-                      v2Key.state ? 'فعال' : 'غیر فعال'
-                    }`"
-                  ></v-switch>
-                </v-col>
+                <v-switch
+                  v-model="v2Key.state"
+                  :label="`وضعیت: ${v2Key.state ? 'فعال' : 'غیر فعال'}`"
+                ></v-switch>
+              </v-col>
             </v-container>
           </v-form>
         </v-card-text>
@@ -93,9 +89,9 @@ export default Vue.extend({
     valid: true,
     loading: false,
     v2Key: {
-      serverId :0,
+      serverId: 0,
       traffic: 0,
-      expireDate : null,
+      expireDate: null,
       state: true,
       count: 1,
     },
@@ -105,11 +101,10 @@ export default Vue.extend({
       handler() {
         if (!this.dialog) {
           this.clearData();
-        }else{
+        } else {
           this.getServers();
         }
-        if (this.id) 
-        this.getV2Key(this.id);
+        if (this.id) this.getV2Key(this.id);
       },
       deep: true,
     },
@@ -132,16 +127,16 @@ export default Vue.extend({
         this.v2Key.state = data.state;
       });
     },
-  
+
     submit() {
       if (!this.$refs.form.validate()) {
         return;
       }
       this.loading = true;
-      
+
       if (this.id) {
         request
-          .put(`/v2Key/${this.id}`,this.v2Key)
+          .put(`/v2Key/${this.id}`, this.v2Key)
           .then((response) => {
             this.dialog = false;
             this.$emit("reloadV2Keys");
@@ -157,6 +152,8 @@ export default Vue.extend({
           .then((response) => {
             this.dialog = false;
             this.$emit("reloadV2Keys");
+            this.clearData();
+
             // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
           })
           .finally(() => {
@@ -167,12 +164,12 @@ export default Vue.extend({
 
     clearData() {
       this.selectedComplexId = null;
-
-        (this.v2Key.serverId = 0),
+      this.v2Key.id = null;
+      (this.v2Key.serverId = 0),
         (this.v2Key.traffic = 40),
         (this.v2Key.expireDate = ""),
-        (this.v2Key.count =1),
-        (this.v2Key.state = true)
+        (this.v2Key.count = 1),
+        (this.v2Key.state = true);
     },
   },
 });

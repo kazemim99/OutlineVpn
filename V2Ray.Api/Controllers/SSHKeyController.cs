@@ -17,7 +17,7 @@ namespace V2Ray.Api.Controllers
             _service = service;
         }
 
-        
+
         [HttpGet("all-sshkeys")]
         [Authorize]
         public async Task<ApiResponse> Filter()
@@ -29,8 +29,8 @@ namespace V2Ray.Api.Controllers
                 ItemsPerPage = 100
             });
             return new ApiResponse(result);
-        }  
-        
+        }
+
         [HttpGet("delete-expired")]
         [Authorize]
         public async Task<ApiResponse> DeleteExpired()
@@ -49,9 +49,19 @@ namespace V2Ray.Api.Controllers
         {
             //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;~
-            filter.SortDesc = true;
-            var result = await _service.GetAllAsync(filter, new[] { "V2Server" });
-            return new ApiResponse(result);
+            try
+            {
+                filter.SortDesc = true;
+                var result = await _service.GetAllAsync(filter, new[] { "V2Server" });
+                return new ApiResponse(result);
+            }
+
+            catch (Exception ex)
+            {
+
+                throw ;
+
+            }
         }
 
         /// <summary>
@@ -113,14 +123,14 @@ namespace V2Ray.Api.Controllers
 
 
 
-        [HttpGet("create-test-ssh")]
-        [Authorize]
-        public async Task<ApiResponse> Create()
-        {
-            await _service.GenerateSshFromClient(UserId);
-            return new ApiResponse();
-        } 
-        
+        //[HttpGet("create-test-ssh")]
+        //[Authorize]
+        //public async Task<ApiResponse> Create()
+        //{
+        //    await _service.GenerateSshFromClient(UserId);
+        //    return new ApiResponse();
+        //} 
+
         [HttpGet("user-key-details")]
         [Authorize]
         public async Task<ApiResponse> KeyDetails()
@@ -145,12 +155,12 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-           var result =   await _service.GetById(id, new[] {"V2Server" });
+            var result = await _service.GetById(id, new[] { "V2Server" });
 
             return new ApiResponse(result);
         }
 
-        
+
 
 
         /// <summary>
@@ -165,7 +175,7 @@ namespace V2Ray.Api.Controllers
 
             return new ApiResponse();
         }
-      
+
     }
-   
+
 }
