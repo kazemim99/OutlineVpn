@@ -29,7 +29,7 @@ namespace V2Ray.Api.Controllers
         {
             //filter.ServerId = ServerId;
             //filter.IsAdmin = IsAdmin;
-            var result = await _service.GetAllAsync(filter);
+            var result = await _service.GetAllAsync(filter, new[] { "SSHKeys" });
             return new ApiResponse(result);
         }
 
@@ -78,7 +78,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> ChageState([FromRoute] int id)
         {
-             await _service.ChangeState(id);
+            await _service.ChangeState(id);
 
             return new ApiResponse();
         }
@@ -103,7 +103,7 @@ namespace V2Ray.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<ApiResponse> Delete([FromRoute] int id)
         {
-            await _service.SoftDelete(id);
+            await _service.Delete(id);
 
             return new ApiResponse();
         }

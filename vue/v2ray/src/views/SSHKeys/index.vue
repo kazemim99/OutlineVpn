@@ -37,7 +37,7 @@
             class="mr-2"
             @click="
               copyToClipBoard(
-                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate}`
+                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n حروف کوچک و بزرگ مهم میباشند`
               )
             "
           >

@@ -64,7 +64,7 @@ namespace V2Ray.Api.Controllers
         [AllowAnonymous]
         public async Task<ApiResponse> RegisterUser([FromBody] CreateUserInput input)
         {
-            input.IP = ipAddress();
+
             await _service.InsertAsync(input);
             return new ApiResponse();
         }
@@ -92,19 +92,16 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpGet("get-code/{mobile}")]
-        public async Task<ApiResponse> GetCode([FromRoute] string mobile)
+        [HttpGet("get-code/{mobile}/{loginToken}")]
+        public async Task<ApiResponse> GetCode([FromRoute] string mobile, [FromRoute] string loginToken)
         {
             try
             {
 
-                if (!Regex.IsMatch(mobile, @"\b[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)\b"))
-                    throw new ApiException("ایمیل وارد شده صحیح نیست");
+                if (!Regex.IsMatch(mobile, @"\b^(09|9)+([0-9]){9}$\b"))
+                    throw new ApiException("موبایل وارد شده صحیح نیست");
 
-                var result = await _service.GetUserByMobile(mobile);
-                if (result == null)
-                    throw new ApiException("چنین کاربری یافت نشد");
-
+                await _service.SendCode(mobile, loginToken);
                 return new ApiResponse();
             }
             catch (Exception ex)
@@ -124,10 +121,10 @@ namespace V2Ray.Api.Controllers
         [HttpPost("verify-code")]
         public async Task<ApiResponse> VerifyCode([FromBody] VerifyCodeViewModel model)
         {
-            if (!Regex.IsMatch(model.Email, @"\b[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)\b"))
-                throw new ApiException("ایمیل وارد شده صحیح نیست");
+            if (!Regex.IsMatch(model.Mobile, @"\b^(09|9)+([0-9]){9}$\b"))
+                throw new ApiException("شماره وارد شده صحیح نیست");
 
-            var result = await _service.VerifyCode(model.Code, model.Email);
+            var result = await _service.VerifyCode(model.Code, model.Mobile);
 
             return new ApiResponse(result);
         }

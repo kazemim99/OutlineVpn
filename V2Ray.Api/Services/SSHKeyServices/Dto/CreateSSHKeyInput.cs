@@ -16,5 +16,6 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         public int? Count { get; set; }
         [Required]
         public int ServerId { get; set; }
+        public int? UserId { get; set; }
     }
 }

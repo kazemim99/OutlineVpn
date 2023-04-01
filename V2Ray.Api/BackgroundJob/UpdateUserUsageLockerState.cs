@@ -16,7 +16,7 @@ namespace V2Ray.Api.BackgroundJob
 
         public Task StartAsync(CancellationToken stoppingToken)
         { // remove expired refresh tokens from
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(12));
             return Task.CompletedTask;
         }
 
@@ -24,10 +24,10 @@ namespace V2Ray.Api.BackgroundJob
         {
             try
             {
-                //using var scope = _scopeFactory.CreateScope();
-                //var _db = scope.ServiceProvider.GetRequiredService<DB>();
-                //var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
-              
+                using var scope = _scopeFactory.CreateScope();
+                var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
+             await   sSHKeyService.DisableExpired();
+
             }
             catch (Exception ex) { }
         }

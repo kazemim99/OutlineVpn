@@ -64,6 +64,12 @@ export default class Dashboard extends Vue {
       permission: "Role_Show",
       to: "/orders",
     },
+
+    {
+      icon: "mdi-alert-box",
+      title: "تیکتها",
+      to: "/tickets",
+    },
     {
       icon: "mdi-alert-box",
       title: "گزارش مشکل",
@@ -75,6 +81,14 @@ export default class Dashboard extends Vue {
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "ApiUrl_Show",
       to: "/v2servers",
+    },
+
+    {
+      icon: "mdi-email",
+      title: "تیکتهای دریافتی",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      permission: "ApiUrl_Show",
+      to: "/manage-tickets",
     },
     {
       icon: "mdi-key",

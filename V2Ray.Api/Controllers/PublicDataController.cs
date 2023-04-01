@@ -7,6 +7,7 @@ using V2Ray.Api.Services.sms;
 using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
 using V2Ray.Api.Services.UserServices;
 using V2Ray.Api.Shared;
+using V2Ray.Api.Shared.ShadowUriGenerator;
 
 namespace V2Ray.Api.Controllers
 {
@@ -39,27 +40,7 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(result);
         }
 
-        //[HttpGet("add-ssh")]
-        //public ApiResponse GetOS(string username)
-        //{
-        //    var connectionInfo = new PasswordConnectionInfo("45.77.140.25", 22000, "root", "!Q@W#E$R5t6y7u8i");
-        //    string password = CreatePassword(8);
 
-        //    using (var ssh = new SshClient(connectionInfo))
-        //    {
-        //        ssh.Connect();
-        //        var date = DateTime.Now.AddMonths(1).ToString("d");
-        //        var command = ssh.CreateCommand($"useradd -m -p $(openssl passwd -1 {password}) -s /bin/bash -G sudo {username}");
-        //         command.Execute();
-
-        //        //command = ssh.CreateCommand("rm create.txt");
-        //        //command.Execute();
-
-        //        ssh.Disconnect();
-        //    }
-        //    return new ApiResponse();
-        //}
-        //Console.WriteLine(ShellHelper.Bash($"echo -e \"{password}\n{password}\n\" | sudo passwd {user}"));
 
 
         [HttpGet("get-operations")]

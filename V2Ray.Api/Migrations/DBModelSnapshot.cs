@@ -322,7 +322,6 @@ namespace V2Ray.Api.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Enable")
@@ -332,7 +331,6 @@ namespace V2Ray.Api.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IP")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAdmin")
@@ -344,6 +342,10 @@ namespace V2Ray.Api.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Mobile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("NeedConfirm")
                         .HasColumnType("bit");
 
@@ -351,7 +353,6 @@ namespace V2Ray.Api.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateAt")
@@ -466,6 +467,11 @@ namespace V2Ray.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("Capacity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(50);
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -540,9 +546,11 @@ namespace V2Ray.Api.Migrations
                         .WithMany("SSHKeys")
                         .HasForeignKey("ServerId");
 
-                    b.HasOne("V2Ray.Api.Entity.User", null)
+                    b.HasOne("V2Ray.Api.Entity.User", "User")
                         .WithMany("SSHKeyInfos")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
 
                     b.Navigation("V2Server");
                 });

@@ -35,6 +35,18 @@ const routes: Array<RouteConfig> = [
         meta: { requireAuth: true }
       },
       {
+        path: 'tickets',
+        name: 'CreateTicket',
+        component: () => import('@/views/Ticket/create.vue'),
+        meta: { requireAuth: true }
+      },
+      {
+        path: 'manage-tickets',
+        name: 'ManageTickets',
+        component: () => import('@/views/Ticket/tickets.vue'),
+        meta: { requireAuth: true }
+      },
+      {
         path: 'manage-plans',
         name: 'ManagPlans',
         component: () => import('@/views/Plans/ManagePlans.vue'),

@@ -11,11 +11,11 @@ services:
   #pgadmin:
   #  image: dpage/pgadmin4  
 
-  portainer:
-    image: portainer/portainer-ce
+  #portainer:
+  #  image: portainer/portainer-ce
 
-  seq:
-    image: datalust/seq:latest
+  #seq:
+  #  image: datalust/seq:latest
 
   nginx:
     image: nginx:alpine
@@ -43,8 +43,5 @@ services:
 
 
 volumes:
-  portainer_data:
   postgres_data:
-  #pgadmin_data:
-
 

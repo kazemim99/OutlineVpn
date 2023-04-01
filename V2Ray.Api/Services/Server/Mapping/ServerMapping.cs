@@ -9,7 +9,7 @@ namespace V2Ray.Api.Services.Server.Mapping
     {
         public V2ServerMapping()
         {
-            CreateMap<V2Server, GetServerListOutput>();
+            CreateMap<V2Server, GetServerListOutput>().ForMember(c=>c.KeyCount,a=>a.MapFrom(b=>b.SSHKeys.Count(a=>a.Enable)));
 
             CreateMap<V2Server, GetServerOutput>();
 

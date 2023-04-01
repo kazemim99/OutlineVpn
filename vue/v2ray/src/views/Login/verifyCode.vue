@@ -6,10 +6,7 @@
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
-                <v-toolbar-title>
-                  کد تایید ارسالی به ایمیل خود را اینجا وارد
-                  کنید</v-toolbar-title
-                >
+                <v-toolbar-title> کد تایید را وارد نمایید </v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-text-field
@@ -72,7 +69,7 @@ export default class extends Vue {
         this.loading = false;
         return;
       }
-      await UserModule.VerifyCode({ code: this.code, email: UserModule.email });
+      await UserModule.VerifyCode({ code: this.code, mobile: UserModule.mobile });
       this.loading = false;
       if (UserModule.verfied) {
         this.$router.push("/dashboard/buy-vpn");

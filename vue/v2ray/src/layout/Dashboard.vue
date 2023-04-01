@@ -142,6 +142,19 @@ export default class Dashboard extends Vue {
       permission: "Role_Show",
       to: "/dashboard/orders",
     },
+
+    {
+      icon: "mdi-email ",
+      title: "مدیریت تیکتها",
+      permission: "Role_Show",
+      to: "/dashboard/manage-tickets",
+    },
+    {
+      icon: "mdi-lifebuoy",
+      title: "پشتیبانی",
+      permission: "Role_Show",
+      to: "/dashboard/tickets",
+    },
     // {
     //   icon: "mdi-alert-box",
     //   title: "آموزش اتصال با ایفون و اندروید",

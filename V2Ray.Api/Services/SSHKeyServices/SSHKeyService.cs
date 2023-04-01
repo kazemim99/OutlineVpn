@@ -14,6 +14,7 @@ using System.Net.Http.Headers;
 using V2Ray.Api.Services.V2Keys.Dto;
 using Renci.SshNet;
 using V2Ray.Api.Services.SSHKeyServices.Dto;
+using System.Diagnostics;
 
 namespace V2Ray.Api.Services.SSHKeyServices
 {
@@ -37,30 +38,86 @@ namespace V2Ray.Api.Services.SSHKeyServices
             _mapper = mapper;
 
         }
-        //        drop table #users
-        //drop table PanelUser
 
-        //CREATE TABLE #users(
-        //id int ,username varchar(255),password varchar(255),email varchar(255) ,mobile varchar(255),multiuser varchar(255),startdate varchar(255),finishdate varchar(255)
-        //,enable varchar(255),traffic varchar(255),referral varchar(255))
 
-        //insert into #users (id,username,password,email,mobile,multiuser,startdate,finishdate,enable,traffic,referral)
-        //select Id, UserName,[Password],'','',1, FORMAT(GETDATE(), 'yyyy-MM-dd'),[ExpireDate],[Enable],50,''
-        //from SSHKeyInfos
 
-        //select* into PanelUser from #users
+        public async Task Swapp2(string url)
+        {
+            var users = await _db.SSHKeyInfos.Include(a => a.V2Server)
+                .Where(a => a.V2Server.Url == url && a.Enable).ToListAsync();
+            var server = users.First().V2Server;
+            AddUserFromServer(users, "192.248.150.61");
+
+        }
+
+
+        private void DeleteUserFromServer(List<SSHKey> users, string ip)
+        {
+            string str = "";
+            var i = 0;
+            foreach (var item in users)
+            {
+                i++;
+                var app = "&&";
+                if (i >= users.Count())
+                {
+                    app = "";
+                }
+                str += $"killall -u {item.UserName} &&  deluser --remove-home -f {item.UserName} {app}\n";
+            }
+
+
+            var connectionInfo = GetConnectionInfo(ip,1027, "!Q@W#E$R5t6y7u8i", "root");
+            using (var ssh = new SshClient(connectionInfo))
+            {
+                Connect(ssh);
+
+                var command2 = ssh.CreateCommand(str);
+                command2.Execute();
+
+                ssh.Disconnect();
+            }
+        }
+        private void AddUserFromServer(List<SSHKey> users, string ip)
+        {
+            string str = "";
+            var i = 0;
+            foreach (var item in users)
+            {
+                i++;
+                var app = "&&";
+                if (i >= users.Count())
+                {
+                    app = "";
+                }
+                str += $"useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName} {app} \n";
+            }
+
+
+            var connectionInfo = new PasswordConnectionInfo(ip, 1027, "root", "!Q@W#E$R5t6y7u8i");
+            var ssh = new SshClient(connectionInfo);
+            Connect(ssh);
+
+            var comm = str;
+            var command = ssh.CreateCommand(comm);
+            command.Execute();
+            ssh.Disconnect();
+        }
 
         public async Task Swapp()
         {
-            var users = await _db.SSHKeyInfos.Where(a => a.Enable).ToListAsync();
-            var servers = await _db.V2Servers.ToListAsync();
+            int attempts = 0;
+            int _connectiontRetryAttempts = 50;
+            var users = await _db.SSHKeyInfos.Include(a => a.V2Server).Where(a => a.Enable).ToListAsync();
+            //var servers = await _db.V2Servers.ToListAsync();
             //foreach (var server in servers)
             //{
             foreach (var item in users)
             {
-                var connectionInfo = new PasswordConnectionInfo("192.248.190.163", 1027, "root", "!Q@W#E$R5t6y7u8i");
+                var connectionInfo = new PasswordConnectionInfo("45.77.66.228", 1027, "root", "!Q@W#E$R5t6y7u8i");
                 using var ssh = new SshClient(connectionInfo);
-                ssh.Connect();
+
+                Connect(ssh);
 
                 var comm = $"useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName}";
                 var command = ssh.CreateCommand(comm);
@@ -68,41 +125,90 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 ssh.Disconnect();
 
             }
-            //}
+            //} 
         }
+        //public async Task Onlines()
+        //{
+        //    var connectionInfo = new PasswordConnectionInfo("45.77.66.228", 1027, "root", "!Q@W#E$R5t6y7u8i");
+        //    using var ssh = new SshClient(connectionInfo);
+
+        //    Connect(ssh);
+        //    string command = "sudo lsof -i | awk '!seen[$9]++ {print $1,$2,$3,$9,$10}'";
+        //    ProcessStartInfo processInfo = new ProcessStartInfo("/bin/bash", "-c \"" + command + "\"");
+        //     ssh.CreateCommand(comm);
+        //    command.Execute();
+        //    processInfo.RedirectStandardOutput = true;
+
+        //    Process process = new Process();
+        //    process.StartInfo = processInfo;
+        //    process.Start();
+        //    process.WaitForExit();
+
+        //    string result = process.StandardOutput.ReadToEnd();
+
+        //}
+        private void Connect(SshClient ssh)
+        {
+            int attempts = 0;
+            int _connectiontRetryAttempts = 50;
+            do
+            {
+                try
+                {
+                    ssh.Connect();
+                }
+                catch (Renci.SshNet.Common.SshConnectionException)
+                {
+                    attempts++;
+                }
+            } while (attempts < _connectiontRetryAttempts && !ssh.IsConnected);
+        }
+
         public async Task DeleteFromVPS(string username, V2Server server)
         {
-            var connectionInfo = GetConnectionInfo(server.IP, server.Port, server.Password, server.UserName);
-            using (var ssh = new SshClient(connectionInfo))
+
+            foreach (var ip in server.IP.Split(','))
             {
-                ssh.Connect();
-                var com1 = $"killall -u {username}";
-                var command = ssh.CreateCommand(com1);
-                command.Execute();
+                try
+                {
+                    var connectionInfo = GetConnectionInfo(ip, server.Port, server.Password, server.UserName);
+                    using (var ssh = new SshClient(connectionInfo))
+                    {
+                        Connect(ssh);
+                        var com1 = $"killall -u {username}";
+                        var command = ssh.CreateCommand(com1);
+                        command.Execute();
 
-                var com2 = $"deluser --remove-home -f {username}";
-                var command2 = ssh.CreateCommand(com2);
-                command2.Execute();
+                        var com2 = $"deluser --remove-home -f {username}";
+                        var command2 = ssh.CreateCommand(com2);
+                        command2.Execute();
 
-                ssh.Disconnect();
+                        ssh.Disconnect();
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw new ApiException($"اتصال به این سرور برقرار نشد {ip}");
+                }
+
             }
 
         }
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
         {
             var user = _db.SSHKeyInfos.Where(a => a.Id == id).Select(c => new { c.Password, c.UserName, c.V2Server }).First();
-            if (_db.SSHKeyInfos.Count(c => c.ServerId == input.ServerId) > 80)
-                throw new ApiException("ظرفیت سرور تکمیل است");
-
-            input.Password = input.Password;
+            if (input.ServerId != user.V2Server.Id)
+            {
+                if (_db.SSHKeyInfos.Count(c => c.ServerId == input.ServerId && c.Enable) > _db.V2Servers.First(a=>a.Id == input.ServerId).Capacity)
+                    throw new ApiException("ظرفیت سرور تکمیل است");
+            }
             if (user.V2Server != null)
             {
-                foreach (var item in _db.V2Servers.ToList())
-                {
-                    await DeleteFromVPS(user.UserName, item);
-                }
+                await DeleteFromVPS(user.UserName, user.V2Server);
             }
             var map = _mapper.Map<CreateSSHKeyInput>(input);
+            map.UserId = null;
             CreateSSHUser(map, true);
             await base.UpdateAsync(id, input, include);
         }
@@ -110,7 +216,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
             try
             {
-                if (_db.SSHKeyInfos.Count(c => c.ServerId == input.ServerId) > 80)
+                if (_db.SSHKeyInfos.Count(c => c.ServerId == input.ServerId && c.Enable) > _db.V2Servers.First(a => a.Id == input.ServerId).Capacity)
                     throw new ApiException("ظرفیت سرور تکمیل است");
 
                 input.ExpireDate = input.ExpireDate == null ? DateTime.Now.AddDays(31).ToPersianDate() : input.ExpireDate;
@@ -139,23 +245,25 @@ namespace V2Ray.Api.Services.SSHKeyServices
             return $"u{user}";
         }
 
-        //public async Task GenerateSshFromClient(int userId)
-        //{
-        //    var user = await _db.Users.Include(a => a.SSHKeyInfos).FirstAsync(a => a.Id == userId);
-        //    if (user.SSHKeyInfos.Any())
-        //        throw new ApiException("شما قبلا از یوزر تست استفاده کرده اید");
+        public async Task GenerateSshFromClient(int userId)
+        {
+            var user = await _db.Users.Include(a => a.SSHKeyInfos).FirstAsync(a => a.Id == userId);
+            if (user.SSHKeyInfos.Any())
+                throw new ApiException("شما قبلا از یوزر تست استفاده کرده اید");
 
-        //    var input = new CreateSSHKeyInput
-        //    {
-        //        Password = CreatePassword(),
-        //        Port = 1027,
-        //        ExpireDate = DateTime.Now.AddDays(3).ToPersianDate(),
-        //        UserName = user.Email.Split('@')[0]
-        //    };
-        //    CreateSSHUser(input, false);
-        //    await base.InsertAsync(input);
-
-        //}
+            var input = new CreateSSHKeyInput
+            {
+                Password = CreatePassword(),
+                UserId = userId,
+                Port = 1027,
+                ExpireDate = DateTime.Now.AddHours(2).ToPersianDate(),
+                Name = user.Mobile,
+                UserName = GenerateUser(),
+                ServerId = _db.V2Servers.First(a => a.SSHKeys.Count() < 50 && !a.Url.StartsWith("r")).Id
+            };
+            CreateSSHUser(input, false);
+            await base.InsertAsync(input);
+        }
 
         public async Task ChangeState(int id)
         {
@@ -165,10 +273,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             if (!keyInfo.Enable)
             {
-                foreach (var item in _db.V2Servers.ToList())
-                {
-                    await DeleteFromVPS(keyInfo.UserName, item);
-                }
+
+                await DeleteFromVPS(keyInfo.UserName, keyInfo.V2Server);
             }
             else
             {
@@ -187,39 +293,37 @@ namespace V2Ray.Api.Services.SSHKeyServices
             _db.SaveChanges();
 
         }
-        //public async Task<GenerateSSHOutput> GetUserSSHKey(int userId)
-        //{
-        //    var user = await _db.SSHKeyInfos.Include("V2Server").FirstOrDefaultAsync(a => a.UserId == userId);
-        //    if (user == null)
-        //        return new GenerateSSHOutput();
-        //    return new GenerateSSHOutput
-        //    {
-        //        UserName = user.UserName,
-        //        Password = user.Password,
-        //        HostName = user.V2Server.Url,
-        //        Port = user.V2Server.Port,
-        //        ExpireDate = user.ExpireDate.ToPeString("yyyy/MM/dd")
-        //    };
-        //}
+
         private async void CreateSSHUser(CreateSSHKeyInput input, bool isUpdate)
         {
             try
             {
                 var server = _db.V2Servers.First(a => a.Id == input.ServerId);
+                foreach (var ip in server.IP.Split(','))
+                {
+                    try
+                    {
+                        var connectionInfo = GetConnectionInfo(ip, server.Port, server.Password, server.UserName);
 
-                var connectionInfo = GetConnectionInfo(server.IP, server.Port, server.Password, server.UserName);
+                        using var ssh = new SshClient(connectionInfo);
+                        Connect(ssh);
 
-                using var ssh = new SshClient(connectionInfo);
-                ssh.Connect();
+                        var comm = $"useradd -m -p  $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
+                        var command = ssh.CreateCommand(comm);
+                        command.Execute();
 
-                var comm = $"useradd -m -p  $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
-                var command = ssh.CreateCommand(comm);
-                command.Execute();
+                        ssh.Disconnect();
+                    }
+                    catch (Exception)
+                    {
+                        throw new ApiException($"اتصال به این سرور برقرار نشد {ip}");
+                    }
 
-                ssh.Disconnect();
+                }
+
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw new ApiException("ارتباط با سرور برقرار نشد");
             }
@@ -237,7 +341,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             const string valid = "1369";
             StringBuilder res = new();
             Random rnd = new();
-            res.Append("Vacp");
+            res.Append("Tacp");
 
             while (0 < length--)
             {
@@ -260,19 +364,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         //    _db.SaveChanges();
         //}
 
-        public override IQueryable<SSHKey> Filter(SSHKeyFilterInput filter)
-        {
-            var query = _db.SSHKeyInfos.AsQueryable();
-
-            if (filter.UserName != null)
-                query = query.Where(a => a.UserName.Contains(filter.UserName));
-            if (filter.Expired)
-            {
-                query = query.Where(a => a.ExpireDate.Date <= DateTime.Now.Date);
-            }
-
-            return query;
-        }
 
         public async Task Recreate(string name)
         {
@@ -281,6 +372,46 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 Thread.Sleep(1000);
                 await ChangeState(item.Id);
+            }
+        }
+        public async Task Adjust(int serverId)
+        {
+            var keys = await _db.SSHKeyInfos.Include(c => c.V2Server).Where(a => a.ServerId != serverId).ToListAsync();
+
+            DeleteUserFromServer(keys, keys.First().V2Server.IP);
+        }
+        public async Task DisableExpired()
+        {
+            try
+            {
+
+
+                var keys = _db.SSHKeyInfos.Include(c => c.V2Server).Where(c => c.ExpireDate.Date <= DateTime.Now.Date).ToList();
+
+                foreach (var item in keys)
+                {
+                    var key = _db.SSHKeyInfos.First(a => a.Id == item.Id);
+                    await DeleteFromVPS(item.UserName, item.V2Server);
+                    if (item.ExpireDate.Date < DateTime.Now.AddDays(-10))
+                    {
+
+                        _db.SSHKeyInfos.Remove(key);
+                        _db.SaveChanges();
+
+                    }
+                    else
+                    {
+                        item.Enable = false;
+                        _db.SSHKeyInfos.Update(key);
+                        _db.SaveChanges();
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
         }
         //private int GeneratePort(DB db)
@@ -295,5 +426,36 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         //    return port;
         //}
+
+        public async Task<GenerateSSHOutput> GetKeyDetails(int userId)
+        {
+            var userKeyInfo = _db.SSHKeyInfos.Include(c=>c.V2Server).FirstOrDefault(c => c.UserId == userId);
+            if(userKeyInfo == null)
+            {
+                return new GenerateSSHOutput();
+            }
+            return  new GenerateSSHOutput
+            {
+                ExpireDate = userKeyInfo.ExpireDate.ToPeString("yyyy/MM/dd"),
+                HostName = userKeyInfo.V2Server.Url,
+                Password = userKeyInfo.Password,
+                Port = userKeyInfo.Port,
+                UserName = userKeyInfo.UserName
+            };
+        }
+        public override IQueryable<SSHKey> Filter(SSHKeyFilterInput filter)
+        {
+            var query = _db.SSHKeyInfos.AsQueryable();
+
+            if (filter.UserName != null)
+                query = query.Where(a => a.UserName.Contains(filter.UserName));
+            if (filter.Expired)
+            {
+                query = query.Where(a => a.ExpireDate.Date <= DateTime.Now.Date);
+            }
+
+            return query;
+        }
+
     }
 }

@@ -12,7 +12,6 @@ namespace V2Ray.Api.Services.V2Keys.Mapping
                 .ForMember(a => a.Url, c => c.MapFrom(b => b.V2Server.Url))
                 .ForMember(a => a.Key, c => c.MapFrom(b => b.Key))
                 .ForMember(a => a.V2ServerId, c => c.MapFrom(b => b.V2ServerId))
-                .ForMember(a => a.Email, c => c.MapFrom(b => b.User.Email))
                 .ForMember(a => a.IP, c => c.MapFrom(b => b.User.IP))
                 .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToDateTime().ToPeString("yyyy/MM/dd")))
                 .ForMember(a => a.CreateDate, c => c.MapFrom(b => b.CreatedAt.ToPeString("yyyy/MM/dd")));

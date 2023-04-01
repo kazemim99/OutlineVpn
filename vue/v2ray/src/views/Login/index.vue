@@ -14,16 +14,18 @@
                   v-model="valid"
                   ref="form"
                 >
-                  <v-text-field
+                  <!-- <v-text-field
+                    v-show="!register"
                     prepend-icon="mdi-account"
                     name="login"
                     v-model="loginForm.email"
-                    label="ایمیل  "
+                    label="نام کاربری  "
                     autocomplete="off"
                     :rules="userNameRules"
                     type="text"
                   ></v-text-field>
                   <v-text-field
+                    v-show="!register"
                     id="password"
                     :type="show1 ? 'text' : 'password'"
                     @click:append="show1 = !show1"
@@ -34,26 +36,18 @@
                     prepend-icon="mdi-lock"
                     name="password"
                     label="رمز عبور"
-                  ></v-text-field>
+                  ></v-text-field> -->
 
                   <v-text-field
-                    v-show="register"
-                    id="Confirmpassword"
-                    :type="show2 ? 'text' : 'password'"
-                    @click:append="show2 = !show2"
-                    :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+                    id="شماره موبایل"
                     autocomplete="off"
-                    v-model="loginForm.confirmPassword"
-                    :rules="
-                      register
-                        ? confirmPasswordRules.concat(validatePassword2)
-                        : []
-                    "
+                    v-model="loginForm.mobile"
                     prepend-icon="mdi-lock"
-                    name="confirmPassword"
-                    label="تکرار رمز عبور"
+                    name="mobile"
+                    :rules="userNameRules"
+                    label="شماره موبایل"
                   ></v-text-field>
-                  <!-- <v-row>
+                  <v-row>
                     <div class="mt-3">
                       <VueRecaptcha
                         :sitekey="siteKey"
@@ -62,7 +56,7 @@
                         @error="handleError"
                       ></VueRecaptcha>
                     </div>
-                  </v-row> -->
+                  </v-row>
                   <v-row>
                     <!-- <v-col cols="4">
                       <router-link to="/get-code" class="d-flex justify-end"
@@ -73,29 +67,29 @@
                   <v-row>
                     <v-spacer></v-spacer>
 
-                    <v-col cols="3">
-                      <!-- <v-btn
+                    <!-- <v-col cols="3">
+                      <v-btn
                         :loading="loading && register"
                         v-on:click="registerShow"
                         color="success"
                         >ثبت نام</v-btn
-                      > -->
-                    </v-col>
+                      >
+                    </v-col> -->
                     <v-col cols="4">
                       <v-btn
                         :loading="loading"
                         v-show="!register"
                         type="submit"
                         color="primary"
-                        >ورود</v-btn
+                        >ورود / ثبت نام</v-btn
                       >
 
-                      <v-btn
+                      <!-- <v-btn
                         v-show="register"
                         v-on:click="loginShow()"
                         color="primary"
-                        >انصراف</v-btn
-                      >
+                        >انصراف</v-btn -->
+                      <!-- > -->
                     </v-col>
                   </v-row>
                 </v-form>
@@ -111,12 +105,14 @@
 
 <script>
 import { UserModule } from "@/store/modules/user";
-// import { VueRecaptcha } from "vue-recaptcha";
+import { VueRecaptcha } from "vue-recaptcha";
 import Vue from "vue";
 
 export default {
   name: "Login",
-  components: {  },
+  components: {
+    VueRecaptcha
+  },
   metaInfo: {
     meta: [
       {
@@ -136,26 +132,12 @@ export default {
     show2: false,
     register: false,
     loginForm: {
-      loginToken: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      mobile: "",
+      loginToken:"",
     },
-
     userNameRules: [
       (v) => !!v || "نام کاربری الزامی میباشد",
-      (v) =>
-        /[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)/.test(
-          v
-        ) ||
-        "ایمیل وارد شده  اشتباه است ایمیلهای مورد تایید gmail,outlook,hotmail,yahoo",
-    ],
-    passwordRules: [
-      (v) => !!v || "رمز عبور   الزامی میباشد",
-      (v) => v.length > 7 || "رمز عبور   باید هشت رقم باشد ",
-    ],
-    confirmPasswordRules: [
-      (value) => !!value || "لطفا تکرار رمز عبور را وارد نمایید",
+      (v) => /^(09|9)+([0-9]){9}$/.test(v) || "شماره موبایل اشتباه است",
     ],
   }),
   methods: {
@@ -166,29 +148,9 @@ export default {
       alert("خطا");
     },
     async handleSuccess(response) {
+      debugger;
       this.loginForm.loginToken = response;
       this.captchaHasError = false;
-    },
-    async registerShow() {
-      Vue.swal({
-        title: "جهت دریافت تنظیمات به کانال تلگرامی مراجعه فرمایید",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "رفتن به کانال",
-        cancelButtonText: "انصراف",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = `https://t.me/+GRPLkWQHXD5jNGZk`;
-        }
-      });
-    },
-
-    async loginShow() {
-      this.loginForm.password = "";
-      this.loginForm.confirmPassword = "";
-      this.register = false;
     },
 
     async handleRegister() {
@@ -210,19 +172,15 @@ export default {
       }
     },
     async handleLogin() {
-      // if (this.captchaHasError) return;
+      if (this.captchaHasError) return;
       this.validationForm();
       if (!this.valid) return;
 
       this.loading = true;
       try {
-        await UserModule.Login(this.loginForm);
-        if (UserModule.needConfirm) {
-          // await UserModule.GetCode(this.loginForm.email);
-          this.$router.push("/verify-code");
-        } else {
-          this.$router.push("/dashboard/buy-vpn");
-        }
+        debugger;
+        await UserModule.GetCode(this.loginForm);
+          this.$router.push("/verify-code/");
         this.loading = false;
       } catch (error) {
         this.loading = false;

@@ -29,7 +29,7 @@ namespace V2Ray.Api.Controllers
                 ItemsPerPage = 100
             });
             return new ApiResponse(result);
-        }
+        } 
 
         [HttpGet("delete-expired")]
         [Authorize]
@@ -105,7 +105,34 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
+        /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("swap2/{url}")]
 
+        public async Task<ApiResponse> Recreate2([FromRoute] string url)
+        {
+            await _service.Swapp2(url);
+
+            return new ApiResponse();
+        }
+
+
+
+        /// <summary>
+        /// ویرایش یک کاربر 
+        /// </summary>
+        ///
+        [HttpPut("adjust/{serverId:int}")]
+        [Authorize]
+
+        public async Task<ApiResponse> Adjust([FromRoute] int serverId)
+        {
+            await _service.Adjust(serverId);
+
+            return new ApiResponse();
+        }
 
         /// <summary>
         /// ویرایش یک کاربر 
@@ -123,19 +150,20 @@ namespace V2Ray.Api.Controllers
 
 
 
-        //[HttpGet("create-test-ssh")]
-        //[Authorize]
-        //public async Task<ApiResponse> Create()
-        //{
-        //    await _service.GenerateSshFromClient(UserId);
-        //    return new ApiResponse();
-        //} 
+        [HttpGet("create-test-ssh")]
+        [Authorize]
+        public async Task<ApiResponse> Create()
+        {
+            await _service.GenerateSshFromClient(UserId);
+            return new ApiResponse();
+        }
 
         [HttpGet("user-key-details")]
         [Authorize]
         public async Task<ApiResponse> KeyDetails()
         {
-            return new ApiResponse();
+            var details =await _service.GetKeyDetails(UserId);
+            return new ApiResponse(details);
         }
 
         [HttpPost]

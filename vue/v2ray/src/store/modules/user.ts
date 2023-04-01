@@ -5,10 +5,10 @@ import {
   getModule,
   Module,
 } from "vuex-module-decorators";
-import useRoute from 'vue-router'
+import useRoute from "vue-router";
 
 import store from "@/store";
-import VueRouter from 'vue-router';
+import VueRouter from "vue-router";
 
 import { getToken, setToken, removeToken } from "@/utils/cookies";
 import {
@@ -28,14 +28,13 @@ export interface IUserState {
 }
 @Module({ namespaced: true, dynamic: true, store, name: "auth" })
 class User extends VuexModule implements IUserState {
-
   public token = getToken() || "";
   public fullName = "";
   public roles: string[] = [];
   public permisiones: string[] = [];
   public verfied = false;
   public needConfirm = false;
-  public email = "";
+  public mobile = "";
   public isAdmin = false;
   @Mutation
   SET_TOKEN(token: string) {
@@ -52,9 +51,8 @@ class User extends VuexModule implements IUserState {
   }
 
   @Mutation
-
-  SET_Mail(email: string) {
-    this.email = email;
+  SET_Mobile(mobile: string) {
+    this.mobile = mobile;
   }
   @Mutation
   SET_NEEDCONFIRM(needConfirm: boolean) {
@@ -71,11 +69,11 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async VerifyCode(verifyModel: { code: string; email: string }) {
+  public async VerifyCode(verifyModel: { code: string; mobile: string }) {
     await veriFyCode(verifyModel)
       .then((a) => {
         this.SET_VERIFIED(true);
-        this.SET_Mail(verifyModel.email);
+        this.SET_Mobile(verifyModel.mobile);
         const result = a.data.result;
         const token = result.jwtToken.token;
         setToken(`Bearer ${token}`);
@@ -87,12 +85,11 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async Login(userInfo: { email: string; password: string }) {
-
+  public async Login(userInfo: { mobile: string; password: string }) {
     await login(userInfo).then((a) => {
       const result = a.data.result;
-      this.SET_Mail(userInfo.email);
-      this.SET_NEEDCONFIRM(result.needConfirm)
+      this.SET_Mobile(userInfo.mobile);
+      this.SET_NEEDCONFIRM(result.needConfirm);
       if (!result.needConfirm) {
         const token = result.jwtToken.token;
         setToken(`Bearer ${token}`);
@@ -102,11 +99,10 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async Register(userInfo: { email: string; password: string }) {
-
+  public async Register(userInfo: { mobile: string; password: string }) {
     await register(userInfo).then((a) => {
-      this.SET_Mail(userInfo.email);
-      // this.GetCode(userInfo.email)
+      this.SET_Mobile(userInfo.mobile);
+      // this.GetCode(userInfo.mobile)
     });
   }
   @Action
@@ -117,8 +113,9 @@ class User extends VuexModule implements IUserState {
     });
   }
   @Action
-  public async GetCode(mobile: string) {
-    await getCode(mobile);
+  public async GetCode(input: { mobile: string,loginToken: string }) {
+    this.SET_Mobile(input.mobile);
+    await getCode(input);
   }
 
   @Action
@@ -126,7 +123,7 @@ class User extends VuexModule implements IUserState {
     password: string;
     confirmPassword: string;
   }) {
-    await changePassword(this.email, input);
+    await changePassword(this.mobile, input);
   }
   @Action
   public ResetToken() {

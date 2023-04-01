@@ -19,23 +19,42 @@
           :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
         ></v-switch>
       </template>
- 
 
-      <template  v-slot:item.edit="{ item }">
-        <v-icon v-can="'Member_Edit'" medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+      <template v-slot:item.adjust="{ item }">
+        <v-btn :loading="loading" color="blue darken-1" @click="adjustItem(item)"
+            >تنظیم</v-btn
+          >
       </template>
 
-    
+      <template v-slot:item.edit="{ item }">
+        <v-icon
+          v-can="'Member_Edit'"
+          medium
+          class="mr-2"
+          @click="editItem(item)"
+          >mdi-pencil</v-icon
+        >
+      </template>
 
-         <template  v-slot:item.delete="{ item }">
-        <v-icon v-can="'Member_Delete'" medium class="mr-2" @click="deleteItem(item.id)">mdi-delete</v-icon>
+      <template v-slot:item.delete="{ item }">
+        <v-icon
+          v-can="'Member_Delete'"
+          medium
+          class="mr-2"
+          @click="deleteItem(item.id)"
+          >mdi-delete</v-icon
+        >
       </template>
 
       <template v-slot:top>
         <v-toolbar flat>
           <v-col cols="3">
-            <template right >
-              <AddNewV2Server v-can="'Member_Create'" ref="addV2ServerCom" @reloadV2Servers="getV2Servers" />
+            <template right>
+              <AddNewV2Server
+                v-can="'Member_Create'"
+                ref="addV2ServerCom"
+                @reloadV2Servers="getV2Servers"
+              />
             </template>
           </v-col>
           <v-spacer></v-spacer>
@@ -49,9 +68,7 @@
         <v-menu offset-y left :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="title ? 'primary' : ''"
-                >mdi-filter</v-icon
-              >
+              <v-icon small :color="title ? 'primary' : ''">mdi-filter</v-icon>
             </v-btn>
           </template>
           <div style="background-color: white; width: 280px">
@@ -96,7 +113,7 @@ export default {
   },
   data() {
     return {
-        crumbs: [
+      crumbs: [
         {
           text: "خانه",
           disabled: false,
@@ -118,11 +135,13 @@ export default {
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "عنوان", value: "title", sortable: true },
+        { text: "تعداد کاربران", value: "keyCount", sortable: true },
         { text: "آی پی", value: "ip", sortable: false },
         { text: "آدرس", value: "url", sortable: false },
         { text: "وضعیت", value: "isActive", sortable: false },
-        { text: "", value: "edit", sortable: false },
-        { text: "", value: "delete", sortable: false },
+        { text: "تنظیم", value: "adjust", sortable: false },
+        { text: "ویرایش", value: "edit", sortable: false },
+        { text: "حذف", value: "delete", sortable: false },
       ],
     };
   },
@@ -146,6 +165,21 @@ export default {
   },
 
   methods: {
+    async adjustItem(item) {
+      this.loading = true;
+      await request
+        .put(`/sshkey/adjust/${item.id}`)
+        .then(() => {
+          this.loading = false;
+          console.log(item.id);
+        })
+        .catch((error) => {
+          this.loading = false;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
     async changeState(item) {
       this.switchLoading = "warning";
       await request
@@ -165,7 +199,7 @@ export default {
       this.$refs.addV2ServerCom.dialog = true;
       this.$refs.addV2ServerCom.id = item.id;
     },
-     deleteItem(id) {
+    deleteItem(id) {
       Vue.swal({
         title: "ایا مطمئن  هستید",
         icon: "warning",
@@ -189,7 +223,6 @@ export default {
       });
     },
 
-  
     next(page) {
       this.options.page = page;
       this.getV2Servers();

@@ -12,7 +12,7 @@
                 <v-text-field
                   prepend-icon="mdi-account"
                   name="login"
-                  v-model="email"
+                  v-model="mobile"
                   label="ایمیل"
                   autocomplete="off"
                   :rules="userNameRules"
@@ -69,7 +69,7 @@ export default class extends Vue {
   private codeSent = false;
   private loading = false;
   private show1 = false;
-  private email = "";
+  private mobile = "";
   private code = "";
 
   userNameRules = [
@@ -80,22 +80,10 @@ export default class extends Vue {
       ) ||
       "ایمیل وارد شده  اشتباه است ایمیلهای مورد تایید gmail,outlook,hotmail,yahoo",
   ];
-
-  private async getCode() {
-    this.loading = true;
-    try {
-      await UserModule.GetCode(this.email);
-      this.loading = false;
-      this.codeSent = true;
-      // this.$router.push("/change-password");
-    } catch (error) {
-      this.loading = false;
-    }
-  }
   private async verifyCode() {
     this.loading = true;
     try {
-      await UserModule.VerifyCode({ code: this.code, email: this.email });
+      await UserModule.VerifyCode({ code: this.code, mobile: this.mobile });
       this.loading = false;
       if (UserModule.verfied) this.$router.push("/change-password");
     } catch (error) {

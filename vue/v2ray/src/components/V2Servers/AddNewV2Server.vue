@@ -19,7 +19,7 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
               <v-row>
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="3">
                   <v-text-field
                     v-model="v2Server.title"
                     label="عنوان *"
@@ -29,7 +29,7 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="3">
                   <v-text-field
                     autocomplete="false"
                     v-model="v2Server.url"
@@ -37,8 +37,15 @@
                     required
                   ></v-text-field>
                 </v-col>
-
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="3">
+                  <v-text-field
+                    autocomplete="false"
+                    v-model="v2Server.capacity"
+                    label="ظرفیت"
+                    required
+                  ></v-text-field>
+                  </v-col>
+                <v-col cols="3" sm="12" md="3">
                   <v-text-field
                     autocomplete="false"
                     v-model="v2Server.ip"
@@ -116,6 +123,7 @@ export default Vue.extend({
     valid: true,
     loading: false,
     v2Server: {
+      capacity:50,
       title: "",
       isActive: false,
       url: "",
@@ -170,6 +178,7 @@ export default Vue.extend({
       await request.get(`/v2Server/${id}`).then((response) => {
         var data = response.data.result;
         this.v2Server.id = id;
+        this.v2Server.capacity= data.capacity;
         this.v2Server.title = data.title;
         this.v2Server.url = data.url;
         this.v2Server.swapped = data.swapped;
@@ -236,6 +245,7 @@ export default Vue.extend({
       }
       (this.currentRows = 0),
         (this.v2Server.title = ""),
+        (this.v2Server.capacity = 50),
         (this.textFields = []),
         (this.v2Server.url = ""),
         (this.v2Server.userName = ""),

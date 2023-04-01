@@ -23,9 +23,9 @@ export const register = (data: any) =>
     method: "post",
     data,
   });
-export const getCode = (mobile: string) =>
+export const getCode = (input) =>
   request({
-    url: `/authentication/get-code/${mobile}`,
+    url: `/authentication/get-code/${input.mobile}/${input.loginToken}`,
     method: "get",
   });
 

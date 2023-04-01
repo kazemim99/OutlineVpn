@@ -20,8 +20,8 @@ namespace V2Ray.Api.ViewModels
         public string Code { get; set; }
 
         [Required]
-        [RegularExpression(@"\b[a-zA-Z0-9]{0,}([.]?[a-zA-Z0-9]{1,})[@](gmail.com|outlook.com|hotmail.com|yahoo.com)\b", ErrorMessage = "ایمیل وارد شده معتبر نیست")]
-        public string Email { get; set; }
+        [RegularExpression(@"\b^(09|9)+([0-9]){9}$\b", ErrorMessage = "ایمیل وارد شده معتبر نیست")]
+        public string Mobile { get; set; }
     }
 
     public class ChangePasswordViewModel

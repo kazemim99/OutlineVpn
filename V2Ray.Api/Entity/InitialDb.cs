@@ -22,7 +22,7 @@ namespace V2Ray.Api.Entity
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
             }
-            SeedData.Seed(db, isTest);
+            //SeedData.Seed(db, isTest);
         }
     }
 
@@ -170,11 +170,10 @@ namespace V2Ray.Api.Entity
                 IsAdmin = true,
                 Enable = true,
                 NeedConfirm = false,
-                Password = BCrypt.Net.BCrypt.HashPassword("!Q@W3e4r"),
                 FirstName = DefaultUserConst.FirstName,
                 LastName = DefaultUserConst.LastName,
                 Avatar = DefaultUserConst.Avatar,
-                Email = DefaultUserConst.Email,
+                Mobile = DefaultUserConst.Mobile,
                 Roles = new List<UserRole> {
                     new UserRole
                     {

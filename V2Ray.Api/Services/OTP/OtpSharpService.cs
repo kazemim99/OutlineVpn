@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.OTP
 
         public string GetCode(string key, int? stepWindowSeconds = null)
         {
-            //key = key.TrimStart(new[] { '0' });
+            key = key.TrimStart(new[] { '0' });
 
 
             
@@ -26,13 +26,13 @@ namespace V2Ray.Api.Services.OTP
 
         public OtpVerifyOut VerifyCode(string key, string code)
         {
-            //if (_settings.Sandbox)
-            //{
-            //    return new OtpVerifyOut(code == _settings.SandboxCode, 1);
-            //}
-            //else
-            //{
-                //key = key.TrimStart(new[] { '0' });
+            if (_settings.Sandbox)
+            {
+                return new OtpVerifyOut(code == _settings.SandboxCode, 1);
+            }
+            else
+            {
+                key = key.TrimStart(new[] { '0' });
                 var totp = GetTotp(key);
 
                 var result = totp.VerifyTotp(code, out long timeStepMatched,
@@ -44,8 +44,8 @@ namespace V2Ray.Api.Services.OTP
                     throw new Exception("کد ارسال شده اشتباه است");
 
                 return resp;
-            //}
         }
+    }
 
         private Totp GetTotp(string key, int? stepWindowSeconds = null)
         {

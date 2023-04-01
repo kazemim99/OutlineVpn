@@ -8,16 +8,16 @@ services:
   #  ports:
   #      - "6379:6379"
 
-  seq:
-    container_name: seq
-    hostname: seq
-    restart: always   
-    environment:
-      - ACCEPT_EULA=Y   
-    ports:
-      - "5341:5341"
-    volumes:
-      - /datadrive:/data
+  #seq:
+  #  container_name: seq
+  #  hostname: seq
+  #  restart: always   
+  #  environment:
+  #    - ACCEPT_EULA=Y   
+  #  ports:
+  #    - "5341:5341"
+  #  volumes:
+  #    - /datadrive:/data
 
   posgresdb:
     container_name: posgresdb
@@ -43,14 +43,14 @@ services:
   #  volumes:
   #    - pgadmin_data:/root/.pgadmin
 
-  portainer:
-    container_name: portainer
-    restart: always
-    ports:
-      - "8080:8000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+  #portainer:
+  #  container_name: portainer
+  #  restart: always
+  #  ports:
+  #    - "8080:8000"
+  #  volumes:
+  #    - /var/run/docker.sock:/var/run/docker.sock
+  #    - portainer_data:/data
 
 
   nginx:

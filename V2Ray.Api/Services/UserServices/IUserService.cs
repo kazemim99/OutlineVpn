@@ -24,7 +24,7 @@ namespace V2Ray.Api.Services.UserServices
 
         Task<GetUserOutput> GetUserByMobile(string mobile);
 
-        Task SendCode(string mobile);
+        Task SendCode(string mobile, string loginToken);
         Task<LoginResultDto> VerifyCode(string code, string mobile);
         Task ChangePasswordAsync(string mobile, string password);
         Task<IEnumerable<OptionItem>> GetSelectList(string input);

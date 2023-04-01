@@ -7,7 +7,6 @@
         public string IP { get; set; }
         public string Url { get; set; }
         public bool IsActive { get; set; }
-
-
+        public object KeyCount { get;  set; }
     }
 }

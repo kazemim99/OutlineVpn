@@ -120,7 +120,7 @@ public class ShadowsocksServerConfig
     /// <returns>An SIP002 URL.</returns>
     public Uri ToUri()
     {
-        var uriBuilder = new UriBuilder("ss", Host, Port)
+        var uriBuilder = new UriBuilder("ssh", Host, Port)
         {
             UserName = Method,
             Password = Uri.EscapeDataString(GetPassword()),
@@ -129,29 +129,29 @@ public class ShadowsocksServerConfig
 
         if (!string.IsNullOrEmpty(PluginName))
         {
-            var querySB = new StringBuilder("plugin=");
+            //var querySB = new StringBuilder("plugin=");
 
-            querySB.Append(Uri.EscapeDataString(PluginName));
+            //querySB.Append(Uri.EscapeDataString(PluginName));
 
-            if (!string.IsNullOrEmpty(PluginOptions))
-            {
-                querySB.Append("%3B"); // URI-escaped ';'
-                querySB.Append(Uri.EscapeDataString(PluginOptions));
-            }
+            //if (!string.IsNullOrEmpty(PluginOptions))
+            //{
+            //    querySB.Append("%3B"); // URI-escaped ';'
+            //    querySB.Append(Uri.EscapeDataString(PluginOptions));
+            //}
 
-            if (!string.IsNullOrEmpty(PluginVersion))
-            {
-                querySB.Append("&pluginVersion=");
-                querySB.Append(Uri.EscapeDataString(PluginVersion));
-            }
+            //if (!string.IsNullOrEmpty(PluginVersion))
+            //{
+            //    querySB.Append("&pluginVersion=");
+            //    querySB.Append(Uri.EscapeDataString(PluginVersion));
+            //}
 
-            if (!string.IsNullOrEmpty(PluginArguments))
-            {
-                querySB.Append("&pluginArguments=");
-                querySB.Append(Uri.EscapeDataString(PluginArguments));
-            }
+            //if (!string.IsNullOrEmpty(PluginArguments))
+            //{
+            //    querySB.Append("&pluginArguments=");
+            //    querySB.Append(Uri.EscapeDataString(PluginArguments));
+            //}
 
-            uriBuilder.Query = querySB.ToString();
+            //uriBuilder.Query = querySB.ToString();
         }
 
         return uriBuilder.Uri;

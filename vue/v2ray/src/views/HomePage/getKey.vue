@@ -85,7 +85,7 @@
               @click="getKey()"
               dark
             >
-              دریافت سرور 3 روزه رایگان
+              دریافت سرور 2 ساعته تستی
             </v-btn>
             <v-row v-else>
               <v-col cols="6"> </v-col>
@@ -96,13 +96,20 @@
         </v-list-item-content>
       </v-list-item>
       <v-card-actions>
-        <!-- <AddOrder ref="addOrderCom" /> -->
+        <AddOrder ref="addOrderCom" />
         <AddProblmeReport ref="addProblemReportCom" />
       </v-card-actions>
-      جهت خرید اشتراک یا پشتیبانی به این شماره پیام بدین
-      <v-col  md="6" sm="6">
-        <a large style="margin: auto" text color="success" href="tel:09123135143"
-          >09123135143</a>
+      پشتیبانی تلگرام :
+      <v-col md="6" sm="6">
+        <a
+          large
+          target="”_blank"
+          style="margin: auto"
+          text
+          color="success"
+          href="https://t.me/+GRPLkWQHXD5jNGZk"
+          >ورود به کانال</a
+        >
       </v-col>
       <v-card-subtitle class="pb-0">
         در صورت عدم رضایت بعد از ده روز در قسمت گزارش قطعی گزینه بازگشت وجه را
@@ -144,12 +151,12 @@
   <script>
 import request from "@/utils/request";
 import AddProblmeReport from "@/components/common/ProblemReport.vue";
-// import AddOrder from "@/components/Home/Order.vue";
+import AddOrder from "@/components/Home/Order.vue";
 
 export default {
   components: {
     AddProblmeReport,
-    // AddOrder,
+    AddOrder,
   },
   data() {
     return {
@@ -179,6 +186,7 @@ export default {
       down: "مشاهده",
       count: 1,
       userKeyDetails: {
+        password: "",
         expireDate: null,
       },
     };
@@ -230,7 +238,8 @@ export default {
     getUserKeyDetails() {
       request.get(`/sshKey/user-key-details`).then((response) => {
         var data = response.data.result;
-        this.userKeyDetails = data;
+        debugger;
+        this.userKeyDetails = data.result;
       });
     },
   },

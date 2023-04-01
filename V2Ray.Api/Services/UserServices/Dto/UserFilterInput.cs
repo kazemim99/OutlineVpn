@@ -24,7 +24,7 @@ namespace V2Ray.Api.Services.UserServices.Dto
         public bool? IsAdmin { get; set; }
 
         [DataMember(IsRequired = false)]
-        public string? Email { get;  set; }
+        public string? Mobile { get;  set; }
     }
 
     public class ReCaptchaResponse

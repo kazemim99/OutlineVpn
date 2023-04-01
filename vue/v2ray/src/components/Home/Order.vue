@@ -5,14 +5,19 @@
         <v-btn color="primary" dark v-bind="attrs" v-on="on"> تمدید </v-btn>
       </template>
       <v-card>
-        <v-card-title class="text-h5"> </v-card-title>
+        <v-card-title class="text-h5">  کارت به کارت</v-card-title>
 
         <v-card-text>
+          مبلغ 100 تومان به کارت زیر واریز کرده سپس شماره کارت خود را کارت وارد کرده و ارسال نمایید
+          <br/>
+          6219-8619-1061-8114
+          <br/>
+          مصطفی کاظمی
         </v-card-text>
         
 
         <v-form ref="form" v-model="valid" lazy-validation>
-          <!-- <v-container>
+          <v-container>
               <v-col sm="12" md="12">
                 <v-text-field
                   v-model="order.cardNumber"
@@ -23,7 +28,7 @@
                   required
                 ></v-text-field>
               </v-col>
-              <v-col sm="12" md="12">
+              <!-- <v-col sm="12" md="12">
                 <v-text-field
                   v-model="order.tranactionNumber"
                   label="َشماره تراکنش *"
@@ -31,9 +36,9 @@
                   autocomplete="false"
                   :rules="TransactionNumberRules"
                   required
-                ></v-text-field>
-              </v-col>
-          </v-container> -->
+                ></v-text-field> 
+              </v-col>-->
+          </v-container>
         </v-form>
         <v-card-actions>
           <v-spacer></v-spacer>

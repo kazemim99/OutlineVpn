@@ -140,6 +140,12 @@
              </summary>
             
         </member>
+        <member name="M:V2Ray.Api.Controllers.SSHKeyController.Recreate2(System.String)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
         <member name="M:V2Ray.Api.Controllers.SSHKeyController.ChangeState(System.Int32)">
              <summary>
              ویرایش یک کاربر 

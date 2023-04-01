@@ -54,19 +54,23 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task<LoginResultDto> Login(LoginDto input)
         {
-           //await RecaptchaResult(input.LoginToken);
 
             var user = await _db.Users.Include(new[] { "Roles.Role" })
-                 .FirstOrDefaultAsync(a => a.Email == input.Email);
-
+                .FirstOrDefaultAsync(a => a.Mobile == input.Mobile);
             if (user == null)
-                throw new ApiException(AppErrors.UserNotFound, 400);
+            {
+                await InsertAsync(new CreateUserInput
+                {
+                    Mobile = input.Mobile
+                });
+            }
+            //await RecaptchaResult(input.LoginToken);
 
             if (!user.Enable)
                 throw new ApiException(AppErrors.UserDeactive, 400);
 
-            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
-                throw new ApiException(AppErrors.WrongPassword);
+            //if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
+            //    throw new ApiException(AppErrors.WrongPassword);
 
             if (user.NeedConfirm)
             {
@@ -134,30 +138,39 @@ namespace V2Ray.Api.Services.UserServices
 
         public override async Task InsertAsync(CreateUserInput input)
         {
-           await  RecaptchaResult(input.LoginToken);
-            var user = await _db.Users.AnyAsync(a => a.Email == input.Email);
-            if (user)
-                throw new ApiException(AppErrors.UserAlreadyExists);
-
-            var map = _mapper.Map<CreateUserInput, User>(input);
-
-
-            map.Roles = new List<UserRole>();
-            if (input.IsAdmin)
+            try
             {
+
+
+                var user = await _db.Users.AnyAsync(a => a.Mobile == input.Mobile);
+                if (user)
+                    throw new ApiException(AppErrors.UserAlreadyExists);
+
+                var map = _mapper.Map<CreateUserInput, User>(input);
+
+
+                map.Roles = new List<UserRole>();
+                if (input.IsAdmin)
+                {
+                    map.Roles.Add(new UserRole
+                    {
+                        RoleId = _db.Roles.First(a => a.Title == Policies.Admin).Id
+                    });
+                }
                 map.Roles.Add(new UserRole
                 {
-                    RoleId = _db.Roles.First(a => a.Title == Policies.Admin).Id
+                    RoleId = _db.Roles.First(a => a.Title == Policies.User).Id
                 });
+                //map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
+                map.NeedConfirm = true;
+                await _db.AddAsync(map);
+                await _db.SaveChangesAsync();
             }
-            map.Roles.Add(new UserRole
+            catch (Exception ex)
             {
-                RoleId = _db.Roles.First(a => a.Title == Policies.User).Id
-            });
-            map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
-            map.NeedConfirm = true;
-            await _db.AddAsync(map);
-            await _db.SaveChangesAsync();
+
+                throw;
+            }
         }
 
         private async Task RecaptchaResult(string loginToken)
@@ -214,7 +227,7 @@ namespace V2Ray.Api.Services.UserServices
             }
             var googleReCaptchaResponse = JsonConvert.DeserializeObject<ReCaptchaResponse>(stringContent);
 
-            if (!recaptchaResponse.IsSuccessStatusCode  || !googleReCaptchaResponse.Success)
+            if (!recaptchaResponse.IsSuccessStatusCode || !googleReCaptchaResponse.Success)
 
             {
                 throw new ApiException("خطا در احراز هویت کپچا");
@@ -224,7 +237,7 @@ namespace V2Ray.Api.Services.UserServices
         public async Task ChangeState(int id)
         {
             var user = _db.Users.FirstOrDefault(a => a.Id == id);
-            
+
 
             var stateString = user.Enable ? "فعال" : "غیر فعال";
             user.Enable = !user.Enable;
@@ -236,8 +249,8 @@ namespace V2Ray.Api.Services.UserServices
         {
             var query = _db.Users.AsQueryable();
 
-            if (!filter.Email.IsNullOrEmpty())
-                query = query.Where(a => a.Email.Contains(filter.Email));
+            if (!filter.Mobile.IsNullOrEmpty())
+                query = query.Where(a => a.Mobile.Contains(filter.Mobile));
 
             if (filter.Enable != null)
                 query = query.Where(a => a.Enable == filter.Enable);
@@ -248,22 +261,30 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task<GetUserOutput> GetUserByMobile(string mobile)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == mobile);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Mobile == mobile);
             return _mapper.Map<GetUserOutput>(user);
         }
 
-        public async Task SendCode(string mobile)
+        public async Task SendCode(string mobile,string loginToken)
         {
+            await  RecaptchaResult(loginToken);
+            if(!_db.Users.Any(c=>c.Mobile == mobile)){
+                await InsertAsync(new CreateUserInput
+                {
+                    Mobile = mobile,
+                });
+            }
+          
             if (_otpService.Sandbox) return;
 
             var otpCode = _otpService.GetCode(mobile);
-            //await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode, destinationAddress = mobile });
+            await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode, destinationAddress = mobile });
         }
 
-        public async Task<LoginResultDto> VerifyCode(string code, string email)
+        public async Task<LoginResultDto> VerifyCode(string code, string mobile)
         {
-            _otpService.VerifyCode(email, code);
-            var user = await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Email == email);
+            _otpService.VerifyCode(mobile, code);
+            var user = await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Mobile == mobile);
             var response = new LoginResultDto
             {
                 JwtToken = new JwtToken()
@@ -285,7 +306,7 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task ChangePasswordAsync(string email, string password)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email == email);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Mobile == email);
 
             //user.Password = BCrypt.Net.BCrypt.HashPassword(password);
             _db.Update(user);
@@ -325,7 +346,7 @@ namespace V2Ray.Api.Services.UserServices
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userInfo.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, userInfo.Mobile),
                 new Claim("fullName", $"{userInfo.FirstName} {userInfo.LastName}"),
                 new Claim("UserId", userInfo.Id.ToString()),
                 new Claim("FreeAccount", userInfo.UsedFreeAccount.ToString()),

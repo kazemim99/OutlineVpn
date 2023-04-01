@@ -48,7 +48,29 @@ namespace V2Ray.Api.Entity.Configurations
         public void Configure(EntityTypeBuilder<SSHKey> builder)
         {
             builder.HasIndex(c => c.UserName).IsUnique();
-            builder.HasOne(a => a.V2Server).WithMany(c=>c.SSHKeys).HasForeignKey(b=>b.ServerId).IsRequired(false);
+            builder.HasOne(a => a.V2Server).WithMany(c => c.SSHKeys).HasForeignKey(b => b.ServerId).IsRequired(false);
+        }
+    }
+
+    public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
+    {
+        public void Configure(EntityTypeBuilder<Ticket> builder)
+        {
+            builder.HasMany(t => t.Messages)
+                .WithOne(m => m.Ticket)
+                .HasForeignKey(m => m.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+
+    public class MessageConfiguration : IEntityTypeConfiguration<Message>
+    {
+        public void Configure(EntityTypeBuilder<Message> builder)
+        {
+            builder.HasMany(m => m.Attachments)
+                .WithOne(a => a.Message)
+                .HasForeignKey(a => a.MessageId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
     public class UserConfig : IEntityTypeConfiguration<User>
@@ -57,6 +79,17 @@ namespace V2Ray.Api.Entity.Configurations
         {
 
             builder.HasQueryFilter(a => !a.IsDeleted);
+            builder.Property(a => a.Password).IsRequired(false);
+            builder.Property(a => a.Email).IsRequired(false);
+        }
+    }
+
+    public class V2ServerConfig : IEntityTypeConfiguration<V2Server>
+    {
+        public void Configure(EntityTypeBuilder<V2Server> builder)
+        {
+            builder.HasQueryFilter(a => !a.IsDeleted);
+            builder.Property(a => a.Capacity).HasDefaultValue(50);
         }
     }
 }

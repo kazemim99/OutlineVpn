@@ -11,7 +11,7 @@ namespace V2Ray.Api.Extensions
         {
             var phones = phone.TrimStart(new[] { '0' });
 
-            return Regex.IsMatch(phones, @"^9[0-9]{9}$");
+            return Regex.IsMatch(phones, @"^(09|9)+([0-9]){9}$");
         }
         public static string FirstCharToUpper(this string input) =>
             input switch
