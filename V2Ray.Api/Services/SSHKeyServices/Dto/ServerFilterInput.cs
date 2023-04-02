@@ -5,6 +5,13 @@ using V2Ray.Api.Extensions;
 
 namespace V2Ray.Api.Services.SSHKeyServices.Dto
 {
+    public class SetPasswordModel
+    {
+        [Required]
+        public string UserName { get; set; }
+        [Required]
+        public string Password { get; set; }
+    }
     public class SSHKeyFilterInput : PaginationModelInput
     {
         public string? UserName { get; set; }

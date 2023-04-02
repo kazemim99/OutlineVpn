@@ -29,7 +29,17 @@ namespace V2Ray.Api.Controllers
                 ItemsPerPage = 100
             });
             return new ApiResponse(result);
-        } 
+        }
+
+
+        [HttpPost("set-user")]
+        [Authorize]
+        public async Task<ApiResponse> SetUser([FromBody] SetPasswordModel model)
+        {
+            
+            await _service.SetUser(UserId, model);
+            return new ApiResponse();
+        }
 
         [HttpGet("delete-expired")]
         [Authorize]
@@ -47,8 +57,6 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] SSHKeyFilterInput filter)
         {
-            //filter.SSHKeyId = SSHKeyId;
-            //filter.IsAdmin = IsAdmin;~
             try
             {
                 filter.SortDesc = true;
@@ -58,9 +66,7 @@ namespace V2Ray.Api.Controllers
 
             catch (Exception ex)
             {
-
-                throw ;
-
+                throw;
             }
         }
 
@@ -162,7 +168,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> KeyDetails()
         {
-            var details =await _service.GetKeyDetails(UserId);
+            var details = await _service.GetKeyDetails(UserId);
             return new ApiResponse(details);
         }
 

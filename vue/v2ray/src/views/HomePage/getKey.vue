@@ -5,6 +5,10 @@
 
       <v-card-subtitle class="pb-0">
         این اطلاعات در قسمت آموزش که توضیح داده شده باید وارد نمایید
+        <br />
+        در صورتی که قبلا اطلاعات سرور را دریافت کرده اید دکمه زیر ر ابزنید
+        <br />
+        <Userpass ref="userPassCom" />
       </v-card-subtitle>
 
       <v-list-item three-line class="mt-4">
@@ -75,6 +79,9 @@
                 >
               </v-row>
             </v-col>
+            <v-col md="6" sm="6">
+              <v-btn href="https://blog.iranv2ray.com/%d8%a2%d9%85%d9%88%d8%b2%d8%b4-%d8%a7%d8%aa%d8%b5%d8%a7%d9%84/">آموزش استفاده</v-btn>
+            </v-col>
           </v-row>
           <div class="text-center mt-10">
             <v-btn
@@ -111,39 +118,13 @@
           >ورود به کانال</a
         >
       </v-col>
+
       <v-card-subtitle class="pb-0">
         در صورت عدم رضایت بعد از ده روز در قسمت گزارش قطعی گزینه بازگشت وجه را
         بزنید تا مبلغ به حسابی که با آن پرداخت کرده ایید واریز شود
       </v-card-subtitle>
     </v-card>
-    <v-row>
-      <v-col
-        v-for="card in cards"
-        class="mt-10 p-10"
-        :key="card.id"
-        cols="12"
-        sm="4"
-        md="4"
-      >
-        <v-hover v-slot="{ hover }">
-          <v-card
-            :href="card.url"
-            :elevation="hover ? 16 : 2"
-            :class="{ 'on-hover': hover }"
-            style="background-color: #00b894; cursor: pointer"
-          >
-            <v-img :src="card.image" height="150"> </v-img>
-            <v-card-actions>
-              <span
-                style="text-align: center"
-                class="text-h6 white--text d-inline-block"
-                v-text="card.name"
-              ></span>
-            </v-card-actions>
-          </v-card>
-        </v-hover>
-      </v-col>
-    </v-row>
+    <v-row> </v-row>
     <div></div>
   </div>
 </template>
@@ -152,34 +133,16 @@
 import request from "@/utils/request";
 import AddProblmeReport from "@/components/common/ProblemReport.vue";
 import AddOrder from "@/components/Home/Order.vue";
+import Userpass from "@/components/Home/UserPass.vue";
 
 export default {
   components: {
     AddProblmeReport,
     AddOrder,
+    Userpass,
   },
   data() {
     return {
-      cards: [
-        {
-          fileName: "",
-          name: "آموزش استفاده اندروید و آیفون",
-          url: "/dashboard/phone-toturial",
-          image: "/phone.jpg",
-        },
-
-        {
-          fileName: "netmode.apk",
-          name: "آموزش استفاده ویندوز",
-          url: "/dashboard/windows-toturial",
-          image: "/windows.jpg",
-        },
-        {
-          name: "اموزش استفاده لینوکس",
-          url: "/dashboard/linux-toturial",
-          image: "/linux.jpg",
-        },
-      ],
       loading: false,
       loading1: false,
       keys: [],
@@ -238,8 +201,7 @@ export default {
     getUserKeyDetails() {
       request.get(`/sshKey/user-key-details`).then((response) => {
         var data = response.data.result;
-        debugger;
-        this.userKeyDetails = data.result;
+        this.userKeyDetails = data;
       });
     },
   },

@@ -41,15 +41,14 @@ export default {
       messageHistory: [],
     };
   },
-  mounted(){
-
+  mounted() {
+    this.tickets();
   },
   methods: {
     async tickets() {
       await request.get(`/user-tickets/`).then((response) => {
         var data = response.data.result;
-          this.messageHistory = data.result;
-          
+        this.messageHistory = data.result;
       });
     },
     async sendMessage() {
