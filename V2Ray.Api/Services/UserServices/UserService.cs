@@ -265,16 +265,17 @@ namespace V2Ray.Api.Services.UserServices
             return _mapper.Map<GetUserOutput>(user);
         }
 
-        public async Task SendCode(string mobile,string loginToken)
+        public async Task SendCode(string mobile, string loginToken)
         {
-            await  RecaptchaResult(loginToken);
-            if(!_db.Users.Any(c=>c.Mobile == mobile)){
+            await RecaptchaResult(loginToken);
+            if (!_db.Users.Any(c => c.Mobile == mobile))
+            {
                 await InsertAsync(new CreateUserInput
                 {
                     Mobile = mobile,
                 });
             }
-          
+
             if (_otpService.Sandbox) return;
 
             var otpCode = _otpService.GetCode(mobile);
