@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
 using V2Ray.Api.Entity;
 using V2Ray.Api.Extensions;
-using V2Ray.Api.Services.MessageServices.Dto;
 using V2Ray.Api.Services.TicketServices.Dto;
 
-namespace V2Ray.Api.Services.MessageServices.Mapping
+namespace V2Ray.Api.Services.TicketServices.Mapping
 {
     public class MessageMapping : Profile
     {

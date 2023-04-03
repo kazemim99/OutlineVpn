@@ -1,7 +1,6 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Mvc;
-using V2Ray.Api.Services.MessageServices;
-using V2Ray.Api.Services.MessageServices.Dto;
+using V2Ray.Api.Services.TicketServices;
 using V2Ray.Api.Services.TicketServices.Dto;
 
 namespace V2Ray.Api.Controllers

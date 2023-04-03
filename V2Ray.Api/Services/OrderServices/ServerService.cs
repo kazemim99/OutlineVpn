@@ -11,32 +11,27 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
-using V2Ray.Api.Services.V2Keys.Dto;
-using Renci.SshNet;
-using System.Diagnostics;
-using V2Ray.Api.Services.TicketServices.Dto;
+using V2Ray.Api.Services.V2Keys;
+using V2Ray.Api.Services.OrderServices.Dto;
 
-namespace V2Ray.Api.Services.TicketServices
+namespace V2Ray.Api.Services.OrderServices
 {
-    public class MessageService : BaseService<Message,
+    public class OrderService : BaseService<Order,
         int,
-        UpdateMessageInput,
-        CreateMessageInput,
-        GetMessageOutput,
-        GetMessageListOutput,
-        MessageFilterInput>,
-        IMessageService
+        UpdateOrderInput,
+        CreateOrderInput,
+        GetOrderOutput,
+        GetOrderListOutput,
+        OrderFilterInput>,
+        IOrderService
     {
         private readonly DB _db;
 
-
-
         private readonly IMapper _mapper;
-        public MessageService(IMapper mapper, DB db) : base(mapper, db)
+        public OrderService(DB db, IMapper mapper) : base(mapper, db)
         {
-            _db = db;
             _mapper = mapper;
-
+            _db = db;
         }
 
     }

@@ -55,11 +55,11 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
-        private void DeleteUserFromServer(List<SSHKey> users, string ip)
+        private void DeleteUserFromServer(List<SSHKey> users, string url)
         {
             string str = "";
             var i = 0;
-            var connectionInfo = GetConnectionInfo(ip, 1027, "!Q@W#E$R5t6y7u8i", "root");
+            var connectionInfo = GetConnectionInfo(url, 1027, "!Q@W#E$R5t6y7u8i", "root");
             using var ssh = new SshClient(connectionInfo);
             Connect(ssh);
             foreach (var item in users)
@@ -95,7 +95,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             ssh.Disconnect();
         }
-        private void AddUserFromServer(List<SSHKey> users, string ip)
+        private void AddUserFromServer(List<SSHKey> users, string url)
         {
             string str = "";
             var i = 0;
@@ -111,7 +111,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
 
 
-            var connectionInfo = new PasswordConnectionInfo(ip, 1027, "root", "!Q@W#E$R5t6y7u8i");
+            var connectionInfo = new PasswordConnectionInfo(url, 1027, "root", "!Q@W#E$R5t6y7u8i");
             var ssh = new SshClient(connectionInfo);
             Connect(ssh);
 
@@ -184,32 +184,32 @@ namespace V2Ray.Api.Services.SSHKeyServices
         public async Task DeleteFromVPS(string username, V2Server server)
         {
 
-            foreach (var ip in server.IP.Split(','))
+            //foreach (var ip in server.IP.Split(','))
+            //{
+            try
             {
-                try
+                var connectionInfo = GetConnectionInfo(server.Url, server.Port, server.Password, server.UserName);
+                using (var ssh = new SshClient(connectionInfo))
                 {
-                    var connectionInfo = GetConnectionInfo(ip, server.Port, server.Password, server.UserName);
-                    using (var ssh = new SshClient(connectionInfo))
-                    {
-                        Connect(ssh);
-                        var com1 = $"killall -u {username}";
-                        var command = ssh.CreateCommand(com1);
-                        command.Execute();
+                    Connect(ssh);
+                    var com1 = $"killall -u {username}";
+                    var command = ssh.CreateCommand(com1);
+                    command.Execute();
 
-                        var com2 = $"deluser --remove-home -f {username}";
-                        var command2 = ssh.CreateCommand(com2);
-                        command2.Execute();
+                    var com2 = $"deluser --remove-home -f {username}";
+                    var command2 = ssh.CreateCommand(com2);
+                    command2.Execute();
 
-                        ssh.Disconnect();
-                    }
+                    ssh.Disconnect();
                 }
-                catch (Exception)
-                {
-
-                    throw new ApiException($"اتصال به این سرور برقرار نشد {ip}");
-                }
-
             }
+            catch (Exception)
+            {
+
+                throw new ApiException($"اتصال به این سرور برقرار نشد {server.Url}");
+            }
+
+            //}
 
         }
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
@@ -316,27 +316,27 @@ namespace V2Ray.Api.Services.SSHKeyServices
             try
             {
                 var server = _db.V2Servers.First(a => a.Id == input.ServerId);
-                foreach (var ip in server.IP.Split(','))
+                //foreach (var ip in server.IP.Split(','))
+                //{
+                try
                 {
-                    try
-                    {
-                        var connectionInfo = GetConnectionInfo(ip, server.Port, server.Password, server.UserName);
+                    var connectionInfo = GetConnectionInfo(server.Url, server.Port, server.Password, server.UserName);
 
-                        using var ssh = new SshClient(connectionInfo);
-                        Connect(ssh);
+                    using var ssh = new SshClient(connectionInfo);
+                    Connect(ssh);
 
-                        var comm = $"useradd -m -p  $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
-                        var command = ssh.CreateCommand(comm);
-                        command.Execute();
+                    var comm = $"useradd -m -p  $(openssl passwd -1 {input.Password}) -s /bin/bash {input.UserName}";
+                    var command = ssh.CreateCommand(comm);
+                    command.Execute();
 
-                        ssh.Disconnect();
-                    }
-                    catch (Exception)
-                    {
-                        throw new ApiException($"اتصال به این سرور برقرار نشد {ip}");
-                    }
-
+                    ssh.Disconnect();
                 }
+                catch (Exception)
+                {
+                    throw new ApiException($"اتصال به این سرور برقرار نشد {server.Url}");
+                }
+
+                //}
 
 
             }
@@ -346,9 +346,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
         }
 
-        public PasswordConnectionInfo GetConnectionInfo(string ip, int port, string password, string userName)
+        public PasswordConnectionInfo GetConnectionInfo(string url, int port, string password, string userName)
         {
-            var result = new PasswordConnectionInfo(ip, port, userName, password);
+            var result = new PasswordConnectionInfo(url, port, userName, password);
             return result;
         }
 
@@ -486,7 +486,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
             key.UserId = userId;
             _db.Update(key);
             _db.SaveChanges();
-
         }
     }
 }
