@@ -13,31 +13,32 @@
     >
       <template v-slot:item.statuses="{ item }">
         <v-select
-          v-model="stateId"
-          @change="changeState(item.id, item.email)"
+          @change="changeState(item.id, $event)"
           :items="item.statuses"
           item-value="id"
           item-text="text"
         ></v-select>
       </template>
 
-      <template v-slot:header.email="{ header }">
+      <template v-slot:header.keyUserName="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="email ? 'primary' : ''">mdi-filter</v-icon>
+              <v-icon small :color="keyUserName ? 'primary' : ''"
+                >mdi-filter</v-icon
+              >
             </v-btn>
           </template>
           <div style="background-color: white; width: 280px">
             <v-text-field
-              v-model="email"
+              v-model="keyUserName"
               class="pa-4"
               type="text"
               label="جستجو"
             ></v-text-field>
             <v-btn
-              @click="email = ''"
+              @click="keyUserName = ''"
               small
               text
               color="primary"
@@ -91,11 +92,12 @@ export default {
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
-        { text: "ایمیل", value: "email", sortable: true },
-        { text: "تاریخ واریز", value: "createAt", sortable: false },
+        { text: "کاربر", value: "creator", sortable: false },
+        { text: "تاریخ ایجاد", value: "createdAt", sortable: true },
         { text: "شماره کارت", value: "cardNumber", sortable: false },
-        { text: "شماره تراکنش", value: "tranactionNumber", sortable: false },
-        { text: "وضعیت", value: "statusString", sortable: false },
+        { text: "مبلغ", value: "amount", sortable: false },
+        { text: "کلید", value: "keyUserName", sortable: false },
+        { text: "وضعیت", value: "status", sortable: true },
       ],
     };
   },
@@ -130,10 +132,11 @@ export default {
   },
 
   methods: {
-    async changeState(id, email) {
+    async changeState(id, stateId) {
+      debugger;
       this.switchLoading = "warning";
       await request
-        .put(`/order/change-state/${id}/${email}/${this.stateId}`)
+        .put(`/order/change-state/${id}/${stateId}`)
         .then(() => {
           this.getOrders();
         })
@@ -186,7 +189,8 @@ export default {
     async getOrders() {
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
       this.loading = true;
-
+      // this.options.sortDesc = true;
+      // this.options.sortBy = "createdAt";
       const filterQuery = Object.keys(this.options)
         .filter(
           (x) => this.options[x] !== null && this.options[x] !== undefined

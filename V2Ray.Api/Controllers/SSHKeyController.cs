@@ -79,6 +79,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateSSHKeyInput input)
         {
+            input.UserId = UserId;
             await _service.UpdateAsync(id, input);
 
             return new ApiResponse();
@@ -176,6 +177,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Create([FromBody] CreateSSHKeyInput input)
         {
+            input.UserId = UserId;
             await _service.GenerateSshFromAdmin(input);
             return new ApiResponse();
         }
@@ -189,7 +191,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-            var result = await _service.GetById(id, new[] { "V2Server" });
+            var result = await _service.GetById(id, new[] { "V2Server", "Orders" });
 
             return new ApiResponse(result);
         }

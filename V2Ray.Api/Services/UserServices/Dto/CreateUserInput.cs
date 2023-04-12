@@ -5,6 +5,12 @@ using System.Runtime.Serialization;
 
 namespace V2Ray.Api.Services.UserServices.Dto
 {
+    public class GetCodeInput
+    {
+        public string Mobile { get; set; }
+        public string LoginToken { get; set; }
+
+    }
     public class CreateUserInput
     {
         [DataMember]
@@ -28,8 +34,8 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
         public bool Enable { get; set; }
 
-        [Required]
-        public string LoginToken { get; set; }
+        //[Required]
+        //public string LoginToken { get; set; }
 
     }
 }

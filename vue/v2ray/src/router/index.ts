@@ -1,56 +1,56 @@
 import { getToken } from "@/utils/cookies";
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
-import Dashboard from '@/layout/Dashboard.vue'
-import MainMenu from '@/layout/MainMenu.vue'
+import Dashboard from "@/layout/Dashboard.vue";
+import MainMenu from "@/layout/MainMenu.vue";
 import store from "@/store";
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
-    path: '/dashboard/',
-    name: 'Dashboard',
+    path: "/dashboard/",
+    name: "Dashboard",
     component: Dashboard,
-    redirect: '/buy-vpn',
+    redirect: "/buy-vpn",
     meta: { requireAuth: true },
     children: [
       {
-        path: 'buy-vpn',
-        name: 'BuyKey',
-        component: () => import('@/views/HomePage/getKey.vue'),
-        meta: { requireAuth: true }
+        path: "buy-vpn",
+        name: "BuyKey",
+        component: () => import("@/views/HomePage/getKey.vue"),
+        meta: { requireAuth: true },
       },
 
       {
-        path: 'swaps',
-        name: 'Swap',
-        component: () => import('@/views/Swaps/swap.vue'),
-        meta: { requireAuth: true }
+        path: "swaps",
+        name: "Swap",
+        component: () => import("@/views/Swaps/swap.vue"),
+        meta: { requireAuth: true },
       },
       {
-        path: 'users',
-        name: 'User',
-        component: () => import('@/views/User/Users.vue'),
-        meta: { requireAuth: true }
+        path: "users",
+        name: "User",
+        component: () => import("@/views/User/Users.vue"),
+        meta: { requireAuth: true },
       },
       {
-        path: 'tickets',
-        name: 'CreateTicket',
-        component: () => import('@/views/Ticket/create.vue'),
-        meta: { requireAuth: true }
+        path: "tickets",
+        name: "CreateTicket",
+        component: () => import("@/views/Ticket/create.vue"),
+        meta: { requireAuth: true },
       },
       {
-        path: 'manage-tickets',
-        name: 'ManageTickets',
-        component: () => import('@/views/Ticket/tickets.vue'),
-        meta: { requireAuth: true }
+        path: "manage-tickets",
+        name: "ManageTickets",
+        component: () => import("@/views/Ticket/tickets.vue"),
+        meta: { requireAuth: true },
       },
       {
-        path: 'manage-plans',
-        name: 'ManagPlans',
-        component: () => import('@/views/Plans/ManagePlans.vue'),
-        meta: { requireAuth: true }
+        path: "manage-plans",
+        name: "ManagPlans",
+        component: () => import("@/views/Plans/ManagePlans.vue"),
+        meta: { requireAuth: true },
       },
       {
         path: "problem-reports",
@@ -63,7 +63,6 @@ const routes: Array<RouteConfig> = [
         component: () => import("@/views/Orders/index.vue"),
       },
 
-     
       {
         path: "sshkeys",
         name: "SSHKeys",
@@ -75,9 +74,15 @@ const routes: Array<RouteConfig> = [
         path: "profile",
         name: "Profile",
         component: () => import("@/views/User/Profile.vue"),
-        meta: { requireAuth: true }
+        meta: { requireAuth: true },
       },
 
+      {
+        path: "linux-toturial",
+        name: "Linux",
+
+        component: () => import("@/views/HomePage/Linux.vue"),
+      },
       // {
       //   path: "checkout/:id",
       //   name: "Checkout",
@@ -96,7 +101,7 @@ const routes: Array<RouteConfig> = [
         path: "v2servers",
         name: "V2Servers",
         component: () => import("@/views/V2Servers/index.vue"),
-        meta: { requireAuth: true }
+        meta: { requireAuth: true },
       },
       // {
       //   path: "v2Keys",
@@ -104,28 +109,35 @@ const routes: Array<RouteConfig> = [
       //   component: () => import("@/views/V2Keys/index.vue"),
       //   meta: { requireAuth: true }
       // },
-
-    ]
+    ],
   },
   {
-
-    path: '/',
-    name: 'Home',
-    redirect: '/dashboard/buy-vpn',
-    component: () => import('@/views/Home.vue'),
+    path: "/",
+    name: "Home",
+    redirect: "/dashboard/buy-vpn",
+    component: () => import("@/views/Home.vue"),
     meta: {
-      title: 'فیلتر شکن - فروش فیلتر شکن - فیلتر شکن ایفون , اندروید , کامپیوتر , ویندوز',
+      title:
+        "فیلتر شکن - فروش فیلتر شکن - فیلتر شکن ایفون , اندروید , کامپیوتر , ویندوز",
       metaTags: [
         {
-          name: 'description',
-          content: 'فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته'
+          name: "description",
+          content:
+            "فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته",
         },
         {
-          property: 'og:description',
-          content: 'فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته'
-        }
-      ]
-    }
+          property: "og:description",
+          content:
+            "فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته",
+        },
+      ],
+    },
+  },
+
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("@/views/Login/index.vue"),
   },
   {
     path: "/phone-toturial",
@@ -135,20 +147,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/windows-toturial",
     name: "Windows",
-
     component: () => import("@/views/HomePage/Windows.vue"),
-  },
-  {
-    path: "/linux-toturial",
-    name: "Linux",
-
-    component: () => import("@/views/HomePage/Linux.vue"),
-  },
-  {
-    path: "/login",
-    name: "Login",
-    component: () => import("@/views/Login/index.vue"),
-
   },
   {
     path: "/get-code",
@@ -164,7 +163,7 @@ const routes: Array<RouteConfig> = [
     path: "/change-password",
     name: "ChangePassword",
     component: () => import("@/views/Login/change-password.vue"),
-  }
+  },
 ];
 
 const router = new VueRouter({
@@ -181,7 +180,7 @@ router.beforeEach((to, from, next) => {
   // if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
 
   if (to.matched.some((record) => record.meta.requireAuth) && !isLoggedIn) {
-    next({ path: '/login', query: { returnUrl: to.path } });
+    next({ path: "/login", query: { returnUrl: to.path } });
   }
 
   next();

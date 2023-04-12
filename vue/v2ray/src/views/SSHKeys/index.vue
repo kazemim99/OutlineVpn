@@ -1,7 +1,17 @@
 <template>
   <div>
     <Breadcrump :crumbs="crumbs" />
-
+    <v-col class="d-flex" cols="6" sm="6">
+      <v-select
+        v-model="serverId"
+        :items="servers"
+        item-value="id"
+        item-text="titleCount"
+        label="ُسرور"
+        @change="serverKeys()"
+        solo
+      ></v-select>
+    </v-col>
     <v-data-table
       :headers="headers"
       :items="sshKeys"
@@ -140,8 +150,10 @@ export default {
       totalSSHKeys: 0,
       switchLoading: null,
       pages: 0,
+      servers: [],
+      serverId: 0,
       expired: false,
-      serverid: 0,
+      serverid: null,
       isActive: null,
       userName: null,
       sshKeys: [],
@@ -149,6 +161,7 @@ export default {
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
+        { text: "زمان ایجاد / تمدید", value: "chargeDate", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
         { text: "نام ", value: "name", sortable: true },
         { text: "سرور", value: "serverName", sortable: false },
@@ -177,14 +190,29 @@ export default {
     },
   },
   created() {
+    this.getServers();
     this.getSSHKeys();
   },
 
   methods: {
+    async getServers() {
+      await request.get(`/v2Server/all-servers`).then((response) => {
+        var data = response.data.result;
+        this.servers = data.result;
+      });
+    },
+
     expireKey() {
       this.options.page = 1;
       this.options.expired = this.expired;
       this.options.sortBy = "enable";
+      this.getSSHKeys();
+    },
+
+    serverKeys() {
+      this.options.page = 1;
+      this.options.serverid = this.serverId;
+      this.options.sortBy = "createdAt";
       this.getSSHKeys();
     },
     async editItem(item) {

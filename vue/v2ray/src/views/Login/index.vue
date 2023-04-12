@@ -40,7 +40,7 @@
 
                   <v-text-field
                     id="شماره موبایل"
-                    autocomplete="off"
+                    autocomplete="on"
                     v-model="loginForm.mobile"
                     prepend-icon="mdi-lock"
                     name="mobile"
@@ -49,12 +49,12 @@
                   ></v-text-field>
                   <v-row>
                     <div class="mt-3">
-                      <VueRecaptcha
+                      <!-- <VueRecaptcha
                         :sitekey="siteKey"
                         :load-recaptcha-script="true"
                         @verify="handleSuccess"
                         @error="handleError"
-                      ></VueRecaptcha>
+                      ></VueRecaptcha> -->
                     </div>
                   </v-row>
                   <v-row>
@@ -105,13 +105,13 @@
 
 <script>
 import { UserModule } from "@/store/modules/user";
-import { VueRecaptcha } from "vue-recaptcha";
+// import { VueRecaptcha } from "vue-recaptcha";
 import Vue from "vue";
 
 export default {
   name: "Login",
   components: {
-    VueRecaptcha
+    // VueRecaptcha,
   },
   metaInfo: {
     meta: [
@@ -133,7 +133,7 @@ export default {
     register: false,
     loginForm: {
       mobile: "",
-      loginToken:"",
+      loginToken: "",
     },
     userNameRules: [
       (v) => !!v || "نام کاربری الزامی میباشد",
@@ -163,6 +163,7 @@ export default {
 
       this.loading = true;
       try {
+        this.loginForm.loginToken = "12";
         await UserModule.Register(this.loginForm);
 
         this.loading = false;
@@ -172,15 +173,14 @@ export default {
       }
     },
     async handleLogin() {
-      if (this.captchaHasError) return;
+      // if (this.captchaHasError) return;
       this.validationForm();
       if (!this.valid) return;
 
       this.loading = true;
       try {
-        debugger;
         await UserModule.GetCode(this.loginForm);
-          this.$router.push("/verify-code/");
+        this.$router.push("/verify-code/");
         this.loading = false;
       } catch (error) {
         this.loading = false;

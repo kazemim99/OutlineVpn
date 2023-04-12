@@ -53,8 +53,9 @@ namespace V2Ray.Api.Entity
         public bool IsActive { get;  set; }
         public List<SSHKey> SSHKeys { get; set; }
     }
-    public class SSHKey:AuditEntity<int>
+    public class SSHKey: FullAuditEntity<int>
     {
+        public DateTime ChargeDate { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public DateTime ExpireDate { get; set; }
@@ -65,6 +66,7 @@ namespace V2Ray.Api.Entity
         public int? UserId { get; set; }
         public V2Server V2Server { get; set; }
         public User User { get; set; }
+        public List<Order> Orders { get; set; }
 
     }
     public class V2Key : FullAuditEntity<int>, ISoftDelete

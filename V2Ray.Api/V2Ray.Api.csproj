@@ -64,22 +64,6 @@
 
 	<ItemGroup>
 
-		<Content Include="Resources\**">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-
-		<Content Remove="Resources\NapsternetV.apk" />
-
-		<Content Remove="Resources\NetModSyna-VPNClient_1.11.3.apk" />
-
-		<Content Remove="Resources\NetMod_x86%28Latest%29.exe" />
-
-		<EmbeddedResource Include="Resources\NapsternetV.apk" />
-
-		<EmbeddedResource Include="Resources\NetModSyna-VPNClient_1.11.3.apk" />
-
-		<EmbeddedResource Include="Resources\NetMod_x86(Latest).exe" />
-
 		<Content Update="appsettings.Development.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

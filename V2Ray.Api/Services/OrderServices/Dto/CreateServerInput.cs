@@ -9,6 +9,9 @@ namespace V2Ray.Api.Services.OrderServices.Dto
     {
         [JsonIgnore]
         public int UserId { get; set; }
+
+        [JsonIgnore]
+        public int SSHKeyId { get; set; }
         [Required]
         public string CardNumber { get; set; }
     }

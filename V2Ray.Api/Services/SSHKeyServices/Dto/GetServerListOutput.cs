@@ -13,5 +13,6 @@
         {
             get; set;
         }
+        public string ChargeDate { get; set; }
     }
 }

@@ -16,6 +16,10 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
     {
         public string? UserName { get; set; }
         public bool Expired { get;  set; }
+        public string? Name { get; set; }
+
+        public int? ServerId { get; set; }
+
     }
 
 }

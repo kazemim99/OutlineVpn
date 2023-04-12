@@ -435,7 +435,7 @@
 //                //{
 //                //    throw new ApiException("شما باید مبلغ ترافیک را پرداخت نمایید");
 //                //}
-//                if (user.V2Keys.Any(c => c.ExpireDate >= DateTime.Now.AddHours(2).ToTimeStamp()))
+//                if (user.V2Keys.Any(c => c.ExpireDate >= DateTime.UtcNow.AddHours(2).ToTimeStamp()))
 //                {
 //                    throw new ApiException("اعتبار قبلی شما به پایان نرسیده");
 //                }
@@ -457,7 +457,7 @@
 //                if (user.V2Keys.Any())
 //                {
 //                    var getKey = user.V2Keys.First();
-//                    await UpdateKey(getKey.Id, key.Traffic, DateTime.Now.AddDays(7), true);
+//                    await UpdateKey(getKey.Id, key.Traffic, DateTime.UtcNow.AddDays(7), true);
 //                }
 
 //                await InsertAsync(key);

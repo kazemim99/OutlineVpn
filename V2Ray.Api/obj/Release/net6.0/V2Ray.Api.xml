@@ -32,7 +32,7 @@
             <param name="input"></param>
             <returns></returns>
         </member>
-        <member name="M:V2Ray.Api.Controllers.AuthenticationController.GetCode(System.String)">
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.GetCode(V2Ray.Api.Services.UserServices.Dto.GetCodeInput)">
             <summary>
             دریافت کد تایید از طریق پیامک
             </summary>
@@ -92,6 +92,24 @@
             
              
         </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.Update(System.Int32,V2Ray.Api.Services.OrderServices.Dto.UpdateOrderInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
         <member name="M:V2Ray.Api.Controllers.PlanController.Update(System.Int32,V2Ray.Api.Services.PlanServices.Dto.UpdatePlanInput)">
              <summary>
              ویرایش یک کاربر 
@@ -105,6 +123,30 @@
             
         </member>
         <member name="M:V2Ray.Api.Controllers.PlanController.Delete(System.Int32)">
+             <summary>
+             ویرایش پروفایل یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Update(System.Int32,V2Ray.Api.Services.ProblemReportServices.Dto.UpdateProblemReportInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.SendAnswer(System.Int32,V2Ray.Api.Services.ProblemReportServices.Dto.SendAnswerInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Get(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.ProblemReportController.Delete(System.Int32)">
              <summary>
              ویرایش پروفایل یک کاربر
              </summary>
@@ -141,6 +183,12 @@
             
         </member>
         <member name="M:V2Ray.Api.Controllers.SSHKeyController.Recreate2(System.String)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.SSHKeyController.Adjust(System.Int32)">
              <summary>
              ویرایش یک کاربر 
              </summary>

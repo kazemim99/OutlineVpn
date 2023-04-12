@@ -79,9 +79,12 @@
                 >
               </v-row>
             </v-col>
-            <v-col md="6" sm="6">
-              <v-btn href="https://blog.iranv2ray.com/%d8%a2%d9%85%d9%88%d8%b2%d8%b4-%d8%a7%d8%aa%d8%b5%d8%a7%d9%84/">آموزش استفاده</v-btn>
-            </v-col>
+            <!-- <v-col md="6" sm="6">
+              <v-btn
+                href="https://blog.iranv2ray.com/%d8%a2%d9%85%d9%88%d8%b2%d8%b4-%d8%a7%d8%aa%d8%b5%d8%a7%d9%84/"
+                >آموزش استفاده</v-btn
+              >
+            </v-col> -->
           </v-row>
           <div class="text-center mt-10">
             <v-btn
@@ -124,7 +127,35 @@
         بزنید تا مبلغ به حسابی که با آن پرداخت کرده ایید واریز شود
       </v-card-subtitle>
     </v-card>
-    <v-row> </v-row>
+    <v-row>
+      <v-row>
+        <v-col
+          v-for="card in cards"
+          class="mt-10 p-10"
+          :key="card.id"
+          sm="12"
+          md="6"
+        >
+          <v-hover v-slot="{ hover }">
+            <v-card
+              :href="card.url"
+              :elevation="hover ? 16 : 2"
+              :class="{ 'on-hover': hover }"
+              style="background-color: #00b894; cursor: pointer"
+            >
+              <v-img :src="card.image" width="350" contain> </v-img>
+              <v-card-actions>
+                <span
+                  style="text-align: center"
+                  class="text-h6 white--text d-inline-block"
+                  v-text="card.name"
+                ></span>
+              </v-card-actions>
+            </v-card>
+          </v-hover>
+        </v-col>
+      </v-row>
+    </v-row>
     <div></div>
   </div>
 </template>
@@ -134,6 +165,7 @@ import request from "@/utils/request";
 import AddProblmeReport from "@/components/common/ProblemReport.vue";
 import AddOrder from "@/components/Home/Order.vue";
 import Userpass from "@/components/Home/UserPass.vue";
+import Vue from "vue";
 
 export default {
   components: {
@@ -143,6 +175,21 @@ export default {
   },
   data() {
     return {
+      cards: [
+        {
+          fileName: "",
+          name: "آموزش استفاده اندروید و آیفون",
+          url: "/dashboard/phone-toturial",
+          image: "/phone.jpg",
+        },
+
+        {
+          fileName: "netmode.apk",
+          name: "آموزش استفاده ویندوز",
+          url: "/dashboard/windows-toturial",
+          image: "/windows.jpg",
+        },
+      ],
       loading: false,
       loading1: false,
       keys: [],
@@ -192,6 +239,12 @@ export default {
         .then((response) => {
           var data = response.data.result;
           this.loading = false;
+          Vue.swal(
+            "تبریک",
+            "اکانت تست دو ساعته برای شما فعال شد برای خرید اکانت یک ماه دکمه تمدید در صفحه اصلی را بزنید",
+            "info"
+          );
+
           this.getUserKeyDetails();
         })
         .catch(() => {

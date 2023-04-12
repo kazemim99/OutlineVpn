@@ -16,7 +16,7 @@ namespace V2Ray.Api.BackgroundJob
 
         public Task StartAsync(CancellationToken stoppingToken)
         { // remove expired refresh tokens from
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(12));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(6));
             return Task.CompletedTask;
         }
 

@@ -65,7 +65,7 @@ namespace V2Ray.Api.Services.sms.Rahyab
                     Number = request.number,
                     MessageId = request.messageId,
                     ExceptionMessage = ex.Message,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 });
                 _db.SaveChanges();
             }

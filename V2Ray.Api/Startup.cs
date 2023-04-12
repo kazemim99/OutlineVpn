@@ -108,8 +108,7 @@ namespace V2Ray.Api
                .AddDbContext<DB>(options =>
                {
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                   options.UseSqlServer
-                   (Configuration.GetConnectionString("Default"),c=>c.EnableRetryOnFailure());
+                   options.UseNpgsql();
                });
 
                 services.AddHostedService<JwtRefreshTokenCache>();
@@ -142,12 +141,7 @@ namespace V2Ray.Api
 
                 app.UseHttpsRedirection();
 
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-                    c.DefaultModelsExpandDepth(0);
-                });
+               
             }
             if (!_env.IsDevelopment())
             {
@@ -157,7 +151,12 @@ namespace V2Ray.Api
                 });
                
             }
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.DefaultModelsExpandDepth(0);
+            });
             if (!isTest)
             {
 

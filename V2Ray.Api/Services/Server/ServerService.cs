@@ -75,7 +75,11 @@ namespace V2Ray.Api.Services.Server
             var query = _db.V2Servers.AsQueryable();
 
             if (!filter.Title.IsNullOrEmpty())
+            {
                 query = query.Where(a => a.Title.Contains(filter.Title));
+            }
+
+          
 
 
             return query;

@@ -2,7 +2,6 @@
 
 namespace V2Ray.Api.Entity
 {
-
     public class User : FullAuditEntity<int>, ISoftDelete
     {
         public User()

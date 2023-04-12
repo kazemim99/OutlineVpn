@@ -42,7 +42,7 @@ namespace V2Ray.Api.Controllers
             var result = await _service.GetAllAsync(new ServerFilterInput
             {
                 ItemsPerPage = 100
-            });
+            }, new[] { "SSHKeys" });
             return new ApiResponse(result);
         }
 

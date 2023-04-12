@@ -40,7 +40,7 @@ service.interceptors.response.use(
         message = result[0][index] + "<br/>";
       }
     }
-    Vue.swal("خطا", message, "error");
+    Vue.swal("خطا", message, "error");  
   }
     return Promise.reject(error);
   }

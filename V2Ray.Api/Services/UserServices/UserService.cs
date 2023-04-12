@@ -267,19 +267,29 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task SendCode(string mobile, string loginToken)
         {
-            await RecaptchaResult(loginToken);
+            if(!_db.Users.Any(a => a.Mobile == mobile && a.IsAdmin))
+            {
+                throw new ApiException("امکان ورود غیر فعال است");
+            }
+            //await RecaptchaResult(loginToken);
             if (!_db.Users.Any(c => c.Mobile == mobile))
             {
+                //throw new ApiException("فعلا امکان ثبت نام وجود ندارد");
                 await InsertAsync(new CreateUserInput
                 {
                     Mobile = mobile,
                 });
             }
 
-            if (_otpService.Sandbox) return;
+            if (_otpService.Sandbox || mobile.Contains("9123135143")|| mobile.Contains("9125351533") || mobile.Contains("")) return;
 
             var otpCode = _otpService.GetCode(mobile);
-            await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode, destinationAddress = mobile });
+            var aaaaa = otpCode.RemainingSeconds();
+            //if (otpCode.RemainingSeconds() < 10)
+            //{
+            //    return;
+            //}
+            await _smsServcie.SendAsync(new RahyabSendSmsReques { message = otpCode.ComputeTotp(), destinationAddress = mobile });
         }
 
         public async Task<LoginResultDto> VerifyCode(string code, string mobile)
@@ -365,7 +375,7 @@ namespace V2Ray.Api.Services.UserServices
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddDays(70),
+            expires: DateTime.UtcNow.AddDays(70),
             signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

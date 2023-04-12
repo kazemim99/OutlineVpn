@@ -23,10 +23,11 @@ export const register = (data: any) =>
     method: "post",
     data,
   });
-export const getCode = (input) =>
+export const getCode = (data: any) =>
   request({
-    url: `/authentication/get-code/${input.mobile}/${input.loginToken}`,
-    method: "get",
+    url: `/authentication/get-code`,
+    method: "post",
+    data,
   });
 
 export const veriFyCode = (data: any) =>

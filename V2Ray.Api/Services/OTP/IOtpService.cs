@@ -1,4 +1,5 @@
-﻿using V2Ray.Api.Services.OTP.DTO;
+﻿using OtpNet;
+using V2Ray.Api.Services.OTP.DTO;
 
 namespace V2Ray.Api.Services.OTP
 {
@@ -6,7 +7,7 @@ namespace V2Ray.Api.Services.OTP
     {
         bool Sandbox { get; set; }
 
-        string GetCode(string key, int? stepWindowSeconds = null);
+        Totp GetCode(string key, int? stepWindowSeconds = null);
 
         OtpVerifyOut VerifyCode(string key, string code);
     }

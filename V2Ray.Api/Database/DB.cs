@@ -13,10 +13,10 @@ namespace V2Ray.Api.Database
         {
             var builder = new DbContextOptionsBuilder<DB>();
 
-            var connectionString = "Data Source=185.159.153.204 ;Initial Catalog= iranvra1_sa ;User ID=iranvra1_sa;Password=!Q@W#E$R5t6y7u8i";
+            var connectionString = "Server=localhost;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E";
             //var connectionString = "Server=.; Database=V2Ray;Integrated Security=True";
 
-            builder.UseSqlServer(connectionString);
+            builder.UseNpgsql(connectionString);
             return new DB(builder.Options);
         }
     }

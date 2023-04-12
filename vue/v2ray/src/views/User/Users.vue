@@ -124,7 +124,7 @@ export default {
       headers: [
         { text: "نام", value: "firstName", sortable: true },
         { text: "نام خانوادگی", value: "lastName", sortable: true },
-        { text: "نام کاربری", value: "email", sortable: false },
+        { text: "نام کاربری", value: "mobile", sortable: false },
         { text: "وضعیت", value: "enable", sortable: true },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },

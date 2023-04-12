@@ -47,7 +47,7 @@ namespace V2Ray.Api.Services.ProblemReportServices
                     throw new ApiException("شما هیچ تراکنش فعالی ندارید");
                 }
 
-                if (!_db.Orders.Any(a => a.UserId == input.UserId && a.Status == OrderStateEnum.Confirmed && a.CreatedAt.Date > DateTime.Now.AddDays(10).Date))
+                if (!_db.Orders.Any(a => a.UserId == input.UserId && a.Status == OrderStateEnum.Confirmed && a.CreatedAt.Date > DateTime.UtcNow.AddDays(10).Date))
                 {
                     throw new ApiException("بیش از ده روز از خرید شما گذشته");
                 }

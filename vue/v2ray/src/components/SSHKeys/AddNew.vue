@@ -24,7 +24,7 @@
                     v-model="sshKey.serverId"
                     :items="servers"
                     item-value="id"
-                    item-text="title"
+                    item-text="titleCount"
                     label="ُسرور"
                     solo
                   ></v-select>
@@ -38,7 +38,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="4">
                   <v-text-field
                     v-model="sshKey.count"
                     label="تعداد  *"
@@ -47,7 +47,16 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="4">
+                  <v-text-field
+                    v-model="sshKey.amount"
+                    label="مبلغ "
+                    placeholder=" "
+                    autocomplete="false"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="3" sm="12" md="4">
                   <v-text-field
                     v-model="sshKey.userName"
                     label="نام کاربری *"
@@ -56,7 +65,7 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="4">
                   <v-text-field
                     v-model="sshKey.password"
                     label="رمز"
@@ -100,6 +109,7 @@ export default Vue.extend({
     sshKey: {
       name: "",
       serverId: null,
+      amount: 50000,
       password: null,
       userName: "",
       expireDate: null,
@@ -114,7 +124,7 @@ export default Vue.extend({
         } else {
           this.getServers();
         }
-        if (this.id) this.getSSHKey(this.id);
+        if (this.id != null) this.getSSHKey(this.id);
       },
       deep: true,
     },
@@ -132,11 +142,12 @@ export default Vue.extend({
         var data = response.data.result;
         this.sshKey.id = id;
         this.sshKey.serverId = data.serverId;
+        this.sshKey.amount = data.amount==0?50000:data.amount;
         this.sshKey.password = data.password;
         this.sshKey.name = data.name;
         this.sshKey.userName = data.userName;
         this.sshKey.expireDate = data.expireDate;
-        this.sshKey.count =1;
+        this.sshKey.count = 1;
       });
     },
 
@@ -175,8 +186,9 @@ export default Vue.extend({
     },
 
     clearData() {
-      this.sshKey.id = null;
+      this.id = null;
       this.sshKey.serverId = null;
+      this.sshKey.amount = 50000;
       this.sshKey.password = "";
       this.sshKey.userName = "";
       this.sshKey.name = "";

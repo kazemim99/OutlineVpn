@@ -28,16 +28,7 @@
                   required
                 ></v-text-field>
               </v-col>
-              <!-- <v-col sm="12" md="12">
-                <v-text-field
-                  v-model="order.tranactionNumber"
-                  label="َشماره تراکنش *"
-                  placeholder=" "
-                  autocomplete="false"
-                  :rules="TransactionNumberRules"
-                  required
-                ></v-text-field> 
-              </v-col>-->
+            
           </v-container>
         </v-form>
         <v-card-actions>
@@ -63,8 +54,9 @@ export default {
       dialog: false,
       loading: false,
       valid: true,
-      order: {},
-      TransactionNumberRules: [(v) => !!v || "شماره تراکنش را وارد نمایید"],
+      order: {
+        cardNumber:null
+      },
       CardNumberRules: [
         (v) => !!v || "شماره کارت",
         (v) => (v && v.length > 15) || "شماره کارت اشتباه است",

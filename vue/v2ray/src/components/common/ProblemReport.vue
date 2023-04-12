@@ -9,7 +9,7 @@
           v-on="on"
           style="margin-bottom: 20px"
         >
-       گزارش قطعی و پیام
+          گزارش قطعی و پیام
         </v-btn>
       </template>
       <v-card>
@@ -84,6 +84,7 @@
 </template>
 <script>
 import request from "@/utils/request";
+import Vue from "vue";
 
 export default {
   data: () => ({
@@ -116,12 +117,12 @@ export default {
       this.model.oS = this.os;
     },
     async getOs() {
-      await request.get(`/publicData/get-os`).then((response) => {
+      await request.get(`/publicData/get-operations`).then((response) => {
         this.oprations = response.data.result;
       });
     },
     async getOperations() {
-      await request.get(`/publicData/get-operations`).then((response) => {
+      await request.get(`/publicData/get-os`).then((response) => {
         this.osList = response.data.result;
       });
     },
@@ -135,7 +136,7 @@ export default {
         .then((response) => {
           this.dialog = false;
           this.$emit("reloadUsers");
-          // this.$snotify.success("کابر با موفقیت با موفقیت ثبت گردید");
+          Vue.swal("", "گزارش شما ارسال و بزودی بررسی خواهد شد", "success");
         })
         .catch((e) => {
           console.log(e);

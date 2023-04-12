@@ -25,7 +25,7 @@ namespace V2Ray.Api.Services.JWT
 
         private void DoWork(object state)
         {
-            _jwtAuthManager.RemoveExpiredRefreshTokens(DateTime.Now);
+            _jwtAuthManager.RemoveExpiredRefreshTokens(DateTime.UtcNow);
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

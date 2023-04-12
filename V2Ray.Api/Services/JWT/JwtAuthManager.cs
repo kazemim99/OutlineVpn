@@ -69,7 +69,7 @@ namespace V2Ray.Api.Services.JWT
 
         public JwtAuthResult GenerateTokens(string username, int userId)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var claims = new[]
     {
                 new Claim(ClaimTypes.Name,username),
@@ -90,7 +90,7 @@ namespace V2Ray.Api.Services.JWT
                 UserName = username,
                 UserId = Convert.ToInt32(userId),
                 TokenString = GenerateRefreshTokenString(),
-                ExpireAt = now.AddMinutes(_jwtTokenConfig.Value.RefreshTokenExpiration)
+                ExpireAt = now.AddMinutes(1200)
             };
             _usersRefreshTokens.AddOrUpdate(refreshToken.TokenString, refreshToken, (s, t) => refreshToken);
 
@@ -120,7 +120,7 @@ namespace V2Ray.Api.Services.JWT
             {
                 throw new SecurityTokenException("Invalid token");
             }
-            if (existingRefreshToken.UserName != userName || existingRefreshToken.ExpireAt < DateTime.Now)
+            if (existingRefreshToken.UserName != userName || existingRefreshToken.ExpireAt < DateTime.UtcNow)
             {
                 throw new SecurityTokenException("Invalid token");
             }

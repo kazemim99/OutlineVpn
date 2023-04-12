@@ -92,16 +92,16 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        [HttpGet("get-code/{mobile}/{loginToken}")]
-        public async Task<ApiResponse> GetCode([FromRoute] string mobile, [FromRoute] string loginToken)
+        [HttpPost("get-code")]
+        public async Task<ApiResponse> GetCode([FromBody] GetCodeInput input)
         {
             try
             {
 
-                if (!Regex.IsMatch(mobile, @"\b^(09|9)+([0-9]){9}$\b"))
+                if (!Regex.IsMatch(input.Mobile, @"\b^(09|9)+([0-9]){9}$\b"))
                     throw new ApiException("موبایل وارد شده صحیح نیست");
 
-                await _service.SendCode(mobile, loginToken);
+                await _service.SendCode(input.Mobile, input.LoginToken);
                 return new ApiResponse();
             }
             catch (Exception ex)
@@ -230,12 +230,12 @@ namespace V2Ray.Api.Controllers
                     JwtToken = new JwtToken
                     {
                         Token = jwtResult.AccessToken,
-                        Expire = DateTime.Now.AddMinutes(_jwtTokenConfig.Value.AccessTokenExpiration)
+                        Expire = DateTime.UtcNow.AddMinutes(_jwtTokenConfig.Value.AccessTokenExpiration)
                     },
                     RefreshToken = new RefreshToken
                     {
                         TokenString = jwtResult.RefreshToken.TokenString,
-                        ExpireAt = DateTime.Now.AddMinutes(_jwtTokenConfig.Value.RefreshTokenExpiration)
+                        ExpireAt = DateTime.UtcNow.AddMinutes(_jwtTokenConfig.Value.RefreshTokenExpiration)
                     }
                 };
                 return new ApiResponse(result);
