@@ -103,12 +103,12 @@ namespace V2Ray.Api
 
             if (!isTest)
             {
-                var tt = Configuration.GetConnectionString("Default");
+                
                 services
                .AddDbContext<DB>(options =>
                {
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                   options.UseNpgsql();
+                   options.UseNpgsql(Configuration.GetConnectionString("Default"));
                });
 
                 services.AddHostedService<JwtRefreshTokenCache>();
