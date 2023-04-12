@@ -17,13 +17,19 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         public string? Password { get; set; }
         [JsonIgnore]
         public int Port { get; set; }
-        public DateTime? ExpireDate { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public string? ExpireDate { get; set; }
+        //[Required]
+        //[MaxLength(6, ErrorMessage = "مقدار بیشتر از 6 نمیتواند باشد")]
+
+        //public int Month { get; set; }
+        //[MaxLength(6,ErrorMessage ="مقدار بیشتر از 6 نمتواند باشد")]
+        //public int ExtraDay { get; set; }
         public int? Count { get; set; }
         [Required]
         public int ServerId { get; set; }
         public int? UserId { get; set; }
-        [Required]
-        [Range(50000, 900000, ErrorMessage = "مبلغ وارد شده صحیح نیست")]
         public int Amount { get; set; }
     }
 }

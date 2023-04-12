@@ -96,7 +96,7 @@
 <script>
 import Vue from "vue";
 import request from "@/utils/request";
-
+import { UserModule } from "@/store/modules/user";
 export default Vue.extend({
   name: "AddNewSSHKey",
   data: () => ({
@@ -124,7 +124,11 @@ export default Vue.extend({
         } else {
           this.getServers();
         }
-        if (this.id != null) this.getSSHKey(this.id);
+        if (this.id != null) {
+          this.getSSHKey(this.id);
+        } else {
+          this.name = UserModule.fullName;
+        }
       },
       deep: true,
     },
@@ -142,7 +146,7 @@ export default Vue.extend({
         var data = response.data.result;
         this.sshKey.id = id;
         this.sshKey.serverId = data.serverId;
-        this.sshKey.amount = data.amount==0?50000:data.amount;
+        this.sshKey.amount = data.amount == 0 ? 50000 : data.amount;
         this.sshKey.password = data.password;
         this.sshKey.name = data.name;
         this.sshKey.userName = data.userName;

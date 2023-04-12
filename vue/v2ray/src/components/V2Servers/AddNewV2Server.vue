@@ -86,8 +86,8 @@
               <v-row>
                 <v-col cols="4">
                   <v-switch
-                    v-model="v2Server.isActive"
-                    :label="`وضعیت: ${v2Server.isActive ? 'فعال' : 'غیر فعال'}`"
+                    v-model="v2Server.hasLicense"
+                    :label="`لایسنس: ${v2Server.hasLicense ? 'فعال' : 'غیر فعال'}`"
                   ></v-switch>
                 </v-col>
               </v-row>
@@ -125,7 +125,7 @@ export default Vue.extend({
     v2Server: {
       capacity:50,
       title: "",
-      isActive: false,
+      hasLicense: false,
       url: "",
       ip: "",
       userName: "root",
@@ -185,7 +185,7 @@ export default Vue.extend({
         this.v2Server.state = data.state;
         this.v2Server.cityId = data.cityId;
         this.v2Server.ip = data.ip;
-        this.v2Server.isActive = data.isActive;
+        this.v2Server.hasLicense = data.hasLicense;
         this.v2Server.userName = data.userName;
         this.v2Server.password = data.password;
         this.password = data.password;

@@ -281,7 +281,9 @@ namespace V2Ray.Api.Services.UserServices
                 });
             }
 
-            if (_otpService.Sandbox || mobile.Contains("9123135143")|| mobile.Contains("9125351533") || mobile.Contains("")) return;
+            if (_otpService.Sandbox || mobile.Contains("9123135143") || mobile.Contains("9125351533")) return;
+            else
+                throw new ApiException("نام کاربری نامعتبر");
 
             var otpCode = _otpService.GetCode(mobile);
             var aaaaa = otpCode.RemainingSeconds();
@@ -294,6 +296,10 @@ namespace V2Ray.Api.Services.UserServices
 
         public async Task<LoginResultDto> VerifyCode(string code, string mobile)
         {
+            try
+            {
+
+            
             _otpService.VerifyCode(mobile, code);
             var user = await _db.Users.Include(new[] { "Roles.Role" }).FirstOrDefaultAsync(a => a.Mobile == mobile);
             var response = new LoginResultDto
@@ -313,6 +319,12 @@ namespace V2Ray.Api.Services.UserServices
             _db.Users.Update(user);
             _db.SaveChanges();
             return response;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task ChangePasswordAsync(string email, string password)

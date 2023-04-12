@@ -36,6 +36,21 @@
         >
       </template>
 
+
+      <template v-slot:item.charge="{ item }">
+        <v-btn
+          color="primary"
+          dark
+          v-bind="attrs"
+          v-on="on"
+          @click="charge(item.id)"
+          style="margin-bottom: 20px"
+        >
+             تمدید
+        </v-btn>
+      </template>
+
+
       <template v-slot:item.edit="{ item }">
         <v-icon medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       </template>
@@ -47,7 +62,7 @@
             class="mr-2"
             @click="
               copyToClipBoard(
-                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n حروف کوچک و بزرگ مهم میباشند`
+                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n حروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \n لینک آموزش : https://iranv2ray.com/phone-toturial`
               )
             "
           >
@@ -56,6 +71,21 @@
         </v-row>
       </template>
 
+      <template v-slot:item.copy1="{ item }">
+        <v-row>
+          <v-icon
+            medium
+            class="mr-2"
+            @click="
+              copyToClipBoard(
+                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n حروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید `
+              )
+            "
+          >
+            mdi-content-copy</v-icon
+          >
+        </v-row>
+      </template>
       <template v-slot:top>
         <v-toolbar flat>
           <v-col cols="12">
@@ -167,9 +197,11 @@ export default {
         { text: "سرور", value: "serverName", sortable: false },
         { text: "تاریخ انقضا", value: "expireDate", sortable: true },
         { text: "وضعیت", value: "enable", sortable: true },
+        { text: "", value: "charge", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
         { text: "", value: "copy", sortable: false },
+        { text: "", value: "copy1", sortable: false },
       ],
     };
   },
@@ -221,20 +253,66 @@ export default {
     },
 
     copyToClipBoard(textToCopy) {
-      navigator.clipboard
-        .writeText(textToCopy)
-        .then(() => {
-          console.log(textToCopy);
-        })
-        .catch(() => {
-          alert("خطا در کپی");
-        });
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard
+          .writeText(textToCopy)
+          .then(() => {
+            console.log(textToCopy);
+          })
+          .catch(() => {
+            alert("خطا در کپی");
+          });
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+
+        // Move textarea out of the viewport so it's not visible
+        textArea.style.position = "absolute";
+        textArea.style.left = "-999999px";
+
+        document.body.prepend(textArea);
+        textArea.select();
+
+        try {
+          document.execCommand("copy");
+        } catch (error) {
+          console.error(error);
+        } finally {
+          textArea.remove();
+        }
+      }
     },
     async enableKey(id) {
       request.put(`/SSHKey/change-state/${id}`).then(() => {
         this.getSSHKeys();
       });
     },
+
+    charge(id) {
+      Vue.swal({
+        title: "ایا مطمئن  هستید",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "بله ,تمدید شود",
+        cancelButtonText: "انصراف",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          request
+            .put(`/SSHKey/charge/${id}`)
+            .then(() => {
+              Vue.swal("", "اکانت با موفقیت تمدید گردید", "success");
+              this.getSSHKeys();
+            })
+            .finally(() => {
+              this.uploadLoading = false;
+            });
+        }
+      });
+    },
+
+
     deleteItem(id) {
       Vue.swal({
         title: "ایا مطمئن  هستید",

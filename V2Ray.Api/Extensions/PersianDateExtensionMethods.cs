@@ -68,14 +68,21 @@ namespace V2Ray.Api.Extensions
         public static DateTime ToGeo(this DateTime date)
         {
             PersianCalendar pc = new PersianCalendar();
-            DateTime dt = new DateTime(date.Year, date.Month, date.Day, pc);
+            DateTime dt = new DateTime(date.Year, date.Month, date.Day,date.Hour,date.Minute,date.Second, pc);
             return dt;
         }
-
-        public static DateTime ToPersianDate(this DateTime date)
+        public static DateTime ToGeo(this string input)
+        {
+            var date = input.Split("/");
+            var tt = DateTime.Now;
+            PersianCalendar pc = new PersianCalendar();
+            DateTime dt = new DateTime(Convert.ToInt32(date[0]), Convert.ToInt32(date[1]), Convert.ToInt32(date[2]),tt.Hour,tt.Minute,tt.Second, pc);
+            return dt;
+        }
+            public static DateTime ToPersianDate(this DateTime date)
         {
             PersianCalendar pc = new PersianCalendar();
-            DateTime dt = new DateTime(pc.GetYear(date), pc.GetMonth(date), pc.GetDayOfMonth(date));
+            DateTime dt = new(pc.GetYear(date), pc.GetMonth(date), pc.GetDayOfMonth(date), pc.GetHour(date), pc.GetMinute(date), pc.GetSecond(date),pc);
             return dt;
         }
 

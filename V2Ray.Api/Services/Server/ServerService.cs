@@ -65,7 +65,7 @@ namespace V2Ray.Api.Services.Server
         public async Task ChangeState(int id)
         {
             var Server = _db.V2Servers.FirstOrDefault(a => a.Id == id);
-            Server.IsActive = !Server.IsActive;
+            Server.HasLicense = !Server.HasLicense;
             _db.Update(Server);
             await _db.SaveChangesAsync();
         }

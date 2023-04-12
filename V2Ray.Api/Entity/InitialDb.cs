@@ -12,7 +12,7 @@ namespace V2Ray.Api.Entity
         {
             using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var db = serviceScope.ServiceProvider.GetService<T>();
-            var isTest = db.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
+            bool isTest = db.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory";
             if (!isTest)
             {
                 db.Database.Migrate();

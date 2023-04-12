@@ -5,6 +5,9 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
 {
     public class UpdateSSHKeyInput : CreateSSHKeyInput
     {
+        public bool Charge { get; set; }
        
+        [JsonIgnore]
+        public bool Enable { get;  set; }
     }
 }

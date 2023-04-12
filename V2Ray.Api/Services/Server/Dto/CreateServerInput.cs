@@ -10,6 +10,7 @@ namespace V2Ray.Api.Services.Server.Dto
         [Required]
         public string UserName { get; set; }
         public int Capacity { get; set; }
+        public bool HasLicense { get; set; }
 
 
         [Required]

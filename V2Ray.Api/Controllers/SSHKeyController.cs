@@ -99,32 +99,6 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
-        /// <summary>
-        /// ویرایش یک کاربر 
-        /// </summary>
-        ///
-        [HttpPut("swap")]
-
-        public async Task<ApiResponse> Recreate()
-        {
-            await _service.Swapp();
-
-            return new ApiResponse();
-        }
-
-        /// <summary>
-        /// ویرایش یک کاربر 
-        /// </summary>
-        ///
-        [HttpPut("swap2/{url}")]
-
-        public async Task<ApiResponse> Recreate2([FromRoute] string url)
-        {
-            await _service.Swapp2(url);
-
-            return new ApiResponse();
-        }
-
 
 
         /// <summary>
@@ -157,13 +131,13 @@ namespace V2Ray.Api.Controllers
 
 
 
-        [HttpGet("create-test-ssh")]
-        [Authorize]
-        public async Task<ApiResponse> Create()
-        {
-            await _service.GenerateSshFromClient(UserId);
-            return new ApiResponse();
-        }
+        //[HttpGet("create-test-ssh")]
+        //[Authorize]
+        //public async Task<ApiResponse> Create()
+        //{
+        //    await _service.GenerateSshFromClient(UserId);
+        //    return new ApiResponse();
+        //}
 
         [HttpGet("user-key-details")]
         [Authorize]
@@ -196,6 +170,21 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(result);
         }
 
+
+
+
+        /// <summary>
+        /// ویرایش پروفایل یک کاربر
+        /// </summary>
+        ///
+        [Authorize]
+        [HttpPut("charge/{id}")]
+        public async Task<ApiResponse> Charge([FromRoute] int id)
+        {
+            await _service.Charge(id);
+
+            return new ApiResponse();
+        }
 
 
 

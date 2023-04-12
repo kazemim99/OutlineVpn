@@ -11,7 +11,7 @@
               <v-card-text>
                 <v-text-field
                   id="code"
-                  autocomplete="off"
+                  autocomplete="on"
                   v-model="code"
                   prepend-icon="mdi-numeric "
                   name="code"

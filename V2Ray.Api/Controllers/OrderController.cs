@@ -55,7 +55,7 @@ namespace V2Ray.Api.Controllers
             input.UserId = input.UserId;
 
             await _service.InsertAsync(input);
-            await _iSSHKeyService.GenerateSshFromClient(UserId);
+            //await _iSSHKeyService.GenerateSshFromClient(UserId);
 
             return new ApiResponse();
         }

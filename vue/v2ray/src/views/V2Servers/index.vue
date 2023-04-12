@@ -11,12 +11,12 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.isActive="{ item }">
+      <template v-slot:item.hasLicense="{ item }">
         <v-switch
-          v-model="item.isActive"
+          v-model="item.hasLicense"
           flat
           @change="changeState(item)"
-          :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
+          :label="`${item.hasLicense ? 'فعال' : 'غیر فعال'}`"
         ></v-switch>
       </template>
 
@@ -128,7 +128,7 @@ export default {
       totalV2Servers: 0,
       switchLoading: null,
       pages: 0,
-      isActive: null,
+      hasLicense: null,
       title: null,
       v2ServerList: [],
       loading: true,
@@ -138,7 +138,7 @@ export default {
         { text: "تعداد کاربران", value: "keyCount", sortable: true },
         { text: "آی پی", value: "ip", sortable: false },
         { text: "آدرس", value: "url", sortable: false },
-        { text: "وضعیت", value: "isActive", sortable: false },
+        { text: "لایسنس", value: "hasLicense", sortable: false },
         { text: "تنظیم", value: "adjust", sortable: false },
         { text: "ویرایش", value: "edit", sortable: false },
         { text: "حذف", value: "delete", sortable: false },
@@ -185,11 +185,11 @@ export default {
       await request
         .put(`/v2Server/change-state/${item.id}`)
         .then(() => {
-          console.log(item.isActive);
+         this.getV2Servers();
         })
         .catch((error) => {
           alert(error);
-          this.isActive = !this.isActive;
+          this.hasLicense = !this.hasLicense;
         })
         .finally(() => {
           this.loading = false;

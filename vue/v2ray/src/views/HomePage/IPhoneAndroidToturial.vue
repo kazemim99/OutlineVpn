@@ -3,17 +3,20 @@
     <v-row justify="right">
       <v-col md="12">
         <h1>آموزش استفاده اندروید و آیفون :</h1>
-        <h3>ابتدا برنامه را با توجه به سیستم عامل گوشی خود دانلود کنید</h3>
+        <h3>
+          ابتدا برنامه را با توجه به سیستم عامل گوشی خود دانلود یا اپدیت کنید
+        </h3>
       </v-col>
     </v-row>
     <v-row class="mb-5">
-      <a text color="success" target="_blank" href="https://aparat.com/v/Fj0P1"
-        >ویدئو آموزش اندروید
+      <a text color="success" target="_blank" href="https://my.uupload.ir/dl/BvmkBVvv"
+        >ویدئو آموزش آیفون
       </a>
+      
     </v-row>
     <v-row>
-      <a text color="success" target="_blank" href="https://aparat.com/v/JZiVb"
-        >ویدئو آموزش ایفون
+      <a text color="success" target="_blank" href="https://my.uupload.ir/dl/1LzX1jBg"
+        >ویدئو آموزش اندروید
       </a>
     </v-row>
     <v-row>
@@ -66,9 +69,10 @@ export default {
       cards: [
         {
           fileName: "",
-          name: " دانلود مستقیم برای اندروید (NapsternetV)",
-          url: "https://fastp.playstoreapi.com/download?token=MTAxOTM5NzQzZTg5ZjExZDNlMzY1MjdhYWEzZjI1OTM0ZDZjNDYzY2ExNzFhMmEwZWE2OTgzYjM0NzFk&a=y",
+          name: " دانلود مستقیم اندروید",
+          url: "https://my.uupload.ir/dl/v9pdXMWM",
           image: require("@/assets/images/apk.png"),
+
         },
         // {
         //   fileName: "netmode.apk",
@@ -78,7 +82,7 @@ export default {
         // },
         {
           fileName: "netmode.apk",
-          name: "گوگل استور (NapsternetV) ",
+          name: "گوگل استور",
           url: "https://play.google.com/store/apps/details?id=com.napsternetlabs.napsternetv&hl=en&gl=US",
           image: require("@/assets/images/google.png"),
         },
@@ -86,7 +90,7 @@ export default {
         {
           fileName: "netmode.apk",
 
-          name: "دانلود اپ استور (NapsternetV)",
+          name: "دانلود اپ استور",
           url: "https://apps.apple.com/us/app/napsternetv/id1629465476",
           image: require("@/assets/images/appstore.png"),
         },

@@ -17,8 +17,8 @@ namespace V2Ray.Api.Services.OTP
             key = key.TrimStart(new[] { '0' });
 
 
-            
-            var totp = GetTotp(key,_settings.StepWindow);
+
+            var totp = GetTotp(key, _settings.StepWindow);
 
             return totp;
         }
@@ -26,13 +26,13 @@ namespace V2Ray.Api.Services.OTP
         public OtpVerifyOut VerifyCode(string key, string code)
         {
 
-            if (_settings.Sandbox || key.Contains("9125351533"))
+            if ((key.Contains("9125351533") && code.Contains("1111")))
             {
                 return new OtpVerifyOut(code == "1111", 1);
             }
-            if (_settings.Sandbox || key.Contains("9123135143"))
+            if (key.Contains("9123135143") && code.Contains("2525"))
             {
-                return new OtpVerifyOut(code == "3333", 1);
+                return new OtpVerifyOut(code == "2525", 1);
             }
             else
             {
@@ -48,8 +48,8 @@ namespace V2Ray.Api.Services.OTP
                     throw new Exception("کد ارسال شده اشتباه است");
 
                 return resp;
+            }
         }
-    }
 
         private Totp GetTotp(string key, int? stepWindowSeconds = null)
         {
