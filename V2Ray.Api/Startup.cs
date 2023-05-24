@@ -103,7 +103,7 @@ namespace V2Ray.Api
 
             if (!isTest)
             {
-                var tt = Configuration.GetConnectionString("Default");
+                
                 services
                .AddDbContext<DB>(options =>
                {
