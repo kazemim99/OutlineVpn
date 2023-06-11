@@ -1,17 +1,7 @@
 ﻿using AutoMapper;
 using AutoWrapper.Wrappers;
-using Microsoft.EntityFrameworkCore;
-using System.Text;
 using V2Ray.Api.Database;
-using V2Ray.Api.Shared;
 using V2Ray.Api.Entity;
-using V2Ray.Api.Extensions;
-using V2Ray.Api.Controllers;
-using System.Net;
-using Newtonsoft.Json;
-using System.Text.RegularExpressions;
-using System.Net.Http.Headers;
-using V2Ray.Api.Services.V2Keys;
 using V2Ray.Api.Services.OrderServices.Dto;
 using V2Ray.Api.Services.SSHKeyServices;
 using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
@@ -37,25 +27,25 @@ namespace V2Ray.Api.Services.OrderServices
             _sshKeyService = sshKeyService;
         }
 
-        public async Task ChangeState(int id, OrderStateEnum stateId)
-        {
-            var order = await _db.Orders.FirstAsync(a => a.Id == id);
-            var sshKey = await _db.SSHKeyInfos.Include(a => a.V2Server).FirstAsync(a => a.Id == order.SSHKeyId);
-            if (stateId == OrderStateEnum.Confirmed)
-            {
-                await _sshKeyService.Charge(order.UserId);
-            }
-            if (stateId == OrderStateEnum.Invalid)
-            {
-                await _sshKeyService.DeleteFromVPS(sshKey.UserName, sshKey.V2Server);
-                sshKey.Enable = false;
-                _db.Update(sshKey);
-            }
-            order.Status = stateId;
-            _db.Update(order);
-            _db.SaveChanges();
+        //public async Task ChangeState(int id, OrderStateEnum stateId)
+        //{
+        //    var order = await _db.Orders.FirstAsync(a => a.Id == id);
+        //    var sshKey = await _db.SSHKeyInfos.Include(a => a.V2Server).FirstAsync(a => a.Id == order.SSHKeyId);
+        //    if (stateId == OrderStateEnum.Confirmed)
+        //    {
+        //        await _sshKeyService.Charge(order.UserId);
+        //    }
+        //    if (stateId == OrderStateEnum.Invalid)
+        //    {
+        //        await _sshKeyService.DeleteFromVPS(sshKey.UserName, sshKey.V2Server);
+        //        sshKey.Enable = false;
+        //        _db.Update(sshKey);
+        //    }
+        //    order.Status = stateId;
+        //    _db.Update(order);
+        //    _db.SaveChanges();
 
-        }
+        //}
 
         public override async Task InsertAsync(CreateOrderInput input)
         {

@@ -55,7 +55,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="4">
                   <v-text-field
                     autocomplete="false"
                     v-model="v2Server.userName"
@@ -64,7 +64,7 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="4">
                   <v-text-field
                     autocomplete="false"
                     v-model="v2Server.password"
@@ -73,11 +73,21 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="4" sm="12" md="4">
+                <v-col cols="3" sm="12" md="4">
                   <v-text-field
                     autocomplete="false"
                     v-model="v2Server.port"
                     label="پورت  *"
+                    placeholder=" "
+                    required
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="3" sm="12" md="4">
+                  <v-text-field
+                    autocomplete="false"
+                    v-model="v2Server.token"
+                    label="توکن  "
                     placeholder=" "
                     required
                   ></v-text-field>
@@ -125,6 +135,7 @@ export default Vue.extend({
     v2Server: {
       capacity:50,
       title: "",
+      token:"",
       hasLicense: false,
       url: "",
       ip: "",
@@ -183,6 +194,7 @@ export default Vue.extend({
         this.v2Server.url = data.url;
         this.v2Server.swapped = data.swapped;
         this.v2Server.state = data.state;
+        this.v2Server.token = data.token;
         this.v2Server.cityId = data.cityId;
         this.v2Server.ip = data.ip;
         this.v2Server.hasLicense = data.hasLicense;
@@ -249,6 +261,7 @@ export default Vue.extend({
         (this.textFields = []),
         (this.v2Server.url = ""),
         (this.v2Server.userName = ""),
+        (this.v2Server.token = ""),
         (this.v2Server.password = ""),
         (this.v2Server.ip = ""),
         (this.v2Server.id = null),

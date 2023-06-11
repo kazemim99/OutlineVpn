@@ -13,10 +13,10 @@ namespace V2Ray.Api.Services.SSHKeyServices
     {
         Task<GenerateSSHOutput> GetKeyDetails(int userId);
         //Task GenerateSshFromClient(int userId);
-        Task DeleteFromVPS(string userName, V2Server server);
         Task GenerateSshFromAdmin(CreateSSHKeyInput input);
         Task Adjust(int serverId);
         Task ChangeState(int id);
+        Task ChangePassowrd(int id);
         Task Recreate(string name);
         Task DisableExpired();
         Task SetUser(int userId, SetPasswordModel model);

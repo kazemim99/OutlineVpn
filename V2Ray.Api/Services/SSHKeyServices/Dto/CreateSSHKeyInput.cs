@@ -30,6 +30,5 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         [Required]
         public int ServerId { get; set; }
         public int? UserId { get; set; }
-        public int Amount { get; set; }
     }
 }

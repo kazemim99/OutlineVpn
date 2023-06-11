@@ -81,7 +81,6 @@ namespace V2Ray.Api.Controllers
         {
             input.UserId = UserId;
             await _service.UpdateAsync(id, input);
-
             return new ApiResponse();
         }
 
@@ -95,7 +94,6 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Recreate([FromRoute] string name)
         {
             await _service.Recreate(name);
-
             return new ApiResponse();
         }
 
@@ -111,7 +109,6 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Adjust([FromRoute] int serverId)
         {
             await _service.Adjust(serverId);
-
             return new ApiResponse();
         }
 
@@ -125,7 +122,6 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> ChangeState([FromRoute] int id)
         {
             await _service.ChangeState(id);
-
             return new ApiResponse();
         }
 
@@ -170,7 +166,14 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(result);
         }
 
-
+       
+        [Authorize]
+        [HttpPost("change-password/{id}")]
+        public async Task<ApiResponse> ChangePassowrd([FromRoute] int id)
+        {
+            await _service.ChangePassowrd(id);
+            return new ApiResponse();
+        }
 
 
         /// <summary>
@@ -178,11 +181,10 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         ///
         [Authorize]
-        [HttpPut("charge/{id}")]
+        [HttpPost("charge/{id}")]
         public async Task<ApiResponse> Charge([FromRoute] int id)
         {
             await _service.Charge(id);
-
             return new ApiResponse();
         }
 
@@ -197,7 +199,6 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Delete([FromRoute] int id)
         {
             await _service.Delete(id);
-
             return new ApiResponse();
         }
 

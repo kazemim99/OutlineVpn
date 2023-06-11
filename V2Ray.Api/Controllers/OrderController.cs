@@ -61,15 +61,6 @@ namespace V2Ray.Api.Controllers
         }
 
 
-        [HttpPut("change-state/{id}/{stateId}")]
-        [Authorize]
-        public async Task<ApiResponse> ChangeState([FromRoute] int id,[FromRoute] OrderStateEnum stateId)
-        {
-            await _service.ChangeState(id,stateId);
-
-            return new ApiResponse();
-        }
-
         /// <summary>
         /// دریافت اطلاعات یک کاربر
         /// </summary>

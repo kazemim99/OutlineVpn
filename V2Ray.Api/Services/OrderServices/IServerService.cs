@@ -13,6 +13,5 @@ namespace V2Ray.Api.Services.OrderServices
         GetOrderListOutput,
         OrderFilterInput>
     {
-        Task ChangeState(int id, OrderStateEnum stateId);
     }
 }

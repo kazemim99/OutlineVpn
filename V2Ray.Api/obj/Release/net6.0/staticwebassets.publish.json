@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "nOjpChtZ+IlPYSUj05abP8hv2FUCoJs404RMothesqA=",
+  "Hash": "Tlqk5uS5N0i2Fsbd6VE0c+YiyEXflD9XDvhMhBSPjtE=",
   "Source": "V2Ray.Api",
   "BasePath": "_content/V2Ray.Api",
   "Mode": "Default",
@@ -102,6 +102,23 @@
       "OriginalItemSpec": "wwwroot\\css\\chunk-2d98e358.a12f34f8.css"
     },
     {
+      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\css\\chunk-34960888.63871b0d.css",
+      "SourceId": "V2Ray.Api",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
+      "BasePath": "_content/V2Ray.Api",
+      "RelativePath": "css/chunk-34960888.63871b0d.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\chunk-34960888.63871b0d.css"
+    },
+    {
       "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\css\\chunk-3a0ed02b.88b75361.css",
       "SourceId": "V2Ray.Api",
       "SourceType": "Discovered",
@@ -134,23 +151,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\chunk-3c9d605e.88b75361.css"
-    },
-    {
-      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\css\\chunk-53756466.60bec828.css",
-      "SourceId": "V2Ray.Api",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
-      "BasePath": "_content/V2Ray.Api",
-      "RelativePath": "css/chunk-53756466.60bec828.css",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\chunk-53756466.60bec828.css"
     },
     {
       "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\css\\chunk-5879bde7.5c9b84ed.css",
@@ -969,12 +969,12 @@
       "OriginalItemSpec": "wwwroot\\index.html"
     },
     {
-      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\app.b773af69.js",
+      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\app.0aedd5d5.js",
       "SourceId": "V2Ray.Api",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
       "BasePath": "_content/V2Ray.Api",
-      "RelativePath": "js/app.b773af69.js",
+      "RelativePath": "js/app.0aedd5d5.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -983,15 +983,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\app.b773af69.js"
+      "OriginalItemSpec": "wwwroot\\js\\app.0aedd5d5.js"
     },
     {
-      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\app.b773af69.js.map",
+      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\app.0aedd5d5.js.map",
       "SourceId": "V2Ray.Api",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
       "BasePath": "_content/V2Ray.Api",
-      "RelativePath": "js/app.b773af69.js.map",
+      "RelativePath": "js/app.0aedd5d5.js.map",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -1000,7 +1000,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\app.b773af69.js.map"
+      "OriginalItemSpec": "wwwroot\\js\\app.0aedd5d5.js.map"
     },
     {
       "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\chunk-0c45579e.8ea64202.js",
@@ -1139,6 +1139,40 @@
       "OriginalItemSpec": "wwwroot\\js\\chunk-2d98e358.d0f7c2be.js.map"
     },
     {
+      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\chunk-34960888.b668c63d.js",
+      "SourceId": "V2Ray.Api",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
+      "BasePath": "_content/V2Ray.Api",
+      "RelativePath": "js/chunk-34960888.b668c63d.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\chunk-34960888.b668c63d.js"
+    },
+    {
+      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\chunk-34960888.b668c63d.js.map",
+      "SourceId": "V2Ray.Api",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
+      "BasePath": "_content/V2Ray.Api",
+      "RelativePath": "js/chunk-34960888.b668c63d.js.map",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\chunk-34960888.b668c63d.js.map"
+    },
+    {
       "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\chunk-3a0ed02b.ab552d5f.js",
       "SourceId": "V2Ray.Api",
       "SourceType": "Discovered",
@@ -1205,40 +1239,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\chunk-3c9d605e.4fef2d00.js.map"
-    },
-    {
-      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\chunk-53756466.ce1aad3a.js",
-      "SourceId": "V2Ray.Api",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
-      "BasePath": "_content/V2Ray.Api",
-      "RelativePath": "js/chunk-53756466.ce1aad3a.js",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\chunk-53756466.ce1aad3a.js"
-    },
-    {
-      "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\chunk-53756466.ce1aad3a.js.map",
-      "SourceId": "V2Ray.Api",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\",
-      "BasePath": "_content/V2Ray.Api",
-      "RelativePath": "js/chunk-53756466.ce1aad3a.js.map",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\chunk-53756466.ce1aad3a.js.map"
     },
     {
       "Identity": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\wwwroot\\js\\chunk-5879bde7.de246e04.js",

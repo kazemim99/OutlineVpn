@@ -124,7 +124,7 @@ export default {
       totalV2Keys: 0,
       switchLoading: null,
       pages: 0,
-      serverid: 0,
+      serverId: 0,
       isActive: null,
       title: null,
       v2Keys: [],

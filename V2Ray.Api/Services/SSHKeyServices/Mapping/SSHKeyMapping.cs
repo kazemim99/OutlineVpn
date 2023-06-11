@@ -17,8 +17,10 @@ namespace V2Ray.Api.Services.SSHKeyServices.Mapping
                 .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToPeString("yyyy/MM/dd")));
 
             CreateMap<CreateSSHKeyInput, SSHKey>()
-                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.IsNullOrEmpty()? DateTime.UtcNow : b.ExpireDate.ToGeo()))
+                .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo()))
                 .ForMember(a => a.Enable, c => c.MapFrom(b => true));
+
+            CreateMap<SSHKey, UpdateSSHKeyInput>();
 
             CreateMap<UpdateSSHKeyInput, SSHKey>()
                 .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo()))

@@ -8,6 +8,6 @@
         public string Url { get; set; }
         public bool HasLicense { get; set; }
         public int KeyCount { get; set; }
-        public string TitleCount { get; set; }
+        public string TitleCount => $"{Title}({KeyCount})";
     }
 }

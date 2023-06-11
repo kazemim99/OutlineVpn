@@ -37,19 +37,17 @@
       </template>
 
 
-      <template v-slot:item.charge="{ item }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-          @click="charge(item.id)"
-          style="margin-bottom: 20px"
+      <template v-slot:item.changePassword="{ item }">
+        <v-icon medium class="mr-2" @click="changePassword(item.id)"
+          >mdi-key-change</v-icon
         >
-             تمدید
-        </v-btn>
       </template>
 
+      <template v-slot:item.charge="{ item }">
+        <v-icon medium class="mr-2" @click="charge(item.id)"
+          >mdi-recycle</v-icon
+        >
+      </template>
 
       <template v-slot:item.edit="{ item }">
         <v-icon medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
@@ -197,7 +195,8 @@ export default {
         { text: "سرور", value: "serverName", sortable: false },
         { text: "تاریخ انقضا", value: "expireDate", sortable: true },
         { text: "وضعیت", value: "enable", sortable: true },
-        { text: "", value: "charge", sortable: false },
+        { text: "تمدید", value: "charge", sortable: false },
+        { text: "تغییر رمز", value: "changePassword", sortable: false },
         { text: "", value: "edit", sortable: false },
         { text: "", value: "delete", sortable: false },
         { text: "", value: "copy", sortable: false },
@@ -288,9 +287,35 @@ export default {
       });
     },
 
-    charge(id) {
+    
+   async changePassword(id) {
       Vue.swal({
-        title: "ایا مطمئن  هستید",
+        title: "آیا مطمئن  هستید",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "بله",
+        cancelButtonText: "انصراف",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          request
+            .post(`/sshkey/change-password/${id}`)
+            .then(() => {
+              Vue.swal("", "رمز با موفقیت تغییر کرد", "success");
+              this.getSSHKeys();
+            })
+            .finally(() => {
+              this.uploadLoading = false;
+            });
+        }
+      });
+    },
+
+
+   async charge(id) {
+      Vue.swal({
+        title: "آیا مطمئن  هستید",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -300,7 +325,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           request
-            .put(`/SSHKey/charge/${id}`)
+            .post(`/sshkey/charge/${id}`)
             .then(() => {
               Vue.swal("", "اکانت با موفقیت تمدید گردید", "success");
               this.getSSHKeys();
@@ -313,7 +338,7 @@ export default {
     },
 
 
-    deleteItem(id) {
+    async deleteItem(id) {
       Vue.swal({
         title: "ایا مطمئن  هستید",
         icon: "warning",

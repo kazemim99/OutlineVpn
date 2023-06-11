@@ -49,15 +49,6 @@
                 </v-col>
                 <v-col cols="3" sm="12" md="4">
                   <v-text-field
-                    v-model="sshKey.amount"
-                    label="مبلغ "
-                    placeholder=" "
-                    autocomplete="false"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="3" sm="12" md="4">
-                  <v-text-field
                     v-model="sshKey.userName"
                     label="نام کاربری *"
                     placeholder=" "
@@ -146,7 +137,6 @@ export default Vue.extend({
         var data = response.data.result;
         this.sshKey.id = id;
         this.sshKey.serverId = data.serverId;
-        this.sshKey.amount = data.amount == 0 ? 50000 : data.amount;
         this.sshKey.password = data.password;
         this.sshKey.name = data.name;
         this.sshKey.userName = data.userName;
@@ -192,7 +182,6 @@ export default Vue.extend({
     clearData() {
       this.id = null;
       this.sshKey.serverId = null;
-      this.sshKey.amount = 50000;
       this.sshKey.password = "";
       this.sshKey.userName = "";
       this.sshKey.name = "";
