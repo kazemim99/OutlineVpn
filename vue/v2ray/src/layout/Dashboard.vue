@@ -109,31 +109,17 @@ export default class Dashboard extends Vue {
     {
       icon: "mdi-home",
       title: "صفحه اصلی",
-      to: "/dashboard/buy-vpn",
+      to: "/dashboard/sshkeys",
       adminVisible: true,
       permission: "Home_Show",
     },
-    {
-      icon: "mdi-sync",
-      title: "انتقال",
-      adminVisible: this.$store.state.userDetails.isAdmin,
-      to: "/dashboard/swaps",
-    },
-
+   
     {
       icon: "mdi-account",
       title: "مدیریت کاربران",
       adminVisible: this.$store.state.userDetails.isAdmin,
       permission: "Member_Show",
       to: "/dashboard/users",
-    },
-
-    {
-      icon: "mdi-account-key ",
-      title: "نقش ها",
-      adminVisible: this.$store.state.userDetails.isAdmin,
-      permission: "Role_Show",
-      to: "/dashboard/user-roles",
     },
 
     {
@@ -170,11 +156,7 @@ export default class Dashboard extends Vue {
     //   title: "اموزش اتصال لینوکس",
     //   to: "/dashboard/linux-toturial",
     // },
-    {
-      icon: "mdi-alert-box",
-      title: "گزارش مشکل",
-      to: "/dashboard/problem-reports",
-    },
+   
     {
       icon: "mdi-server",
       title: "سرورها",

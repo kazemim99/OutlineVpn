@@ -72,7 +72,7 @@ export default class extends Vue {
       await UserModule.VerifyCode({ code: this.code, mobile: UserModule.mobile });
       this.loading = false;
       if (UserModule.verfied) {
-        this.$router.push("/dashboard/buy-vpn");
+        this.$router.push("/dashboard/sshkeys");
       }
     } catch (error) {
       this.loading = false;

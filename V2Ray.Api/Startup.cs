@@ -18,6 +18,7 @@ using V2Ray.Api.BackgroundJob;
 using V2Ray.Api.Services.JWT;
 using V2Ray.Api.IOC;
 using Microsoft.AspNetCore.HttpOverrides;
+using Telegram.Bot;
 
 namespace V2Ray.Api
 {
@@ -60,6 +61,9 @@ namespace V2Ray.Api
                .WriteTo.File(new RenderedCompactJsonFormatter(), "logs/log.ndjson")
                .WriteTo.Seq("http://localhost:5341")
                .CreateLogger();
+
+            //services.AddSingleton<ITelegramBotClient>(new TelegramBotClient("6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M"));
+
 
             services.BindAppSettings(Configuration);
             services.AddHostedService<UpdateUserUsageLockerState>();

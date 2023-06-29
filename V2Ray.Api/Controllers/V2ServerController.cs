@@ -30,6 +30,7 @@ namespace V2Ray.Api.Controllers
             //filter.ServerId = ServerId;
             //filter.IsAdmin = IsAdmin;
             var result = await _service.GetAllAsync(filter, new[] { "SSHKeys" });
+                
             return new ApiResponse(result);
         }
 

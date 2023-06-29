@@ -15,6 +15,10 @@ using V2Ray.Api.Services.V2Keys.Dto;
 using Renci.SshNet;
 using V2Ray.Api.Services.SSHKeyServices.Dto;
 using System.Diagnostics;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types.Enums;
 
 namespace V2Ray.Api.Services.SSHKeyServices
 {
@@ -49,14 +53,12 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 if (server.SSHKeys.Count(a => a.Enable) > server.Capacity)
                     throw new ApiException("ظرفیت سرور تکمیل است");
 
-
-
                 for (int i = 0; i < input.Count; i++)
                 {
                     input.Password = input.Password.IsNullOrEmpty() ? CreatePassword() : input.Password;
                     input.Port = 1027;
                     input.UserName = input.UserName.IsNullOrEmpty() ? GenerateUser() : input.UserName;
-                    input.ExpireDate = input.ExpireDate.IsNullOrEmpty() ? DateTime.UtcNow.AddMonths(1).ToPeString("yyyy/MM/dd") : input.ExpireDate;
+                    input.ExpireDate = input.ExpireDate.IsNullOrEmpty() ? DateTime.UtcNow.AddMonths(1).AddDays(1).ToPeString("yyyy/MM/dd") : input.ExpireDate;
 
 
 
@@ -120,6 +122,10 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
         {
+
+
+
+
             var key = _db.SSHKeyInfos.Include(new[] { "V2Server", "Orders" }).Where(a => a.Id == id).ToList();
             var user = key.First();
             if (user.ServerId != input.ServerId || user.Password != input.Password)
@@ -172,31 +178,40 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         private async Task DeleteUserFromServer(List<SSHKey> users, V2Server server)
         {
-
-            string str = "";
-            var i = 0;
-
-            foreach (var item in users)
+            try
             {
-                
-                if (server.HasLicense)
+
+
+                string str = "";
+                var i = 0;
+
+                foreach (var item in users)
                 {
-                    await DeleteFromPanel(item.UserName, server);
+
+                    if (server.HasLicense)
+                    {
+                        // await DeleteFromPanel(item.UserName, server);
+                    }
+                    else
+                    {
+                        str += $"sudo killall -u {item.UserName} \n sudo deluser --remove-home {item.UserName} \n ";
+                    }
                 }
-                else
+                if (!server.HasLicense)
                 {
-                    str += $"sudo killall -u {item.UserName} \n sudo deluser --remove-home {item.UserName} \n ";
+                    var connectionInfo = GetConnectionInfo(server.Url, 1027, server.Password, server.UserName);
+                    using var ssh = new SshClient(connectionInfo);
+                    Connect(ssh);
+                    str += "\n";
+                    var command2 = ssh.CreateCommand(str);
+                    command2.Execute();
+                    ssh.Disconnect();
                 }
             }
-            if (!server.HasLicense)
+            catch (Exception ex)
             {
-                var connectionInfo = GetConnectionInfo(server.Url, 1027, server.Password, server.UserName);
-                using var ssh = new SshClient(connectionInfo);
-                Connect(ssh);
-                str += "\n";
-                var command2 = ssh.CreateCommand(str);
-                command2.Execute();
-                ssh.Disconnect();
+
+                throw new Exception($"{ex.Message} {server.Url}");
             }
         }
 
@@ -267,47 +282,80 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         public async Task ChangeState(int id)
         {
-            var keyInfo = await _db.SSHKeyInfos.Include(a => a.V2Server).FirstOrDefaultAsync(a => a.Id == id);
-
-            keyInfo.Enable = !keyInfo.Enable;
-            var keys = new List<SSHKey>();
-
-            if (!keyInfo.Enable)
+            try
             {
-                await DeleteUserFromServer(new List<SSHKey> { keyInfo }, keyInfo.V2Server);
 
-                if (keyInfo.V2Server.HasLicense)
+//                var receiverOptions = new ReceiverOptions()
+//                {
+//                    AllowedUpdates = new UpdateType[]
+//                    {
+//UpdateType.Message,
+//UpdateType.EditedMessage
+//                    }
+//                };
+//                TelegramBotClient botClient = new TelegramBotClient("6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M");
+//                await botClient.ReceiveAsync(UpdateHander, ErrorHander, receiverOptions);
+//                //var chat = await botClient.GetChatAsync("@kazemimstbot)");
+
+                //// Send the message to the account
+                //await botClient.SendTextMessageAsync(chat.Id, "1:1");
+
+                var keyInfo = await _db.SSHKeyInfos.Include(a => a.V2Server).FirstOrDefaultAsync(a => a.Id == id);
+
+                keyInfo.Enable = !keyInfo.Enable;
+                var keys = new List<SSHKey>();
+
+                if (!keyInfo.Enable)
                 {
-                    await SuspendUnSuspendFromPanel(keyInfo.UserName, keyInfo.V2Server);
-                }
+                    await DeleteUserFromServer(new List<SSHKey> { keyInfo }, keyInfo.V2Server);
 
+                    if (keyInfo.V2Server.HasLicense)
+                    {
+                        await SuspendUnSuspendFromPanel(keyInfo.UserName, keyInfo.V2Server);
+                    }
+
+                }
+                else
+                {
+                    var key = new CreateSSHKeyInput
+                    {
+                        UserName = keyInfo.UserName,
+                        Password = keyInfo.Password,
+                        ServerId = keyInfo.ServerId.Value,
+                        Count = 1,
+                        Port = 1027
+                    };
+                    var map = _mapper.Map<SSHKey>(key);
+                    keys.Add(map);
+
+                    await AddUserToServer(keys, keyInfo.V2Server);
+
+                    if (keyInfo.V2Server.HasLicense)
+                    {
+                        await SuspendUnSuspendFromPanel(keyInfo.UserName, keyInfo.V2Server, "unsuspenduser");
+                    }
+
+                }
+                _db.Update(keyInfo);
+                _db.SaveChanges();
             }
-            else
+            catch (Exception ex)
             {
-                var key = new CreateSSHKeyInput
-                {
-                    UserName = keyInfo.UserName,
-                    Password = keyInfo.Password,
-                    ServerId = keyInfo.ServerId.Value,
-                    Count = 1,
-                    Port = 1027
-                };
-                var map = _mapper.Map<SSHKey>(key);
-                keys.Add(map);
 
-                await AddUserToServer(keys, keyInfo.V2Server);
-
-                if (keyInfo.V2Server.HasLicense)
-                {
-                    await SuspendUnSuspendFromPanel(keyInfo.UserName, keyInfo.V2Server, "unsuspenduser");
-                }
-
+                throw;
             }
-            _db.Update(keyInfo);
-            _db.SaveChanges();
 
         }
 
+        private Task ErrorHander(ITelegramBotClient arg1, Exception arg2, CancellationToken arg3)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Task UpdateHander(ITelegramBotClient arg1, Update arg2, CancellationToken arg3)
+        {
+            throw new NotImplementedException();
+        }
 
         public PasswordConnectionInfo GetConnectionInfo(string url, int port, string password, string userName)
         {
@@ -380,25 +428,25 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
                 foreach (var item in keys)
                 {
-                    if (item.V2Server.HasLicense)
+                    //if (item.V2Server.HasLicense)
+                    //{
+                    //    await SuspendUnSuspendFromPanel(item.UserName, item.V2Server, "suspenduser");
+                    //}
+                    //else
+                    //{
+                    if (item.ExpireDate.AddDays(15) < DateTime.Now)
                     {
-                        await SuspendUnSuspendFromPanel(item.UserName, item.V2Server, "suspenduser");
+                        var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
+                        _db.SSHKeyInfos.Remove(newItem);
                     }
-                    else
+                    if (item.Enable)
                     {
-                        if (item.ExpireDate.AddDays(15) < DateTime.Now)
-                        {
-                            var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
-                            _db.SSHKeyInfos.Remove(newItem);
-                        }
-                        if (item.Enable)
-                        {
-                            var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
-                            newItem.Enable = false;
-                            _db.Update(newItem);
-                        }
+                        var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
+                        newItem.Enable = false;
+                        _db.Update(newItem);
+                    }
 
-                    }
+                    //}
                 }
                 await _db.SaveChangesAsync();
 
@@ -551,16 +599,19 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 if (!server.HasLicense)
                     return;
 
+                var date = expireTimeFa.ToGeo().ToString("yyyy-MM-dd");
                 var formContent = new FormUrlEncodedContent(new[]
                                     {
                                     new KeyValuePair<string, string>("username", userName.Trim()),
                                     new KeyValuePair<string, string>("password", password.Trim()),
                                     new KeyValuePair<string, string>("multiuser", "1"),
-                                    new KeyValuePair<string, string>("finishdate",expireTimeFa.ToGeo().ToString("yyyy-MM-dd")),
+                                    new KeyValuePair<string, string>("finishdate","2030-01-01"),
                                     new KeyValuePair<string, string>("traffic", "500000"),
                                     new KeyValuePair<string, string>("method", method),
                                 });
-                var uri = $"http://{server.Url}/apiV1/api.php?token={server.Token}";
+                var token = server.Token.Trim();
+                //"eb5GXv9LjCy3Omsr";
+                var uri = $"http://{server.Url}/apiV1/api.php?token={token}";
                 var myHttpClient = new HttpClient();
                 var response = await myHttpClient.PostAsync(uri, formContent);
                 var contents = await response.Content.ReadAsStringAsync();

@@ -90,3 +90,4 @@ C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\ref\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.xml
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.genruntimeconfig.cache
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.AssemblyReference.cache
+C:\Repos\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\Telegram.Bot.dll

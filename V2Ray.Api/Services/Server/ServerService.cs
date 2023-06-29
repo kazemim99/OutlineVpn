@@ -34,6 +34,29 @@ namespace V2Ray.Api.Services.Server
             _db = db;
         }
 
+
+        public override async Task<Pagination<GetServerListOutput>> GetAllAsync(ServerFilterInput paging, params string[] include)
+        {
+            var model = Filter(paging);
+
+            var pagination = new Pagination<GetServerListOutput>
+            {
+                TotalItems = model.Count(),
+                PageCount = paging.ItemsPerPage == -1 ? 1 : Convert.ToInt32(model.Count() / paging.ItemsPerPage + 1),
+                CurrentPage = paging.Page,
+            };
+
+            var skip = (paging.Page - 1) * paging.ItemsPerPage;
+
+            paging.ItemsPerPage = paging.ItemsPerPage == -1 ? int.MaxValue : paging.ItemsPerPage;
+            var result = await model.Include(include)
+                 .Skip(skip)
+                 .Take(paging.ItemsPerPage).ToListAsync();
+
+            pagination.Result = _mapper.Map<List<GetServerListOutput>>(result);
+
+            return pagination;
+        }
         public override async Task UpdateAsync(int id, UpdateServerInput input, params string[] include)
         {
             try
@@ -72,17 +95,16 @@ namespace V2Ray.Api.Services.Server
 
         public override IQueryable<V2Server> Filter(ServerFilterInput filter)
         {
-            var query = _db.V2Servers.AsQueryable();
+            var query = _db.V2Servers.Include(a=>a.SSHKeys).AsQueryable();
 
             if (!filter.Title.IsNullOrEmpty())
             {
                 query = query.Where(a => a.Title.Contains(filter.Title));
             }
 
-          
 
 
-            return query;
+            return query.OrderBy(a => a.SSHKeys.Count(a => a.ExpireDate > DateTime.Now));
         }
 
 
@@ -161,7 +183,7 @@ namespace V2Ray.Api.Services.Server
             public string password { get; set; }
             public string flow { get; set; }
         }
-      
+
         public class ShadowSetting
         {
             public string method { get; set; }

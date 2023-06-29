@@ -12,51 +12,19 @@ const routes: Array<RouteConfig> = [
     path: "/dashboard/",
     name: "Dashboard",
     component: Dashboard,
-    redirect: "/buy-vpn",
+    redirect: "/sshkeys",
     meta: { requireAuth: true },
     children: [
-      {
-        path: "buy-vpn",
-        name: "BuyKey",
-        component: () => import("@/views/HomePage/getKey.vue"),
-        meta: { requireAuth: true },
-      },
-
-      {
-        path: "swaps",
-        name: "Swap",
-        component: () => import("@/views/Swaps/swap.vue"),
-        meta: { requireAuth: true },
-      },
+     
+    
       {
         path: "users",
         name: "User",
         component: () => import("@/views/User/Users.vue"),
         meta: { requireAuth: true },
       },
-      {
-        path: "tickets",
-        name: "CreateTicket",
-        component: () => import("@/views/Ticket/create.vue"),
-        meta: { requireAuth: true },
-      },
-      {
-        path: "manage-tickets",
-        name: "ManageTickets",
-        component: () => import("@/views/Ticket/tickets.vue"),
-        meta: { requireAuth: true },
-      },
-      {
-        path: "manage-plans",
-        name: "ManagPlans",
-        component: () => import("@/views/Plans/ManagePlans.vue"),
-        meta: { requireAuth: true },
-      },
-      {
-        path: "problem-reports",
-        name: "ProblemReports",
-        component: () => import("@/views/ProblemReports/index.vue"),
-      },
+     
+     
       {
         path: "orders",
         name: "Orders",
@@ -114,7 +82,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/",
     name: "Home",
-    redirect: "/dashboard/buy-vpn",
+    redirect: "/dashboard/sshkeys",
     component: () => import("@/views/Home.vue"),
     meta: {
       title:

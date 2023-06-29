@@ -6,7 +6,7 @@
           <h1>آموزش استفاده :</h1>
           <h4>
             ابتدا برای اتصال از
-            <v-btn link to="/dashboard/buy-vpn">صفحه اصلی</v-btn>
+            <v-btn link to="/dashboard/sshkeys">صفحه اصلی</v-btn>
             اطلاعات اتصال را دریافت کنید
           </h4>
         </v-col>
