@@ -29,5 +29,6 @@ namespace V2Ray.Api.Entity
         public List<ProblemReport> ProblemReports { get;  set; }
         public List<Order> Orders { get;  set; }
         public string Mobile { get;  set; }
+        public List<V2Server> Servers { get;  set; }
     }
 }

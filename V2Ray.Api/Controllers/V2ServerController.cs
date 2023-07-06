@@ -27,10 +27,10 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] ServerFilterInput filter)
         {
-            //filter.ServerId = ServerId;
-            //filter.IsAdmin = IsAdmin;
+            filter.UserId = UserId;
+            filter.IsAdmin = IsAdmin;
             var result = await _service.GetAllAsync(filter, new[] { "SSHKeys" });
-                
+
             return new ApiResponse(result);
         }
 
@@ -38,10 +38,11 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> AllServers()
         {
-            //filter.ServerId = ServerId;
-            //filter.IsAdmin = IsAdmin;
+
             var result = await _service.GetAllAsync(new ServerFilterInput
             {
+                UserId = UserId,
+                IsAdmin = IsAdmin,
                 ItemsPerPage = 100
             }, new[] { "SSHKeys" });
             return new ApiResponse(result);
@@ -67,6 +68,9 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Create([FromBody] CreateServerInput input)
         {
+            if (!IsAdmin)
+                input.UserId = UserId;
+
             await _service.InsertAsync(input);
             return new ApiResponse();
         }

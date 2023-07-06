@@ -83,17 +83,20 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     input.ChargeDate = DateTime.UtcNow;
                     var id = await base.InsertGetIdAsync(input);
 
-                    _db.Orders.Add(new Order
+                   
+                    input.ChargeDate = DateTime.UtcNow;
+                    if (!input.IsAdmin)
                     {
-                        SSHKeyId = id,
-                        Status = sms.Kavenegar.Models.Enums.OrderStateEnum.Confirmed,
-                        CardNumber = "",
-                        CreatedAt = DateTime.UtcNow.Date,
-                        CreatorUserId = input.UserId,
-                        UserId = input.UserId.Value,
-
-                    });
-
+                        _db.Orders.Add(new Order
+                        {
+                            SSHKeyId = id,
+                            CreatedAt = DateTime.UtcNow.Date,
+                            MonthCount = MountCount(input.ExpireDate),
+                            CreatorUserId = input.UserId,
+                            UserId = input.UserId.Value,
+                            Status = sms.Kavenegar.Models.Enums.OrderStateEnum.Waiting
+                        });
+                    }
                     _db.SaveChanges();
                     input.UserName = "";
                     input.Password = "";
@@ -122,10 +125,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
         {
-
-
-
-
             var key = _db.SSHKeyInfos.Include(new[] { "V2Server", "Orders" }).Where(a => a.Id == id).ToList();
             var user = key.First();
             if (user.ServerId != input.ServerId || user.Password != input.Password)
@@ -137,17 +136,27 @@ namespace V2Ray.Api.Services.SSHKeyServices
             input.ChargeDate = user.ChargeDate;
             if (input.ExpireDate.ToGeo().Date > user.ExpireDate.AddDays(7).Date)
             {
-
-                _db.Orders.Add(new Order
+                var expire = user.ExpireDate;
+                if(user.ExpireDate > DateTime.UtcNow)
                 {
-                    SSHKeyId = id,
-                    Status = sms.Kavenegar.Models.Enums.OrderStateEnum.Confirmed,
-                    CardNumber = "",
-                    CreatedAt = DateTime.UtcNow,
-                    CreatorUserId = input.UserId,
-                    UserId = input.UserId.Value,
+                    var diff = input.ExpireDate.ToGeo().DayOfYear - user.ExpireDate.DayOfYear;
 
-                });
+                    expire =  expire.AddDays(diff);
+                }
+                int moth = MountCount(expire.ToPeString());
+                if (moth > 0 && !input.IsAdmin)
+                {
+                    _db.Orders.Add(new Order
+                    {
+                        SSHKeyId = id,
+                        MonthCount = moth,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatorUserId = input.UserId,
+                        UserId = input.UserId.Value,
+                        Status = sms.Kavenegar.Models.Enums.OrderStateEnum.Waiting
+
+                    });
+                }
                 input.ChargeDate = DateTime.UtcNow;
 
             }
@@ -162,6 +171,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 await AddUserToServer(key.ToList(), user.V2Server);
             }
             await base.UpdateAsync(id, input, include);
+        }
+
+        private static int MountCount(string expireDate)
+        {
+            DateTime currentTime = DateTime.Now;
+          var remainingTime = expireDate.ToGeo() - currentTime;
+            int moth = (int)(remainingTime.Days / 30);
+            //if (moth == 0)
+            //    throw new ApiException("month is invalid");
+            return moth;
         }
 
         public override async Task<GetSSHKeyOutput> GetById(int id, params string[] include)
@@ -237,9 +256,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         }
 
-        public async Task Charge(int userId)
+        public async Task Charge(int keyId,int userId)
         {
-            var key = await _db.SSHKeyInfos.Include(new[] { "V2Server", "User" }).FirstAsync(a => a.Id == userId);
+            var key = await _db.SSHKeyInfos.Include(new[] { "V2Server", "User" }).FirstAsync(a => a.Id == keyId);
             if (key.ExpireDate.Date > DateTime.UtcNow.Date)
                 throw new ApiException("تاریخ اعتبار به پایان نرسیده");
             //if (key == null)
@@ -251,21 +270,21 @@ namespace V2Ray.Api.Services.SSHKeyServices
             var input = new UpdateSSHKeyInput
             {
                 Password = key.Password.Trim(),
-                UserId = null,
+                UserId = userId,
                 Port = 1027,
                 Enable = true,
                 ChargeDate = DateTime.UtcNow,
                 ExpireDate = expireDate.ToPeString("yyyy/MM/dd"),
-                Name = key.User.Mobile,
+                Name = key.User != null ?key.User.Mobile:" ",
                 UserName = key.UserName.Trim(),
-                ServerId = key.ServerId.Value
+                ServerId = key.ServerId.Value,
+                
             };
 
             var map = _mapper.Map<SSHKey>(input);
             var keys = new List<SSHKey>();
             keys.Add(map);
 
-            //await DeleteUserFromServer(keys, key.V2Server);
 
             await AddUserToServer(keys, key.V2Server);
 
@@ -274,6 +293,21 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 await AddOrUpdateToPanel(input.UserName, input.Password, input.ExpireDate, key.V2Server, "edituser");
             }
 
+            int moth = MountCount(input.ExpireDate);
+
+            if (key.User != null && !key.User.IsAdmin)
+            {
+                _db.Orders.Add(new Order
+                {
+                    SSHKeyId = key.Id,
+                    Status = sms.Kavenegar.Models.Enums.OrderStateEnum.Waiting,
+                    MonthCount = moth,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatorUserId = input.UserId,
+                    UserId = userId,
+                });
+            }
+            input.ChargeDate = DateTime.UtcNow;
 
             await base.UpdateAsync(key.Id, input);
 
@@ -285,17 +319,20 @@ namespace V2Ray.Api.Services.SSHKeyServices
             try
             {
 
-//                var receiverOptions = new ReceiverOptions()
-//                {
-//                    AllowedUpdates = new UpdateType[]
-//                    {
-//UpdateType.Message,
-//UpdateType.EditedMessage
-//                    }
-//                };
-//                TelegramBotClient botClient = new TelegramBotClient("6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M");
-//                await botClient.ReceiveAsync(UpdateHander, ErrorHander, receiverOptions);
-//                //var chat = await botClient.GetChatAsync("@kazemimstbot)");
+                //var receiverOptions = new ReceiverOptions()
+                //{
+                //    AllowedUpdates = new UpdateType[]
+                //    {
+                //        UpdateType.Message,
+                //        UpdateType.EditedMessage
+                //    }
+                //};
+                //TelegramBotClient botClient = new TelegramBotClient("6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M");
+
+                //var updates = await botClient.GetUpdatesAsync();
+
+                ////await botClient.ReceiveAsync(UpdateHander, ErrorHander, receiverOptions);
+                //var chat = await botClient.GetChatAsync("@daniyal_3184)");
 
                 //// Send the message to the account
                 //await botClient.SendTextMessageAsync(chat.Id, "1:1");
@@ -369,8 +406,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             const string valid = "0123456789";
             StringBuilder res = new();
             Random rnd = new();
-            res.Append("Tacpq");
-
+            res.Append("643");
             while (0 < length--)
             {
                 res.Append(valid[rnd.Next(valid.Length)]);
@@ -408,6 +444,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 foreach (var item in enableAccounts)
                 {
+                    Thread.Sleep(1000);
                     await AddOrUpdateToPanel(item.UserName, item.Password, item.ExpireDate.ToPeString(), server);
                 }
             }
@@ -481,7 +518,11 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
 
 
-                var query = _db.SSHKeyInfos.AsQueryable();
+                var query = _db.SSHKeyInfos.Include(a=>a.V2Server).AsQueryable();
+                if (!filter.IsAdmin)
+                {
+                    query = query.Where(c => c.V2Server.UserId == filter.UserId);
+                }
 
                 if (filter.UserName != null && filter.UserName.Length >= 3)
                     query = query.Where(a => a.UserName.Contains(filter.UserName));

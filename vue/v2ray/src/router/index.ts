@@ -29,6 +29,7 @@ const routes: Array<RouteConfig> = [
         path: "orders",
         name: "Orders",
         component: () => import("@/views/Orders/index.vue"),
+        meta: { requireAuth: true },
       },
 
       {

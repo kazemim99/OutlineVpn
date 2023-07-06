@@ -28,5 +28,7 @@ namespace V2Ray.Api.Services.Server.Dto
 
         [Required]
         public string Url { get; set; }
+
+        public int? UserId { get; set; }
     }
 }

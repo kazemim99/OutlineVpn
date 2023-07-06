@@ -23,7 +23,20 @@
                     autocomplete="off"
                     :rules="userNameRules"
                     type="text"
+                  >
+                
+                </v-text-field> -->
+
+                <v-text-field
+                    id="شماره موبایل"
+                    autocomplete="on"
+                    v-model="loginForm.mobile"
+                    prepend-icon="mdi-lock"
+                    name="mobile"
+                    :rules="userNameRules"
+                    label="شماره موبایل"
                   ></v-text-field>
+
                   <v-text-field
                     v-show="!register"
                     id="password"
@@ -36,9 +49,9 @@
                     prepend-icon="mdi-lock"
                     name="password"
                     label="رمز عبور"
-                  ></v-text-field> -->
+                  ></v-text-field>
 
-                  <v-text-field
+                  <!-- <v-text-field
                     id="شماره موبایل"
                     autocomplete="on"
                     v-model="loginForm.mobile"
@@ -46,7 +59,7 @@
                     name="mobile"
                     :rules="userNameRules"
                     label="شماره موبایل"
-                  ></v-text-field>
+                  ></v-text-field> -->
                   <v-row>
                     <div class="mt-3">
                       <!-- <VueRecaptcha
@@ -133,7 +146,7 @@ export default {
     register: false,
     loginForm: {
       mobile: "",
-      loginToken: "",
+      password: "",
     },
     userNameRules: [
       (v) => !!v || "نام کاربری الزامی میباشد",
@@ -179,8 +192,10 @@ export default {
 
       this.loading = true;
       try {
-        await UserModule.GetCode(this.loginForm);
-        this.$router.push("/verify-code/");
+         await UserModule.Login(this.loginForm);
+        // this.$router.push("/verify-code/");
+        this.$router.push("/dashboard/sshkeys");
+
         this.loading = false;
       } catch (error) {
         this.loading = false;

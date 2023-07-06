@@ -169,6 +169,7 @@ namespace V2Ray.Api.Entity
                 IP = "192.168.1.1",
                 IsAdmin = true,
                 Enable = true,
+                Password="!Q@W3e4r",
                 NeedConfirm = false,
                 FirstName = DefaultUserConst.FirstName,
                 LastName = DefaultUserConst.LastName,

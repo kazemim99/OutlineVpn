@@ -1,6 +1,21 @@
 <template>
   <div>
     <Breadcrump :crumbs="crumbs" />
+    <v-col class="d-flex" cols="6" sm="6">
+      <v-select
+        v-if="this.$store.state.userDetails.isAdmin"
+        v-model="userId"
+        :items="users"
+        item-value="id"
+        item-text="firstName"
+        label="کاربر"
+        @change="getOrders()"
+        solo
+      ></v-select>
+      <p>{{ waitingCount }}</p>
+      <br />
+      <p>{{ allCount }}</p>
+    </v-col>
 
     <v-data-table
       :headers="headers"
@@ -81,12 +96,14 @@ export default {
           disabled: true,
         },
       ],
+      userId: null,
       stateId: 0,
       totalOrders: 0,
       switchLoading: null,
       pages: 0,
       serverid: 0,
       isActive: null,
+      users: [],
       title: null,
       orders: [],
       loading: true,
@@ -94,8 +111,6 @@ export default {
       headers: [
         { text: "کاربر", value: "creator", sortable: false },
         { text: "تاریخ ایجاد", value: "createdAt", sortable: true },
-        { text: "شماره کارت", value: "cardNumber", sortable: false },
-        { text: "مبلغ", value: "amount", sortable: false },
         { text: "کلید", value: "keyUserName", sortable: false },
         { text: "وضعیت", value: "status", sortable: true },
       ],
@@ -129,9 +144,25 @@ export default {
   },
   created() {
     this.getOrders();
+    this.getUsers();
   },
 
   methods: {
+    async getUsers() {
+      await request
+        .get("/user/users")
+        .then((response) => {
+          debugger;
+          var data = response.data.result;
+          this.users = data.result;
+        })
+        .catch((error) => {
+          alert(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
     async changeState(id, stateId) {
       debugger;
       this.switchLoading = "warning";
@@ -191,6 +222,7 @@ export default {
       this.loading = true;
       // this.options.sortDesc = true;
       // this.options.sortBy = "createdAt";
+      this.options.userId = this.userId;
       const filterQuery = Object.keys(this.options)
         .filter(
           (x) => this.options[x] !== null && this.options[x] !== undefined
@@ -206,6 +238,14 @@ export default {
           this.orders = data.result;
           this.totalOrders = data.totalItems;
           this.pages = data.pageCount;
+          if (this.userId !== null) {
+            request.get(`/order/orderCount/${this.userId}`).then((response) => {
+              debugger;
+              var data = response.data.result;
+              this.waitingCount = data.waitingCount;
+              this.allCount = data.allCount;
+            });
+          }
         })
         .catch((error) => {
           alert(error);

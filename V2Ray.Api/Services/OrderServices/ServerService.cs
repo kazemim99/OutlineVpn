@@ -47,10 +47,20 @@ namespace V2Ray.Api.Services.OrderServices
 
         //}
 
+
+        public override IQueryable<Order> Filter(OrderFilterInput filter)
+        {
+            var query = _db.Orders.AsQueryable();
+            if (filter.UserId != null && !filter.IsAdmin)
+                query = query.Where(a => a.UserId == filter.UserId);
+            
+            return query;
+
+        }
         public override async Task InsertAsync(CreateOrderInput input)
         {
             var sshKey = _db.SSHKeyInfos.FirstOrDefault(c => c.UserId == input.UserId);
-            if(sshKey == null)
+            if (sshKey == null)
                 throw new ApiException("شما هنوز هیچ اکانتی نساخته ایید");
 
             if (sshKey.Orders.Any(a => a.Status == OrderStateEnum.Waiting))
@@ -60,5 +70,24 @@ namespace V2Ray.Api.Services.OrderServices
             await base.InsertAsync(input);
         }
 
+        public async Task<OrdersCountOutput> OrdersCount(int? userId)
+        {
+            var quer = _db.Orders.AsQueryable();
+            var waitingCount = 0;
+            var allCount = 0;
+            if(userId != null)
+            {
+                quer = quer.Where(a => a.UserId == userId.Value);
+                allCount = quer.Sum(a=>a.MonthCount);
+                waitingCount = quer.Where(a => a.Status == OrderStateEnum.Waiting)
+                    .Sum(c=>c.MonthCount);
+            }
+
+            return new OrdersCountOutput
+            {
+                AllCount = allCount,
+                WaitingCount = waitingCount
+            };
+        }
     }
 }

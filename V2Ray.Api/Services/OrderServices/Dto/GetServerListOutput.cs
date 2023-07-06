@@ -6,9 +6,7 @@ namespace V2Ray.Api.Services.OrderServices.Dto
     public class GetOrderListOutput
     {
         public int Id { get; set; }
-        public string CardNumber { get; set; }
         public string Status { get; set; }
-        public string Mobile { get; set; }
 
         public string KeyUserName { get; set; }
         public string CreatedAt { get; set; }
@@ -17,5 +15,10 @@ namespace V2Ray.Api.Services.OrderServices.Dto
         public IEnumerable<OptionItem> Statuses { get; set; }
 
 
+    }
+    public class OrdersCountOutput
+    {
+        public int WaitingCount { get; set; }
+        public int AllCount { get; set; }
     }
 }

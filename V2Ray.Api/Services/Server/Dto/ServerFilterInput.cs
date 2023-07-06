@@ -8,6 +8,8 @@ namespace V2Ray.Api.Services.Server.Dto
     public class ServerFilterInput : PaginationModelInput
     {
         public string? Title { get; set; }
+        public int UserId { get; set; }
+        public bool IsAdmin { get; set; }
     }
 
 }

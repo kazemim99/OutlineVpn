@@ -160,14 +160,15 @@ export default class Dashboard extends Vue {
     {
       icon: "mdi-server",
       title: "سرورها",
-      adminVisible: this.$store.state.userDetails.isAdmin,
+      adminVisible: true,
       permission: "ApiUrl_Show",
       to: "/dashboard/v2servers",
     },
     {
       icon: "mdi-key",
       title: "کلیدها",
-      adminVisible: this.$store.state.userDetails.isAdmin,
+      adminVisible: true,
+
       permission: "ApiUrl_Show",
       to: "/dashboard/sshkeys",
     },

@@ -10,7 +10,6 @@ using V2Ray.Api.Services.UserServices.Dto;
 namespace V2Ray.Api.Controllers
 {
     [ApiController]
-    [Authorize(Policy = Policies.Admin)]
 
     [Route("api/[controller]")]
     public class UserController : CustomBaseController
@@ -29,7 +28,6 @@ namespace V2Ray.Api.Controllers
 
         [HttpGet("users")]
         [Authorize]
-
         public async Task<ApiResponse> Filter([FromQuery] UserFilterInput filter)
         {
             //filter.UserId = UserId;
@@ -45,7 +43,6 @@ namespace V2Ray.Api.Controllers
         ///
         [HttpPut("{userId:int}")]
         [Authorize]
-
         public async Task<ApiResponse> Update([FromRoute] int userId, [FromForm] UpdateUserInput input)
         {
 

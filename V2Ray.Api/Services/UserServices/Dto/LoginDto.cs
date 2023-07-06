@@ -10,12 +10,10 @@ namespace V2Ray.Api.Services.UserServices.Dto
         [RegularExpression(@"\b^(09|9)+([0-9]){9}$\b", ErrorMessage = "موا وارد شده معتبر نیست")]
         public string Mobile { get; set; }
 
-        //[MinLength(8, ErrorMessage = "طول رمز عبور حداقل 8 کارکتر میباشد")]
-        //[MaxLength(32, ErrorMessage = "طول رمز عبور حداکثر 32 کارکتر میباشد")]
-        //public string Password { get; set; }
 
-        //[Required]
-        //public string LoginToken { get; set; }
+        [MinLength(8, ErrorMessage = "طول رمز عبور حداقل 8 کارکتر میباشد")]
+        [MaxLength(32, ErrorMessage = "طول رمز عبور حداکثر 32 کارکتر میباشد")]
+        public string Password { get; set; }
     }
 }
 

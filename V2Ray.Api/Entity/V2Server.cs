@@ -54,6 +54,8 @@ namespace V2Ray.Api.Entity
         public List<SSHKey> SSHKeys { get; set; }
         public bool HasLicense { get;  set; }
         public string Token { get;  set; }
+        public int? UserId { get; internal set; }
+        public User User { get; set; }
     }
     public class SSHKey: FullAuditEntity<int>
     {

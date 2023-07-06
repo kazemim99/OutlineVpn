@@ -26,7 +26,9 @@ namespace V2Ray.Api.Controllers
             //filter.IsAdmin = IsAdmin;
             var result = await _service.GetAllAsync(new SSHKeyFilterInput
             {
-                ItemsPerPage = 100
+                ItemsPerPage = 100,
+                IsAdmin = IsAdmin,
+                UserId = UserId
             });
             return new ApiResponse(result);
         }
@@ -59,8 +61,10 @@ namespace V2Ray.Api.Controllers
         {
             try
             {
+                filter.UserId = UserId;
+                filter.IsAdmin = IsAdmin;
                 filter.SortDesc = true;
-                var result = await _service.GetAllAsync(filter, new[] { "V2Server" });
+                var result = await _service.GetAllAsync(filter);
                 return new ApiResponse(result);
             }
 
@@ -80,6 +84,8 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Update([FromRoute] int id, [FromBody] UpdateSSHKeyInput input)
         {
             input.UserId = UserId;
+            input.IsAdmin = IsAdmin;
+
             await _service.UpdateAsync(id, input);
             return new ApiResponse();
         }
@@ -148,6 +154,7 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> Create([FromBody] CreateSSHKeyInput input)
         {
             input.UserId = UserId;
+            input.IsAdmin = IsAdmin;
             await _service.GenerateSshFromAdmin(input);
             return new ApiResponse();
         }
@@ -184,7 +191,7 @@ namespace V2Ray.Api.Controllers
         [HttpPost("charge/{id}")]
         public async Task<ApiResponse> Charge([FromRoute] int id)
         {
-            await _service.Charge(id);
+            await _service.Charge(id,UserId);
             return new ApiResponse();
         }
 

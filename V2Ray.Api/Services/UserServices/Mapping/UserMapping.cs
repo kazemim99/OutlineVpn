@@ -8,7 +8,9 @@ namespace V2Ray.Api.Services.UserServices.Mapping
     {
         public UserMapping()
         {
-            CreateMap<User, GetUserListOutput>();
+            CreateMap<User, GetUserListOutput>()
+                .ForMember(a => a.FullName, c => c.MapFrom(b => $"{b.FirstName} {b.LastName}"))
+                ;
 
             CreateMap<User, GetUserOutput>()
                    .ForMember(a => a.Avatar,

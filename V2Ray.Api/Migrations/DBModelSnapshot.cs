@@ -149,13 +149,6 @@ namespace V2Ray.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -165,14 +158,14 @@ namespace V2Ray.Api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MonthCount")
+                        .HasColumnType("int");
+
                     b.Property<int>("SSHKeyId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
-
-                    b.Property<string>("TranactionNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
@@ -639,11 +632,16 @@ namespace V2Ray.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("V2Servers");
                 });
@@ -759,6 +757,15 @@ namespace V2Ray.Api.Migrations
                     b.Navigation("V2Server");
                 });
 
+            modelBuilder.Entity("V2Ray.Api.Entity.V2Server", b =>
+                {
+                    b.HasOne("V2Ray.Api.Entity.User", "User")
+                        .WithMany("Servers")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("V2Ray.Api.Entity.Message", b =>
                 {
                     b.Navigation("Attachments");
@@ -788,6 +795,8 @@ namespace V2Ray.Api.Migrations
                     b.Navigation("Roles");
 
                     b.Navigation("SSHKeyInfos");
+
+                    b.Navigation("Servers");
 
                     b.Navigation("V2Keys");
                 });

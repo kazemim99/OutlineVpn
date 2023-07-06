@@ -20,6 +20,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task Recreate(string name);
         Task DisableExpired();
         Task SetUser(int userId, SetPasswordModel model);
-        Task Charge(int userId);
+        Task Charge(int userId, int userId1);
     }
 }

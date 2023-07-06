@@ -69,16 +69,16 @@ namespace V2Ray.Api.Services.UserServices
             if (!user.Enable)
                 throw new ApiException(AppErrors.UserDeactive, 400);
 
-            //if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
-            //    throw new ApiException(AppErrors.WrongPassword);
+            if (!BCrypt.Net.BCrypt.Verify(input.Password, user.Password))
+                throw new ApiException(AppErrors.WrongPassword);
 
-            if (user.NeedConfirm)
-            {
-                return new LoginResultDto
-                {
-                    NeedConfirm = true
-                };
-            }
+            //if (user.NeedConfirm)
+            //{
+            //    return new LoginResultDto
+            //    {
+            //        NeedConfirm = true
+            //    };
+            //}
 
             var response = new LoginResultDto
             {
@@ -115,11 +115,12 @@ namespace V2Ray.Api.Services.UserServices
                     throw new ApiException(AppErrors.UserNotFound);
 
                 var map = _mapper.Map<User>(input);
+                map.Enable = true;
                 map.Id = id;
-                //if (!string.IsNullOrEmpty(input.Password) && input.Password != "null")
-                //    map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
-                //else
-                //    map.Password = user.Password;
+                if (!string.IsNullOrEmpty(input.Password) && input.Password != "null")
+                    map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
+                else
+                    map.Password = user.Password;
 
                 //if (!string.IsNullOrEmpty(map.Avatar))
                 //    map.Avatar = input.Avatar;
@@ -161,8 +162,9 @@ namespace V2Ray.Api.Services.UserServices
                 {
                     RoleId = _db.Roles.First(a => a.Title == Policies.User).Id
                 });
-                //map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
-                map.NeedConfirm = true;
+                map.Password = BCrypt.Net.BCrypt.HashPassword(input.Password);
+                map.Enable = input.Enable;
+
                 await _db.AddAsync(map);
                 await _db.SaveChangesAsync();
             }

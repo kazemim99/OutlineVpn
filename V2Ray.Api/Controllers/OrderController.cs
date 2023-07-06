@@ -22,18 +22,37 @@ namespace V2Ray.Api.Controllers
         }
 
 
+        [HttpGet("orderCount/{userId}")]
+        [Authorize]
+
+        public async Task<ApiResponse> Filter([FromRoute]int userId)
+        {
+            var result = await _service.OrdersCount(userId);
+            return new ApiResponse(result);
+        }
+
+
         [HttpGet("filter")]
         [Authorize]
 
         public async Task<ApiResponse> Filter([FromQuery] OrderFilterInput filter)
         {
-            //filter.OrderId = OrderId;
-            //filter.IsAdmin = IsAdmin;
-            
+            filter.IsAdmin = IsAdmin;
+            filter.UserId = UserId;
             var result = await _service.GetAllAsync(filter, new[] { "SSHKey", "User" });
             return new ApiResponse(result);
         }
 
+
+        [HttpGet("orderCount")]
+        [Authorize]
+
+        public async Task<ApiResponse> OrderCount()
+        {
+
+            var result = await _service.OrdersCount(UserId);
+            return new ApiResponse(result);
+        }
         /// <summary>
         /// ویرایش یک کاربر 
         /// </summary>
@@ -43,6 +62,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> Update([FromRoute] int id, [FromForm] UpdateOrderInput input)
         {
+            input.UserId = UserId;
             await _service.UpdateAsync(id, input);
 
             return new ApiResponse();

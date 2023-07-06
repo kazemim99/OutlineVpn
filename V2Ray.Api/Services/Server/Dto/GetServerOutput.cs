@@ -12,6 +12,7 @@ namespace V2Ray.Api.Services.Server.Dto
         public string Token { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public int? UserId { get; set; }
         public string IP { get; set; }
         public bool HasLicense { get; set; }
         public string? Url { get; set; }

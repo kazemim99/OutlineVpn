@@ -43,13 +43,6 @@
               <v-row>
                 <v-col cols="4" sm="12" md="4">
                   <v-text-field
-                    autocomplete="false"
-                    v-model="user.email"
-                    label="ایمیل "
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="4" sm="12" md="4">
-                  <v-text-field
                     v-model="user.mobile"
                     autocomplete="false"
                     label=" موبایل *"
@@ -57,18 +50,11 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="4" sm="12" md="4">
-                  <v-text-field
-                    autocomplete="false"
-                    v-model="user.initCapacity"
-                    label="حجم"
-                    placeholder=" "
-                  ></v-text-field>
-                </v-col>
+               
               </v-row>
 
               <v-row>
-                <!-- <v-col cols="4" sm="12" md="4">
+                <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     v-model="user.password"
                     autocomplete="new-password"
@@ -92,51 +78,9 @@
                     type="password"
                     required
                   ></v-text-field>
-                </v-col> -->
-                <v-col cols="4" sm="12" md="4">
-                  <v-col>
-                    <v-btn
-                      large
-                      color="blue-grey"
-                      class="ma-2 white--text"
-                      @click="clickImg"
-                    >
-                      بارگذاری تصویر
-                    </v-btn>
-
-                    <image-uploader
-                      hidden
-                      v-model="user.avatar"
-                      :debug="1"
-                      :maxWidth="512"
-                      :quality="0.7"
-                      :autoRotate="true"
-                      :preview="false"
-                      outputFormat="verbose"
-                      :className="[
-                        'fileinput',
-                        { 'fileinput--loaded': hasImage },
-                      ]"
-                      :capture="false"
-                      accept="image/*"
-                      doNotResize="['gif', 'svg']"
-                      @input="onFileChange"
-                    ></image-uploader>
-                  </v-col>
-                  <small style="display: block; color: #e91e63">
-                    پسوند‌های مجاز: ".png", ".jpg",".jpeg"
-                  </small>
-                  <small style="display: block; color: #e91e63">
-                    حجم مجاز: 15KB
-                  </small>
-                  <v-col>
-                    <v-img
-                      :src="imageUrl"
-                      style="border: 1px dashed #ccc; max-height: 300px"
-                    />
-                  </v-col>
                 </v-col>
-              </v-row>
+              
+              </v-row> 
               <v-row>
                 <v-col cols="4">
                   <v-switch
@@ -152,37 +96,6 @@
                   ></v-switch>
                 </v-col>
               </v-row>
-              <div>
-                <h3>{{ user.initCapacity }} / {{ user.cunsumedTraffic }}</h3>
-              </div>
-              <div v-if="!user.isAdmin">
-                <!-- <v-list
-                  v-if="selectedComplexId"
-                  two-line
-                  subheader
-                >
-                  <v-subheader> نقشها </v-subheader>
-                  <v-list-item v-for="(item, i) in complexRoleList" :key="i">
-                    <v-list-item-content>
-                      <v-list-item-title>{{
-                        item.title
-                      }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list> -->
-                <div>
-                  <v-divider></v-divider>
-                  <v-card-text class="h3"> سرور </v-card-text>
-                  <v-select
-                    v-model="user.serverId"
-                    :items="servers"
-                    item-value="id"
-                    item-text="title"
-                    label="سرور"
-                    solo
-                  ></v-select>
-                </div>
-              </div>
             </v-container>
           </v-form>
         </v-card-text>
@@ -201,13 +114,9 @@
 <script>
 import Vue from "vue";
 import request from "@/utils/request";
-import ImageUploader from "vue-image-upload-resize";
-
-import qs from "qs";
 export default Vue.extend({
   name: "AddNewUser",
   components: {
-    ImageUploader,
   },
   props: ["selectedComplexId"],
   data: () => ({

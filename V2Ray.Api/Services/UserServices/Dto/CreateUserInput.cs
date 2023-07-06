@@ -18,13 +18,13 @@ namespace V2Ray.Api.Services.UserServices.Dto
         [RegularExpression(@"\b^(09|9)+([0-9]){9}$\b", ErrorMessage = "موبایل وارد شده معتبر نیست")]
         public string Mobile { get; set; }
 
-        //[DataMember]
-        //[MinLength(8, ErrorMessage = "طول رمز عبور حداقل 8 کارکتر میباشد")]
-        //[MaxLength(32, ErrorMessage = "طول رمز عبور حداکثر 32 کارکتر میباشد")]
-        //public string Password { get; set; }
+        [DataMember]
+        [MinLength(8, ErrorMessage = "طول رمز عبور حداقل 8 کارکتر میباشد")]
+        [MaxLength(32, ErrorMessage = "طول رمز عبور حداکثر 32 کارکتر میباشد")]
+        public string Password { get; set; }
 
-        //[Compare("Password",ErrorMessage ="تکرار رمز عبور اشتباه است")]
-        //public string ConfirmPassword { get; set; }
+        [Compare("Password", ErrorMessage = "تکرار رمز عبور اشتباه است")]
+        public string ConfirmPassword { get; set; }
 
 
         public bool IsAdmin { get; set; } = false;

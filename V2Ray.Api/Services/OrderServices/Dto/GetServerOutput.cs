@@ -8,10 +8,7 @@ namespace V2Ray.Api.Services.OrderServices.Dto
     public class GetOrderOutput : EntityDto<int>
     {
 
-        public string CardNumber { get; set; }
         public OrderStateEnum Status { get; set; }
-        public string Mobile { get; set; }
-
         public string KeyUserName { get; set; }
         public string CreateAt { get; set; }
         public int Amount { get; set; }

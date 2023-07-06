@@ -19,6 +19,20 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
               <v-row>
+                <div>
+                  <v-card-text class="h3"> کاربر </v-card-text>
+                  <v-select
+                  v-if="this.$store.state.userDetails.isAdmin"
+                    v-model="v2Server.userId"
+                    :items="users"
+                    item-value="id"
+                    item-text="fullName"
+                    label="سرور"
+                    solo
+                  ></v-select>
+                </div>
+              </v-row>
+              <v-row>
                 <v-col cols="3" sm="12" md="3">
                   <v-text-field
                     v-model="v2Server.title"
@@ -44,7 +58,7 @@
                     label="ظرفیت"
                     required
                   ></v-text-field>
-                  </v-col>
+                </v-col>
                 <v-col cols="3" sm="12" md="3">
                   <v-text-field
                     autocomplete="false"
@@ -97,7 +111,9 @@
                 <v-col cols="4">
                   <v-switch
                     v-model="v2Server.hasLicense"
-                    :label="`لایسنس: ${v2Server.hasLicense ? 'فعال' : 'غیر فعال'}`"
+                    :label="`لایسنس: ${
+                      v2Server.hasLicense ? 'فعال' : 'غیر فعال'
+                    }`"
                   ></v-switch>
                 </v-col>
               </v-row>
@@ -132,10 +148,12 @@ export default Vue.extend({
     dialogLogo: false,
     valid: true,
     loading: false,
+    users: [],
     v2Server: {
-      capacity:50,
+      userId: null,
+      capacity: 50,
       title: "",
-      token:"",
+      token: "",
       hasLicense: false,
       url: "",
       ip: "",
@@ -161,8 +179,25 @@ export default Vue.extend({
       deep: true,
     },
   },
-
+  mounted() {
+    this.users = this.getUsers();
+  },
   methods: {
+    async getUsers() {
+      await request
+        .get("/user/users")
+        .then((response) => {
+          debugger;
+          var data = response.data.result;
+          this.users = data.result;
+        })
+        .catch((error) => {
+          alert(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
     async addEmpty() {
       this.currentRows++;
       var tempObj = {};
@@ -189,7 +224,7 @@ export default Vue.extend({
       await request.get(`/v2Server/${id}`).then((response) => {
         var data = response.data.result;
         this.v2Server.id = id;
-        this.v2Server.capacity= data.capacity;
+        this.v2Server.capacity = data.capacity;
         this.v2Server.title = data.title;
         this.v2Server.url = data.url;
         this.v2Server.swapped = data.swapped;
@@ -201,6 +236,7 @@ export default Vue.extend({
         this.v2Server.userName = data.userName;
         this.v2Server.password = data.password;
         this.password = data.password;
+        this.v2Server.userId = data.userId;
 
         data.iPs.forEach((ip) => {
           this.add(ip);

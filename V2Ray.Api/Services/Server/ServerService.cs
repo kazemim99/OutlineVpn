@@ -101,7 +101,10 @@ namespace V2Ray.Api.Services.Server
             {
                 query = query.Where(a => a.Title.Contains(filter.Title));
             }
-
+            if (!filter.IsAdmin)
+            {
+                query = query.Where(a => a.UserId == filter.UserId);
+            }
 
 
             return query.OrderBy(a => a.SSHKeys.Count(a => a.ExpireDate > DateTime.Now));

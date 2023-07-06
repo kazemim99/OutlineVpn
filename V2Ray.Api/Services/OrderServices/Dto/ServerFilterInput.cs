@@ -9,7 +9,8 @@ namespace V2Ray.Api.Services.OrderServices.Dto
     {
         public string? KeyUserName { get; set; }
         public string? Mobile { get; set; }
-        
+        public int? UserId { get;  set; }
+        public bool IsAdmin { get;  set; }
     }
 
 }
