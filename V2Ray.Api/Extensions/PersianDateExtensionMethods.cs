@@ -74,7 +74,7 @@ namespace V2Ray.Api.Extensions
         public static DateTime ToGeo(this string input)
         {
             var date = input.Split("/");
-            var tt = DateTime.Now;
+            var tt = DateTime.UtcNow;
             PersianCalendar pc = new PersianCalendar();
             DateTime dt = new DateTime(Convert.ToInt32(date[0]), Convert.ToInt32(date[1]), Convert.ToInt32(date[2]),tt.Hour,tt.Minute,tt.Second, pc);
             return dt;

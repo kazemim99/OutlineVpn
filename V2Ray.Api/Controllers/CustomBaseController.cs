@@ -14,6 +14,13 @@ namespace V2Ray.Api.Controllers
             }
         }
 
+        public string CustomerUserName
+        {
+            get
+            {
+                return User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            }
+        }
         public int FreeAcount
         {
             get

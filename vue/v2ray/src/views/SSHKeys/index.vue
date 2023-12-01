@@ -36,7 +36,6 @@
         >
       </template>
 
-
       <template v-slot:item.changePassword="{ item }">
         <v-icon medium class="mr-2" @click="changePassword(item.id)"
           >mdi-key-change</v-icon
@@ -60,7 +59,7 @@
             class="mr-2"
             @click="
               copyToClipBoard(
-                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n حروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \n لینک آموزش : https://iranv2ray.com/phone-toturial`
+                `username: ${item.userName} \n password: ${item.password} \n  server : ${item.serverName} \n  Port : 1027 \nتاریخ اعتبار : ${item.expireDate} \nحروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \nآموزش اتصال: https://my.uupload.ir/dl/VX7QEBWR \nآموزش تغییر سرور: https://my.uupload.ir/dl/VX7QEBNz \n`
               )
             "
           >
@@ -76,7 +75,7 @@
             class="mr-2"
             @click="
               copyToClipBoard(
-                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n حروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید `
+                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n`
               )
             "
           >
@@ -287,8 +286,7 @@ export default {
       });
     },
 
-    
-   async changePassword(id) {
+    async changePassword(id) {
       Vue.swal({
         title: "آیا مطمئن  هستید",
         icon: "warning",
@@ -312,11 +310,19 @@ export default {
       });
     },
 
-
-   async charge(id) {
+    async charge(id) {
       Vue.swal({
         title: "آیا مطمئن  هستید",
         icon: "warning",
+        input: "select",
+        inputOptions: {
+          900: "3 ماه کامتر",
+          600: "2 ماه کمتر",
+          300: "1 ماه کمتر",
+          30: "1 ماهه",
+          60: "2 ماهه",
+          90: "3 ماهه",
+        },
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
@@ -324,8 +330,12 @@ export default {
         cancelButtonText: "انصراف",
       }).then((result) => {
         if (result.isConfirmed) {
+          debugger;
+          if (result.value == "900") result.value = -90;
+          if (result.value == "600") result.value = -60;
+          if (result.value == "300") result.value = -30;
           request
-            .post(`/sshkey/charge/${id}`)
+            .post(`/sshkey/charge/${id}/${result.value}`)
             .then(() => {
               Vue.swal("", "اکانت با موفقیت تمدید گردید", "success");
               this.getSSHKeys();
@@ -336,7 +346,6 @@ export default {
         }
       });
     },
-
 
     async deleteItem(id) {
       Vue.swal({

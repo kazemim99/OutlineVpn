@@ -15,16 +15,16 @@ const routes: Array<RouteConfig> = [
     redirect: "/sshkeys",
     meta: { requireAuth: true },
     children: [
-     
-    
+
+
       {
         path: "users",
         name: "User",
         component: () => import("@/views/User/Users.vue"),
         meta: { requireAuth: true },
       },
-     
-     
+
+
       {
         path: "orders",
         name: "Orders",
@@ -81,32 +81,26 @@ const routes: Array<RouteConfig> = [
     ],
   },
   {
-    path: "/",
+    path: "/sshkeys",
     name: "Home",
     redirect: "/dashboard/sshkeys",
     component: () => import("@/views/Home.vue"),
-    meta: {
-      title:
-        "فیلتر شکن - فروش فیلتر شکن - فیلتر شکن ایفون , اندروید , کامپیوتر , ویندوز",
-      metaTags: [
-        {
-          name: "description",
-          content:
-            "فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته",
-        },
-        {
-          property: "og:description",
-          content:
-            "فروش فیلتر شکن پر سرعت  برای اندورید , ایفون , ویندوز , کامپیوتر , لینوکس همراه با مهلت تست و پشتیبانی 24 ساعته",
-        },
-      ],
-    },
   },
-
+  {
+    path: "/",
+    name: "CustomerLogin",
+    component: () => import("@/views/Login/customerLogin.vue"),
+  },
+  {
+    path: "/customerInfo",
+    name: "CustomerInfo",
+    meta: { requireAuth: true },
+    component: () => import("@/views/Login/customerInfo.vue"),
+  },
   {
     path: "/login",
     name: "Login",
-    component: () => import("@/views/Login/index.vue"),
+    component: () => import("@/views/Login/customerLogin.vue"),
   },
   {
     path: "/phone-toturial",
@@ -149,7 +143,7 @@ router.beforeEach((to, from, next) => {
   // if (nearestWithTitle) document.title = nearestWithTitle.meta.title;
 
   if (to.matched.some((record) => record.meta.requireAuth) && !isLoggedIn) {
-    next({ path: "/login", query: { returnUrl: to.path } });
+    next({ path: "/", query: { returnUrl: to.path } });
   }
 
   next();

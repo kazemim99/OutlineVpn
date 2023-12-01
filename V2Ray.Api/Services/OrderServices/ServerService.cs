@@ -5,6 +5,7 @@ using V2Ray.Api.Entity;
 using V2Ray.Api.Services.OrderServices.Dto;
 using V2Ray.Api.Services.SSHKeyServices;
 using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
+using V2Ray.Api.Extensions;
 
 namespace V2Ray.Api.Services.OrderServices
 {
@@ -50,9 +51,22 @@ namespace V2Ray.Api.Services.OrderServices
 
         public override IQueryable<Order> Filter(OrderFilterInput filter)
         {
-            var query = _db.Orders.AsQueryable();
-            if (filter.UserId != null && !filter.IsAdmin)
+            var query = _db.Orders.OrderByDescending(c=>c.Id).AsQueryable();
+
+                query = query.Where(a => !a.SSHKey.User.IsAdmin);
+            if (filter.UserId != null)
                 query = query.Where(a => a.UserId == filter.UserId);
+
+            if (filter.From != null)
+                query = query.Where(a => a.CreatedAt.Date >= filter.From.Value.ToGeo().Date);
+
+            if (filter.To != null)
+                query = query.Where(a => a.CreatedAt.Date <= filter.To.Value.ToGeo().Date.Date);
+
+            if (filter.DurationId != null)
+                query = query.Where(a => a.SSHKey.DurationId == filter.DurationId);
+
+            
             
             return query;
 
@@ -70,24 +84,33 @@ namespace V2Ray.Api.Services.OrderServices
             await base.InsertAsync(input);
         }
 
-        public async Task<OrdersCountOutput> OrdersCount(int? userId)
+        public OrdersCountOutput OrderCount(OrderFilterInput filter, string[] vs)
         {
-            var quer = _db.Orders.AsQueryable();
-            var waitingCount = 0;
-            var allCount = 0;
-            if(userId != null)
-            {
-                quer = quer.Where(a => a.UserId == userId.Value);
-                allCount = quer.Sum(a=>a.MonthCount);
-                waitingCount = quer.Where(a => a.Status == OrderStateEnum.Waiting)
-                    .Sum(c=>c.MonthCount);
-            }
+            var query = _db.Orders.OrderByDescending(c => c.Id).AsQueryable();
 
+            query = query.Where(a => !a.SSHKey.User.IsAdmin);
+            if (filter.UserId != null)
+                query = query.Where(a => a.UserId == filter.UserId);
+
+            if (filter.From != null)
+                query = query.Where(a => a.CreatedAt.Date >= filter.From.Value.ToGeo().Date);
+
+            if (filter.To != null)
+                query = query.Where(a => a.CreatedAt.Date <= filter.To.Value.ToGeo().Date.Date);
+
+            if (filter.DurationId != null)
+                query = query.Where(a => a.DurationId == filter.DurationId);
+
+
+         
             return new OrdersCountOutput
             {
-                AllCount = allCount,
-                WaitingCount = waitingCount
+                ThreeMonthCount = query.Count(c=>c.DurationId == 90),
+                OneMonthCount = query.Count(c=>c.DurationId == 30),
+                TwoMonthCount = query.Count(c=>c.DurationId == 60),
+                UnknownCount = query.Count(c=>c.DurationId == 0),
             };
+
         }
     }
 }

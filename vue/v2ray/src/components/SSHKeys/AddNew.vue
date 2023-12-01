@@ -19,7 +19,7 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
               <v-row>
-                <v-col class="d-flex" cols="6" sm="6">
+                <v-col class="d-flex" cols="3" md="3" sm="6">
                   <v-select
                     v-model="sshKey.serverId"
                     :items="servers"
@@ -29,7 +29,7 @@
                     solo
                   ></v-select>
                 </v-col>
-                <v-col class="d-flex" cols="6" sm="6">
+                <v-col class="d-flex" cols="3" md="3" sm="6">
                   <v-text-field
                     v-model="sshKey.name"
                     label="نام "
@@ -38,7 +38,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="3" sm="12" md="4">
+                <v-col cols="3" sm="12" md="3">
                   <v-text-field
                     v-model="sshKey.count"
                     label="تعداد  *"
@@ -47,6 +47,30 @@
                     required
                   ></v-text-field>
                 </v-col>
+
+                <v-col class="d-flex" cols="3" md="3" sm="6">
+                  <v-select
+                    v-model="sshKey.durationId"
+                    :items="durations"
+                    item-value="id"
+                    item-text="title"
+                    label="ماه"
+                    solo
+                  ></v-select>
+                </v-col>
+
+                <v-col class="d-flex" cols="3" md="3" sm="6">
+                  <v-select
+                    v-model="sshKey.extraDayId"
+                    :items="extraDays"
+                    item-value="id"
+                    item-text="title"
+                    label="روزها اضافه"
+                    solo
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="3" sm="12" md="4">
                   <v-text-field
                     v-model="sshKey.userName"
@@ -63,10 +87,6 @@
                     placeholder=" "
                     autocomplete="false"
                   ></v-text-field>
-                </v-col>
-                <v-col cols="6" sm="12" md="6">
-                  <label>تاریخ :</label>
-                  <date-picker v-model="sshKey.expireDate" simple />
                 </v-col>
               </v-row>
             </v-container>
@@ -95,11 +115,29 @@ export default Vue.extend({
     dialog: false,
     dialogLogo: false,
     servers: [],
+    durations: [
+      { id: 30, title: "1 ماه" },
+      { id: 60, title: "2 ماه" },
+      { id: 90, title: "3 ماهه" },
+      { id: 1, title: "تستی" },
+    ],
+    extraDays: [
+      { id: 0, title: "0" },
+      { id: 1, title: "1" },
+      { id: 2, title: "2" },
+      { id: 3, title: "3" },
+      { id: 4, title: "4" },
+      { id: 5, title: "5" },
+      { id: 6, title: "6" },
+      { id: 7, title: "7" },
+    ],
     valid: true,
     loading: false,
     sshKey: {
-      name: "",
+      name: null,
+      extraDayId: 0,
       serverId: null,
+      durationId: 30,
       amount: 50000,
       password: null,
       userName: "",
@@ -115,10 +153,12 @@ export default Vue.extend({
         } else {
           this.getServers();
         }
+
         if (this.id != null) {
           this.getSSHKey(this.id);
         } else {
-          this.name = UserModule.fullName;
+          var userDetails = this.$store.state.userDetails;
+          this.sshKey.name = userDetails.firstName + " " + userDetails.lastName;
         }
       },
       deep: true,

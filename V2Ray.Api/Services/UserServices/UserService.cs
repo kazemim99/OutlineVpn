@@ -365,6 +365,29 @@ namespace V2Ray.Api.Services.UserServices
         }
 
 
+        private string GeneratCustomereJwtToken(SSHKey key)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"])); ;
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, key.UserName),
+                new Claim("ExpireDate", key.ExpireDate.ToString()),
+                new Claim("Server", key.V2Server.Url),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            };
+
+         
+            var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(70),
+            signingCredentials: credentials
+            );
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
         private string GenerateJwtToken(User userInfo)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"])); ;
@@ -393,6 +416,34 @@ namespace V2Ray.Api.Services.UserServices
             signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<LoginCustomerResultDto> CustomerLogin(CustomerLoginDto login)
+        {
+            if(_db.Users.Any(c=>c.Mobile == login.UserName))
+            {
+                return new LoginCustomerResultDto
+                {
+                    Seller = true
+                };
+            }
+            var sshKey =await _db.SSHKeyInfos.Include(a=>a.V2Server).FirstOrDefaultAsync(c => c.UserName == login.UserName && c.Password == login.Password);
+                if(sshKey == null)
+                throw new ApiException("اطلاعات وارد شده صحیح نیست");
+
+            var response = new LoginCustomerResultDto
+            {
+                JwtToken = new JwtToken()
+                {
+                    Token = GeneratCustomereJwtToken(sshKey),
+                },
+                UserName = sshKey.UserName,
+          
+            };
+
+            return response;
+
+
         }
     }
 }

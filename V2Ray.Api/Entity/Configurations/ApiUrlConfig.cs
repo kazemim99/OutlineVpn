@@ -48,8 +48,16 @@ namespace V2Ray.Api.Entity.Configurations
     {
         public void Configure(EntityTypeBuilder<SSHKey> builder)
         {
-            builder.HasIndex(c => c.UserName).IsUnique();
-            builder.HasOne(a => a.V2Server).WithMany(c => c.SSHKeys).HasForeignKey(b => b.ServerId).IsRequired(false);
+            builder.HasIndex(c => c.UserName)
+                .IsUnique();
+            builder.Property(c => c.UserName).IsRequired();
+            builder.Property(c => c.Password).IsRequired();
+
+            builder.HasOne(a => a.V2Server).WithMany(c => c.SSHKeys)
+                .HasForeignKey(b => b.ServerId).IsRequired(true);
+
+            builder.HasOne(a => a.User).WithMany(c => c.SSHKeyInfos)
+            .HasForeignKey(b => b.UserId).IsRequired(true);
         }
     }
 
@@ -90,7 +98,8 @@ namespace V2Ray.Api.Entity.Configurations
         public void Configure(EntityTypeBuilder<V2Server> builder)
         {
             builder.HasQueryFilter(a => !a.IsDeleted);
-            builder.HasOne(a => a.User).WithMany(a=>a.Servers).HasForeignKey(c=>c.UserId).IsRequired(false);
+            builder.HasOne(a => a.User).WithMany(a=>a.Servers).HasForeignKey(c=>c.UserId).IsRequired(true);
+            builder.HasMany(a => a.SSHKeys).WithOne(a=>a.V2Server).HasForeignKey(c=>c.ServerId).IsRequired(true);
             builder.Property(a => a.Capacity).HasDefaultValue(50);
         }
     }

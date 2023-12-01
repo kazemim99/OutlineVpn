@@ -28,5 +28,6 @@ namespace V2Ray.Api.Services.UserServices
         Task<LoginResultDto> VerifyCode(string code, string mobile);
         Task ChangePasswordAsync(string mobile, string password);
         Task<IEnumerable<OptionItem>> GetSelectList(string input);
+        Task<LoginCustomerResultDto> CustomerLogin(CustomerLoginDto login);
     }
 }

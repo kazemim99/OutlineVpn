@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.Net.Http.Headers;
 using V2Ray.Api.Services.V2Keys;
+using V2Ray.Api.Services.SSHKeyServices;
 
 namespace V2Ray.Api.Services.Server
 {
@@ -28,34 +29,46 @@ namespace V2Ray.Api.Services.Server
         private readonly DB _db;
 
         private readonly IMapper _mapper;
-        public ServerService(DB db, IMapper mapper) : base(mapper, db)
+        private readonly ISSHKeyService _sshService;
+        public ServerService(DB db, IMapper mapper, ISSHKeyService sshService) : base(mapper, db)
         {
             _mapper = mapper;
             _db = db;
+            _sshService = sshService;
         }
 
 
         public override async Task<Pagination<GetServerListOutput>> GetAllAsync(ServerFilterInput paging, params string[] include)
         {
-            var model = Filter(paging);
-
-            var pagination = new Pagination<GetServerListOutput>
+            try
             {
-                TotalItems = model.Count(),
-                PageCount = paging.ItemsPerPage == -1 ? 1 : Convert.ToInt32(model.Count() / paging.ItemsPerPage + 1),
-                CurrentPage = paging.Page,
-            };
 
-            var skip = (paging.Page - 1) * paging.ItemsPerPage;
 
-            paging.ItemsPerPage = paging.ItemsPerPage == -1 ? int.MaxValue : paging.ItemsPerPage;
-            var result = await model.Include(include)
-                 .Skip(skip)
-                 .Take(paging.ItemsPerPage).ToListAsync();
+                var model = Filter(paging);
 
-            pagination.Result = _mapper.Map<List<GetServerListOutput>>(result);
+                var pagination = new Pagination<GetServerListOutput>
+                {
+                    TotalItems = model.Count(),
+                    PageCount = paging.ItemsPerPage == -1 ? 1 : Convert.ToInt32(model.Count() / paging.ItemsPerPage + 1),
+                    CurrentPage = paging.Page,
+                };
 
-            return pagination;
+                var skip = (paging.Page - 1) * paging.ItemsPerPage;
+
+                paging.ItemsPerPage = paging.ItemsPerPage == -1 ? int.MaxValue : paging.ItemsPerPage;
+                var result = await model.Include(include)
+                     .Skip(skip)
+                     .Take(paging.ItemsPerPage).ToListAsync();
+
+                pagination.Result = _mapper.Map<List<GetServerListOutput>>(result);
+
+                return pagination;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
         public override async Task UpdateAsync(int id, UpdateServerInput input, params string[] include)
         {
@@ -85,6 +98,14 @@ namespace V2Ray.Api.Services.Server
             await _db.SaveChangesAsync();
         }
 
+
+        public async Task ChangeActive(int id)
+        {
+            var Server = _db.V2Servers.FirstOrDefault(a => a.Id == id);
+            Server.IsActive = !Server.IsActive;
+            _db.Update(Server);
+            await _db.SaveChangesAsync();
+        }
         public async Task ChangeState(int id)
         {
             var Server = _db.V2Servers.FirstOrDefault(a => a.Id == id);
@@ -95,7 +116,7 @@ namespace V2Ray.Api.Services.Server
 
         public override IQueryable<V2Server> Filter(ServerFilterInput filter)
         {
-            var query = _db.V2Servers.Include(a=>a.SSHKeys).AsQueryable();
+            var query = _db.V2Servers.Include(a => a.SSHKeys).AsQueryable();
 
             if (!filter.Title.IsNullOrEmpty())
             {
@@ -107,7 +128,7 @@ namespace V2Ray.Api.Services.Server
             }
 
 
-            return query.OrderBy(a => a.SSHKeys.Count(a => a.ExpireDate > DateTime.Now));
+            return query.OrderBy(a => a.SSHKeys.Count(a => a.ExpireDate > DateTime.UtcNow));
         }
 
 
@@ -128,6 +149,48 @@ namespace V2Ray.Api.Services.Server
                 Key = key,
                 V2ServerId = serverId,
             });
+            _db.SaveChanges();
+        }
+
+        public async Task<CustomerInfoOutput> CustomerInfo(string userName)
+        {
+            var result = await _db.SSHKeyInfos.Include(c => c.V2Server).FirstOrDefaultAsync(c => c.UserName == userName);
+            if (result == null)
+                throw new ApiException("نام کاربری یافت نشد");
+
+            return new CustomerInfoOutput
+            {
+                ExpireDate = result.ExpireDate.ToPeString(),
+                UserName = result.UserName,
+                Password = result.Password,
+                Server = result.V2Server.Url
+            };
+        }
+
+
+        public  List<CustomerServerOutput> CustomerServers(string userName)
+        {
+            var sshkey = _db.SSHKeyInfos.Include(a=>a.V2Server).FirstOrDefault(a => a.UserName == userName);
+
+            var result =  _db.V2Servers.Where(c => c.UserId == sshkey.V2Server.UserId && c.IsActive  && c.SSHKeys.Where(c=>c.Enable).Count() < 55)
+                .OrderBy(c => c.SSHKeys.Where(c => c.Enable).Count())
+                .Select(b => new CustomerServerOutput
+                {
+                    Id = b.Id,
+                    Title = b.Url.Split('.',StringSplitOptions.None)[0].ToUpper(),
+                }).ToList();
+            return result.ToList();
+
+        }
+
+        public async Task ChangeServer(int serverId, string customerUserName)
+        {
+            var sshKey =await _db.SSHKeyInfos.FirstAsync(c => c.UserName == customerUserName);
+            var oldServer = await _db.V2Servers.FirstAsync(c => c.Id == sshKey.ServerId);
+            var newServer = await _db.V2Servers.FirstAsync(c => c.Id == serverId);
+            _sshService.ChangeServer(sshKey, newServer, oldServer);
+            sshKey.ServerId = serverId;
+            _db.SSHKeyInfos.Update(sshKey);
             _db.SaveChanges();
         }
 

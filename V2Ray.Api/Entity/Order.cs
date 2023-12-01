@@ -8,6 +8,7 @@ namespace V2Ray.Api.Entity
         public int SSHKeyId { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
+        public int DurationId { get; set; }
         public OrderStateEnum Status { get; set; }
 
         public bool IsDeleted
@@ -15,6 +16,5 @@ namespace V2Ray.Api.Entity
             get; set;
 
         }
-        public int MonthCount { get; internal set; }
     }
 }

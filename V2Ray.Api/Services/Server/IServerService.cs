@@ -15,5 +15,9 @@ namespace V2Ray.Api.Services.Server
     {
         Task IsDelete(int id, string fullName);
         Task ChangeState(int id);
+        Task<CustomerInfoOutput> CustomerInfo(string userName);
+        List<CustomerServerOutput> CustomerServers(string userName);
+        Task ChangeServer(int serverId, string customerUserName);
+        Task ChangeActive(int id);
     }
 }

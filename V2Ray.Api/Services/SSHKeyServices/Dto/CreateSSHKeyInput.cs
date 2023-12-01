@@ -22,7 +22,12 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         [JsonIgnore]
         public int Port { get; set; }
 
+
+        [DataMember(IsRequired = true)]
+        public int DurationId { get; set; }
+
         [DataMember(IsRequired = false)]
+        [JsonIgnore]
         public string? ExpireDate { get; set; }
         //[Required]
         //[MaxLength(6, ErrorMessage = "مقدار بیشتر از 6 نمیتواند باشد")]
@@ -34,5 +39,6 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         [Required]
         public int ServerId { get; set; }
         public int? UserId { get; set; }
+        public int ExtraDayId { get;  set; }
     }
 }

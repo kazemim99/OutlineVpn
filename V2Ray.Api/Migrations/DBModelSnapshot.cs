@@ -155,11 +155,11 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DurationId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<int>("MonthCount")
-                        .HasColumnType("int");
 
                     b.Property<int>("SSHKeyId")
                         .HasColumnType("int");
@@ -336,6 +336,9 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("CreatorUserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DurationId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Enable")
                         .HasColumnType("bit");
 
@@ -353,7 +356,7 @@ namespace V2Ray.Api.Migrations
                     b.Property<int>("Port")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ServerId")
+                    b.Property<int>("ServerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdateAt")
@@ -362,7 +365,7 @@ namespace V2Ray.Api.Migrations
                     b.Property<int?>("UpdaterUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
@@ -632,7 +635,7 @@ namespace V2Ray.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
@@ -710,11 +713,15 @@ namespace V2Ray.Api.Migrations
                 {
                     b.HasOne("V2Ray.Api.Entity.V2Server", "V2Server")
                         .WithMany("SSHKeys")
-                        .HasForeignKey("ServerId");
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("V2Ray.Api.Entity.User", "User")
                         .WithMany("SSHKeyInfos")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
 
@@ -761,7 +768,9 @@ namespace V2Ray.Api.Migrations
                 {
                     b.HasOne("V2Ray.Api.Entity.User", "User")
                         .WithMany("Servers")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

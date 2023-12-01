@@ -10,7 +10,7 @@ namespace V2Ray.Api.Services.Server.Mapping
         public V2ServerMapping()
         {
             CreateMap<V2Server, GetServerListOutput>()
-                .ForMember(c => c.KeyCount, a => a.MapFrom(b => b.SSHKeys.Count(a => a.ExpireDate > DateTime.Now)));
+                .ForMember(c => c.KeyCount, a => a.MapFrom(b => b.SSHKeys.Count(a => a.ExpireDate > DateTime.UtcNow)));
                 
 
             CreateMap<V2Server, GetServerOutput>();

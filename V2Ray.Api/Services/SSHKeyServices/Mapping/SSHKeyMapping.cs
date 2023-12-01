@@ -24,7 +24,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Mapping
 
             CreateMap<UpdateSSHKeyInput, SSHKey>()
                 .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToGeo()))
-                .ForMember(a => a.UpdateAt, c => c.MapFrom(b => DateTime.UtcNow.ToGeo()));
+                .ForMember(a => a.UpdateAt, c => c.MapFrom(b => DateTime.UtcNow));
 
 
         }

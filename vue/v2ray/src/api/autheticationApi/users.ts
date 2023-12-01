@@ -12,6 +12,12 @@ export const login = (data: any) =>
     data,
   });
 
+export const customerLogin = (data: any) =>
+  request({
+    url: "/authentication/customer-login",
+    method: "post",
+    data,
+  });
 export const getUser = () =>
   request({
     url: "/authentication/get-current-user",

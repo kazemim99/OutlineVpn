@@ -1,5 +1,13 @@
 ﻿namespace V2Ray.Api.Services.Server.Dto
 {
+    public class CustomerInfoOutput
+    {
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string Server { get; set; }
+        public string ExpireDate { get; set; }
+
+    }
     public class GetServerListOutput
     {
         public int Id { get; set; }
@@ -8,6 +16,7 @@
         public string Url { get; set; }
         public bool HasLicense { get; set; }
         public int KeyCount { get; set; }
+        public bool IsActive { get; set; }
         public string TitleCount => $"{Title}({KeyCount})";
     }
 }

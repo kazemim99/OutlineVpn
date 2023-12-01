@@ -22,15 +22,24 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Filter()
         {
+            try
+            {
+                var result = await _service.GetAllAsync(new SSHKeyFilterInput
+                {
+                    ItemsPerPage = 100,
+                    IsAdmin = IsAdmin,
+                    UserId = UserId
+                });
+                return new ApiResponse(result);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
             //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;
-            var result = await _service.GetAllAsync(new SSHKeyFilterInput
-            {
-                ItemsPerPage = 100,
-                IsAdmin = IsAdmin,
-                UserId = UserId
-            });
-            return new ApiResponse(result);
+        
         }
 
 
@@ -188,10 +197,10 @@ namespace V2Ray.Api.Controllers
         /// </summary>
         ///
         [Authorize]
-        [HttpPost("charge/{id}")]
-        public async Task<ApiResponse> Charge([FromRoute] int id)
+        [HttpPost("charge/{id}/{durationId}")]
+        public async Task<ApiResponse> Charge([FromRoute] int id, [FromRoute] int durationId)
         {
-            await _service.Charge(id,UserId);
+            await _service.Charge(id, durationId, UserId);
             return new ApiResponse();
         }
 

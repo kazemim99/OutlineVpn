@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Repos\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj": {}
+    "C:\\Users\\stocksna\\source\\repos\\kazemim99\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj": {}
   },
   "projects": {
-    "C:\\Repos\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj": {
+    "C:\\Users\\stocksna\\source\\repos\\kazemim99\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj",
+        "projectUniqueName": "C:\\Users\\stocksna\\source\\repos\\kazemim99\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj",
         "projectName": "V2Ray.Api",
-        "projectPath": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj",
-        "packagesPath": "C:\\Users\\Mostafa\\.nuget\\packages\\",
-        "outputPath": "C:\\Repos\\OutlineVpn\\V2Ray.Api\\obj\\",
+        "projectPath": "C:\\Users\\stocksna\\source\\repos\\kazemim99\\OutlineVpn\\V2Ray.Api\\V2Ray.Api.csproj",
+        "packagesPath": "C:\\Users\\stocksna\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\stocksna\\source\\repos\\kazemim99\\OutlineVpn\\V2Ray.Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Mostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\stocksna\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

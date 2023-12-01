@@ -7,9 +7,10 @@ namespace V2Ray.Api.Services.OrderServices.Dto
 {
     public class OrderFilterInput : PaginationModelInput
     {
-        public string? KeyUserName { get; set; }
-        public string? Mobile { get; set; }
-        public int? UserId { get;  set; }
+        public int? UserId { get; set; }
+        public DateTime? From { get; set; }
+        public DateTime? To { get;  set; }
+        public int? DurationId { get;  set; }
         public bool IsAdmin { get;  set; }
     }
 

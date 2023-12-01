@@ -15,11 +15,13 @@ namespace V2Ray.Api.Services.SSHKeyServices
         //Task GenerateSshFromClient(int userId);
         Task GenerateSshFromAdmin(CreateSSHKeyInput input);
         Task Adjust(int serverId);
-        Task ChangeState(int id);
+        Task ChangeState(int id,bool fromCharge= false);
         Task ChangePassowrd(int id);
         Task Recreate(string name);
         Task DisableExpired();
         Task SetUser(int userId, SetPasswordModel model);
-        Task Charge(int userId, int userId1);
+        Task Charge(int id, int durationId, int userId);
+        void ChangeServer(SSHKey sshKey, V2Server newServer, V2Server oldserver);
+        Task ChangePassword();
     }
 }

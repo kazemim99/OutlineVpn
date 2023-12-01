@@ -13,8 +13,10 @@ namespace V2Ray.Api.Services.OrderServices.Mapping
         {
             CreateMap<Order, GetOrderListOutput>()
                 .ForMember(c => c.KeyUserName, a => a.MapFrom(b => b.SSHKey.UserName))
+                .ForMember(c => c.Duration, a => a.MapFrom(b => GetDuration(b)))
                 .ForMember(c => c.Creator, a => a.MapFrom(d => $"{d.User.FirstName} {d.User.LastName}"))
-                .ForMember(c => c.CreatedAt, a => a.MapFrom(b => b.CreatedAt.ToPeString("yyyy/MM/dd")))
+                .ForMember(c => c.CreatedAt, a => a.MapFrom(b => b.SSHKey.ChargeDate.ToPeString("yyyy/MM/dd")))
+                .ForMember(c => c.ExpireDate, a => a.MapFrom(b => b.SSHKey.ExpireDate.ToPeString("yyyy/MM/dd")))
                 .ForMember(c => c.Status, a => a.MapFrom(b => b.Status.GetDescription()));
 
             CreateMap<Order, GetOrderOutput>()
@@ -29,6 +31,22 @@ namespace V2Ray.Api.Services.OrderServices.Mapping
 
 
             CreateMap<UpdateOrderInput, Order>();
+        }
+
+        private string GetDuration(Order b)
+        {
+            if (b.DurationId == 30)
+            {
+                return "1 ماهه";
+            }
+            else if (b.DurationId == 90)
+            {
+                return "3 ماهه";
+            }
+            else
+            {
+                return "نام مشخص";
+            }
         }
 
         private IEnumerable<OptionItem> GetStatus()

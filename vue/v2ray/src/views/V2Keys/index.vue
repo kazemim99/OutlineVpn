@@ -30,7 +30,10 @@
         >
       </template>
 
-      <template v-slot:item.delete="{ item }">
+      <template
+        v-if="this.$store.state.userDetails.isAdmin"
+        v-slot:item.delete="{ item }"
+      >
         <v-icon
           v-can="'Member_Delete'"
           medium

@@ -18,6 +18,7 @@ import {
   veriFyCode,
   changePassword,
   register,
+  customerLogin,
 } from "@/api/autheticationApi/users";
 
 export interface IUserState {
@@ -30,6 +31,7 @@ export interface IUserState {
 class User extends VuexModule implements IUserState {
   public token = getToken() || "";
   public fullName = "";
+  public customerUserName = "";
   public roles: string[] = [];
   public permisiones: string[] = [];
   public verfied = false;
@@ -64,6 +66,11 @@ class User extends VuexModule implements IUserState {
   }
 
   @Mutation
+  Set_Customer_UserName(input: any) {
+    this.customerUserName = `${input.UserName}`;
+  }
+
+  @Mutation
   SET_IsAdmin(isAdmin: any) {
     this.isAdmin = isAdmin;
   }
@@ -77,6 +84,7 @@ class User extends VuexModule implements IUserState {
         const result = a.data.result;
         const token = result.jwtToken.token;
         setToken(`Bearer ${token}`);
+
         store.commit("setUserDetails", result);
       })
       .catch((e) => {
@@ -87,6 +95,7 @@ class User extends VuexModule implements IUserState {
   @Action
   public async Login(userInfo: { mobile: string; password: string }) {
     await login(userInfo).then((a) => {
+      this.ResetToken();
       const result = a.data.result;
       this.SET_Mobile(userInfo.mobile);
       this.SET_NEEDCONFIRM(result.needConfirm);
@@ -94,14 +103,25 @@ class User extends VuexModule implements IUserState {
         const token = result.jwtToken.token;
         setToken(`Bearer ${token}`);
         store.commit("setUserDetails", result);
+
+        this.SET_FULLNAME(result)
       }
     });
   }
 
   @Action
+  public async CustomerLogin(result: any) {
+    this.ResetToken();
+    const token = result.jwtToken.token;
+    this.SET_TOKEN(token);
+    setToken(`Bearer ${token}`);
+    store.commit("setCustomerUserName", result.userName);
+  }
+
+  @Action
   public async Register(userInfo: { mobile: string; password: string }) {
     await register(userInfo).then((a) => {
-      this.SET_Mobile(userInfo.mobile);
+
       // this.GetCode(userInfo.mobile)
     });
   }
@@ -113,7 +133,7 @@ class User extends VuexModule implements IUserState {
     });
   }
   @Action
-  public async GetCode(input: { mobile: string,loginToken: string }) {
+  public async GetCode(input: { mobile: string, loginToken: string }) {
     this.SET_Mobile(input.mobile);
     await getCode(input);
   }

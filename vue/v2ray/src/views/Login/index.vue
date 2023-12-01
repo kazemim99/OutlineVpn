@@ -94,15 +94,10 @@
                         v-show="!register"
                         type="submit"
                         color="primary"
-                        >ورود / ثبت نام</v-btn
+                        >ورود</v-btn
                       >
 
-                      <!-- <v-btn
-                        v-show="register"
-                        v-on:click="loginShow()"
-                        color="primary"
-                        >انصراف</v-btn -->
-                      <!-- > -->
+                  
                     </v-col>
                   </v-row>
                 </v-form>
@@ -161,7 +156,7 @@ export default {
       alert("خطا");
     },
     async handleSuccess(response) {
-      debugger;
+      
       this.loginForm.loginToken = response;
       this.captchaHasError = false;
     },

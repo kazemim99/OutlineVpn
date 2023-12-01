@@ -11,6 +11,20 @@
             <param name="input"></param>
             <returns></returns>
         </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.ChangePass">
+            <summary>
+            ورود مشتریان 
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:V2Ray.Api.Controllers.AuthenticationController.CustomerLogin(V2Ray.Api.Services.UserServices.Dto.CustomerLoginDto)">
+            <summary>
+            ورود مشتریان 
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
         <member name="M:V2Ray.Api.Controllers.AuthenticationController.Login(V2Ray.Api.Services.UserServices.Dto.LoginDto)">
             <summary>
             فرم ورود و دریافت کد تایید 
@@ -91,6 +105,12 @@
              <returns></returns>
             
              
+        </member>
+        <member name="M:V2Ray.Api.Controllers.OrderController.OrderCount(V2Ray.Api.Services.OrderServices.Dto.OrderFilterInput)">
+             <summary>
+             ویرایش یک کاربر 
+             </summary>
+            
         </member>
         <member name="M:V2Ray.Api.Controllers.OrderController.Update(System.Int32,V2Ray.Api.Services.OrderServices.Dto.UpdateOrderInput)">
              <summary>
@@ -194,7 +214,7 @@
              </summary>
             
         </member>
-        <member name="M:V2Ray.Api.Controllers.SSHKeyController.Charge(System.Int32)">
+        <member name="M:V2Ray.Api.Controllers.SSHKeyController.Charge(System.Int32,System.Int32)">
              <summary>
              ویرایش پروفایل یک کاربر
              </summary>

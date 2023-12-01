@@ -10,8 +10,11 @@ export default new Vuex.Store({
     userMobile: "",
     userStates: [],
     selectedDeviceName: "",
+    customerUserName:"",
     userDetails: {
       isAdmin: false,
+      firstName: null,
+      lastName: null
     },
     roles: [],
     permissions: [],
@@ -23,6 +26,10 @@ export default new Vuex.Store({
     },
     setUserDetails(state, userDetails: any) {
       state.userDetails = userDetails;
+    },
+
+    setCustomerUserName(state, userDetails: any) {
+      state.customerUserName = userDetails;
     },
     setUserStates(state, userStates: any) {
       state.userStates = userStates;

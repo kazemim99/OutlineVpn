@@ -13,6 +13,6 @@ namespace V2Ray.Api.Services.OrderServices
         GetOrderListOutput,
         OrderFilterInput>
     {
-        public Task<OrdersCountOutput> OrdersCount(int? userId);
+        OrdersCountOutput OrderCount(OrderFilterInput filter, string[] vs);
     }
 }

@@ -13,6 +13,7 @@ using V2Ray.Api.Services.Settings;
 using V2Ray.Api.Services.UserServices;
 using V2Ray.Api.Services.UserServices.Dto;
 using V2Ray.Api.ViewModels;
+using V2Ray.Api.Services.SSHKeyServices;
 
 namespace V2Ray.Api.Controllers
 {
@@ -28,20 +29,49 @@ namespace V2Ray.Api.Controllers
     {
         private readonly IUserService _service;
 
+        private readonly ISSHKeyService _service1;
+
         private readonly ILogger<AuthenticationController> _logger;
 
         private readonly IJwtAuthManager _jwtAuthManager;
 
         private readonly IOptions<JwtConfig> _jwtTokenConfig;
 
-        public AuthenticationController(IUserService service, IJwtAuthManager jwtAuthManager, IOptions<JwtConfig> jwtTokenConfig, ILogger<AuthenticationController> logger)
+        public AuthenticationController(IUserService service, IJwtAuthManager jwtAuthManager, IOptions<JwtConfig> jwtTokenConfig, ILogger<AuthenticationController> logger, ISSHKeyService service1)
         {
             _service = service;
             _jwtAuthManager = jwtAuthManager;
             _jwtTokenConfig = jwtTokenConfig;
             _logger = logger;
+            _service1 = service1;
         }
 
+
+
+        /// <summary>
+        /// ورود مشتریان 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("changePass")]
+        [AllowAnonymous]
+        public ApiResponse ChangePass()
+        {
+            _service1.ChangePassword();
+            return new ApiResponse();
+        }
+        /// <summary>
+        /// ورود مشتریان 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost("customer-login")]
+        [AllowAnonymous]
+        public async Task<ApiResponse> CustomerLogin([FromBody] CustomerLoginDto login)
+        {
+            var result = await _service.CustomerLogin(login);
+            return new ApiResponse(result);
+        }
 
         /// <summary>
         /// فرم ورود و دریافت کد تایید 

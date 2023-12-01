@@ -20,6 +20,15 @@
         ></v-switch>
       </template>
 
+      <template v-slot:item.isActive="{ item }">
+        <v-switch
+          v-model="item.isActive"
+          flat
+          @change="changeActive(item)"
+          :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
+        ></v-switch>
+      </template>
+
       <template v-slot:item.adjust="{ item }">
         <v-btn :loading="loading" color="blue darken-1" @click="adjustItem(item)"
             >تنظیم</v-btn
@@ -129,6 +138,7 @@ export default {
       switchLoading: null,
       pages: 0,
       hasLicense: null,
+      isActive: null,
       title: null,
       v2ServerList: [],
       loading: true,
@@ -139,6 +149,7 @@ export default {
         { text: "آی پی", value: "ip", sortable: false },
         { text: "آدرس", value: "url", sortable: false },
         { text: "لایسنس", value: "hasLicense", sortable: false },
+        { text: "وضعیت", value: "isActive", sortable: false },
         { text: "تنظیم", value: "adjust", sortable: false },
         { text: "ویرایش", value: "edit", sortable: false },
         { text: "حذف", value: "delete", sortable: false },
@@ -190,6 +201,22 @@ export default {
         .catch((error) => {
           alert(error);
           this.hasLicense = !this.hasLicense;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+
+    async changeActive(item) {
+      this.switchLoading = "warning";
+      await request
+        .put(`/v2Server/change-active/${item.id}`)
+        .then(() => {
+         this.getV2Servers();
+        })
+        .catch((error) => {
+          alert(error);
+          this.isActive = !this.isActive;
         })
         .finally(() => {
           this.loading = false;

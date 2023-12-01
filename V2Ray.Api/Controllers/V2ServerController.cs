@@ -23,6 +23,35 @@ namespace V2Ray.Api.Controllers
             _service = service;
         }
 
+        [HttpPut("change-server/{serverId}")]
+        [Authorize]
+        public async Task<ApiResponse> ChangeServer([FromRoute]int serverId)
+        {
+            
+            await _service.ChangeServer(serverId,CustomerUserName);
+
+            return new ApiResponse();
+        }  
+        
+        [HttpGet("customer-info")]
+        [Authorize]
+        public async Task<ApiResponse> CustomerInfo()
+        {
+            
+            var result = await _service.CustomerInfo(CustomerUserName);
+
+            return new ApiResponse(result);
+        }  
+        
+        [HttpGet("customer-servers")]
+        [Authorize]
+        public async Task<ApiResponse> CustomerServers()
+        {
+            
+            var result =  _service.CustomerServers(CustomerUserName);
+
+            return new ApiResponse(result);
+        } 
         [HttpGet("filter")]
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] ServerFilterInput filter)
@@ -88,6 +117,15 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
+
+        [HttpPut("change-active/{id:int}")]
+        [Authorize]
+        public async Task<ApiResponse> ChageActive([FromRoute] int id)
+        {
+            await _service.ChangeActive(id);
+
+            return new ApiResponse();
+        }
         /// <summary>
         /// دریافت اطلاعات یک کاربر
         /// </summary>

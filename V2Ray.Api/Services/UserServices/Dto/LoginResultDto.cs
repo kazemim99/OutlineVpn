@@ -2,6 +2,19 @@
 
 namespace V2Ray.Api.Services.UserServices.Dto
 {
+
+    public class LoginCustomerResultDto 
+    {
+        public JwtToken JwtToken { get; set; }
+
+        public RefreshToken RefreshToken { get; set; }
+        public string UserName { get;  set; }
+        public bool Seller { get;  set; }
+
+
+
+        //public IEnumerable<string> Permissions { get; internal set; }
+    }
     public class LoginResultDto:UserDetailDto
     {
         public JwtToken JwtToken { get; set; }

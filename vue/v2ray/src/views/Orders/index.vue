@@ -1,22 +1,55 @@
 <template>
   <div>
     <Breadcrump :crumbs="crumbs" />
-    <v-col class="d-flex" cols="6" sm="6">
-      <v-select
-        v-if="this.$store.state.userDetails.isAdmin"
-        v-model="userId"
-        :items="users"
-        item-value="id"
-        item-text="firstName"
-        label="کاربر"
-        @change="getOrders()"
-        solo
-      ></v-select>
-      <p>{{ waitingCount }}</p>
-      <br />
-      <p>{{ allCount }}</p>
-    </v-col>
 
+    <v-row>
+      <v-col cols="6" md="6" sm="12">
+        <v-select
+          v-if="this.$store.state.userDetails.isAdmin"
+          v-model="input.userId"
+          :items="users"
+          item-value="id"
+          item-text="firstName"
+          label="کاربر"
+          @change="getOrders()"
+          solo
+        ></v-select>
+      </v-col>
+      <v-col cols="6" sm="12" md="4">
+        <v-select
+          v-model="input.durationId"
+          :items="durations"
+          item-value="id"
+          item-text="title"
+          label="اعتبار"
+          solo
+        ></v-select>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="6" sm="12" md="4">
+        <label>از :</label>
+        <date-picker v-model="input.from" simple />
+      </v-col>
+
+      <v-col cols="6" sm="12" md="4">
+        <label>تا :</label>
+        <date-picker v-model="input.to" simple />
+      </v-col>
+    </v-row>
+
+    <label>یک ماهه : {{ oneMonthCount }}</label>
+    <br />
+    <label>دو ماهه : {{ twoMonthCount }}</label>
+    <br />
+    <label>سه ماهه : {{ threeMonthCount }}</label>
+    <br />
+    <label>نامشخص : {{ unknownCount }}</label>
+    <br />
+    <v-btn color="primary" dark @click="submit()"> اعمال </v-btn>
+
+    <br />
+    <br />
     <v-data-table
       :headers="headers"
       :items="orders"
@@ -96,9 +129,24 @@ export default {
           disabled: true,
         },
       ],
-      userId: null,
+      durations: [
+        { id: 30, title: "1 ماهه" },
+        { id: 60, title: "2 ماهه" },
+        { id: 90, title: "3 ماهه" },
+        { id: 0, title: "نام مشخص" },
+      ],
+
+      input: {
+        userId: null,
+        from: null,
+        to: null,
+        durationId: null,
+      },
       stateId: 0,
-      totalOrders: 0,
+      oneMonthCount: 0,
+      twoMonthCount: 0,
+      unknownCount: 0,
+      threeMonthCount: 0,
       switchLoading: null,
       pages: 0,
       serverid: 0,
@@ -110,9 +158,10 @@ export default {
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "کاربر", value: "creator", sortable: false },
-        { text: "تاریخ ایجاد", value: "createdAt", sortable: true },
+        { text: "تاریخ تمدید یا ایجاد", value: "createdAt", sortable: true },
+        { text: "تاریخ انتقضا", value: "expireDate", sortable: true },
         { text: "کلید", value: "keyUserName", sortable: false },
-        { text: "وضعیت", value: "status", sortable: true },
+        { text: "دوره", value: "duration", sortable: false },
       ],
     };
   },
@@ -133,15 +182,16 @@ export default {
     },
   },
   mounted() {
-    if (this.$store.state.userDetails.isAdmin) {
-      this.headers.push({
-        text: "وضعیت",
-        value: "statuses",
-        sortable: false,
-        widh: "150",
-      });
-    }
+    // if (this.$store.state.userDetails.isAdmin) {
+    //   this.headers.push({
+    //     text: "وضعیت",
+    //     value: "statuses",
+    //     sortable: false,
+    //     widh: "150",
+    //   });
+    // }
   },
+
   created() {
     this.getOrders();
     this.getUsers();
@@ -152,7 +202,6 @@ export default {
       await request
         .get("/user/users")
         .then((response) => {
-          debugger;
           var data = response.data.result;
           this.users = data.result;
         })
@@ -162,48 +211,6 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-    },
-    async changeState(id, stateId) {
-      debugger;
-      this.switchLoading = "warning";
-      await request
-        .put(`/order/change-state/${id}/${stateId}`)
-        .then(() => {
-          this.getOrders();
-        })
-        .catch((error) => {
-          alert(error);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
-    },
-    async editItem(item) {
-      this.$refs.addOrderCom.dialog = true;
-      this.$refs.addOrderCom.id = item.id;
-    },
-    deleteItem(id) {
-      Vue.swal({
-        title: "ایا مطمئن  هستید",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "بله ,حذف شود",
-        cancelButtonText: "انصراف",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          request
-            .delete(`/Order/${id}`)
-            .then(() => {
-              Vue.swal("", "کلید با موفقیت حذف گردید", "success");
-              this.getOrders();
-            })
-            .finally(() => {
-              this.uploadLoading = false;
-            });
-        }
-      });
     },
 
     next(page) {
@@ -216,13 +223,18 @@ export default {
     GetSelectedState(state) {
       this.state = state;
     },
-
+    async submit() {
+      this.getOrders();
+    },
     async getOrders() {
       const { sortBy, sortDesc, page, itemsPerPage } = this.options;
       this.loading = true;
       // this.options.sortDesc = true;
       // this.options.sortBy = "createdAt";
-      this.options.userId = this.userId;
+      this.options.userId = this.input.userId;
+      this.options.from = this.input.from;
+      this.options.to = this.input.to;
+      this.options.durationId = this.input.durationId;
       const filterQuery = Object.keys(this.options)
         .filter(
           (x) => this.options[x] !== null && this.options[x] !== undefined
@@ -238,14 +250,14 @@ export default {
           this.orders = data.result;
           this.totalOrders = data.totalItems;
           this.pages = data.pageCount;
-          if (this.userId !== null) {
-            request.get(`/order/orderCount/${this.userId}`).then((response) => {
-              debugger;
-              var data = response.data.result;
-              this.waitingCount = data.waitingCount;
-              this.allCount = data.allCount;
-            });
-          }
+
+          request.get("/order/orderCount?" + filterQuery).then((response) => {
+            var data = response.data.result;
+            this.oneMonthCount = data.oneMonthCount;
+            this.twoMonthCount = data.twoMonthCount;
+            this.threeMonthCount = data.threeMonthCount;
+            this.unknownCount = data.unknownCount;
+          });
         })
         .catch((error) => {
           alert(error);

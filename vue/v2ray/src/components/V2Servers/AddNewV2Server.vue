@@ -22,7 +22,7 @@
                 <div>
                   <v-card-text class="h3"> کاربر </v-card-text>
                   <v-select
-                  v-if="this.$store.state.userDetails.isAdmin"
+                    v-if="this.$store.state.userDetails.isAdmin"
                     v-model="v2Server.userId"
                     :items="users"
                     item-value="id"
@@ -116,6 +116,15 @@
                     }`"
                   ></v-switch>
                 </v-col>
+
+                <v-col cols="4">
+                  <v-switch
+                    v-model="v2Server.isActive"
+                    :label="`وضعیت: ${
+                      v2Server.hasLicense ? 'فعال' : 'غیر فعال'
+                    }`"
+                  ></v-switch>
+                </v-col>
               </v-row>
             </v-container>
           </v-form>
@@ -152,9 +161,9 @@ export default Vue.extend({
     v2Server: {
       userId: null,
       capacity: 50,
+      isActive: false,
       title: "",
       token: "",
-      hasLicense: false,
       url: "",
       ip: "",
       userName: "root",
@@ -187,7 +196,6 @@ export default Vue.extend({
       await request
         .get("/user/users")
         .then((response) => {
-          debugger;
           var data = response.data.result;
           this.users = data.result;
         })
