@@ -9,12 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "V2Ray.Api.Test", "V2Ray.Api
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{DE4DBEC9-8863-4BAA-968C-8C6F909CAA86}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nginx", "Nginx", "{114C34D8-568B-4027-A24D-1F2284625EB0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nginx", "nginx", "{DE312BBC-857C-4E2F-91A3-8CFBDAC519F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "conf", "conf", "{FD7FABC9-AE41-467C-888C-996F22AFD152}"
 	ProjectSection(SolutionItems) = preProject
-		Nginx\cert.crt = Nginx\cert.crt
-		Nginx\nginx.conf = Nginx\nginx.conf
-		Nginx\Nginx.Dockerfile = Nginx\Nginx.Dockerfile
-		Nginx\private.key = Nginx\private.key
+		nginx\conf\nginx.conf = nginx\conf\nginx.conf
 	EndProjectSection
 EndProject
 Global
@@ -38,6 +37,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD7FABC9-AE41-467C-888C-996F22AFD152} = {DE312BBC-857C-4E2F-91A3-8CFBDAC519F4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD46DFEF-C2E4-42C3-BE21-D27ACFB19D12}
