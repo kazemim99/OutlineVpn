@@ -53,22 +53,23 @@ services:
   #    - portainer_data:/data
 
 
-  nginx:
-    container_name: ngnix
+
+  webserver:
+    image: nginx:latest
     ports:
-       - 80:80
-       - 443:443
+      - 80:80
+      - 443:443
     restart: always
     volumes:
-      - ./Nginx/:/etc/nginx/conf.d/:ro
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
-
   certbot:
     image: certbot/certbot:latest
     volumes:
       - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
+
 
   v2rayapi:
     expose:
