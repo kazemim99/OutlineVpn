@@ -24,9 +24,6 @@ services:
   reverseproxy:
    container_name: reverseproxy
    image : nginx
-   build:
-      context: ./Nginx
-      dockerfile: Nginx.Dockerfile
    environment:
     - NGINX_HOST=localhost
     - NGINX_PORT=80
