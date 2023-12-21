@@ -37,13 +37,7 @@ namespace V2Ray.Api.Entity.Configurations
             builder.HasQueryFilter(a => !a.IsDeleted);
         }
     }
-    public class PlanConfig : IEntityTypeConfiguration<Plan>
-    {
-        public void Configure(EntityTypeBuilder<Plan> builder)
-        {
-            builder.HasQueryFilter(a => !a.IsDeleted);
-        }
-    }
+   
     public class SSHKeyConfig : IEntityTypeConfiguration<SSHKey>
     {
         public void Configure(EntityTypeBuilder<SSHKey> builder)

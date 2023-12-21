@@ -11,13 +11,19 @@ namespace V2Ray.Api.Database
     {
         public DB CreateDbContext(string[] args)
         {
-            var builder = new DbContextOptionsBuilder<DB>();
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
 
-            var connectionString = "Data Source=5.9.192.37,2019 ;Initial Catalog= iranvra1_sa ;User ID=iranvra1_sa;Password=!Q@W#E$R5t6y7u8i";
-            //var connectionString = "Server=.; Database=V2Ray;Integrated Security=True";
+            // Get connection string from appsettings.json
+            string connectionString = configuration.GetConnectionString("Default");
 
-            builder.UseSqlServer(connectionString);
-            return new DB(builder.Options);
+            // Create options builder using Npgsql
+            var optionsBuilder = new DbContextOptionsBuilder<DB>()
+                .UseNpgsql(connectionString);
+
+            return new DB(optionsBuilder.Options);
         }
     }
     public class DB : DbContext
@@ -27,17 +33,13 @@ namespace V2Ray.Api.Database
         {
         }
 
-        public DbSet<Plan> Plans { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<ProblemReport> ProblemReports { get; set; }
-        public DbSet<FailedSms> FailedSms { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<V2Server> V2Servers { get; set; }
         public DbSet<V2Key> V2Keys { get; set; }
-        //public DbSet<City> Cities { get; set; }
-        //public DbSet<Country> Countries { get; set; }
         public DbSet<SSHKey> SSHKeyInfos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

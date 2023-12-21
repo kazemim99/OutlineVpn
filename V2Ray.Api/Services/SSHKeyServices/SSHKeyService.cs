@@ -11,6 +11,7 @@ using V2Ray.Api.Services.SSHKeyServices.Dto;
 using System.Text.Json;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace V2Ray.Api.Services.SSHKeyServices
 {
@@ -41,7 +42,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             try
             {
                 var server = _db.V2Servers.Include(a => a.SSHKeys).FirstOrDefault(a => a.Id == input.ServerId);
-
+                var keys = new List<SSHKey>();
                 if (server.SSHKeys.Count(a => a.Enable) > server.Capacity)
                     throw new ApiException("ظرفیت سرور تکمیل است");
 
@@ -57,14 +58,11 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     //int daysDifference = Math.Abs(days.Days);
 
 
-                    AddUserToServer(new List<SSHKey>
+                    keys.Add(new SSHKey
                     {
-                        new SSHKey
-                        {
-                            UserName = input.UserName,
-                            Password = input.Password
-                        }
-                    }, server);
+                        UserName = input.UserName,
+                        Password = input.Password
+                    });
 
 
 
@@ -91,6 +89,15 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     input.UserName = "";
                     input.Password = "";
                 }
+                if (server.HasLicense)
+                {
+                    await BulkAddUserToServer(keys);
+                }
+                else
+                {
+                  await  AddUserToServer(keys, server);
+                }
+
 
             }
             catch (Exception ex)
@@ -107,13 +114,20 @@ namespace V2Ray.Api.Services.SSHKeyServices
             key.Password = CreatePassword();
             _db.Update(key);
             _db.SaveChanges();
-            await DeleteUserFromServer(new List<SSHKey> { key }, key.V2Server);
-            AddUserToServer(new List<SSHKey> { key }, key.V2Server);
+            if (key.V2Server.HasLicense)
+            {
+                await BulkDeleteServer(new List<SSHKey> { key });
+                await BulkAddUserToServer(new List<SSHKey> { key });
+            }
+            else
+            {
+                await DeleteUserFromServer(new List<SSHKey> { key }, key.V2Server);
+               await AddUserToServer(new List<SSHKey> { key }, key.V2Server);
+            }
+
 
 
         }
-
-
 
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
         {
@@ -138,15 +152,10 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
-
         public override async Task<GetSSHKeyOutput> GetById(int id, params string[] include)
         {
             var result = await base.GetById(id, include);
-            var orders = _db.Orders.Where(a => a.SSHKey.Id == id);
-            if (orders.Any())
-            {
-                var key = orders.OrderByDescending(c => c.CreatedAt).FirstOrDefault();
-            }
+
 
             return result;
         }
@@ -157,9 +166,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 var i = 0;
 
-                var connectionInfo = GetConnectionInfo(server.Url, 1027, server.Password, server.UserName);
-                using var ssh = new SshClient(connectionInfo);
-                Connect(ssh);
+                var ssh = await Connect(server);
                 foreach (var item in users)
                 {
                     try
@@ -168,7 +175,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                         if (!string.IsNullOrEmpty(item.UserName))
                         {
-                            var str = $"sudo killall -u {item.UserName}";
+                            var str = $"sudo pkill -u {item.UserName}";
                             var command2 = ssh.CreateCommand(str);
                             command2.Execute();
                             str = $"sudo deluser --remove-home {item.UserName}";
@@ -189,7 +196,76 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
         }
 
-        private void AddUserToServer(List<SSHKey> users, V2Server server)
+        private async Task BulkDeleteServer(List<SSHKey> keys)
+        {
+            List<Instance> instances = await GetInstances();
+
+            var ips = instances.Where(c => c.label.Contains("D")).OrderBy(c => c.label).Select(c => c.main_ip);
+            var server = new V2Server();
+            foreach (var ip in ips)
+            {
+                server.IP = ip;
+                server.Url = ip;
+                server.UserName = "master";
+                server.Password = "!Q@W#E$R5t6y7u8i";
+                await DeleteUserFromServer(keys, server);
+            }
+        }
+
+        public async Task BulkAddUserToServer(List<SSHKey> keys)
+        {
+            List<Instance> instances = await GetInstances();
+
+            // var ips = instances.Where(c => c.label.Contains("D")).OrderBy(c => c.label).Select(c => c.main_ip);
+            var ips = new List<string>()
+           {
+               "64.176.165.231",
+               "64.176.167.116",
+               "64.176.165.78"
+           };
+            foreach (var ip in ips)
+            {
+                var skipCount = 100M;
+                var chunkCount = (int)Math.Ceiling(keys.Count > 100 ? keys.Count / skipCount : keys.Count);
+
+                var ssh = await Connect(new V2Server());
+                for (int i = 0; i < chunkCount; i++)
+                {
+                    try
+                    {
+
+
+                        string str = "";
+
+                        foreach (var item in keys.Skip(i * Convert.ToInt32(skipCount)).Take(Convert.ToInt32(skipCount)))
+                        {
+
+                            if (!string.IsNullOrEmpty(item.UserName) && !string.IsNullOrEmpty(item.Password))
+                            {
+                                str += $"sudo useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName} \n ";
+
+                            }
+
+                        }
+                        var comm = str;
+                        var command = ssh.CreateCommand(comm);
+                        command.Execute();
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
+                }
+
+
+
+
+                ssh.Disconnect();
+            }
+
+        }
+        private async Task AddUserToServer(List<SSHKey> users, V2Server server)
         {
             string str = "";
 
@@ -201,9 +277,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
             }
 
-            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, server.Password);
-            var ssh = new SshClient(connectionInfo);
-            Connect(ssh);
+            var ssh = await Connect(server);
 
             var comm = str;
             var command = ssh.CreateCommand(comm);
@@ -257,9 +331,15 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 var keys = new List<SSHKey>();
                 keys.Add(map);
 
+                if (key.V2Server.HasLicense)
+                {
+                    // await BulkDeleteServer(new List<SSHKey> { key });
+                }
+                else
+                {
+                    await DeleteUserFromServer(keys, key.V2Server);
+                }
 
-
-                await DeleteUserFromServer(keys, key.V2Server);
 
                 if (input.DurationId <= 0)
                 {
@@ -269,8 +349,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 else
                 {
+                    if (key.V2Server.HasLicense)
+                    {
 
-                    AddUserToServer(keys, key.V2Server);
+                        await BulkAddUserToServer(keys);
+                    }
+                    else
+                    {
+                       await AddUserToServer(keys, key.V2Server);
+
+                    }
 
                     // Other code can continue executing here
 
@@ -337,7 +425,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 if (!keyInfo.Enable)
                 {
-                    await DeleteUserFromServer(new List<SSHKey> { keyInfo }, keyInfo.V2Server);
+                    if (keyInfo.V2Server.HasLicense)
+                    {
+                        await BulkDeleteServer(new List<SSHKey> { keyInfo });
+                    }
+                    else
+                    {
+                        await DeleteUserFromServer(new List<SSHKey> { keyInfo }, keyInfo.V2Server);
+
+                    }
+
                 }
                 else
                 {
@@ -352,7 +449,15 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     var map = _mapper.Map<SSHKey>(key);
                     keys.Add(map);
 
-                    AddUserToServer(keys, keyInfo.V2Server);
+
+                    if (keyInfo.V2Server.HasLicense)
+                    {
+                        await BulkAddUserToServer(new List<SSHKey> { keyInfo });
+                    }
+                    else
+                    {
+                      await  AddUserToServer(keys, keyInfo.V2Server);
+                    }
 
                 }
                 _db.Update(keyInfo);
@@ -389,7 +494,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         public override async Task Delete(int id)
         {
             var keyInfo = await _db.SSHKeyInfos.Include(a => a.V2Server).FirstAsync(a => a.Id == id);
-            await DeleteFromPanel(keyInfo.UserName, keyInfo.V2Server);
             if (keyInfo.ExpireDate.Date >= DateTime.Now.AddDays(6))
             {
                 var order = await _db.Orders.Where(c => c.SSHKeyId == keyInfo.Id).ToListAsync();
@@ -413,22 +517,58 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 await ChangeState(item.Id);
             }
         }
+
+        public async Task AddIps(int sreverId)
+        {
+            var instances = await GetInstances();
+
+            var server = _db.V2Servers.First(c => c.Id == sreverId);
+
+            var instance = instances.FirstOrDefault(c => c.label.ToLower() == server.Title.ToLower());
+            var ips = await GetIps(instance.id);
+            var ssh = await Connect(server);
+
+
+            var command2 = ssh.CreateCommand($"echo '{AddIPBashScript(ips, instance.v6_main_ip, instance.internal_ip)}' | sudo tee /etc/netplan/10-ens3.yaml");
+            command2.Execute();
+            //https://api.vultr.com/v2/instances/{instance-id}/reboot
+
+            command2 = ssh.CreateCommand($"sudo netplan apply");
+           await RebootInstance(instance.id);
+            command2.Execute();
+            ssh.Disconnect();
+
+        }
         public async Task Adjust(int serverId)
         {
             //var keys = await _db.SSHKeyInfos.ToListAsync();
             var servers = _db.V2Servers.Where(c => c.Id == serverId).ToList();
+
+
+
+            //var serverLinked = GetLinkedServer(servers.FirstOrDefault());
+            //if(serverLinked != null)
+            //{
+            //    servers.AddRange(_db.V2Servers.Where(c => c.Url.StartsWith(serverLinked)));
+            //}
+
             foreach (var item in servers)
             {
+
                 try
                 {
-
+                    if (item.HasLicense)
+                    {
+                        await BulkSync();
+                        return;
+                    }
                     //PreInitialScript(item);
                     var accounts = _db.SSHKeyInfos.Where(a => a.ServerId == item.Id);
 
                     var enableAccounts = accounts.Where(a => a.Enable);
                     await DeleteUserFromServer(accounts.ToList(), item);
 
-                    AddUserToServer(enableAccounts.ToList(), item);
+                   await AddUserToServer(enableAccounts.ToList(), item);
                 }
                 catch (Exception ex)
                 {
@@ -439,11 +579,61 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         }
 
-        private void PreInitialScript(V2Server server)
+        private string? GetLinkedServer(V2Server? v2Server)
         {
-            var connectionInfo = GetConnectionInfo(server.Url, 1027, server.Password, server.UserName);
-            using var client = new SshClient(connectionInfo);
-            Connect(client);
+            if (v2Server == null)
+                return null;
+            var title = v2Server.Url.Split('.')[0].ToLower();
+            if (title == "r4")
+                return "a";
+
+            if (title == "r5")
+                return "b";
+
+            if (title == "d14")
+                return "e";
+
+            if (title == "r15")
+                return "f";
+
+            if (title == "r6")
+                return "g";
+
+            if (title == "r10")
+                return "h";
+
+
+
+            if (title == "r19")
+                return "i";
+
+            //if (title == "r9")
+            //    return "k";
+
+            //if (title == "r10")
+            //    return "l";
+
+            //if (title == "r11")
+            //    return "m";
+
+            //if (title == "r12")
+            //    return "o";
+
+            //if (title == "r13")
+            //    return "p";
+
+            //if (title == "r14")
+            //    return "s";
+            //if (title == "r15")
+            //    return "t";
+            return null;
+        }
+
+
+
+        private async Task PreInitialScript(V2Server server)
+        {
+            var client = await Connect(server);
 
 
             var command2 = client.CreateCommand($"sudo apt-get update");
@@ -483,6 +673,28 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
         }
 
+
+        static string AddIPBashScript(List<Ipv4> ips, string ipv6, string privateIp)
+        {
+            var gateWay = ips.FirstOrDefault().gateway;
+            var ipsStr = string.Join(',', ips.Select(c => c.ip));
+            return @$"network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp1s0:
+      dhcp4: no
+      addresses: [{ipsStr},'{ipv6}']
+      nameservers:
+        addresses: [108.61.10.10]
+      routes:
+      - to: default
+        via: {gateWay}
+      - to: 169.254.0.0/16
+        via: {gateWay}
+        metric: 100
+";
+        }
         static string GetBashScript()
         {
             return @"#!/bin/bash
@@ -520,7 +732,7 @@ fi
 
         public async Task DisableExpired()
         {
-            await ShotDownServers();
+            //await ShotDownServers();
 
             //var sskKeys = _db.SSHKeyInfos.Where(c=>c.ChargeDate.Date < DateTime.Now.AddDays(-4).Date);
             //var list = new List<SSHKey>();
@@ -554,58 +766,70 @@ fi
             ////_db.UpdateRange(list);
             ////_db.UpdateRange(orders);
             //_db.SaveChanges();
-
+            bool deleted = false;
             var info = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
             DateTimeOffset localServerTime = DateTimeOffset.Now;
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(localServerTime, info);
-            if (currentTime.Hour < 9 && currentTime.Hour > 2)
-                return;
-
-            var keys = _db.SSHKeyInfos
-                .Where(c => c.ExpireDate <= DateTime.Now && c.Enable);
-
-            var tt = keys.GroupBy(a => a.ServerId, (id, key) => new { Keys = key.ToList(), serverId = id });
-            foreach (var key in tt)
+            if (currentTime.Hour <= 200 && currentTime.Hour >= 19)
             {
-                try
-                {
-                    var server = _db.V2Servers.FirstOrDefault(a => a.Id == key.serverId);
-                    if (server != null)
-                    {
-                        await DeleteUserFromServer(key.Keys, server);
-                    }
 
-                }
-                catch (Exception ex)
+                var keys = _db.SSHKeyInfos
+                    .Where(c => c.ExpireDate <= DateTime.Now);
+
+                var tt = keys.GroupBy(a => a.ServerId, (id, key) => new { Keys = key.ToList(), serverId = id });
+                foreach (var key in tt)
                 {
+                    try
+                    {
+                        var server = _db.V2Servers.FirstOrDefault(a => a.Id == key.serverId);
+                        if (server != null)
+                        {
+
+                            if (server.HasLicense && !deleted)
+                            {
+                                await BulkDeleteServer(key.Keys);
+                                deleted = true;
+                                // await BulkAddUserToServer(key.Keys);
+                            }
+                            else
+                            {
+                                await DeleteUserFromServer(key.Keys, server);
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
+                foreach (var item in keys)
+                {
+                    try
+                    {
+
+                        if (item.ExpireDate.AddDays(15) < DateTime.UtcNow)
+                        {
+                            var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
+                            _db.SSHKeyInfos.Remove(newItem);
+                        }
+                        if (item.Enable)
+                        {
+                            var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
+                            newItem.Enable = false;
+                            _db.Update(newItem);
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    //}
+                }
+                await _db.SaveChangesAsync();
+
+
             }
-            foreach (var item in keys)
-            {
-                try
-                {
-
-                    if (item.ExpireDate.AddDays(15) < DateTime.UtcNow)
-                    {
-                        var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
-                        _db.SSHKeyInfos.Remove(newItem);
-                    }
-                    if (item.Enable)
-                    {
-                        var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
-                        newItem.Enable = false;
-                        _db.Update(newItem);
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    
-                }
-                //}
-            }
-            await _db.SaveChangesAsync();
-
 
 
         }
@@ -678,8 +902,11 @@ fi
 
 
 
-        private void Connect(SshClient ssh)
+        private async Task<SshClient>  Connect(V2Server server)
         {
+
+            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, server.Password);
+            using var ssh = new SshClient(connectionInfo);
             int attempts = 0;
             int _connectiontRetryAttempts = 70;
             do
@@ -687,12 +914,16 @@ fi
                 try
                 {
                     ssh.Connect();
+                    attempts = _connectiontRetryAttempts;
                 }
                 catch (Renci.SshNet.Common.SshConnectionException)
                 {
+
                     attempts++;
                 }
             } while (attempts < _connectiontRetryAttempts && !ssh.IsConnected);
+
+            return ssh;
         }
 
 
@@ -730,15 +961,35 @@ fi
             {
                 sshKey
             };
-            await DeleteUserFromServer(lst, oldServer);
+
+            if (newServer.HasLicense)
+            {
+                await BulkDeleteServer(lst);
+            }
+            else
+            {
+                await DeleteUserFromServer(lst, oldServer);
+
+            }
             Thread.Sleep(1000);
             if (sshKey.Enable)
-                AddUserToServer(lst, newServer);
+            {
+                if (newServer.HasLicense)
+                {
+                    await BulkAddUserToServer(lst);
+                }
+                else
+                {
+                   await AddUserToServer(lst, newServer);
+                }
+
+
+            }
         }
 
         public async Task ChangePassword()
         {
-       
+
             Renci.SshNet.ConnectionInfo ConnNfo = new Renci.SshNet.ConnectionInfo("o.iranv2ray.com", 1027, "root",
            new AuthenticationMethod[]{
 
@@ -766,6 +1017,20 @@ fi
 
 
         }
+        public async Task BulkSync()
+        {
+
+            var keys = _db.SSHKeyInfos.Include(c => c.V2Server).Where(c => c.V2Server.HasLicense && c.Enable).ToList();
+            List<Task> tasks = new List<Task>();
+            var ttt = keys.Where(c => c.V2Server.Title == "L");
+            //var keys = servers.SelectMany(c => c.SSHKeys).ToList();
+
+
+            await BulkAddUserToServer(keys);
+
+
+        }
+
 
 
         public async Task ShotDownServers()
@@ -777,7 +1042,6 @@ fi
             string apiKey = "H46OMSQRYTYFHAFUDMSTALHANESEVNBIPXKA";
 
             // Set your server IDs
-            List<string> serverIds = new List<string> { "server_id_1", "server_id_2", /* Add more server IDs */ };
 
             // Set the base URL for the Vultr API
             string baseUrl = "https://api.vultr.com/v2/";
@@ -787,7 +1051,7 @@ fi
         {
             { "Authorization", $"Bearer {apiKey}" },
             { "Accept", "application/json" },
-             { "Content-Type", "application/json" } 
+             { "Content-Type", "application/json" }
         };
 
 
@@ -795,34 +1059,34 @@ fi
             DateTimeOffset localServerTime = DateTimeOffset.Now;
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(localServerTime, info);
             // Get the current time
-            if (currentTime.Hour >= 3 && currentTime.Hour < 7 && currentTime.Minute >= 0)
-            {
-                await ShutdownServers(baseUrl, headers, serverIds);
+            //if (currentTime.Hour >= 3 && currentTime.Hour < 4 && currentTime.Minute >= 0)
+            //{
+            //    await ShutdownServers(baseUrl, headers);
 
-            }
+            //}
 
             // Check if the current time is 7:00 AM
-            if (currentTime.Hour >= 7 && currentTime.Hour <= 8 && currentTime.Minute >= 0)
-            {
-                await StartServers(baseUrl, headers, serverIds);
+            //if (currentTime.Hour >= 7 && currentTime.Hour <= 8 && currentTime.Minute >= 0)
+            //{
+            await StartServers(baseUrl, headers);
 
-            }
+            //}
         }
 
         public class Instances
         {
             public List<string> instance_ids { get; set; }
         }
-        static async Task ShutdownServers(string baseUrl, Dictionary<string, string> headers, List<string> serverIds)
+        static async Task ShutdownServers(string baseUrl, Dictionary<string, string> headers)
         {
             using (HttpClient client = new HttpClient())
             {
-                List<Instance> instances = await GetInstances(baseUrl, headers);
+                List<Instance> instances = await GetInstances();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "H46OMSQRYTYFHAFUDMSTALHANESEVNBIPXKA");
                 client.DefaultRequestHeaders
                       .Accept
                       .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
-                var input = instances.Where(c=>c.power_status == "running").Select(c => c.id);
+                var input = instances.Where(c => c.power_status == "running").Select(c => c.id);
                 var instancessss = new Instances
                 {
                     instance_ids = input.ToList(),
@@ -848,8 +1112,88 @@ fi
         }
 
 
-        static async Task<List<Instance>> GetInstances(string baseUrl, Dictionary<string, string> headers)
+        public async Task<List<Ipv4>> GetIps(string instanceid)
         {
+
+            string baseUrl = "https://api.vultr.com/v2/";
+
+            // Set the headers for the HTTP requests
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" },
+             { "Content-Type", "application/json" }
+        };
+            using (HttpClient client = new HttpClient())
+            {
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "H46OMSQRYTYFHAFUDMSTALHANESEVNBIPXKA");
+
+                // Send a GET request to get the list of instances
+                HttpResponseMessage response = await client.GetAsync($"{baseUrl}instances/{instanceid}/reboot", HttpCompletionOption.ResponseHeadersRead);
+
+                // Check if the request was successful
+                if (response.IsSuccessStatusCode)
+                {
+                    // Parse the JSON response to get a list of instances
+                    string content = await response.Content.ReadAsStringAsync();
+                    IPRoot instancesResponse = JsonConvert.DeserializeObject<IPRoot>(content);
+                    return instancesResponse.ipv4s;
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to get instances. Error: {response.StatusCode}");
+                    return null;
+                }
+            }
+        }
+
+        public async Task<List<Ipv4>> RebootInstance(string instanceid)
+        {
+            string baseUrl = "https://api.vultr.com/v2/";
+
+            // Set the headers for the HTTP requests
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" },
+             { "Content-Type", "application/json" }
+        };
+            using (HttpClient client = new HttpClient())
+            {
+
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "H46OMSQRYTYFHAFUDMSTALHANESEVNBIPXKA");
+                client.DefaultRequestHeaders
+                      .Accept
+                      .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
+
+                // Send a GET request to get the list of instances
+                HttpResponseMessage response = await client.PostAsync($"{baseUrl}instances/{instanceid}/ipv4", null);
+
+                // Check if the request was successful
+                if (response.IsSuccessStatusCode)
+                {
+                    // Parse the JSON response to get a list of instances
+                    string content = await response.Content.ReadAsStringAsync();
+                    IPRoot instancesResponse = JsonConvert.DeserializeObject<IPRoot>(content);
+                    return instancesResponse.ipv4s;
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to get instances. Error: {response.StatusCode}");
+                    return null;
+                }
+            }
+        }
+        static async Task<List<Instance>> GetInstances()
+        {
+
+            string baseUrl = "https://api.vultr.com/v2/";
+
+            // Set the headers for the HTTP requests
+            var headers = new Dictionary<string, string>
+        {
+            { "Accept", "application/json" },
+             { "Content-Type", "application/json" }
+        };
             using (HttpClient client = new HttpClient())
             {
 
@@ -874,11 +1218,11 @@ fi
             }
         }
 
-        static async Task StartServers(string baseUrl, Dictionary<string, string> headers, List<string> serverIds)
+        static async Task StartServers(string baseUrl, Dictionary<string, string> headers)
         {
             using (HttpClient client = new HttpClient())
             {
-                List<Instance> instances = await GetInstances(baseUrl, headers);
+                List<Instance> instances = await GetInstances();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "H46OMSQRYTYFHAFUDMSTALHANESEVNBIPXKA");
                 client.DefaultRequestHeaders
                       .Accept
@@ -897,15 +1241,15 @@ fi
 
                 // Check if the request was successful
                 if (response.IsSuccessStatusCode)
-                    {
-                    }
-                    else
-                    {
-                    }
+                {
+                }
+                else
+                {
+                }
             }
         }
 
-       
+
     }
 
 
@@ -953,6 +1297,34 @@ fi
         public Instance instance { get; set; }
     }
 
+
+
+    public class Ipv4
+    {
+        public string ip { get; set; }
+        public string netmask { get; set; }
+        public string gateway { get; set; }
+        public string type { get; set; }
+        public string reverse { get; set; }
+    }
+
+    public class Links
+    {
+        public string next { get; set; }
+        public string prev { get; set; }
+    }
+
+    public class Meta
+    {
+        public int total { get; set; }
+        public Links links { get; set; }
+    }
+
+    public class IPRoot
+    {
+        public List<Ipv4> ipv4s { get; set; }
+        public Meta meta { get; set; }
+    }
 
 
 }

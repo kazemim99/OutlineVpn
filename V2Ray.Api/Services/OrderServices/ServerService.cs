@@ -51,9 +51,12 @@ namespace V2Ray.Api.Services.OrderServices
 
         public override IQueryable<Order> Filter(OrderFilterInput filter)
         {
-            var query = _db.Orders.OrderByDescending(c=>c.Id).AsQueryable();
+            if (filter.UserId == null)
+                return new List<Order>().AsQueryable();
 
-                query = query.Where(a => !a.SSHKey.User.IsAdmin);
+            var query = _db.Orders.OrderByDescending(c=>c.CreatedAt).AsQueryable();
+        
+                //query = query.Where(a => !a.SSHKey.User.IsAdmin);
             if (filter.UserId != null)
                 query = query.Where(a => a.UserId == filter.UserId);
 
@@ -86,9 +89,12 @@ namespace V2Ray.Api.Services.OrderServices
 
         public OrdersCountOutput OrderCount(OrderFilterInput filter, string[] vs)
         {
+            if (filter.UserId == null)
+                return new OrdersCountOutput();
+
             var query = _db.Orders.OrderByDescending(c => c.Id).AsQueryable();
 
-            query = query.Where(a => !a.SSHKey.User.IsAdmin);
+            
             if (filter.UserId != null)
                 query = query.Where(a => a.UserId == filter.UserId);
 

@@ -5,7 +5,7 @@
         <v-row class="child-flex">
           <div>
             <v-toolbar>
-              <v-toolbar-title link to="/login">IranV2Ray</v-toolbar-title>
+              <v-toolbar-title link to="/login">IranSshVPN</v-toolbar-title>
             </v-toolbar>
           </div>
 

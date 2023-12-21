@@ -100,7 +100,7 @@ import { UserModule } from "@/store/modules/user";
 })
 export default class Dashboard extends Vue {
   private drawer = true;
-  private title = "IranV2Ray";
+  private title = "IranSshVPN";
   private fixed = false;
   getNotif() {
     this.$router.push("/device-notifications");

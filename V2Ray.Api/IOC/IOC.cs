@@ -7,7 +7,6 @@ using V2Ray.Api.Services.OTP;
 using V2Ray.Api.Services.sms;
 using V2Ray.Api.Database;
 using V2Ray.Api.Services.UserServices;
-using V2Ray.Api.Services.PlanServices;
 using V2Ray.Api.Services.sms.Rahyab;
 
 using V2Ray.Api.Services.V2Keys;
@@ -26,7 +25,6 @@ namespace V2Ray.Api.IOC
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRahyabSmsSender, SmsService>();
             services.AddScoped<IOtpService, OtpSharpService>();
-            services.AddScoped<IPlanService, PlanService>();
             services.AddScoped<IServerService, ServerService>();
             services.AddScoped<IOrderService, OrderService>();
             //services.AddScoped<IV2KeyService, V2KeyService>();

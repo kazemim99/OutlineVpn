@@ -30,7 +30,7 @@
       </template>
 
       <template v-slot:item.adjust="{ item }">
-        <v-btn :loading="loading" color="blue darken-1" @click="adjustItem(item)"
+        <v-btn :loading=loadingItems[item.id] color="blue darken-1" @click="adjustItem(item)"
             >تنظیم</v-btn
           >
       </template>
@@ -134,6 +134,7 @@ export default {
         },
       ],
       V2Server: {},
+      loadingItems: {},
       totalV2Servers: 0,
       switchLoading: null,
       pages: 0,
@@ -148,7 +149,7 @@ export default {
         { text: "تعداد کاربران", value: "keyCount", sortable: true },
         { text: "آی پی", value: "ip", sortable: false },
         { text: "آدرس", value: "url", sortable: false },
-        { text: "لایسنس", value: "hasLicense", sortable: false },
+        { text: "لود بالانس", value: "hasLicense", sortable: false },
         { text: "وضعیت", value: "isActive", sortable: false },
         { text: "تنظیم", value: "adjust", sortable: false },
         { text: "ویرایش", value: "edit", sortable: false },
@@ -177,18 +178,19 @@ export default {
 
   methods: {
     async adjustItem(item) {
+      this.$set(this.loadingItems, item.id, true);
       this.loading = true;
       await request
         .put(`/sshkey/adjust/${item.id}`)
         .then(() => {
           this.loading = false;
-          console.log(item.id);
         })
         .catch((error) => {
           this.loading = false;
         })
         .finally(() => {
           this.loading = false;
+          this.$set(this.loadingItems, item.id, false);
         });
     },
     async changeState(item) {
@@ -203,7 +205,7 @@ export default {
           this.hasLicense = !this.hasLicense;
         })
         .finally(() => {
-          this.loading = false;
+          this.$set(this.loadingItems, item.id, false);
         });
     },
 
@@ -219,7 +221,7 @@ export default {
           this.isActive = !this.isActive;
         })
         .finally(() => {
-          this.loading = false;
+          this.$set(this.loadingItems, item.id, false);
         });
     },
     async editItem(item) {

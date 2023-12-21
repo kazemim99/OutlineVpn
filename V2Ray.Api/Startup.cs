@@ -112,7 +112,7 @@ namespace V2Ray.Api
                .AddDbContext<DB>(options =>
                {
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                   options.UseSqlServer
+                   options.UseNpgsql
                    (Configuration.GetConnectionString("Default"),c=>c.EnableRetryOnFailure());
                });
 

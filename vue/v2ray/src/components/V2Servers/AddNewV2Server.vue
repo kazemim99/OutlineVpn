@@ -108,10 +108,10 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4">
+                <v-col cols="4" v-if="this.$store.state.userDetails.isAdmin">
                   <v-switch
                     v-model="v2Server.hasLicense"
-                    :label="`لایسنس: ${
+                    :label="`لود بالانس: ${
                       v2Server.hasLicense ? 'فعال' : 'غیر فعال'
                     }`"
                   ></v-switch>
@@ -121,7 +121,7 @@
                   <v-switch
                     v-model="v2Server.isActive"
                     :label="`وضعیت: ${
-                      v2Server.hasLicense ? 'فعال' : 'غیر فعال'
+                      v2Server.isActive ? 'فعال' : 'غیر فعال'
                     }`"
                   ></v-switch>
                 </v-col>
@@ -239,6 +239,7 @@ export default Vue.extend({
         this.v2Server.state = data.state;
         this.v2Server.token = data.token;
         this.v2Server.cityId = data.cityId;
+        this.v2Server.isActive = data.isActive;
         this.v2Server.ip = data.ip;
         this.v2Server.hasLicense = data.hasLicense;
         this.v2Server.userName = data.userName;

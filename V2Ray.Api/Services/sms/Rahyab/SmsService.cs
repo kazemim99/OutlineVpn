@@ -26,8 +26,7 @@ namespace V2Ray.Api.Services.sms.Rahyab
 
         public async Task SendAsync(RahyabSendSmsReques request)
         {
-            try
-            {
+            
                 if (!request.destinationAddress.ValidPhone())
                     throw new Exception($" {request.destinationAddress} نا معتبر است"); ;
 
@@ -48,27 +47,6 @@ namespace V2Ray.Api.Services.sms.Rahyab
                     throw new Exception($"خطا در ارسال پیام به {request.destinationAddress}");
 
                 Log.Information(await redss.Content.ReadAsStringAsync());
-            }
-            catch (Exception ex)
-            {
-                if (_db.FailedSms.Any(a => a.DestinationAddress == request.destinationAddress && !a.Sent))
-                    throw;
-
-                _db.FailedSms.Add(new FailedSms
-                {
-                    Sent = false,
-                    DestinationAddress = request.destinationAddress,
-                    Password = request.password,
-                    UserName = request.userName,
-                    Message = request.message,
-                    Company = request.company,
-                    Number = request.number,
-                    MessageId = request.messageId,
-                    ExceptionMessage = ex.Message,
-                    CreatedAt = DateTime.UtcNow
-                });
-                _db.SaveChanges();
-            }
+            }           
         }
     }
-}
