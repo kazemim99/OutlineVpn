@@ -611,7 +611,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         }
 
-
         private async Task PreInitialScript(V2Server server)
         {
             var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, server.Password);
