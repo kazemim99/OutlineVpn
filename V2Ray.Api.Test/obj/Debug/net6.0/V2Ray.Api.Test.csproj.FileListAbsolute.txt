@@ -1,7 +1,0 @@
-C:\Repos\OutlineVpn\V2Ray.Api.Test\bin\Debug\net6.0\CoverletSourceRootsMapping
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.csproj.AssemblyReference.cache
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\MvcTestingAppManifest.json
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.GeneratedMSBuildEditorConfig.editorconfig
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.AssemblyInfoInputs.cache
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.AssemblyInfo.cs
-C:\Repos\OutlineVpn\V2Ray.Api.Test\obj\Debug\net6.0\V2Ray.Api.Test.csproj.CoreCompileInputs.cache
