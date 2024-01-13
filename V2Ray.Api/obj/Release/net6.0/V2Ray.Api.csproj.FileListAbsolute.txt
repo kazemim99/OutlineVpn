@@ -184,3 +184,5 @@ C:\Users\stocksna\Source\Repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Release\net6.0
 C:\Users\stocksna\Source\Repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Release\net6.0\ref\V2Ray.Api.dll
 C:\Users\stocksna\Source\Repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Release\net6.0\V2Ray.Api.xml
 C:\Users\stocksna\Source\Repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Release\net6.0\V2Ray.Api.genruntimeconfig.cache
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Release\net6.0\Microsoft.EntityFrameworkCore.Relational.Design.dll
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Release\net6.0\Npgsql.EntityFrameworkCore.PostgreSQL.Design.dll

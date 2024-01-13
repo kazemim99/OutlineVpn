@@ -130,24 +130,6 @@
              </summary>
             
         </member>
-        <member name="M:V2Ray.Api.Controllers.PlanController.Update(System.Int32,V2Ray.Api.Services.PlanServices.Dto.UpdatePlanInput)">
-             <summary>
-             ویرایش یک کاربر 
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.PlanController.Get(System.Int32)">
-             <summary>
-             دریافت اطلاعات یک کاربر
-             </summary>
-            
-        </member>
-        <member name="M:V2Ray.Api.Controllers.PlanController.Delete(System.Int32)">
-             <summary>
-             ویرایش پروفایل یک کاربر
-             </summary>
-            
-        </member>
         <member name="M:V2Ray.Api.Controllers.ProblemReportController.Update(System.Int32,V2Ray.Api.Services.ProblemReportServices.Dto.UpdateProblemReportInput)">
              <summary>
              ویرایش یک کاربر 
@@ -269,6 +251,12 @@
             
         </member>
         <member name="M:V2Ray.Api.Controllers.V2ServerController.ChageState(System.Int32)">
+             <summary>
+             دریافت اطلاعات یک کاربر
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.V2ServerController.ChageLoadBalance(System.Int32)">
              <summary>
              دریافت اطلاعات یک کاربر
              </summary>

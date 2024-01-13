@@ -10,6 +10,7 @@ namespace V2Ray.Api.Services.Server.Dto
         public string? Title { get; set; }
         public int UserId { get; set; }
         public bool IsAdmin { get; set; }
+        public bool? Enable { get; internal set; }
     }
 
 }

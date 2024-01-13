@@ -19,5 +19,6 @@ namespace V2Ray.Api.Services.Server
         List<CustomerServerOutput> CustomerServers(string userName);
         Task ChangeServer(int serverId, string customerUserName);
         Task ChangeActive(int id);
+        Task ChageLoadBalance(int id);
     }
 }

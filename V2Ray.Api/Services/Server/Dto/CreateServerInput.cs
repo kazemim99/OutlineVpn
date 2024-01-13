@@ -10,11 +10,13 @@ namespace V2Ray.Api.Services.Server.Dto
         [Required]
         public string UserName { get; set; }
         public int Capacity { get; set; }
-        public bool HasLicense { get; set; }
+        public bool Enable { get; set; }
 
         public bool IsActive { get; set; }
 
         public string Token { get; set; }
+
+        public bool HasLoadBalance { get; set; }
 
         [Required]
         public string Password { get; set; }

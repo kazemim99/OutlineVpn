@@ -58,6 +58,7 @@ namespace V2Ray.Api.Controllers
         {
             filter.UserId = UserId;
             filter.IsAdmin = IsAdmin;
+            filter.Enable = null;
             var result = await _service.GetAllAsync(filter, new[] { "SSHKeys" });
 
             return new ApiResponse(result);
@@ -72,8 +73,9 @@ namespace V2Ray.Api.Controllers
             {
                 UserId = UserId,
                 IsAdmin = IsAdmin,
-                ItemsPerPage = 100
-            }, new[] { "SSHKeys" });
+                ItemsPerPage = 100,
+                Enable = true
+            }, new[] { "SSHKeys" }); ;
             return new ApiResponse(result);
         }
 
@@ -113,6 +115,19 @@ namespace V2Ray.Api.Controllers
         public async Task<ApiResponse> ChageState([FromRoute] int id)
         {
             await _service.ChangeState(id);
+
+            return new ApiResponse();
+        } 
+        
+        /// <summary>
+        /// دریافت اطلاعات یک کاربر
+        /// </summary>
+        ///
+        [HttpPut("change-loadBalance/{id:int}")]
+        [Authorize]
+        public async Task<ApiResponse> ChageLoadBalance([FromRoute] int id)
+        {
+            await _service.ChageLoadBalance(id);
 
             return new ApiResponse();
         }

@@ -17,7 +17,8 @@
           flat
           @change="changeState(item)"
           :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
-        ></v-switch>
+        >
+      </v-switch>
       </template>
 
       <template v-slot:item.edit="{ item }">

@@ -59,7 +59,7 @@
             class="mr-2"
             @click="
               copyToClipBoard(
-                `username: ${item.userName} \n password: ${item.password} \n  server : ${item.serverName} \n  Port : 1027 \nتاریخ اعتبار : ${item.expireDate} \nحروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \nآموزش اتصال: https://my.uupload.ir/dl/VX7QEBWR \nآموزش تغییر سرور: https://my.uupload.ir/dl/VX7QEBNz \n`
+                `username: ${item.userName} \n password: ${item.password} \n  server : ${item.serverName} \n  Port : 1027 \nتاریخ اعتبار : ${item.expireDate} \nحروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \nآموزش اتصال: https://my.uupload.ir/dl/yoOWe2Y7 \nآموزش تغییر سرور: https://my.uupload.ir/dl/VX7QEBNz \n`
               )
             "
           >

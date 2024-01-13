@@ -14,9 +14,10 @@
         public string Title { get; set; }
         public string IP { get; set; }
         public string Url { get; set; }
-        public bool HasLicense { get; set; }
+        public bool Enable { get; set; }
         public int KeyCount { get; set; }
         public bool IsActive { get; set; }
+        public bool HasLoadBalance { get; set; }
         public string TitleCount => $"{Title}({KeyCount})";
     }
 }

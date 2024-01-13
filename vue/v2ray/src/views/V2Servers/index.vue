@@ -11,12 +11,12 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.hasLicense="{ item }">
+      <template v-slot:item.enable="{ item }">
         <v-switch
-          v-model="item.hasLicense"
+          v-model="item.enable"
           flat
           @change="changeState(item)"
-          :label="`${item.hasLicense ? 'فعال' : 'غیر فعال'}`"
+          :label="`${item.enable ? 'فعال' : 'غیر فعال'}`"
         ></v-switch>
       </template>
 
@@ -29,10 +29,22 @@
         ></v-switch>
       </template>
 
+      <template v-slot:item.hasLoadBalance="{ item }">
+        <v-switch
+          v-model="item.hasLoadBalance"
+          flat
+          @change="changeLoadBalance(item)"
+          :label="`${item.hasLoadBalance ? 'فعال' : 'غیر فعال'}`"
+        ></v-switch>
+      </template>
+
       <template v-slot:item.adjust="{ item }">
-        <v-btn :loading=loadingItems[item.id] color="blue darken-1" @click="adjustItem(item)"
-            >تنظیم</v-btn
-          >
+        <v-btn
+          :loading="loadingItems[item.id]"
+          color="blue darken-1"
+          @click="adjustItem(item)"
+          >تنظیم</v-btn
+        >
       </template>
 
       <template v-slot:item.edit="{ item }">
@@ -112,6 +124,7 @@ import request from "@/utils/request";
 import AddNewV2Server from "@/components/V2Servers/AddNewV2Server.vue";
 import Breadcrump from "@/components/common/Breadcrump.vue";
 import Vue from "vue";
+import AezaAPI from "aeza-net-sdk";
 
 export default {
   name: "V2Servers",
@@ -140,6 +153,7 @@ export default {
       pages: 0,
       hasLicense: null,
       isActive: null,
+      hasLoadBalance: null,
       title: null,
       v2ServerList: [],
       loading: true,
@@ -149,8 +163,9 @@ export default {
         { text: "تعداد کاربران", value: "keyCount", sortable: true },
         { text: "آی پی", value: "ip", sortable: false },
         { text: "آدرس", value: "url", sortable: false },
-        { text: "لود بالانس", value: "hasLicense", sortable: false },
+        { text: "فعال", value: "enable", sortable: false },
         { text: "وضعیت", value: "isActive", sortable: false },
+        { text: "لود بالانس", value: "hasLoadBalance", sortable: false },
         { text: "تنظیم", value: "adjust", sortable: false },
         { text: "ویرایش", value: "edit", sortable: false },
         { text: "حذف", value: "delete", sortable: false },
@@ -198,7 +213,7 @@ export default {
       await request
         .put(`/v2Server/change-state/${item.id}`)
         .then(() => {
-         this.getV2Servers();
+          this.getV2Servers();
         })
         .catch((error) => {
           alert(error);
@@ -210,15 +225,38 @@ export default {
     },
 
     async changeActive(item) {
+      debugger;
+      
+      const api = new AezaAPI('ea09de9d2f1a7952ae8e524074a8ec92');
+      const { response } = await api.profile.get();
+
+      console.log(response);
+      
       this.switchLoading = "warning";
       await request
         .put(`/v2Server/change-active/${item.id}`)
         .then(() => {
-         this.getV2Servers();
+          this.getV2Servers();
         })
         .catch((error) => {
           alert(error);
           this.isActive = !this.isActive;
+        })
+        .finally(() => {
+          this.$set(this.loadingItems, item.id, false);
+        });
+    },
+
+    async changeLoadBalance(item) {
+      this.switchLoading = "warning";
+      await request
+        .put(`/v2Server/change-loadBalance/${item.id}`)
+        .then(() => {
+          this.getV2Servers();
+        })
+        .catch((error) => {
+          alert(error);
+          this.hasLoadBalance = !this.hasLoadBalance;
         })
         .finally(() => {
           this.$set(this.loadingItems, item.id, false);

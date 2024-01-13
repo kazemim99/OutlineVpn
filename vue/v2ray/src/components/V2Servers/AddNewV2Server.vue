@@ -110,9 +110,9 @@
               <v-row>
                 <v-col cols="4" v-if="this.$store.state.userDetails.isAdmin">
                   <v-switch
-                    v-model="v2Server.hasLicense"
-                    :label="`لود بالانس: ${
-                      v2Server.hasLicense ? 'فعال' : 'غیر فعال'
+                    v-model="v2Server.enable"
+                    :label="`فعال : ${
+                      v2Server.enable ? 'فعال' : 'غیر فعال'
                     }`"
                   ></v-switch>
                 </v-col>
@@ -122,6 +122,14 @@
                     v-model="v2Server.isActive"
                     :label="`وضعیت: ${
                       v2Server.isActive ? 'فعال' : 'غیر فعال'
+                    }`"
+                  ></v-switch>
+                </v-col>
+                <v-col cols="4">
+                  <v-switch
+                    v-model="v2Server.hasLoadBalance"
+                    :label="`لود بالانس: ${
+                      v2Server.hasLoadBalance ? 'فعال' : 'غیر فعال'
                     }`"
                   ></v-switch>
                 </v-col>
@@ -160,6 +168,7 @@ export default Vue.extend({
     users: [],
     v2Server: {
       userId: null,
+      hasLoadBalance: null,
       capacity: 50,
       isActive: false,
       title: "",
@@ -239,9 +248,10 @@ export default Vue.extend({
         this.v2Server.state = data.state;
         this.v2Server.token = data.token;
         this.v2Server.cityId = data.cityId;
+        this.v2Server.hasLoadBalance = data.hasLoadBalance;
         this.v2Server.isActive = data.isActive;
         this.v2Server.ip = data.ip;
-        this.v2Server.hasLicense = data.hasLicense;
+        this.v2Server.enable = data.enable;
         this.v2Server.userName = data.userName;
         this.v2Server.password = data.password;
         this.password = data.password;
@@ -309,6 +319,7 @@ export default Vue.extend({
         (this.v2Server.token = ""),
         (this.v2Server.password = ""),
         (this.v2Server.ip = ""),
+        (this.v2Server.hasLoadBalance = null),
         (this.v2Server.id = null),
         (this.v2Server.cityId = 0),
         (this.v2Server.state = false),

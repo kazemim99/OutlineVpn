@@ -105,11 +105,19 @@ namespace V2Ray.Api.Services.Server
             Server.IsActive = !Server.IsActive;
             _db.Update(Server);
             await _db.SaveChangesAsync();
+        } 
+        
+        public async Task ChageLoadBalance(int id)
+        {
+            var Server = _db.V2Servers.FirstOrDefault(a => a.Id == id);
+            Server.HasLoadBalance = !Server.HasLoadBalance;
+            _db.Update(Server);
+            await _db.SaveChangesAsync();
         }
         public async Task ChangeState(int id)
         {
             var Server = _db.V2Servers.FirstOrDefault(a => a.Id == id);
-            Server.HasLicense = !Server.HasLicense;
+            Server.Enable = !Server.Enable;
             _db.Update(Server);
             await _db.SaveChangesAsync();
         }
@@ -118,6 +126,11 @@ namespace V2Ray.Api.Services.Server
         {
             var query = _db.V2Servers.Include(a => a.SSHKeys).AsQueryable();
 
+
+            if (filter.Enable != null)
+            {
+                query = query.Where(a => a.Enable);
+            }
             if (!filter.Title.IsNullOrEmpty())
             {
                 query = query.Where(a => a.Title.Contains(filter.Title));

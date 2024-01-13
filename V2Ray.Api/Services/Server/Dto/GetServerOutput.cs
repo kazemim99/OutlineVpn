@@ -15,7 +15,9 @@ namespace V2Ray.Api.Services.Server.Dto
         public int? UserId { get; set; }
         public string IP { get; set; }
         public string IsActive { get; set; }
-        public bool HasLicense { get; set; }
+        public bool Enable { get; set; }
         public string? Url { get; set; }
+        public bool HasLoadBalance { get; set; }
+
     }
 }

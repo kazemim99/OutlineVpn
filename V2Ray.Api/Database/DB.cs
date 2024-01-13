@@ -21,7 +21,7 @@ namespace V2Ray.Api.Database
 
             // Create options builder using Npgsql
             var optionsBuilder = new DbContextOptionsBuilder<DB>()
-                .UseNpgsql(connectionString);
+                .UseSqlServer(connectionString);
 
             return new DB(optionsBuilder.Options);
         }
