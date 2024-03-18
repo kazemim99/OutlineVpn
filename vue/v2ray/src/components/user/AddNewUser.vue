@@ -84,8 +84,8 @@
               <v-row>
                 <v-col cols="4">
                   <v-switch
-                    v-model="user.userState"
-                    :label="`وضعیت: ${user.userState ? 'فعال' : 'غیر فعال'}`"
+                    v-model="user.enable"
+                    :label="`وضعیت: ${user.enable ? 'فعال' : 'غیر فعال'}`"
                   ></v-switch>
                 </v-col>
 
@@ -134,6 +134,7 @@ export default Vue.extend({
       initCapacity: 0,
       isAdmin: false,
       password: "",
+      enable: "",
       firstName: "کاربر",
       lastName: "مهمان",
       email: "",
@@ -195,10 +196,12 @@ export default Vue.extend({
         this.user.mobile = data.mobile;
         this.user.serverId = data.serverId;
         this.user.email = data.email;
+        this.user.password = data.password;
         this.user.phone = data.phone;
         this.user.userState = data.userState;
         this.user.avatar = "";
         this.user.isAdmin = data.isAdmin;
+        this.user.enable = data.enable;
         this.imageUrl = data.avatar;
         this.user.initCapacity = data.initCapacity;
         this.user.cunsumedTraffic = data.cunsumedTraffic;
@@ -287,7 +290,7 @@ export default Vue.extend({
 
     clearData() {
       // (this.user.confirmPassword = ""),
-      //   (this.user.password = ""),
+       (this.user.password = ""),
       (this.user.firstName = "کاربر"),
         (this.user.lastName = "مهمان"),
         (this.user.email = ""),

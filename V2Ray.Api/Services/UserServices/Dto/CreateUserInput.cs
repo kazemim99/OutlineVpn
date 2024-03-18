@@ -26,6 +26,8 @@ namespace V2Ray.Api.Services.UserServices.Dto
         [Compare("Password", ErrorMessage = "تکرار رمز عبور اشتباه است")]
         public string ConfirmPassword { get; set; }
 
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
         public bool IsAdmin { get; set; } = false;
 

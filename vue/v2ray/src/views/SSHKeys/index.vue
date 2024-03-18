@@ -325,10 +325,7 @@ export default {
                  دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n 
                  تاریخ اعتبار : ${item.expireDate}`;
         }
-        textToCopy = `username: ${item.userName} \n
-                 password: ${item.password} \n 
-                 server: ${item.server}.iransshvpn.com \n 
-                 دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n تاریخ اعتبار : ${item.expireDate}`;
+   
       }
 
       if (item.accountType == 1) {

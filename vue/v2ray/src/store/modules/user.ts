@@ -35,7 +35,6 @@ class User extends VuexModule implements IUserState {
   public roles: string[] = [];
   public permisiones: string[] = [];
   public verfied = false;
-  public needConfirm = false;
   public mobile = "";
   public isAdmin = false;
   @Mutation
@@ -57,9 +56,7 @@ class User extends VuexModule implements IUserState {
     this.mobile = mobile;
   }
   @Mutation
-  SET_NEEDCONFIRM(needConfirm: boolean) {
-    this.needConfirm = needConfirm;
-  }
+
   @Mutation
   SET_FULLNAME(input: any) {
     this.fullName = `${input.firstName} ${input.lastName}`;
@@ -98,14 +95,11 @@ class User extends VuexModule implements IUserState {
       this.ResetToken();
       const result = a.data.result;
       this.SET_Mobile(userInfo.mobile);
-      this.SET_NEEDCONFIRM(result.needConfirm);
-      if (!result.needConfirm) {
-        const token = result.jwtToken.token;
-        setToken(`Bearer ${token}`);
-        store.commit("setUserDetails", result);
+      const token = result.jwtToken.token;
+      setToken(`Bearer ${token}`);
+      store.commit("setUserDetails", result);
 
-        this.SET_FULLNAME(result)
-      }
+      this.SET_FULLNAME(result)
     });
   }
 

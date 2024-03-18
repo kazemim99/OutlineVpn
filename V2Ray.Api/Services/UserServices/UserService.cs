@@ -86,7 +86,6 @@ namespace V2Ray.Api.Services.UserServices
                 {
                     Token = GenerateJwtToken(user),
                 },
-                NeedConfirm = user.NeedConfirm,
                 IsAdmin = user.IsAdmin,
                 FreeAccount = user.UsedFreeAccount,
                 FirstName = $"{user.FirstName} ",

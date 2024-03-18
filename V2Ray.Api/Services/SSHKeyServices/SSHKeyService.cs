@@ -107,7 +107,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
 
                 input.ChargeDate = DateTime.UtcNow;
-                if (!input.IsAdmin && input.DurationId != 1)
+                if (input.DurationId != 1)
                 {
                     for (int j = 0; j < input.MultiUser; j++)
                     {
@@ -215,7 +215,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             var keys = new List<SSHKey>() { key };
             if (input.AccountType != key.AccountType)
             {
-                if(key.AccountType == AccountType.V2RAy)
+                if (key.AccountType == AccountType.V2RAy)
                 {
                     await CreateV2Ray(keys, AccountActionStatus.Delete);
 
@@ -520,7 +520,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 var v2id = (int)obj["id"];
                 item.V2Id = v2id;
                 item.AccountType = AccountType.V2RAy;
-                if(_db.SSHKeyInfos.Any(c=>c.Id == item.Id))
+                if (_db.SSHKeyInfos.Any(c => c.Id == item.Id))
                 {
                     entity = _db.SSHKeyInfos.Update(item);
                 }
@@ -531,9 +531,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 try
                 {
 
-               
-                var result = _db.SaveChanges();
-                item.Id = entity.Entity.Id;
+
+                    var result = _db.SaveChanges();
+                    item.Id = entity.Entity.Id;
                 }
                 catch (Exception ex)
                 {
@@ -578,7 +578,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     string str = "";
                     if (!keys.Any())
                         newKeys = _db.SSHKeyInfos.Where(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date).Skip(i * Convert.ToInt32(skipCount)).Take(Convert.ToInt32(skipCount)).ToList();
-
+                    else
+                        newKeys = keys;
 
                     foreach (var item in newKeys)
                     {
@@ -710,11 +711,12 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 if (key.AccountType == AccountType.V2RAy)
                     await CreateV2Ray(keys, AccountActionStatus.Update);
 
-                await BulkAddUserToServer(keys);
+                if (key.AccountType == AccountType.SSH)
+                    await BulkAddUserToServer(keys);
             }
 
 
-            if (key.User != null && !key.User.IsAdmin)
+            if (key.User != null)
             {
                 if (durationId >= 30)
                 {
@@ -982,9 +984,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
             try
             {
-
-
                 var query = _db.SSHKeyInfos.AsQueryable();
+
                 if (!filter.IsAdmin)
                 {
                     query = query.Where(c => c.UserId == filter.UserId);
