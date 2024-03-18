@@ -14,7 +14,7 @@ namespace V2Ray.Api.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-          
+            
         }
     }
 }

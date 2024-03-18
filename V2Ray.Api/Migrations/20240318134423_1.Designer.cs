@@ -12,8 +12,8 @@ using V2Ray.Api.Database;
 namespace V2Ray.Api.Migrations
 {
     [DbContext(typeof(DB))]
-    [Migration("20240316053627_4")]
-    partial class _4
+    [Migration("20240318134423_1")]
+    partial class _1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -133,6 +133,9 @@ namespace V2Ray.Api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MultiUser")
+                        .HasColumnType("int");
+
                     b.Property<int>("SSHKeyId")
                         .HasColumnType("int");
 
@@ -248,8 +251,14 @@ namespace V2Ray.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ChargeDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -296,6 +305,15 @@ namespace V2Ray.Api.Migrations
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("V2Guid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("V2Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("V2Port")
+                        .HasColumnType("int");
 
                     b.Property<int?>("V2ServerId")
                         .HasColumnType("int");

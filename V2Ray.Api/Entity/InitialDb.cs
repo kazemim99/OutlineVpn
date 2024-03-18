@@ -34,7 +34,7 @@ namespace V2Ray.Api.Entity
             {
 
                 CreateUser(db);
-                CreateServer(db);
+                //CreateServer(db);
 
                 //CreateLockerLog(db);
                 if (!isTest)
