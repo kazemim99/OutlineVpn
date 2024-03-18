@@ -195,6 +195,7 @@ export default Vue.extend({
         this.user.mobile = data.mobile;
         this.user.serverId = data.serverId;
         this.user.email = data.email;
+        this.user.enable = data.enable;
         this.user.phone = data.phone;
         this.user.userState = data.userState;
         this.user.avatar = "";

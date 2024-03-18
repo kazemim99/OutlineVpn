@@ -170,7 +170,6 @@ namespace V2Ray.Api.Entity
                 IsAdmin = true,
                 Enable = true,
                 Password="!Q@W3e4r",
-                NeedConfirm = false,
                 FirstName = DefaultUserConst.FirstName,
                 LastName = DefaultUserConst.LastName,
                 Avatar = DefaultUserConst.Avatar,
