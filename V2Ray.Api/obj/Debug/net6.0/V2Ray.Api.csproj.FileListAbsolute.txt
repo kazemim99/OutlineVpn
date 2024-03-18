@@ -91,6 +91,12 @@ C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\ref\V2Ray.Api.dll
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.xml
 C:\Repos\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.genruntimeconfig.cache
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfoInputs.cache
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfo.cs
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.CoreCompileInputs.cache
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\V2Ray.Api.staticwebassets.runtime.json
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\V2Ray.Api.exe
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\appsettings.Development.json
@@ -171,13 +177,6 @@ C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\r
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
-C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.AssemblyReference.cache
-C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfoInputs.cache
-C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.AssemblyInfo.cs
-C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.CoreCompileInputs.cache
-C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\staticwebassets.build.json
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\staticwebassets.development.json
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\scopedcss\bundle\V2Ray.Api.styles.css
@@ -186,3 +185,4 @@ C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\ref\V2Ray.Api.dll
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.xml
 C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.genruntimeconfig.cache
+C:\Users\stocksna\source\repos\kazemim99\OutlineVpn\V2Ray.Api\obj\Debug\net6.0\V2Ray.Api.csproj.AssemblyReference.cache

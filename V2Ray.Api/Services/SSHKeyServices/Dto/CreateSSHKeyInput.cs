@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
@@ -36,9 +37,35 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         //[MaxLength(6,ErrorMessage ="مقدار بیشتر از 6 نمتواند باشد")]
         //public int ExtraDay { get; set; }
         public int? Count { get; set; }
-        [Required]
-        public int ServerId { get; set; }
+
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
+        public string? Server { get; set; }
         public int? UserId { get; set; }
         public int ExtraDayId { get;  set; }
+
+        [Required]
+        public int MultiUser { get; set; } = 1;
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
+        public string? Code { get; set; }
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
+        public int? V2Port { get; set; }
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
+        public string? V2Guid { get; set; }
+        [Required]
+        public AccountType AccountType { get; set; }
+    }
+
+    public enum AccountType
+    {
+        [Description("SSH")]
+        SSH = 1,
+        [Description("V2RAy")]
+        V2RAy = 2,
+        [Description("OpenVPN/L2TP")]
+        OpenVPN =3
     }
 }

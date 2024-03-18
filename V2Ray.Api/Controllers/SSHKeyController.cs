@@ -18,6 +18,10 @@ namespace V2Ray.Api.Controllers
         }
 
 
+
+       
+
+
         [HttpGet("all-sshkeys")]
         [Authorize]
         public async Task<ApiResponse> Filter()
@@ -39,7 +43,7 @@ namespace V2Ray.Api.Controllers
             }
             //filter.SSHKeyId = SSHKeyId;
             //filter.IsAdmin = IsAdmin;
-        
+
         }
 
 
@@ -47,7 +51,7 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> SetUser([FromBody] SetPasswordModel model)
         {
-            
+
             await _service.SetUser(UserId, model);
             return new ApiResponse();
         }
@@ -164,6 +168,7 @@ namespace V2Ray.Api.Controllers
         {
             input.UserId = UserId;
             input.IsAdmin = IsAdmin;
+            input.Name = FullName;
             await _service.GenerateSshFromAdmin(input);
             return new ApiResponse();
         }
@@ -177,12 +182,12 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Get([FromRoute] int id)
         {
-            var result = await _service.GetById(id, new[] { "V2Server", "Orders" });
+            var result = await _service.GetById(id, new[] { "Orders" });
 
             return new ApiResponse(result);
         }
 
-       
+
         [Authorize]
         [HttpPost("change-password/{id}")]
         public async Task<ApiResponse> ChangePassowrd([FromRoute] int id)

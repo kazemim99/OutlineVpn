@@ -48,6 +48,27 @@ namespace V2Ray.Api.Migrations
                     b.ToTable("Attachment");
                 });
 
+            modelBuilder.Entity("V2Ray.Api.Entity.DNSRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Ipv4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ipv6")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DNSRecords");
+                });
+
             modelBuilder.Entity("V2Ray.Api.Entity.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -109,6 +130,9 @@ namespace V2Ray.Api.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("MultiUser")
+                        .HasColumnType("int");
 
                     b.Property<int>("SSHKeyId")
                         .HasColumnType("int");
@@ -225,8 +249,14 @@ namespace V2Ray.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ChargeDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -243,6 +273,9 @@ namespace V2Ray.Api.Migrations
                     b.Property<DateTime>("ExpireDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("MultiUser")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -254,8 +287,9 @@ namespace V2Ray.Api.Migrations
                     b.Property<int>("Port")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServerId")
-                        .HasColumnType("int");
+                    b.Property<string>("Server")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
@@ -270,14 +304,26 @@ namespace V2Ray.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("V2Guid")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ServerId");
+                    b.Property<int>("V2Id")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("V2Port")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("V2ServerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.HasIndex("UserName")
                         .IsUnique();
+
+                    b.HasIndex("V2ServerId");
 
                     b.ToTable("SSHKeyInfos");
                 });
@@ -511,6 +557,9 @@ namespace V2Ray.Api.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("MultiUser")
+                        .HasColumnType("int");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -591,7 +640,7 @@ namespace V2Ray.Api.Migrations
                     b.HasOne("V2Ray.Api.Entity.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("SSHKey");
@@ -612,21 +661,17 @@ namespace V2Ray.Api.Migrations
 
             modelBuilder.Entity("V2Ray.Api.Entity.SSHKey", b =>
                 {
-                    b.HasOne("V2Ray.Api.Entity.V2Server", "V2Server")
-                        .WithMany("SSHKeys")
-                        .HasForeignKey("ServerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("V2Ray.Api.Entity.User", "User")
                         .WithMany("SSHKeyInfos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("V2Ray.Api.Entity.V2Server", null)
+                        .WithMany("SSHKeys")
+                        .HasForeignKey("V2ServerId");
 
-                    b.Navigation("V2Server");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.UserRole", b =>
@@ -670,7 +715,7 @@ namespace V2Ray.Api.Migrations
                     b.HasOne("V2Ray.Api.Entity.User", "User")
                         .WithMany("Servers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");

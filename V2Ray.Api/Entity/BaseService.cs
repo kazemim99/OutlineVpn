@@ -42,12 +42,21 @@ namespace V2Ray.Api.Entity
 
         public virtual async Task<TKey> InsertGetIdAsync(TInsert input)
         {
-            var entity = _mapper.Map<TEntity>(input);
-            var model = await _db.Set<TEntity>().AddAsync(entity);
+            try
+            {
+                var entity = _mapper.Map<TEntity>(input);
+                var model = await _db.Set<TEntity>().AddAsync(entity);
 
-            await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
 
-            return model.Entity.Id;
+                return model.Entity.Id;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+         
         }
 
         public virtual async Task UpdateAsync(TKey id, TUpdate input, params string[] include)

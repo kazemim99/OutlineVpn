@@ -18,7 +18,7 @@ namespace V2Ray.Api.Entity.Configurations
             builder.ToTable("Orders");
             builder.HasQueryFilter(a => !a.IsDeleted);
             builder.Property(a => a.CreatorUserId).IsRequired(false);
-            builder.HasOne(a => a.User).WithMany(a => a.Orders).HasForeignKey(c => c.UserId);
+            builder.HasOne(a => a.User).WithMany(a => a.Orders).HasForeignKey(c => c.UserId).OnDelete(DeleteBehavior.Restrict);
         }
     }
     public class ProblemReportConfig : IEntityTypeConfiguration<ProblemReport>
@@ -37,7 +37,16 @@ namespace V2Ray.Api.Entity.Configurations
             builder.HasQueryFilter(a => !a.IsDeleted);
         }
     }
-   
+
+
+    public class DNSRecordsConfig : IEntityTypeConfiguration<DNSRecord>
+    {
+        public void Configure(EntityTypeBuilder<DNSRecord> builder)
+        {
+           
+        }
+    }
+
     public class SSHKeyConfig : IEntityTypeConfiguration<SSHKey>
     {
         public void Configure(EntityTypeBuilder<SSHKey> builder)
@@ -47,8 +56,6 @@ namespace V2Ray.Api.Entity.Configurations
             builder.Property(c => c.UserName).IsRequired();
             builder.Property(c => c.Password).IsRequired();
 
-            builder.HasOne(a => a.V2Server).WithMany(c => c.SSHKeys)
-                .HasForeignKey(b => b.ServerId).IsRequired(true);
 
             builder.HasOne(a => a.User).WithMany(c => c.SSHKeyInfos)
             .HasForeignKey(b => b.UserId).IsRequired(true);
@@ -92,8 +99,7 @@ namespace V2Ray.Api.Entity.Configurations
         public void Configure(EntityTypeBuilder<V2Server> builder)
         {
             builder.HasQueryFilter(a => !a.IsDeleted);
-            builder.HasOne(a => a.User).WithMany(a=>a.Servers).HasForeignKey(c=>c.UserId).IsRequired(true);
-            builder.HasMany(a => a.SSHKeys).WithOne(a=>a.V2Server).HasForeignKey(c=>c.ServerId).IsRequired(true);
+            builder.HasOne(a => a.User).WithMany(a=>a.Servers).HasForeignKey(c=>c.UserId).IsRequired(true).OnDelete(DeleteBehavior.Restrict);
             builder.Property(a => a.Capacity).HasDefaultValue(50);
         }
     }

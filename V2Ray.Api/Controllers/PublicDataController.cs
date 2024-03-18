@@ -5,6 +5,7 @@ using Renci.SshNet;
 using V2Ray.Api.Extensions;
 using V2Ray.Api.Services.sms;
 using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
+using V2Ray.Api.Services.SSHKeyServices.Dto;
 using V2Ray.Api.Services.UserServices;
 using V2Ray.Api.Shared;
 using V2Ray.Api.Shared.ShadowUriGenerator;
@@ -41,7 +42,18 @@ namespace V2Ray.Api.Controllers
         }
 
 
+        [HttpGet("get-accounType")]
+        [Authorize]
+        public ApiResponse AccountType()
+        {
+            var result = Enum.GetValues(typeof(AccountType))
+                .Cast<AccountType>()
+                .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
+            return new ApiResponse(result);
+        }
 
+
+       
 
         [HttpGet("get-operations")]
         [Authorize]
@@ -53,28 +65,58 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(result);
         }
 
+
         /// <summary>
         /// نمایش فایلها در قسمت در فرانت با اسفتاده از آدرس
         /// </summary>
         ///
-        [HttpGet("get-file/{path}")]
-        public async Task<ActionResult> GetFile(string path)
+        [HttpGet("get-file-p")]
+        public async Task<ActionResult> GetFileP()
         {
-            path = path.Replace('*', '\\');
-            var stream = await OpenReadStreamAsync(path);
+
+            string filePath = "Resources/open.ovpn";
+            string fileName = "open.ovpn";
+            var stream = await OpenReadStreamAsync(filePath);
 
             string contentType = "";
-            var prefex = path.Split('.')[1];
-            if (prefex.Contains("jpeg") || prefex.Contains("jpg") || prefex.Contains("png")) ;
-            contentType = "image/jpeg";
-            if (prefex.Contains("text"))
-                contentType = "text/*";
-            if (prefex.Contains("doc"))
-                contentType = "application/msword";
-            if (prefex.Contains("docx"))
-                contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            var prefex = filePath.Split('.')[1];
+
+            contentType = GetMimeType(fileName);
+
 
             return File(stream, contentType);
+        }
+
+
+        /// <summary>
+        /// نمایش فایلها در قسمت در فرانت با اسفتاده از آدرس
+        /// </summary>
+        ///
+        [HttpGet("get-file")]
+        public async Task<FileStreamResult> GetFile()
+        {
+
+            string filePath = "Resources/open.ovpn";
+            string fileName = "open.ovpn";
+            var stream = await OpenReadStreamAsync(filePath);
+
+            string contentType = "";
+            var prefex = filePath.Split('.')[1];
+
+            contentType = GetMimeType(fileName);
+
+
+            return File(stream, contentType, "open.ovpn");
+        }
+
+        private string GetMimeType(string fileName)
+        {
+            string mimeType = "application/unknown";
+            string ext = System.IO.Path.GetExtension(fileName).ToLower();
+            Microsoft.Win32.RegistryKey regKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
+            if (regKey != null && regKey.GetValue("Content Type") != null)
+                mimeType = regKey.GetValue("Content Type").ToString();
+            return mimeType;
         }
 
         private async Task<Stream> OpenReadStreamAsync(string file)

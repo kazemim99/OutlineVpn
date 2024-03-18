@@ -48,18 +48,7 @@ namespace V2Ray.Api.Controllers
 
 
 
-        /// <summary>
-        /// ورود مشتریان 
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost("changePass")]
-        [AllowAnonymous]
-        public ApiResponse ChangePass()
-        {
-            _service1.ChangePassword();
-            return new ApiResponse();
-        }
+      
         /// <summary>
         /// ورود مشتریان 
         /// </summary>

@@ -167,13 +167,15 @@ namespace V2Ray.Api
 
                 app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions
                 {
-                    UseApiProblemDetailsException = true,
-                    ShowIsErrorFlagForSuccessfulResponse = true,
+                    UseApiProblemDetailsException = false,
+                    ShowIsErrorFlagForSuccessfulResponse = false,
+                    
                     BypassHTMLValidation = true,
                     IsApiOnly = false,
                     ExcludePaths = new List<AutoWrapperExcludePath>
                 {
                     new AutoWrapperExcludePath("\\bget-file\\b",ExcludeMode.Regex),
+                    new AutoWrapperExcludePath("\\bget-file-p\\b",ExcludeMode.Regex),
                 }
                 }); ;
             }

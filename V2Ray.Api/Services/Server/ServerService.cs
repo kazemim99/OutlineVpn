@@ -167,7 +167,7 @@ namespace V2Ray.Api.Services.Server
 
         public async Task<CustomerInfoOutput> CustomerInfo(string userName)
         {
-            var result = await _db.SSHKeyInfos.Include(c => c.V2Server).FirstOrDefaultAsync(c => c.UserName == userName);
+            var result = await _db.SSHKeyInfos.FirstOrDefaultAsync(c => c.UserName == userName);
             if (result == null)
                 throw new ApiException("نام کاربری یافت نشد");
 
@@ -176,17 +176,17 @@ namespace V2Ray.Api.Services.Server
                 ExpireDate = result.ExpireDate.ToPeString(),
                 UserName = result.UserName,
                 Password = result.Password,
-                Server = result.V2Server.Url
             };
+
         }
 
 
         public  List<CustomerServerOutput> CustomerServers(string userName)
         {
-            var sshkey = _db.SSHKeyInfos.Include(a=>a.V2Server).FirstOrDefault(a => a.UserName == userName);
+            var sshkey = _db.SSHKeyInfos.FirstOrDefault(a => a.UserName == userName);
 
-            var result =  _db.V2Servers.Where(c => c.UserId == sshkey.V2Server.UserId && c.IsActive  && c.SSHKeys.Where(c=>c.Enable).Count() < 55)
-                .OrderBy(c => c.SSHKeys.Where(c => c.Enable).Count())
+            var result =  _db.V2Servers.Where(c => c.UserId == sshkey.UserId && c.IsActive  && c.SSHKeys.Where(c=>c.Enable).Count() < 51 )
+                .OrderByDescending(c => c.SSHKeys.Where(c => c.Enable).Count())
                 .Select(b => new CustomerServerOutput
                 {
                     Id = b.Id,
@@ -198,13 +198,7 @@ namespace V2Ray.Api.Services.Server
 
         public async Task ChangeServer(int serverId, string customerUserName)
         {
-            var sshKey =await _db.SSHKeyInfos.FirstAsync(c => c.UserName == customerUserName);
-            var oldServer = await _db.V2Servers.FirstAsync(c => c.Id == sshKey.ServerId);
-            var newServer = await _db.V2Servers.FirstAsync(c => c.Id == serverId);
-            _sshService.ChangeServer(sshKey, newServer, oldServer);
-            sshKey.ServerId = serverId;
-            _db.SSHKeyInfos.Update(sshKey);
-            _db.SaveChanges();
+       
         }
 
 

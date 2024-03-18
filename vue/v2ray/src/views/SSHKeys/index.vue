@@ -1,17 +1,7 @@
 <template>
   <div>
     <Breadcrump :crumbs="crumbs" />
-    <v-col class="d-flex" cols="6" sm="6">
-      <v-select
-        v-model="serverId"
-        :items="servers"
-        item-value="id"
-        item-text="titleCount"
-        label="ُسرور"
-        @change="serverKeys()"
-        solo
-      ></v-select>
-    </v-col>
+    <v-col class="d-flex" cols="6" sm="6"> </v-col>
     <v-data-table
       :headers="headers"
       :items="sshKeys"
@@ -52,37 +42,36 @@
         <v-icon medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       </template>
 
+      <template v-slot:item.qrButton="{ item }">
+        <v-btn v-if="item.accountType == 2" @click="showQRCode(item)">QR</v-btn>
+      </template>
+
       <template v-slot:item.copy="{ item }">
-        <v-row>
-          <v-icon
-            medium
-            class="mr-2"
-            @click="
-              copyToClipBoard(
-                `username: ${item.userName} \n password: ${item.password} \n  server : ${item.serverName} \n  Port : 1027 \nتاریخ اعتبار : ${item.expireDate} \nحروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \nآموزش اتصال: https://my.uupload.ir/dl/yoOWe2Y7 \nآموزش تغییر سرور: https://my.uupload.ir/dl/VX7QEBNz \n`
-              )
-            "
-          >
-            mdi-content-copy</v-icon
+        <v-snackbar v-model="snackbar" :color="snackbarColor" right>{{
+          snackbarMessage
+        }}</v-snackbar>
+        <v-row v-if="item.accountType == 1 || item.accountType == 3">
+          <v-icon medium class="mr-2" @click="copyToClipBoard(item, true)"
+            >mdi-content-copy</v-icon
           >
         </v-row>
       </template>
 
       <template v-slot:item.copy1="{ item }">
-        <v-row>
-          <v-icon
-            medium
-            class="mr-2"
-            @click="
-              copyToClipBoard(
-                `username: ${item.userName} \n password: ${item.password} \n server : ${item.serverName} \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n`
-              )
-            "
-          >
+        <v-row v-if="item.accountType == 1 || item.accountType == 3">
+          <v-icon medium class="mr-2" @click="copyToClipBoard(item, false)">
             mdi-content-copy</v-icon
           >
         </v-row>
       </template>
+
+      <template
+        v-if="this.$store.state.userDetails.isAdmin"
+        v-slot:item.name="{ item }"
+      >
+        {{ item.name }}
+      </template>
+
       <template v-slot:top>
         <v-toolbar flat>
           <v-col cols="12">
@@ -140,7 +129,34 @@
           </div>
         </v-menu>
       </template>
+
+      <template v-slot:item.chargeDate="{ item }">
+        <v-badge color="green" :content="item.chargeDate"> </v-badge>
+      </template>
+
+      <template v-slot:item.expireDate="{ item }">
+        <v-badge color="blue" :content="item.expireDate"> </v-badge>
+      </template>
     </v-data-table>
+
+    <v-dialog v-model="modal" max-width="250">
+      <v-card>
+        <v-card-title>اکانت V2Ray</v-card-title>
+        <v-card-text>
+          <div v-if="qrData">
+            <vue-qrcode-component
+              :text="qrData"
+              :size="200"
+              @click.native="copyToClipboardCode"
+            />
+          </div>
+          <div v-else>No QR Code to display</div>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" @click="modal = false">بستن</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-pagination
       v-model="options.page"
       @input="next"
@@ -154,12 +170,14 @@ import request from "@/utils/request";
 import AddNew from "@/components/SSHKeys/AddNew.vue";
 import Breadcrump from "@/components/common/Breadcrump.vue";
 import Vue from "vue";
+import VueQrcodeComponent from "vue-qrcode-component";
 
 export default {
   name: "SSHKeys",
   components: {
     AddNew,
     Breadcrump,
+    VueQrcodeComponent,
   },
   data() {
     return {
@@ -174,9 +192,16 @@ export default {
           disabled: true,
         },
       ],
+
+      snackbar: false,
+      snackbarMessage: "کپی شد",
+      snackbarColor: "success",
+
       totalSSHKeys: 0,
       switchLoading: null,
       pages: 0,
+      modal: false,
+      qrData: "",
       servers: [],
       serverId: 0,
       expired: false,
@@ -188,16 +213,18 @@ export default {
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
+        { text: "سرور", value: "server", sortable: true },
         { text: "زمان ایجاد / تمدید", value: "chargeDate", sortable: true },
+        { text: "تاریخ انقضا", value: "expireDate", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
         { text: "نام ", value: "name", sortable: true },
-        { text: "سرور", value: "serverName", sortable: false },
-        { text: "تاریخ انقضا", value: "expireDate", sortable: true },
         { text: "وضعیت", value: "enable", sortable: true },
         { text: "تمدید", value: "charge", sortable: false },
         { text: "تغییر رمز", value: "changePassword", sortable: false },
-        { text: "", value: "edit", sortable: false },
-        { text: "", value: "delete", sortable: false },
+        { text: "ویرایش", value: "edit", sortable: false },
+        { text: "حذف", value: "delete", sortable: false },
+
+        { text: "", value: "qrButton", sortable: false },
         { text: "", value: "copy", sortable: false },
         { text: "", value: "copy1", sortable: false },
       ],
@@ -231,7 +258,14 @@ export default {
         this.servers = data.result;
       });
     },
+    showQRCode(item) {
+      debugger;
+      // Generate QR code data based on item data
+      this.qrData = item.code;
 
+      // Optionally, add more parameters like type, security, etc.
+      this.modal = true;
+    },
     expireKey() {
       this.options.page = 1;
       this.options.expired = this.expired;
@@ -250,7 +284,60 @@ export default {
       this.$refs.addSSHKeyCom.id = item.id;
     },
 
-    copyToClipBoard(textToCopy) {
+    copyToClipboardCode() {
+      // Copy QR code data to clipboard
+      navigator.clipboard.writeText(this.qrData);
+      this.snackbar = true;
+      setTimeout(() => {
+        this.snackbar = false;
+      }, 2000);
+    },
+    copyToClipBoard(item, withToturial) {
+      this.snackbar = true;
+      setTimeout(() => {
+        this.snackbar = false;
+      }, 2000);
+
+      if (withToturial) {
+        this.snackbarMessage = "با اموزش کپی شد";
+      } else {
+        this.snackbarMessage = "کپی شد";
+      }
+      let textToCopy = "";
+      if (item.accountType == 3) {
+        if (withToturial) {
+          textToCopy = `
+                username: ${item.userName} \n
+                username: ${item.server}.iransshvpn.com \n
+                 password: ${item.password} \n
+                 تاریخ اعتبار :  ${item.expireDate} \n
+                 \nدانلو برنامه اندروید :https://my.uupload.ir/dl/yoOK6DRX
+                  \n دانلود برنامه آیفون : https://apps.apple.com/us/app/openvpn-connect-openvpn-app/id590379981
+                  \n دانلود پروفایل : https://iranv2ray.com/api/PublicData/get-file
+                 \nآموزش اتصال اندروید  : https://my.uupload.ir/p/yoOK6rxD
+                  \nآموزش اتصال l2tp (پیشنهادی) آیفون : https://my.uupload.ir/p/6E4o6vxW
+                 \nآموزش اتصال آیفون(OPEN VPN)  :https://my.uupload.ir/p/VX70k2KQ
+              `;
+        } else {
+          textToCopy = `username: ${item.userName} \n
+                 password: ${item.password} \n 
+                 server: ${item.server}.iransshvpn.com \n 
+                 دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n 
+                 تاریخ اعتبار : ${item.expireDate}`;
+        }
+        textToCopy = `username: ${item.userName} \n
+                 password: ${item.password} \n 
+                 server: ${item.server}.iransshvpn.com \n 
+                 دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n تاریخ اعتبار : ${item.expireDate}`;
+      }
+
+      if (item.accountType == 1) {
+        if (withToturial) {
+          textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : ${item.server}.iransshvpn.com \n  Port : 1027 \nتاریخ اعتبار : ${item.expireDate} \nحروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \nآموزش اتصال: https://my.uupload.ir/dl/yoOWe2Y7 \n`;
+        } else {
+          textToCopy = `username: ${item.userName} \n password: ${item.password} \n server : ${item.server}.iransshvpn.com \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n`;
+        }
+      }
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard
           .writeText(textToCopy)

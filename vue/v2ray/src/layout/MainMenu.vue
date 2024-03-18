@@ -42,22 +42,7 @@ export default class Dashboard extends Vue {
       to: "/swaps",
     },
 
-    {
-      icon: "mdi-account",
-      title: "مدیریت کاربران",
-      adminVisible: this.$store.state.userDetails.isAdmin,
-      permission: "Member_Show",
-      to: "/users",
-    },
-
-    {
-      icon: "mdi-account-key ",
-      title: "نقش ها",
-      adminVisible: this.$store.state.userDetails.isAdmin,
-      permission: "Role_Show",
-      to: "/user-roles",
-    },
-
+   
     {
       icon: "mdi-currency-usd ",
       title: "تراکنش ها",
@@ -65,12 +50,7 @@ export default class Dashboard extends Vue {
       to: "/orders",
     },
 
-    
-    {
-      icon: "mdi-alert-box",
-      title: "گزارش مشکل",
-      to: "/problem-reports",
-    },
+  
     {
       icon: "mdi-server",
       title: "سرورها",
@@ -78,18 +58,7 @@ export default class Dashboard extends Vue {
       permission: "ApiUrl_Show",
       to: "/v2servers",
     },
-    // {
-    //   icon: "mdi-alert-box",
-    //   title: "تیکتها",
-    //   to: "/tickets",
-    // },
-    // {
-    //   icon: "mdi-email",
-    //   title: "تیکتهای دریافتی",
-    //   adminVisible: this.$store.state.userDetails.isAdmin,
-    //   permission: "ApiUrl_Show",
-    //   to: "/manage-tickets",
-    // },
+   
     {
       icon: "mdi-key",
       title: "کلیدها",
@@ -98,13 +67,23 @@ export default class Dashboard extends Vue {
       to: "/sshkeys",
     },
 
-    // {
-    //   icon: "mdi-currency-usd",
-    //   title: "خرید ترافیک",
-    //   adminVisible: true,
-    //   permission: "Member_Show",
-    //   to: "/buy-traffic",
-    // },
+    {
+      icon: "mdi-key",
+      title: "DNS",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      permission: "ApiUrl_Show",
+      to: "/dnsrecords",
+    },
+
+    {
+      icon: "mdi-account",
+      title: "مدیریت کاربران",
+      adminVisible: this.$store.state.userDetails.isAdmin,
+      permission: "Member_Show",
+      to: "/users",
+    },
+
+
     {
       icon: "mdi-account-edit",
       title: "پروفایل",

@@ -11,13 +11,6 @@
             <param name="input"></param>
             <returns></returns>
         </member>
-        <member name="M:V2Ray.Api.Controllers.AuthenticationController.ChangePass">
-            <summary>
-            ورود مشتریان 
-            </summary>
-            <param name="input"></param>
-            <returns></returns>
-        </member>
         <member name="M:V2Ray.Api.Controllers.AuthenticationController.CustomerLogin(V2Ray.Api.Services.UserServices.Dto.CustomerLoginDto)">
             <summary>
             ورود مشتریان 
@@ -160,7 +153,13 @@
              </summary>
             
         </member>
-        <member name="M:V2Ray.Api.Controllers.PublicDataController.GetFile(System.String)">
+        <member name="M:V2Ray.Api.Controllers.PublicDataController.GetFileP">
+             <summary>
+             نمایش فایلها در قسمت در فرانت با اسفتاده از آدرس
+             </summary>
+            
+        </member>
+        <member name="M:V2Ray.Api.Controllers.PublicDataController.GetFile">
              <summary>
              نمایش فایلها در قسمت در فرانت با اسفتاده از آدرس
              </summary>

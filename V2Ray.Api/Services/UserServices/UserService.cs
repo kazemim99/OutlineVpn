@@ -373,7 +373,6 @@ namespace V2Ray.Api.Services.UserServices
             {
                 new Claim(JwtRegisteredClaimNames.Sub, key.UserName),
                 new Claim("ExpireDate", key.ExpireDate.ToString()),
-                new Claim("Server", key.V2Server.Url),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
@@ -427,7 +426,7 @@ namespace V2Ray.Api.Services.UserServices
                     Seller = true
                 };
             }
-            var sshKey =await _db.SSHKeyInfos.Include(a=>a.V2Server).FirstOrDefaultAsync(c => c.UserName == login.UserName && c.Password == login.Password);
+            var sshKey =await _db.SSHKeyInfos.FirstOrDefaultAsync(c => c.UserName == login.UserName && c.Password == login.Password);
                 if(sshKey == null)
                 throw new ApiException("اطلاعات وارد شده صحیح نیست");
 

@@ -9,6 +9,7 @@ namespace V2Ray.Api.Entity
         public int UserId { get; set; }
         public User User { get; set; }
         public int DurationId { get; set; }
+        public int MultiUser { get; set; }
         public OrderStateEnum Status { get; set; }
 
         public bool IsDeleted

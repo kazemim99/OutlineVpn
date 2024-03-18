@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using V2Ray.Api.Services.SSHKeyServices.Dto;
 using static V2Ray.Api.Entity.SSHKey;
 using static V2Ray.Api.Services.Server.ServerService;
 
@@ -59,7 +60,9 @@ namespace V2Ray.Api.Entity
         public string Token { get; set; }
         public int UserId { get; internal set; }
         public User User { get; set; }
-        public bool HasLoadBalance { get;  set; }
+        public bool HasLoadBalance { get; set; }
+        public int? MultiUser { get; set; }
+
     }
     public class SSHKey : FullAuditEntity<int>
     {
@@ -72,15 +75,21 @@ namespace V2Ray.Api.Entity
         public DateTime ExpireDate { get; set; }
         public string Name { get; set; }
         public int Port { get; set; }
+
         public bool Enable { get; set; }
-        [Required]
-        public int ServerId { get; set; }
+
         [Required]
         public int UserId { get; set; }
-        public V2Server V2Server { get; set; }
         public User User { get; set; }
         public List<Order> Orders { get; set; }
-        public int DurationId { get; internal set; }
+        public int DurationId { get; set; }
+        public int MultiUser { get; set; }
+        public string Server { get; set; }
+        public string? Code { get; set; }
+        public int? V2Port { get; set; }
+        public string? V2Guid { get; set; }
+        public int V2Id { get; set; }
+        public AccountType AccountType { get; set; }
     }
     public class V2Key : FullAuditEntity<int>, ISoftDelete
     {

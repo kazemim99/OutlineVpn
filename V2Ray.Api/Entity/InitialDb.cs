@@ -125,16 +125,16 @@ namespace V2Ray.Api.Entity
                 db.SaveChanges();
                 var serverId = obj.Id;
 
-                if (db.SSHKeyInfos.Any(c => c.ServerId == null))
-                {
-                    var keyInfos = db.SSHKeyInfos.Where(c => c.ServerId == null);
-                    foreach (var item in keyInfos)
-                    {
-                        item.ServerId = serverId;
-                        db.Update(item);
-                    }
-                    db.SaveChanges();
-                }
+                //if (db.SSHKeyInfos.Any(c => c.ServerId == null))
+                //{
+                //    var keyInfos = db.SSHKeyInfos.Where(c => c.ServerId == null);
+                //    foreach (var item in keyInfos)
+                //    {
+                //        item.ServerId = serverId;
+                //        db.Update(item);
+                //    }
+                //    db.SaveChanges();
+                //}
             }
           
 

@@ -13,31 +13,34 @@
       </template>
       <v-card>
         <v-card-title>
-          <span class="text-h5">ثبت کلید جدید</span>
+          <span class="text-h5">ثبت اکانت جدید</span>
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
               <v-row>
-                <v-col class="d-flex" cols="3" md="3" sm="6">
+                <v-col cols="4">
                   <v-select
-                    v-model="sshKey.serverId"
-                    :items="servers"
+                    v-model="sshKey.accountType"
+                    :items="accountTypes"
                     item-value="id"
-                    item-text="titleCount"
-                    label="ُسرور"
+                    item-text="text"
+                    label="پروتکل"
                     solo
                   ></v-select>
                 </v-col>
-                <v-col class="d-flex" cols="3" md="3" sm="6">
-                  <v-text-field
-                    v-model="sshKey.name"
-                    label="نام "
-                    required
-                  ></v-text-field>
+
+                <v-col class="d-flex" cols="4" md="3" sm="6">
+                  <v-select
+                    v-model="sshKey.multiUser"
+                    :items="multiUser"
+                    item-value="id"
+                    item-text="title"
+                    label="تعداد کاربر"
+                    solo
+                  ></v-select>
                 </v-col>
-              </v-row>
-              <v-row>
+
                 <v-col cols="3" sm="12" md="3">
                   <v-text-field
                     v-model="sshKey.count"
@@ -48,7 +51,7 @@
                   ></v-text-field>
                 </v-col>
 
-                <v-col class="d-flex" cols="3" md="3" sm="6">
+                <v-col class="d-flex" cols="4" md="3" sm="6">
                   <v-select
                     v-model="sshKey.durationId"
                     :items="durations"
@@ -115,6 +118,13 @@ export default Vue.extend({
     dialog: false,
     dialogLogo: false,
     servers: [],
+    accountTypes: [],
+    multiUser: [
+      { id: 1, title: "تک کاربره" },
+      { id: 2, title: "دو کاربره" },
+      { id: 3, title: "سه کاربره" },
+    ],
+
     durations: [
       { id: 30, title: "1 ماه" },
       { id: 60, title: "2 ماه" },
@@ -122,7 +132,7 @@ export default Vue.extend({
       { id: 1, title: "تستی" },
     ],
     extraDays: [
-      { id: 0, title: "0" },
+      { id: 0, title: "روز اضافه" },
       { id: 1, title: "1" },
       { id: 2, title: "2" },
       { id: 3, title: "3" },
@@ -136,9 +146,10 @@ export default Vue.extend({
     sshKey: {
       name: null,
       extraDayId: 0,
+      accountType:1,
       serverId: null,
       durationId: 30,
-      amount: 50000,
+      multiUser: 1,
       password: null,
       userName: "",
       expireDate: null,
@@ -151,7 +162,7 @@ export default Vue.extend({
         if (!this.dialog) {
           this.clearData();
         } else {
-          this.getServers();
+          this.getAccountType();
         }
 
         if (this.id != null) {
@@ -178,7 +189,9 @@ export default Vue.extend({
         this.sshKey.id = id;
         this.sshKey.serverId = data.serverId;
         this.sshKey.password = data.password;
+        this.sshKey.accountType = data.accountType;
         this.sshKey.name = data.name;
+        this.sshKey.multiUser = data.multiUser;
         this.sshKey.userName = data.userName;
         this.sshKey.expireDate = data.expireDate;
         this.sshKey.count = 1;
@@ -204,6 +217,7 @@ export default Vue.extend({
             this.loading = false;
           });
       } else {
+        debugger;
         request
           .post("/sshKey", this.sshKey)
           .then((response) => {
@@ -219,12 +233,21 @@ export default Vue.extend({
       }
     },
 
+    async getAccountType() {
+      await request.get(`/publicData/get-accounType`).then((response) => {
+        var data = response.data.result;
+        this.accountTypes = data;
+      });
+    },
+
     clearData() {
       this.id = null;
       this.sshKey.serverId = null;
       this.sshKey.password = "";
       this.sshKey.userName = "";
       this.sshKey.name = "";
+      this.sshKey.accountType = 1;
+      this.sshKey.multiUser = null;
       this.sshKey.expireDate = "";
     },
   },

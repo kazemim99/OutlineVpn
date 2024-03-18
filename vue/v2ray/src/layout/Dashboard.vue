@@ -172,7 +172,13 @@ export default class Dashboard extends Vue {
       permission: "ApiUrl_Show",
       to: "/dashboard/sshkeys",
     },
-
+    {
+      icon: "mdi-server",
+      title: "DNS",
+      adminVisible: true,
+      permission: "ApiUrl_Show",
+      to: "/dashboard/dnsrecoreds",
+    },
     // {
     //   icon: "mdi-currency-usd",
     //   title: "خرید ترافیک",
