@@ -25,7 +25,8 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
         public bool Enable { get; set; }
 
-        public string[] ComplexRoles { get; set; }
+    
+
         public double CunsumedTraffic { get; internal set; }
         public double InitCapacity { get; set; }
         public bool NeedConfirm { get;  set; }
