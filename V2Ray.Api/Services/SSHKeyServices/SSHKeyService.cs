@@ -60,6 +60,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
             //    throw new ApiException("ظرفیت سرور تکمیل است");
 
 
+            if (input.Count > 10)
+                throw new ApiException("امکان ساخت بیشتر از ده اکانت همزمان  وجود ندارد");
+
+            var user = _db.Users.Include(c=>c.SSHKeyInfos).First(c => c.Id == input.UserId);
+            var ceiling = user.SSHKeyInfos.Count(c => c.Enable) + input.Count;
+            if (user.AccountLimit < ceiling)
+            {
+                throw new ApiException($"امکان ساخت بیش از {user.AccountLimit} برای شما وجود ندارد");
+            }
+
             var keys = new List<SSHKey>();
 
 
