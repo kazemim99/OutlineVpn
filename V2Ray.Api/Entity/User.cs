@@ -14,18 +14,20 @@ namespace V2Ray.Api.Entity
         public string?  IP { get; set; }
 
         public string? Password { get; set; }
+        public int? AccountLimit { get; set; }
+        public int? OneAccountPrice { get; set; }
+        public int? TwoAccountPrice { get; set; }
+        public int? ThreeAccountPrice { get; set; }
 
         public bool IsAdmin { get; set; }
         public bool Enable { get; set; }
         public bool IsDeleted { get; set; }
         public ICollection<UserRole> Roles { get; set; }
         //public string Password { get;  set; }
-        public bool NeedConfirm { get;  set; }
         public string? FirstName { get;  set; }
         public string? LastName { get;  set; }
         public List<SSHKey> SSHKeyInfos { get; set; }
         public List<V2Key> V2Keys { get; set; }
-        public bool Paid { get;  set; }
         public List<ProblemReport> ProblemReports { get;  set; }
         public List<Order> Orders { get;  set; }
         public string Mobile { get;  set; }

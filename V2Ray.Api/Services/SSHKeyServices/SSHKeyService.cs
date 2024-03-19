@@ -60,6 +60,17 @@ namespace V2Ray.Api.Services.SSHKeyServices
             //    throw new ApiException("ظرفیت سرور تکمیل است");
 
 
+            if (input.Count > 10)
+                throw new ApiException("امکان ساخت بیشتر از ده اکانت همزمان  وجود ندارد");
+
+            var user = _db.Users.Include(c=>c.SSHKeyInfos).First(c => c.Id == input.UserId);
+            var ceiling = user.SSHKeyInfos.Count(c => c.Enable) + input.Count;
+
+            if (user.AccountLimit > 0 && user.AccountLimit < ceiling)
+            {
+                throw new ApiException($"امکان ساخت بیش از {user.AccountLimit} برای شما وجود ندارد");
+            }
+
             var keys = new List<SSHKey>();
 
 
@@ -667,6 +678,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 UserId = userId,
                 Port = 1027,
                 Enable = true,
+                AccountType=key.AccountType,
                 ChargeDate = DateTime.UtcNow,
                 ExpireDate = expireDate.ToPeString("yyyy/MM/dd"),
                 Name = key.User != null ? key.User.Mobile : " ",
@@ -1054,6 +1066,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
         private string GenerateUser()
         {
             var user = _db.SSHKeyInfos.Max(c => c.Id);
+            if (user < 100)
+                user += 100;
+
             return $"u{user}";
         }
 

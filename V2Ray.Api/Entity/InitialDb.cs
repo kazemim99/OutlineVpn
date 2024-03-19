@@ -22,7 +22,7 @@ namespace V2Ray.Api.Entity
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
             }
-            //SeedData.Seed(db, isTest);
+            SeedData.Seed(db, isTest);
         }
     }
 
@@ -34,7 +34,8 @@ namespace V2Ray.Api.Entity
             {
 
                 CreateUser(db);
-                CreateServer(db);
+                CreateKey(db);
+                //CreateServer(db);
 
                 //CreateLockerLog(db);
                 if (!isTest)
@@ -136,9 +137,9 @@ namespace V2Ray.Api.Entity
                 //    db.SaveChanges();
                 //}
             }
-          
 
-          
+
+
             //if (!db.V2Servers.Any(a=>a.Title == "Frankfurt-A"))
             //{
             //    db.V2Servers.Add(new V2Server
@@ -156,7 +157,7 @@ namespace V2Ray.Api.Entity
             //}
 
         }
-        
+
 
 
         private static void CreateUser<T>(T db) where T : DB
@@ -169,8 +170,7 @@ namespace V2Ray.Api.Entity
                 IP = "192.168.1.1",
                 IsAdmin = true,
                 Enable = true,
-                Password="!Q@W3e4r",
-                NeedConfirm = false,
+                Password = BCrypt.Net.BCrypt.HashPassword("11111111"),
                 FirstName = DefaultUserConst.FirstName,
                 LastName = DefaultUserConst.LastName,
                 Avatar = DefaultUserConst.Avatar,
@@ -193,6 +193,42 @@ namespace V2Ray.Api.Entity
                 },
             });
             db.SaveChanges();
+        }
+
+        private static void CreateKey<T>(T db) where T : DB
+        {
+            if (db.SSHKeyInfos.Any())
+                return;
+
+            try
+            {
+
+           
+            db.SSHKeyInfos.Add(new SSHKey
+            {
+                AccountType = Services.SSHKeyServices.Dto.AccountType.SSH,
+                ChargeDate = DateTime.Now,
+                Code = "",
+                DurationId = 100,
+                Enable = true,
+                ExpireDate = DateTime.Now.AddMonths(100),
+                MultiUser = 2,
+                Name = "ایمان",
+                Password = "123456",
+                Port = 1027,
+                UserId = 2,
+                UserName = "master",
+                Server="a",
+                V2Port = 1300
+            });
+            db.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 }

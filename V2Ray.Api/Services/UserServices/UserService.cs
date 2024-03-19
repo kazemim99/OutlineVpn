@@ -310,13 +310,11 @@ namespace V2Ray.Api.Services.UserServices
                     Token = GenerateJwtToken(user),
                 },
                 IsAdmin = user.IsAdmin,
-                NeedConfirm = user.NeedConfirm,
                 FreeAccount = user.UsedFreeAccount,
                 FirstName = $"{user.FirstName} ",
                 LastName = $"{user.LastName} ",
                 Id = user.Id,
             };
-            user.NeedConfirm = false;
             _db.Users.Update(user);
             _db.SaveChanges();
             return response;

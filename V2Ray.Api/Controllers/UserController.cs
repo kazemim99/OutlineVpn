@@ -30,8 +30,6 @@ namespace V2Ray.Api.Controllers
         [Authorize]
         public async Task<ApiResponse> Filter([FromQuery] UserFilterInput filter)
         {
-            //filter.UserId = UserId;
-            //filter.IsAdmin = IsAdmin;
             filter.SortDesc = true;
             var result = await _service.GetAllAsync(filter);
             return new ApiResponse(result);

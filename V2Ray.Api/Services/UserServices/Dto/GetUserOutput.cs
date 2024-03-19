@@ -8,7 +8,6 @@ namespace V2Ray.Api.Services.UserServices.Dto
         public int ServerId { get; set; }
 
         public string FirstName { get; set; }
-
         public string AccessUrl { get; set; }
 
         public string LastName { get; set; }
@@ -18,6 +17,10 @@ namespace V2Ray.Api.Services.UserServices.Dto
         public bool IsAdmin { get; set; }
 
         public string Mobile { get; set; }
+        public int? OneAccountPrice { get; set; }
+        public int? TwoAccountPrice { get; set; }
+        public int? ThreeAccountPrice { get; set; }
+
 
         public string Avatar { get; set; }
 
@@ -25,8 +28,7 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
         public bool Enable { get; set; }
 
-    
-
+        public int? AccountLimit { get; set; }
         public double CunsumedTraffic { get; internal set; }
         public double InitCapacity { get; set; }
         public bool NeedConfirm { get;  set; }

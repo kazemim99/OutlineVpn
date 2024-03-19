@@ -50,7 +50,6 @@
                     required
                   ></v-text-field>
                 </v-col>
-               
               </v-row>
 
               <v-row>
@@ -79,8 +78,15 @@
                     required
                   ></v-text-field>
                 </v-col>
-              
-              </v-row> 
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    v-model="user.accountLimit"
+                    autocomplete="false"
+                    label=" محدودیت اکانت"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
               <v-row>
                 <v-col cols="4">
                   <v-switch
@@ -116,8 +122,7 @@ import Vue from "vue";
 import request from "@/utils/request";
 export default Vue.extend({
   name: "AddNewUser",
-  components: {
-  },
+  components: {},
   props: ["selectedComplexId"],
   data: () => ({
     userId: null,
@@ -130,11 +135,11 @@ export default Vue.extend({
     servers: [],
     userRoles: [],
     user: {
-      serverId :0,
+      serverId: 0,
       initCapacity: 0,
+      accountLimit: 0,
       isAdmin: false,
       password: "",
-      enable: "",
       firstName: "کاربر",
       lastName: "مهمان",
       email: "",
@@ -196,12 +201,12 @@ export default Vue.extend({
         this.user.mobile = data.mobile;
         this.user.serverId = data.serverId;
         this.user.email = data.email;
-        this.user.password = data.password;
+        this.user.accountLimit = data.accountLimit;
+        this.user.enable = data.enable;
         this.user.phone = data.phone;
         this.user.userState = data.userState;
         this.user.avatar = "";
         this.user.isAdmin = data.isAdmin;
-        this.user.enable = data.enable;
         this.imageUrl = data.avatar;
         this.user.initCapacity = data.initCapacity;
         this.user.cunsumedTraffic = data.cunsumedTraffic;
@@ -290,13 +295,14 @@ export default Vue.extend({
 
     clearData() {
       // (this.user.confirmPassword = ""),
-       (this.user.password = ""),
+      //   (this.user.password = ""),
       (this.user.firstName = "کاربر"),
         (this.user.lastName = "مهمان"),
         (this.user.email = ""),
         // (this.user.phone = ""),
         (this.user.selectedServers = []),
         (this.user.mobile = ""),
+        (this.user.accountLimit = 0),
         (this.user.isAdmin = false),
         (this.user.avatar = undefined),
         (this.selectedRoles = []),

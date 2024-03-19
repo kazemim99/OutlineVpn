@@ -23,18 +23,18 @@
 
     public static class DefaultUserConst
     {
-        public const string Mobile = "09123135143";
+        public const string Mobile = "09176017484";
 
         public const string Email = "kazemi.mst@gmail.com";
 
         public const string Phone = "88998899";
 
-        public const string FirstName = "ادمین";
+        public const string FirstName = "ایمان";
 
-        public const string LastName = "ادمینی";
+        public const string LastName = "شاپ";
 
         public const string Avatar = "https://i.pravatar.cc/300";
 
-        public const string Password = "1q2w3e4r";
+        public const string Password = "12344321";
     }
 }
