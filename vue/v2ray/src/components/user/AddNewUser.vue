@@ -50,7 +50,6 @@
                     required
                   ></v-text-field>
                 </v-col>
-               
               </v-row>
 
               <v-row>
@@ -79,13 +78,20 @@
                     required
                   ></v-text-field>
                 </v-col>
-              
-              </v-row> 
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    v-model="user.accountLimit"
+                    autocomplete="false"
+                    label=" محدودیت اکانت"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
               <v-row>
                 <v-col cols="4">
                   <v-switch
-                    v-model="user.userState"
-                    :label="`وضعیت: ${user.userState ? 'فعال' : 'غیر فعال'}`"
+                    v-model="user.enable"
+                    :label="`وضعیت: ${user.enable ? 'فعال' : 'غیر فعال'}`"
                   ></v-switch>
                 </v-col>
 
@@ -116,8 +122,7 @@ import Vue from "vue";
 import request from "@/utils/request";
 export default Vue.extend({
   name: "AddNewUser",
-  components: {
-  },
+  components: {},
   props: ["selectedComplexId"],
   data: () => ({
     userId: null,
@@ -130,8 +135,9 @@ export default Vue.extend({
     servers: [],
     userRoles: [],
     user: {
-      serverId :0,
+      serverId: 0,
       initCapacity: 0,
+      accountLimit: 0,
       isAdmin: false,
       password: "",
       firstName: "کاربر",
@@ -195,6 +201,7 @@ export default Vue.extend({
         this.user.mobile = data.mobile;
         this.user.serverId = data.serverId;
         this.user.email = data.email;
+        this.user.accountLimit = data.accountLimit;
         this.user.enable = data.enable;
         this.user.phone = data.phone;
         this.user.userState = data.userState;
@@ -295,6 +302,7 @@ export default Vue.extend({
         // (this.user.phone = ""),
         (this.user.selectedServers = []),
         (this.user.mobile = ""),
+        (this.user.accountLimit = 0),
         (this.user.isAdmin = false),
         (this.user.avatar = undefined),
         (this.selectedRoles = []),

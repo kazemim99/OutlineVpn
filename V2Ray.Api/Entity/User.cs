@@ -15,7 +15,10 @@ namespace V2Ray.Api.Entity
 
         public string? Password { get; set; }
         public int? AccountLimit { get; set; }
-        public int? AccountCreated { get; set; }
+        public int? OneAccountPrice { get; set; }
+        public int? TwoAccountPrice { get; set; }
+        public int? ThreeAccountPrice { get; set; }
+
         public bool IsAdmin { get; set; }
         public bool Enable { get; set; }
         public bool IsDeleted { get; set; }

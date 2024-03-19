@@ -65,7 +65,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var user = _db.Users.Include(c=>c.SSHKeyInfos).First(c => c.Id == input.UserId);
             var ceiling = user.SSHKeyInfos.Count(c => c.Enable) + input.Count;
-            if (user.AccountLimit < ceiling)
+
+            if (user.AccountLimit > 0 && user.AccountLimit < ceiling)
             {
                 throw new ApiException($"امکان ساخت بیش از {user.AccountLimit} برای شما وجود ندارد");
             }
@@ -588,7 +589,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     string str = "";
                     if (!keys.Any())
                         newKeys = _db.SSHKeyInfos.Where(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date).Skip(i * Convert.ToInt32(skipCount)).Take(Convert.ToInt32(skipCount)).ToList();
-
+                    else
+                        newKeys = keys;
 
                     foreach (var item in newKeys)
                     {
@@ -676,6 +678,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 UserId = userId,
                 Port = 1027,
                 Enable = true,
+                AccountType=key.AccountType,
                 ChargeDate = DateTime.UtcNow,
                 ExpireDate = expireDate.ToPeString("yyyy/MM/dd"),
                 Name = key.User != null ? key.User.Mobile : " ",
@@ -1063,6 +1066,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
         private string GenerateUser()
         {
             var user = _db.SSHKeyInfos.Max(c => c.Id);
+            if (user < 100)
+                user += 100;
+
             return $"u{user}";
         }
 
