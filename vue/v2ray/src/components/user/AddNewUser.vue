@@ -19,7 +19,7 @@
           <v-form ref="form" v-model="valid" lazy-validation>
             <v-container>
               <v-row>
-                <v-col cols="6" sm="12" md="6">
+                <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     v-model="user.firstName"
                     label="نام *"
@@ -29,8 +29,7 @@
                     required
                   ></v-text-field>
                 </v-col>
-
-                <v-col cols="6" sm="12" md="6">
+                <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     autocomplete="false"
                     v-model="user.lastName"
@@ -39,8 +38,6 @@
                     required
                   ></v-text-field>
                 </v-col>
-              </v-row>
-              <v-row>
                 <v-col cols="4" sm="12" md="4">
                   <v-text-field
                     v-model="user.mobile"
@@ -51,7 +48,33 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
-
+       
+              <v-row>
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    v-model="user.oneAccountPrice"
+                    autocomplete="false"
+                    label="قیمت تک کاربر"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    v-model="user.twoAccountPrice"
+                    autocomplete="false"
+                    label="قیمت دو کاربر"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="4" sm="12" md="4">
+                  <v-text-field
+                    v-model="user.threeAccountPrice"
+                    autocomplete="false"
+                    label="قیمت سه کاربره"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
               <v-row>
                 <v-col cols="4" sm="12" md="4">
                   <v-text-field
@@ -137,6 +160,9 @@ export default Vue.extend({
     user: {
       serverId: 0,
       initCapacity: 0,
+      oneAccountPrice: 0,
+      twoAccountPrice: 0,
+      threeAccountPrice: 0,
       accountLimit: 0,
       isAdmin: false,
       password: "",
@@ -201,6 +227,9 @@ export default Vue.extend({
         this.user.mobile = data.mobile;
         this.user.serverId = data.serverId;
         this.user.email = data.email;
+        this.user.oneAccountPrice = data.oneAccountPrice;
+        this.user.twoAccountPrice = data.twoAccountPrice;
+        this.user.threeAccountPrice = data.threeAccountPrice;
         this.user.accountLimit = data.accountLimit;
         this.user.enable = data.enable;
         this.user.phone = data.phone;

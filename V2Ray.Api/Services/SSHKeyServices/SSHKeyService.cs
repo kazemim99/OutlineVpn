@@ -36,9 +36,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
             "85.192.63.122",
             "89.208.103.144",
             "92.246.136.94",
-            "147.45.40.90",
             "94.228.168.254",
             "147.45.40.4",
+            "147.45.70.0",
         };
 
 
@@ -63,7 +63,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             if (input.Count > 10)
                 throw new ApiException("امکان ساخت بیشتر از ده اکانت همزمان  وجود ندارد");
 
-            var user = _db.Users.Include(c=>c.SSHKeyInfos).First(c => c.Id == input.UserId);
+            var user = _db.Users.Include(c => c.SSHKeyInfos).First(c => c.Id == input.UserId);
             var ceiling = user.SSHKeyInfos.Count(c => c.Enable) + input.Count;
 
             if (user.AccountLimit > 0 && user.AccountLimit < ceiling)
@@ -71,34 +71,37 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 throw new ApiException($"امکان ساخت بیش از {user.AccountLimit} برای شما وجود ندارد");
             }
 
-            var keys = new List<SSHKey>();
 
 
 
-            input.Password = input.Password.IsNullOrEmpty() ? CreatePassword() : input.Password;
-            input.Port = 1027;
-            input.UserName = input.UserName.IsNullOrEmpty() ? GenerateUser() : input.UserName;
-            input.ExpireDate = DateTime.UtcNow.AddDays(input.DurationId + input.ExtraDayId).ToPeString("yyyy/MM/dd");
-            var server = GetServer(input.UserId);
-            input.Server = server;
-            input.ChargeDate = DateTime.UtcNow;
-            keys.Add(new SSHKey
-            {
-                UserName = input.UserName,
-                Password = input.Password,
-                Name = input.Name,
-                ChargeDate = input.ChargeDate,
-                Server = input.Server,
-                DurationId = input.DurationId,
-                ExpireDate = input.ExpireDate.ToGeo(),
-                MultiUser = input.MultiUser,
-                UserId = input.UserId.Value,
-                Enable = true,
-                AccountType = input.AccountType,
-            }); ;
+
 
             for (int i = 0; i < input.Count; i++)
             {
+                var keys = new List<SSHKey>();
+
+                input.Password = input.Password.IsNullOrEmpty() ? CreatePassword() : input.Password;
+                input.Port = 1027;
+                input.UserName = input.UserName.IsNullOrEmpty() ? GenerateUser() : input.UserName;
+                input.ExpireDate = DateTime.UtcNow.AddDays(input.DurationId + input.ExtraDayId).ToPeString("yyyy/MM/dd");
+                var server = GetServer(input.UserId);
+                input.Server = server;
+                input.ChargeDate = DateTime.UtcNow;
+                keys.Add(new SSHKey
+                {
+                    UserName = input.UserName,
+                    Password = input.Password,
+                    Name = input.Name,
+                    ChargeDate = input.ChargeDate,
+                    Server = input.Server,
+                    DurationId = input.DurationId,
+                    ExpireDate = input.ExpireDate.ToGeo(),
+                    MultiUser = input.MultiUser,
+                    UserId = input.UserId.Value,
+                    Enable = true,
+                    AccountType = input.AccountType,
+                }); ;
+
                 int id = 0;
                 if (input.AccountType == AccountType.OpenVPN)
                 {
@@ -120,17 +123,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 input.ChargeDate = DateTime.UtcNow;
                 if (input.DurationId != 1)
                 {
-                    for (int j = 0; j < input.MultiUser; j++)
+                    _db.Orders.Add(new Order
                     {
-                        _db.Orders.Add(new Order
-                        {
-                            SSHKeyId = id,
-                            CreatedAt = DateTime.UtcNow.Date,
-                            DurationId = input.DurationId,
-                            CreatorUserId = input.UserId,
-                            UserId = input.UserId.Value,
-                        });
-                    }
+                        SSHKeyId = id,
+                        CreatedAt = DateTime.UtcNow.Date,
+                        DurationId = input.DurationId,
+                        CreatorUserId = input.UserId,
+                        UserId = input.UserId.Value,
+                    });
                 }
                 _db.SaveChanges();
                 input.UserName = "";
@@ -181,7 +181,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
             else
             {
-                valid = "abcdefghi";
+                valid = "abcefghi";
                 res.Append(valid[rnd.Next(valid.Length)]);
                 return res.ToString().Trim(); ;
             }
@@ -444,7 +444,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             // Set session cookie in subsequent requests
             httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
-            var uuid = Guid.NewGuid();
             EntityEntry<SSHKey>? entity = null;
 
             var item = sSHKeys.First();
@@ -500,7 +499,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     }
                 };
 
-                item.Code = $"vless://{uuid}@v.iransshvpn.com:{item.V2Port}?type=tcp&security=none#{item.UserName}";
+                item.Code = $"vless://{item.V2Guid}@v.iransshvpn.com:{item.V2Port}?type=tcp&security=none#{item.UserName}";
                 var formData = new Dictionary<string, string>
         {
             { "up", "0" },
@@ -678,7 +677,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 UserId = userId,
                 Port = 1027,
                 Enable = true,
-                AccountType=key.AccountType,
+                AccountType = key.AccountType,
                 ChargeDate = DateTime.UtcNow,
                 ExpireDate = expireDate.ToPeString("yyyy/MM/dd"),
                 Name = key.User != null ? key.User.Mobile : " ",
@@ -1057,6 +1056,10 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 {
 
                     attempts++;
+                    if(attempts >= _connectiontRetryAttempts)
+                    {
+                        throw new Exception("اتصال به سرور : " + ssh.ConnectionInfo.Host);
+                    }
                 }
             } while (attempts < _connectiontRetryAttempts && !ssh.IsConnected);
 

@@ -36,10 +36,6 @@ namespace V2Ray.Api.Services.UserServices.Dto
 
         public bool Enable { get; set; }
 
-
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
         public int? AccountLimit { get; set; }
 
         public int? OneAccountPrice { get; set; }
