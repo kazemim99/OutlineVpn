@@ -110,9 +110,10 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }); ;
 
                 int id = 0;
-                if (input.AccountType == AccountType.OutLine)
+                if (input.AccountType == AccountType.L2TP)
                 {
-                    id = await CreateV2Ray(keys, AccountActionStatus.Create, AccountType.OutLine);
+                    CreateSoftEather(keys);
+                    id = await base.InsertGetIdAsync(input);
 
                 }
                 if (input.AccountType == AccountType.V2RAy)
@@ -245,9 +246,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                     await CreateV2Ray(keys, AccountActionStatus.Delete);
                 }
-                if (key.AccountType == AccountType.OutLine)
+                if (key.AccountType == AccountType.L2TP)
                 {
-                    await CreateV2Ray(keys, AccountActionStatus.Delete);
+                     CreateSoftEather(keys, AccountActionStatus.Delete);
                 }
 
                 if (key.AccountType == AccountType.SSH)
@@ -261,9 +262,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 await CreateV2Ray(keys, AccountActionStatus.Create);
                 return;
             }
-            if (input.AccountType == AccountType.OutLine)
+            if (input.AccountType == AccountType.L2TP)
             {
-                await CreateV2Ray(keys, AccountActionStatus.Create, AccountType.OutLine);
+                CreateSoftEather(new List<SSHKey> { new SSHKey() { ExpireDate = key.ExpireDate.AddDays(input.ExtraDayId), MultiUser = input.MultiUser, UserName = input.UserName, Password = input.Password } }, AccountActionStatus.Update);
             }
             if (input.AccountType == AccountType.SSH)
             {
@@ -851,8 +852,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             if (input.DurationId <= 0)
             {
                 input.Enable = false;
-                if (key.AccountType == AccountType.OutLine)
-                    await CreateV2Ray(keys, AccountActionStatus.Delete, AccountType.OutLine);
+           
 
                 if (key.AccountType == AccountType.V2RAy)
                     await CreateV2Ray(keys, AccountActionStatus.Delete);
@@ -860,12 +860,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 if(key.AccountType == AccountType.SSH)
                     await base.UpdateAsync(key.Id, input);
             }
-
+        
             else
             {
-
-                if (key.AccountType == AccountType.OutLine)
-                    await CreateV2Ray(keys, AccountActionStatus.Update, AccountType.OutLine);
 
                 if (key.AccountType == AccountType.V2RAy)
                     await CreateV2Ray(keys, AccountActionStatus.Update);
@@ -878,6 +875,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
             }
 
+            if (key.AccountType == AccountType.L2TP)
+                CreateSoftEather(keys, AccountActionStatus.Update);
 
             if (key.User != null)
             {
@@ -941,10 +940,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 {
                     await BulkDeleteServer(new List<SSHKey> { keyInfo });
                 }
+                if (keyInfo.AccountType == AccountType.L2TP)
+                    CreateSoftEather(new List<SSHKey> { keyInfo },AccountActionStatus.Delete);
 
             }
             else
             {
+                if (keyInfo.AccountType == AccountType.L2TP)
+                    CreateSoftEather(new List<SSHKey> { keyInfo });
 
                 if (keyInfo.AccountType == AccountType.V2RAy)
                 {
@@ -1006,9 +1009,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 await CreateV2Ray(keys, AccountActionStatus.Delete);
             }
 
-            if (keyInfo.AccountType == AccountType.OutLine)
+            if (keyInfo.AccountType == AccountType.L2TP)
             {
-                await CreateV2Ray(keys, AccountActionStatus.Delete);
+                CreateSoftEather(keys, AccountActionStatus.Delete);
             }
 
             if (keyInfo.ExpireDate.Date >= DateTime.Now.AddDays(6))
@@ -1372,7 +1375,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             string vpnHost = "localhost";          // VPN Server hostname or IP address
             string vpnPort = "5555";               // VPN Server management port
             string vpnHub = "vpn";             // VPN Hub name
-            var cmdStr = $"sudo {vpnCmdPath} /server {vpnHost}:{vpnPort} /hub:{vpnHub} /password: /cmd:{cmd} {args}";
+            var cmdStr = $"sudo {vpnCmdPath} /server {vpnHost}:{vpnPort} /hub:{vpnHub} /password:1q2w3e4r /cmd:{cmd} {args}";
             using (var command = sshClient.CreateCommand(cmdStr))
             {
                 var result = command.Execute();

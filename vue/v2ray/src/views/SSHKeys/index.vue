@@ -357,7 +357,7 @@ export default {
       if (item.accountType == 3) {
         if (withToturial) {
           textToCopy = `
-                username: ${item.userName} \n
+                username: ${item.userName} \nf\
                 username: ${item.server}.iransshvpn.com \n
                  password: ${item.password} \n
                  تاریخ اعتبار :  ${item.expireDate} \n
@@ -372,7 +372,8 @@ export default {
           textToCopy = `username: ${item.userName} \n
                  password: ${item.password} \n 
                  server: ${item.server}.iransshvpn.com \n 
-                 دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n 
+                 pershared-key : vpn \n
+          دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n 
                  تاریخ اعتبار : ${item.expireDate}`;
         }
       }
