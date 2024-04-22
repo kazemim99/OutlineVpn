@@ -124,7 +124,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     await CreateSSH(input, keys);
                     id = await base.InsertGetIdAsync(input);
 
-                }
+                } 
+                
+                
 
                 input.ChargeDate = DateTime.UtcNow;
                 if (input.DurationId != 1)
@@ -1289,8 +1291,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
             string host = "212.33.202.66";
             string username = "root";
             string password = "!Q@W3e4r";
-
-
 
             using (var sshClient = new SshClient(host, username, password))
             {

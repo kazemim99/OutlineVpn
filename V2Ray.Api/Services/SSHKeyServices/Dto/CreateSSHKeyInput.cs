@@ -70,7 +70,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         SSH = 1,
         [Description("V2RAy")]
         V2RAy = 2,
-        [Description("OutLine")]
-        OutLine =3
+        [Description("L2TP")]
+        L2TP =3
     }
 }
