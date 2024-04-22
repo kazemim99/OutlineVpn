@@ -18,5 +18,6 @@
             get; set;
         }
         public string ChargeDate { get; set; }
+        public string Protocol { get; set; }
     }
 }

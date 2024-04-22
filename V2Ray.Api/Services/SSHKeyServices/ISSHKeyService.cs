@@ -14,7 +14,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task<GenerateSSHOutput> GetKeyDetails(int userId);
         //Task GenerateSshFromClient(int userId);
         Task GenerateSshFromAdmin(CreateSSHKeyInput input);
-        Task Adjust(int serverId);
+        Task Adjust();
         Task ChangeState(int id, bool fromCharge = false);
         Task ChangePassowrd(int id);
         Task Recreate(string name);

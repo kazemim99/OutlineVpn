@@ -247,7 +247,7 @@ export default Vue.extend({
       this.sshKey.userName = "";
       this.sshKey.name = "";
       this.sshKey.accountType = 1;
-      this.sshKey.multiUser = null;
+      this.sshKey.multiUser = 1;
       this.sshKey.expireDate = "";
     },
   },

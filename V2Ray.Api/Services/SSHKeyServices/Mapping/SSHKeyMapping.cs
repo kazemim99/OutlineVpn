@@ -10,6 +10,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Mapping
         public SSHKeyMapping()
         {
             CreateMap<SSHKey, GetSSHKeyListOutput>()
+                .ForMember(a => a.Protocol, c => c.MapFrom(b => b.AccountType.GetDescription()))
                 .ForMember(a => a.ChargeDate, c => c.MapFrom(b => b.ChargeDate.ToPeString("yyyy/MM/dd")))
                 .ForMember(a => a.ExpireDate, c => c.MapFrom(b => b.ExpireDate.ToPeString("yyyy/MM/dd")));
             CreateMap<SSHKey, GetSSHKeyOutput>()

@@ -92,11 +92,15 @@ namespace V2Ray.Api.Extensions
             return date.ToString(format, GetPersianCulture());
         }
       
-        public static long  ToTimeStamp(this DateTime dateTime)
+        public static long  ToTimeStamp(this DateTime value)
         {
-            var epoch = new DateTimeOffset(dateTime).ToUnixTimeSeconds();
-            epoch = Convert.ToInt64(epoch+"754");
+
+            long epoch = (value.Ticks - 621355968000000000) / 10000000;
             return epoch;
+
+     
+
+       
         }
 
         public static DateTime ToDateTime(this long stamp)

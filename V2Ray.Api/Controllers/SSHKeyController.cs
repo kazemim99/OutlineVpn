@@ -122,12 +122,11 @@ namespace V2Ray.Api.Controllers
         /// ویرایش یک کاربر 
         /// </summary>
         ///
-        [HttpPut("adjust/{serverId:int}")]
-        [Authorize]
+        [HttpPut("adjust")]
 
-        public async Task<ApiResponse> Adjust([FromRoute] int serverId)
+        public async Task<ApiResponse> Adjust()
         {
-            await _service.Adjust(serverId);
+            await _service.Adjust();
             return new ApiResponse();
         }
 

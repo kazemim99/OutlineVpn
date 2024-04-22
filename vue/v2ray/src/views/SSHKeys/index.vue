@@ -46,6 +46,14 @@
         <v-btn v-if="item.accountType == 2" @click="showQRCode(item)">QR</v-btn>
       </template>
 
+      <template v-slot:item.copyqr="{ item }">
+        <v-row v-if="item.accountType == 2">
+          <v-icon medium class="mr-2" @click="copyToClipboardCode(item)">
+            mdi-content-copy</v-icon
+          >
+        </v-row>
+      </template>
+
       <template v-slot:item.copy="{ item }">
         <v-snackbar v-model="snackbar" :color="snackbarColor" right>{{
           snackbarMessage
@@ -130,6 +138,35 @@
         </v-menu>
       </template>
 
+      <template v-slot:header.password="{ header }">
+        {{ header.text }}
+        <v-menu offset-y left :close-on-content-click="false">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon small :color="password ? 'primary' : ''"
+                >mdi-filter</v-icon
+              >
+            </v-btn>
+          </template>
+          <div style="background-color: white; width: 280px">
+            <v-text-field
+              v-model="password"
+              class="pa-4"
+              type="text"
+              label="جستجو"
+            ></v-text-field>
+            <v-btn
+              @click="password = ''"
+              small
+              text
+              color="primary"
+              class="ml-2 mb-2"
+              >پاک کردن</v-btn
+            >
+          </div>
+        </v-menu>
+      </template>
+
       <template v-slot:item.chargeDate="{ item }">
         <v-badge color="green" :content="item.chargeDate"> </v-badge>
       </template>
@@ -147,7 +184,7 @@
             <vue-qrcode-component
               :text="qrData"
               :size="200"
-              @click.native="copyToClipboardCode"
+              @click="copyToClipboardCode"
             />
           </div>
           <div v-else>No QR Code to display</div>
@@ -208,16 +245,18 @@ export default {
       serverid: null,
       isActive: null,
       userName: null,
+      password: null,
       sshKeys: [],
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
+        { text: "رمز عبور", value: "password", sortable: false },
         { text: "سرور", value: "server", sortable: true },
         { text: "زمان ایجاد / تمدید", value: "chargeDate", sortable: true },
         { text: "تاریخ انقضا", value: "expireDate", sortable: true },
-        { text: "رمز عبور", value: "password", sortable: false },
         { text: "نام ", value: "name", sortable: true },
+        { text: "پروتکل ", value: "protocol", sortable: true },
         { text: "وضعیت", value: "enable", sortable: true },
         { text: "تمدید", value: "charge", sortable: false },
         { text: "تغییر رمز", value: "changePassword", sortable: false },
@@ -225,6 +264,8 @@ export default {
         { text: "حذف", value: "delete", sortable: false },
 
         { text: "", value: "qrButton", sortable: false },
+        { text: "", value: "copyqr", sortable: false },
+
         { text: "", value: "copy", sortable: false },
         { text: "", value: "copy1", sortable: false },
       ],
@@ -238,12 +279,21 @@ export default {
       deep: true,
     },
 
+    password: function () {
+      if (this.password.length > 5 || this.password.length === 0) {
+        this.options.page = 1;
+        this.options.password = this.password;
+
+        if (this.password.length > 5) this.getSSHKeys();
+      }
+    },
+
     userName: function () {
       if (this.userName.length > 2 || this.userName.length === 0)
         this.options.page = 1;
       this.options.userName = this.userName;
 
-      this.getSSHKeys();
+      if (this.userName.length > 3) this.getSSHKeys();
     },
   },
   created() {
@@ -284,9 +334,9 @@ export default {
       this.$refs.addSSHKeyCom.id = item.id;
     },
 
-    copyToClipboardCode() {
+    copyToClipboardCode(item) {
       // Copy QR code data to clipboard
-      navigator.clipboard.writeText(this.qrData);
+      navigator.clipboard.writeText(item.code);
       this.snackbar = true;
       setTimeout(() => {
         this.snackbar = false;
@@ -325,7 +375,6 @@ export default {
                  دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n 
                  تاریخ اعتبار : ${item.expireDate}`;
         }
-   
       }
 
       if (item.accountType == 1) {

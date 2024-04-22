@@ -44,7 +44,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         public int? UserId { get; set; }
         public int ExtraDayId { get;  set; }
 
-        [Required]
+        [Required(ErrorMessage ="لطفا تعداد کاربر را وارد نمایید")]
         public int MultiUser { get; set; } = 1;
         [DataMember(IsRequired = false)]
         [JsonIgnore]
@@ -52,6 +52,11 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         [DataMember(IsRequired = false)]
         [JsonIgnore]
         public int? V2Port { get; set; }
+
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
+        public int? V2Id { get; internal set; }
+
         [DataMember(IsRequired = false)]
         [JsonIgnore]
         public string? V2Guid { get; set; }
@@ -65,7 +70,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         SSH = 1,
         [Description("V2RAy")]
         V2RAy = 2,
-        [Description("OpenVPN/L2TP")]
-        OpenVPN =3
+        [Description("OutLine")]
+        OutLine =3
     }
 }
