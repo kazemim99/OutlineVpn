@@ -67,6 +67,7 @@ namespace V2Ray.Api
 
             services.BindAppSettings(Configuration);
             services.AddHostedService<UpdateUserUsageLockerState>();
+            services.AddHostedService<UpdateUserTraffic>();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -114,7 +115,7 @@ namespace V2Ray.Api
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                    options.UseSqlServer
                    (Configuration.GetConnectionString("Default"),c=>c.EnableRetryOnFailure());
-               });
+               },ServiceLifetime.Transient);
 
                 services.AddHostedService<JwtRefreshTokenCache>();
                 services.AddLogging();

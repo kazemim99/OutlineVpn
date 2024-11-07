@@ -22,23 +22,17 @@
             </v-col>
           </v-row>
 
-          <v-row>
-            <v-col md="6" sm="12">
-              <div class="mb-2">آدرس سرور (SSH Host) :</div>
-            </v-col>
-            <v-col md="6" sm="12">
-              <div class="mb-2">{{ this.userKeyDetails.hostName }}</div>
-            </v-col>
-          </v-row>
 
           <v-row>
             <v-col md="6" sm="12">
-              <div class="mb-2">پورت (SSH Port) :</div>
+              <div class="mb-2">  ترافیک مصرف شده :</div>
             </v-col>
             <v-col md="6" sm="12">
-              <div class="mb-2">{{ this.userKeyDetails.port }}</div>
+              <div class="mb-2">{{ this.userKeyDetails.usedTraffic }}</div>
             </v-col>
           </v-row>
+
+         
 
           <v-row>
             <v-col md="6" sm="12">

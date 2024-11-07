@@ -42,9 +42,9 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         [JsonIgnore]
         public string? Server { get; set; }
         public int? UserId { get; set; }
-        public int ExtraDayId { get;  set; }
+        public int ExtraDayId { get; set; }
 
-        [Required(ErrorMessage ="لطفا تعداد کاربر را وارد نمایید")]
+        [Required(ErrorMessage = "لطفا تعداد کاربر را وارد نمایید")]
         public int MultiUser { get; set; } = 1;
         [DataMember(IsRequired = false)]
         [JsonIgnore]
@@ -60,17 +60,27 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         [DataMember(IsRequired = false)]
         [JsonIgnore]
         public string? V2Guid { get; set; }
+
+        [DataMember(IsRequired = false)]
+        [JsonIgnore]
+        public string? SSHCode { get; set; }
+
         [Required]
         public AccountType AccountType { get; set; }
+
+     
     }
 
     public enum AccountType
     {
+
+        [Description("Hiddify")]
+        Hiddify = 4,
         [Description("SSH")]
         SSH = 1,
         [Description("V2RAy")]
         V2RAy = 2,
-        [Description("L2TP")]
-        L2TP =3
+        [Description("IRAN")]
+        IRAN = 3,
     }
 }

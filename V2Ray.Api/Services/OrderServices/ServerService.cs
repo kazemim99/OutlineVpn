@@ -60,11 +60,11 @@ namespace V2Ray.Api.Services.OrderServices
             if (filter.UserId != null)
                 query = query.Where(a => a.UserId == filter.UserId);
 
-            if (filter.From != null)
-                query = query.Where(a => a.CreatedAt.Date >= filter.From.Value.ToGeo().Date);
+            if (filter.FromGeo != null)
+                query = query.Where(a => a.CreatedAt.Date >= filter.FromGeo.Value.Date);
 
-            if (filter.To != null)
-                query = query.Where(a => a.CreatedAt.Date <= filter.To.Value.ToGeo().Date.Date);
+            if (filter.ToGeo != null)
+                query = query.Where(a => a.CreatedAt.Date <= filter.ToGeo.Value.Date);
 
             if (filter.DurationId != null)
                 query = query.Where(a => a.SSHKey.DurationId == filter.DurationId);
@@ -98,11 +98,11 @@ namespace V2Ray.Api.Services.OrderServices
             if (filter.UserId != null)
                 query = query.Where(a => a.UserId == filter.UserId);
 
-            if (filter.From != null)
-                query = query.Where(a => a.CreatedAt.Date >= filter.From.Value.ToGeo().Date);
+            if (filter.FromGeo != null)
+                query = query.Where(a => a.CreatedAt.Date >= filter.FromGeo.Value.Date);
 
-            if (filter.To != null)
-                query = query.Where(a => a.CreatedAt.Date <= filter.To.Value.ToGeo().Date.Date);
+            if (filter.ToGeo != null)
+                query = query.Where(a => a.CreatedAt.Date <= filter.ToGeo.Value.Date);
 
             if (filter.DurationId != null)
                 query = query.Where(a => a.DurationId == filter.DurationId);

@@ -1,224 +1,210 @@
+
+
 <template>
-  <v-app id="inspire">
-    <v-app-bar fixed app>
-      <v-spacer></v-spacer>
+  <v-container class="pa-4">
+    <!-- Protocol Selection and User Data Section -->
+    <v-row>
+      <v-col cols="12" md="8">
+        <v-select
+          v-model="userData.selectedProtocol"
+          :items="protocols"
+          item-text="text"
+          item-value="id"
+          label="پروتکل ها"
+          outlined
+        ></v-select>
+        <v-btn color="primary" class="ml-3" @click="changeProtocol"
+          >تغییر کانفیگ</v-btn
+        >
+      </v-col>
+      <v-col cols="12" md="4">
+        <v-card class="pa-3">
+          <div>نام کاربری: {{ userData.username }}</div>
+          <div>رمز عبور: {{ userData.password }}</div>
+          <div>سرور : {{ userData.server }}</div>
+          <div>تاریخ انقضا: {{ userData.expireDate }}</div>
+          <div>ترافیک مصرف شده : {{ userData.trafficUsage }}</div>
+          <div>ترافیک کل : {{ userData.totalTraffic }}</div>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <!-- <v-btn icon @click="getNotif()">
-        <v-icon>mdi-bell-ring</v-icon>
-        <v-badge color="green" content="15"> </v-badge>
-      </v-btn> -->
-      <v-btn icon @click="logout">
-        <v-icon>mdi-logout</v-icon>
-      </v-btn>
-    </v-app-bar>
-    <v-main>
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <v-card>
-              <v-card-title>
-                <h5>
-                  کسانی که مشکل قطعی یا کندی سرور دارند میتوانند در این قسمت
-                  سرور رو خود را تغییر دهند
-                </h5>
-              </v-card-title>
-              <v-card-title>
-                <v-select
-                  v-model="serverId"
-                  :items="servers"
-                  item-value="id"
-                  item-text="title"
-                  label="ُسرور"
-                  solo
-                ></v-select>
-              </v-card-title>
+    <!-- QR Code and Config String Section -->
+    <v-row class="mt-4">
+      <v-col cols="12" md="6">
+        <div class="d-flex justify-center align-center">
+          <!-- QR Code component, dynamically generated based on configString -->
+          <qrcode-vue :value="userData.configString" :size="250"></qrcode-vue>
+        </div>
+      </v-col>
 
-              <v-card-text>
-                <v-list>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-btn
-                        :loading="loading"
-                        @click="changeServer"
-                        color="primary"
-                        >تغییر سرور</v-btn
-                      >
-                    </v-list-item-content>
-                  </v-list-item>
+      <v-col cols="12" md="6">
+        <v-text-field
+          v-model="userData.configString"
+          label="لینک کانفیگ"
+          outlined
+          readonly
+          append-icon="mdi-content-copy"
+          @click:append="copyConfigString"
+        ></v-text-field>
+      </v-col>
+    </v-row>
 
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title>ادرس سرور : </v-list-item-title>
-                      <b class="my-3" style="color: crimson">
-                        {{ user.server }}</b
-                      >
-                      <v-spacer></v-spacer>
-                      <h4 class="my-3">اموزش نحوه تغییر سرور :</h4>
-                      <ul>
-                        <li>
-                          <p>
-                            1. در برنامه NapersternetV ابتدا فیلتر شکن را قطع
-                            کرده
-                          </p>
-                        </li>
-                        <li><p>2. از پایین صفحه وارد قسمت کانفیگز شوید</p></li>
-                        <li>
-                          <p>3. دکمه مداد را زده تا فرم اطلاعات باز شود</p>
-                        </li>
-                        <li>
-                          <p>
-                            4. قسمت سوم ssh host(هاست) به
-                            <b style="color: crimson"> {{ user.server }}</b>
-                            <v-icon
-                              medium
-                              class="mr-2"
-                              @click="copyToClipBoard(user.server)"
-                            >
-                              mdi-content-copy</v-icon
-                            >
-                            تغییر دهید
-                          </p>
-                        </li>
-                        <li>
-                          <p>5. دکمه ذخیره را زده و مجدد متصل شود</p>
-                        </li>
-                        <li>
-                          <b
-                            >در صورت کندی یا قطعی مجدد سرور را تغییر داده و
-                            مراحل را تکرار کنید
-                          </b>
-                        </li>
-                      </ul>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title>نام کاربری :</v-list-item-title>
-                      <b> {{ user.userName }}</b>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title>رمز عبور :</v-list-item-title>
-                      <b> {{ user.password }}</b>
-                    </v-list-item-content>
-                  </v-list-item>
+    <v-row class="mt-2">
+      <v-col cols="12">
+        <div class="d-flex align-center justify-center">
+          <span class="download-title">دانلود اپلیکیشن</span>
+        </div>
+        <v-divider></v-divider>
+      </v-col>
 
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title> تاریخ انقضا :</v-list-item-title>
-                      <b> {{ user.expireDate }}</b>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
-  </v-app>
+      <v-col cols="12" sm="4">
+        <v-btn color="primary" @click="downloadApp('ios')" outlined block>
+          <v-icon left>mdi-apple</v-icon> iOS App
+        </v-btn>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-btn color="green" @click="downloadApp('android')" outlined block>
+          <v-icon left>mdi-android</v-icon> Android App
+        </v-btn>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-btn color="blue" @click="downloadApp('windows')" outlined block>
+          <v-icon left>mdi-microsoft-windows</v-icon> Windows App
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row class="mt-5">
+      <v-col cols="12">
+        <div class="d-flex align-center justify-center">
+          <span class="download-title"> ویدئو آموزشی</span>
+        </div>
+        <v-divider></v-divider>
+      </v-col>
+
+      <v-col cols="12" sm="4">
+        <v-btn color="primary" @click="downloadApp('ios')" outlined block>
+          <v-icon left>mdi-play</v-icon> ویدئو آموزش آیفون
+        </v-btn>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-btn color="green" @click="downloadApp('android')" outlined block>
+          <v-icon left>mdi-play</v-icon> ویدئو آموزش اندروید
+        </v-btn>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-btn color="blue" @click="downloadApp('windows')" outlined block>
+          <v-icon left>mdi-play</v-icon>ویدئو آموزش ویندوز
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
-  
-  <script>
-import request from "@/utils/request";
-import { UserModule } from "@/store/modules/user";
 
-// import { VueRecaptcha } from "vue-recaptcha";
-import Vue from "vue";
+<script>
+import request from "@/utils/request";
+import QrcodeVue from "qrcode-vue"; // Import QR code component
 
 export default {
-  name: "customerInfo",
   components: {
-    // VueRecaptcha,
+    QrcodeVue,
   },
-
-  data: () => ({
-    serverId: null,
-    loading: false,
-    servers: [],
-    user: {
-      userName: null,
-      password: null,
-      server: null,
-      expireDate: null,
-    },
-  }),
+  data() {
+    return {
+      protocols: [], // Protocol options
+      configString: "", // Config string received from server
+      guid: null,
+      userData: {
+        username: "xxxx",
+        expireDate: "asdfd",
+        trafficUsage: "23 gig",
+        configString: "",
+        totalTraffic: "",
+        selectedProtocol: null,
+      },
+      videoUrl: "", // URL for the video player
+    };
+  },
 
   created() {
-    if (UserModule.token === null || UserModule.token === "") {
-      this.$router.push("/");
-    }
-    this.getInfo();
+    this.fetchProtocols();
   },
+
   methods: {
-    logout() {
-      UserModule.ResetToken();
-      this.$router.push("/");
+    async getInfo() {
+      this.guid = this.$route.query.guid;
+      await request.get(`PublicData/profile/${this.guid}`).then((response) => {
+        this.userData = response.data.result;
+      });
     },
-    copyToClipBoard(textToCopy) {
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard
-          .writeText(textToCopy)
+
+    async fetchProtocols() {
+      await request.get(`PublicData/get-accounType`).then((response) => {
+        this.protocols = response.data.result;
+        this.getInfo();
+      });
+    },
+    async changeProtocol() {
+      // Call server to get config string based on selected protocol
+      if (this.userData.selectedProtocol) {
+        await request
+          .get(
+            `PublicData/ChangeConfig/${this.guid}/${this.userData.selectedProtocol}`
+          )
           .then(() => {
-            console.log(textToCopy);
-          })
-          .catch(() => {
-            alert("خطا در کپی");
+            this.getInfo();
           });
-      } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = textToCopy;
-
-        // Move textarea out of the viewport so it's not visible
-        textArea.style.position = "absolute";
-        textArea.style.left = "-999999px";
-
-        document.body.prepend(textArea);
-        textArea.select();
-
-        try {
-          document.execCommand("copy");
-        } catch (error) {
-          console.error(error);
-        } finally {
-          textArea.remove();
-        }
       }
     },
-    changeServer() {
-      this.loading = true;
-      Vue.swal({
-        title: "ایا برای تغییر سرور مطمئن  هستید",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "بله",
-        cancelButtonText: "انصراف",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          request
-            .put(`/v2server/change-server/${this.serverId}`, null)
-            .then(() => {
-              Vue.swal("", "سرور با موفقیت تغییر پیدا کرد", "success");
-              this.getInfo();
-              this.loading = false;
-            });
-        }
-      });
+    copyConfigString() {
+      // Copy configString to clipboard
+      navigator.clipboard.writeText(this.userData.configString);
+      // this.$toast.success("Config string copied to clipboard!");
     },
-    async getInfo() {
-      await request.get(`/v2Server/customer-info`).then((response) => {
-        this.user = response.data.result;
-        this.getServers();
-      });
+    downloadApp(platform) {
+      // Redirect to download link based on platform
+      let url = "";
+      switch (platform) {
+        case "ios":
+          url = "/download/ios";
+          break;
+        case "android":
+          url = "/download/android";
+          break;
+        case "windows":
+          url = "/download/windows";
+          break;
+      }
+      window.open(url, "_blank");
     },
-    async getServers() {
-      await request.get(`/v2Server/customer-servers`).then((response) => {
-        this.servers = response.data.result;
-      });
+    async fetchVideoUrl() {
+      // Fetch video URL from server
+      const response = await fetch("/api/videoUrl");
+      this.videoUrl = await response.text();
+      this.videoUrl =
+        "https://s31.uupload.ir/files/toturial/Recorder_27102024_214848.mp4";
     },
+  },
+  mounted() {
+    this.fetchProtocols(); // Fetch protocols on mount
+    this.fetchVideoUrl(); // Fetch video URL on mount
   },
 };
 </script>
+
+
+<style scoped>
+.pa-4 {
+  padding: 16px;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.mt-2 {
+  margin-top: 8px;
+}
+</style>
+

@@ -20,6 +20,7 @@
         public string Password { get; set; }
         public string ExpireDate { get;  set; }
         public string HostName { get;  set; }
+
         public int Port { get;  set; }
     }
 }

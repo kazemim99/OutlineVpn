@@ -15,6 +15,9 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Net;
+using Telegram.Bot.Types;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Cryptography.Xml;
 
 namespace V2Ray.Api.Services.SSHKeyServices
 {
@@ -28,23 +31,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
         ISSHKeyService
     {
         private readonly DB _db;
-        private static int version = 19;
 
 
         private readonly IMapper _mapper;
         private List<string> NodeIpD = new List<string>
         {
-            "79.137.203.191",
-            "77.105.146.61",
-            "77.221.157.27",
-            //"85.192.63.139",
-            "85.192.63.147",
-            "109.120.176.132",
-            //"z1.iranv2ray.com",
-            //"z2.iranv2ray.com",
-            //"z3.iranv2ray.com",
-            //"z4.iranv2ray.com",
-            //"z5.iranv2ray.com"
+                "37.27.202.61"  ,
+                "65.109.6.68" ,
+                "65.21.153.126" ,
         };
 
 
@@ -58,12 +52,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         public async Task GenerateSshFromAdmin(CreateSSHKeyInput input)
         {
-
-            //var server = _db.V2Servers.Include(a => a.SSHKeys).FirstOrDefault(a => a.Id == input.ServerId);
-
-
-            //if (server.SSHKeys.Count(a => a.Enable) >= server.Capacity)
-            //    throw new ApiException("ظرفیت سرور تکمیل است");
 
 
             if (input.Count > 10)
@@ -93,9 +81,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 var server = GetServer(input.UserId);
                 input.Server = server;
                 input.ChargeDate = DateTime.UtcNow;
-                keys.Add(new SSHKey
+                var key = new SSHKey
                 {
-
+                    SSHCode = $"ssh://{input.UserName}:{input.Password}@a.iransshvpn.com:1027?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#${input.UserName}",
                     UserName = input.UserName,
                     Password = input.Password,
                     Name = input.Name,
@@ -107,27 +95,48 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     UserId = input.UserId.Value,
                     Enable = true,
                     AccountType = input.AccountType,
-                }); ;
+                };
+
+                if (input.DurationId == 30)
+                {
+                    key.TotalTraffic = input.UserId == 82 ? 40 : 55;
+                }
+                else if (input.DurationId == 60)
+                {
+                    key.TotalTraffic = input.UserId == 82 ? 80 : 110;
+                }
+                else if (input.DurationId == 90)
+                {
+                    key.TotalTraffic = input.UserId == 82 ? 120 : 165;
+                }
+
+                keys.Add(key);
 
                 int id = 0;
-                if (input.AccountType == AccountType.L2TP)
-                {
-                    CreateSoftEather(keys);
-                    id = await base.InsertGetIdAsync(input);
 
-                }
-                if (input.AccountType == AccountType.V2RAy)
+
+
+                if (input.AccountType == AccountType.Hiddify)
                 {
-                    id = await CreateV2Ray(keys, AccountActionStatus.Create);
+                    var guid = await CreateHiddify(key);
+                    key.Code = guid;
+                    _db.Update(key);
+                }
+
+                if (input.AccountType == AccountType.V2RAy || input.AccountType == AccountType.IRAN)
+                {
+                    id = await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
                 }
                 if (input.AccountType == AccountType.SSH)
                 {
                     await CreateSSH(input, keys);
                     id = await base.InsertGetIdAsync(input);
 
-                } 
-                
-                
+                }
+
+
+
+
 
                 input.ChargeDate = DateTime.UtcNow;
                 if (input.DurationId != 1)
@@ -149,6 +158,79 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
 
 
+        }
+
+        private async Task<string> CreateHiddify(SSHKey input)
+        {
+            try
+            {
+
+
+                var url = "https://hi.iransshvpn.com/kQA0EMPWtl/api/v2/admin/user/";
+
+
+
+
+
+                using var client = new HttpClient();
+
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                client.DefaultRequestHeaders.Add("ContentType", "application/json");
+                client.DefaultRequestHeaders.Add("Hiddify-API-Key", "082b6520-62d9-4879-8c21-28f3732efbfa");
+
+                var data = new
+                {
+                    added_by_uuid = (string)null,
+                    comment = (string)null,
+                    current_usage_GB = 0,
+                    ed25519_private_key = "string",
+                    ed25519_public_key = "string",
+                    enable = true,
+                    is_active = true,
+                    lang = "en",
+                    last_online = (string)null,
+                    last_reset_time = (string)null,
+                    mode = "no_reset",
+                    name = input.UserName,
+                    package_days = input.DurationId,
+                    telegram_id = 0,
+                    usage_limit_GB = GetLimit(input.DurationId),
+                    uuid = input.V2Guid,
+                    wg_pk = "string",
+                    wg_psk = "string",
+                    wg_pub = "string"
+                };
+
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+
+                var response = await client.PostAsync(url, content);
+
+                var contents = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<HiddfyUser>(contents);
+                response.EnsureSuccessStatusCode();
+
+                var key = "https://hi.iransshvpn.com/xc0S1ZjdPjOel6zr/" + result.Uuid + "/#" + input.UserName;
+                input.V2Guid = result.Uuid;
+                return key;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        private object GetLimit(int durationId)
+        {
+            if (durationId == 60)
+                return 100;
+            else if (durationId == 90)
+                return 150;
+            return 50;
         }
 
         public async Task CreateSSH(CreateSSHKeyInput input, List<SSHKey> keys)
@@ -219,6 +301,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var key = _db.SSHKeyInfos.Include(new[] { "Orders" }).First(a => a.Id == id);
 
+
             input.DurationId = key.DurationId;
             input.UserId = key.UserId;
             input.Enable = key.Enable;
@@ -228,51 +311,48 @@ namespace V2Ray.Api.Services.SSHKeyServices
             input.V2Guid = key.V2Guid;
             input.V2Id = key.V2Id;
             input.Code = key.Code;
-
-            //if (input.MultiUser > key.MultiUser)
-            //{
-
-            //    var order = _db.Orders.Include(c => c.SSHKey).First(c => c.SSHKey.Id == id);
-            //    order.MultiUser = input.MultiUser;
-            //    _db.Update(order);
-            //    _db.SaveChanges();
-            //}
+            input.SSHCode = key.SSHCode.IsNullOrEmpty() ? $"ssh://{key.UserName}:{key.Password}@a.iransshvpn.com:1027?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#${key.SSHCode}" : key.SSHCode; ;
             key.ExpireDate = input.ExpireDate.ToGeo().AddDays(input.ExtraDayId);
             var keys = new List<SSHKey>() { key };
             if (input.AccountType != key.AccountType)
             {
                 if (key.AccountType == AccountType.V2RAy)
                 {
+                    if (input.AccountType == AccountType.Hiddify)
+                    {
+                        var code = await CreateHiddify(key);
+                        input.Code = code;
+                    }
+                    if (input.AccountType == AccountType.SSH)
+                    {
+                        await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Delete);
+                        await BulkAddUserToServer(keys);
+                        return;
 
-                    await CreateV2Ray(keys, AccountActionStatus.Delete);
+                    }
+                    await base.UpdateAsync(id, input, include);
+                    return;
                 }
-                if (key.AccountType == AccountType.L2TP)
-                {
-                     CreateSoftEather(keys, AccountActionStatus.Delete);
-                }
+
 
                 if (key.AccountType == AccountType.SSH)
                 {
                     await BulkDeleteServer(keys);
+                    if (input.AccountType == AccountType.V2RAy)
+                    {
+                        await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
+                        return;
+                    }
+                    if (input.AccountType == AccountType.Hiddify)
+                    {
+                        var code = await CreateHiddify(key);
+                        input.Code = code;
+
+                    }
                 }
             }
 
-            if (input.AccountType == AccountType.V2RAy)
-            {
-                await CreateV2Ray(keys, AccountActionStatus.Create);
-                return;
-            }
-            if (input.AccountType == AccountType.L2TP)
-            {
-                CreateSoftEather(new List<SSHKey> { new SSHKey() { ExpireDate = key.ExpireDate.AddDays(input.ExtraDayId), MultiUser = input.MultiUser, UserName = input.UserName, Password = input.Password } }, AccountActionStatus.Update);
-            }
-            if (input.AccountType == AccountType.SSH)
-            {
-                await BulkAddUserToServer(keys);
-                input.AccountType = AccountType.SSH;
-                await base.UpdateAsync(id, input, include);
-
-            }
+            await base.UpdateAsync(id, input, include);
 
         }
 
@@ -289,7 +369,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
             var i = 0;
 
-            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, server.Password);
+            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, "!QAZ2wsx");
             using var ssh = new SshClient(connectionInfo);
             try
             {
@@ -332,7 +412,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
             var i = 0;
 
-            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, server.Password);
+            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, "!QAZ2wsx");
             using var ssh = new SshClient(connectionInfo);
             try
             {
@@ -372,11 +452,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         private async Task BulkDeleteServerExpired(List<SSHKey> keys)
         {
 
-            //var r = keys.Any(c =>
-            //       c.V2Server.Url.ToLower().StartsWith("r") || c.V2Server.Url.ToLower().StartsWith("ic1"));
-
-            //var d = keys.Any(c =>
-            // c.V2Server.Url.ToLower().StartsWith("d"));
             var NodeIps = new List<string>();
 
             NodeIps = NodeIpD;
@@ -393,9 +468,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
 
             var NodeIps = NodeIpD;
-
-
-            //CreateSoftEather(keys, AccountActionStatus.Delete);
 
             await Task.Run(() => Parallel.ForEach(NodeIps, s =>
             {
@@ -430,327 +502,227 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
 
             var NodeIps = NodeIpD;
-            await Task.Run(() => Parallel.ForEach(NodeIps, s =>
+
+            int chunkCount = keys.Count;
+            if (!keys.Any())
             {
-                DoSomething(s, keys);
-            }));
+                var keyCountn = _db.SSHKeyInfos.Count(c => c.Enable && c.AccountType == AccountType.SSH && c.ExpireDate.Date >= DateTime.Now.Date);
+                var skipCount = 100M;
+                chunkCount = (int)Math.Ceiling(keyCountn > 100 ? keyCountn / skipCount : keyCountn);
 
-
-
-        }
-
-        public async Task<int> CreateV2Ray(List<SSHKey> sSHKeys, AccountActionStatus status = AccountActionStatus.Create, AccountType accountType = AccountType.V2RAy)
-        {
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-            { return true; };
-
-            using var httpClient = new HttpClient(clientHandler)
-            {
-
-                Timeout = TimeSpan.FromSeconds(7)
-            };
-
-            var baseUrl = await ConnectPanel(httpClient);
-
-            EntityEntry<SSHKey>? entity = null;
-
-            foreach (var item in sSHKeys)
-            {
-                if (item.V2Id > 0)
+                foreach (var item in NodeIps)
                 {
-                    await httpClient.PostAsync($"{baseUrl}/panel/inbound/del/{item.V2Id}", null);
-                    item.V2Id = 0;
-                    status = AccountActionStatus.Create;
-                }
-                item.V2Port = GetV2Port(item.UserId);
-                Thread.Sleep(1000);
 
-                var formData = new Dictionary<string, string>();
+                    var connectionInfo = new PasswordConnectionInfo(item, 1027, "root", "!QAZ2wsx");
+                    using var ssh = new SshClient(connectionInfo);
+                    Connect(new V2Server(), ssh);
 
-                if (status == AccountActionStatus.Delete)
-                {
-                    var postResponse = await httpClient.PostAsync($"{baseUrl}/panel/inbound/{GetSubId(item.UserId)}/delClient/{item.V2Guid}", null);
-                    postResponse.EnsureSuccessStatusCode();
-
-                }
-        //        else if (status == AccountActionStatus.Update)
-        //        {
-        //            if (item.V2Guid.IsNullOrEmpty() || item.Code.IsNullOrEmpty())
-        //            {
-        //                throw new Exception("مشکل شناسه درست در پنل");
-        //            }
-
-        //            formData = new Dictionary<string, string>
-        //{
-        //    { "id", GetSubId(item.UserId) },
-        //    { "settings", "{\"clients\":" +
-        //    "[" +
-        //    "{\"id\":\"" + item.V2Guid + "\"," +
-        //    "\"flow\":\"\"," +
-        //    "\"email\":\"" + item.UserName + "\"," +
-        //    "\"limitIp\":0," +
-        //    "\"totalGB\":\"" +(item.DurationId/30) * 52212254720 + "\"," +
-        //    "\"expiryTime\":\"" + item.ExpireDate.ToTimeStamp() +"\"," +
-        //    "\"enable\":\"" + item.Enable.ToString().ToLower() + "\"," +
-        //    "\"tgId\":\"\"," +
-        //    "\"subId\":\"jp186e28nard05qn\"," +
-        //    "\"reset\":0}]" +
-        //    "}"
-        //                    },
-
-        //};
-
-
-        //            var content = new FormUrlEncodedContent(formData);
-
-        //            var postResponse = await httpClient.PostAsync($"{baseUrl}/panel/inbound/updateClient/{item.V2Guid}", content);
-
-        //            postResponse.EnsureSuccessStatusCode();
-        //            var contents = await postResponse.Content.ReadAsStringAsync();
-        //            int number = new Random().Next(1, 10);
-        //            item.Code = $"vless://{item.V2Guid}@v{number}.napstar.ir:{item.V2Port}?type=ws&security=none#{item.UserName}";
-
-        //            _db.SSHKeyInfos.Update(item);
-        //        }
-                else
-                {
-                    if (item.V2Guid.IsNullOrEmpty())
-                        item.V2Guid = Guid.NewGuid().ToString();
-
-                    //if (item.V2Port == null || item.V2Port == 0)
-                    //{
-                    //    item.V2Port = RandomPort();
-                    //};
-
-                    int number = new Random().Next(1, 10);
-                    if (accountType == AccountType.V2RAy)
+                    for (int i = 0; i < chunkCount; i++)
                     {
-                        item.Code = $"vless://{item.V2Guid}@v{number}.napstar.ir:{item.V2Port}?type=ws&security=none#{item.UserName}";
-
-                        formData = new Dictionary<string, string>
-        {
-            { "id", GetSubId(item.UserId) },
-            { "settings", "{\"clients\":" +
-            "[" +
-            "{\"flow\":\"\"," +
-            "\"id\":\"" + item.V2Guid + "\"," +
-            "\"email\":\"" + item.UserName + "\"," +
-            "\"limitIp\":0," +
-            "\"totalGB\":\"" +(item.DurationId/30) * 52212254720 + "\"," +
-            "\"expiryTime\":0," +
-            "\"enable\":true," +
-            "\"tgId\":0," +
-          
-            "\"reset\":0" +
-            "}" +
-            "]" +
-            "}"
-                            },
-
-        };
-                    }
-
-                    // Encode the form data
-                    var content = new FormUrlEncodedContent(formData);
-
-                    // Perform POST request to /panel/inbound/add
-                    var postResponse = await httpClient.PostAsync($"{baseUrl}/panel/inbound/addClient", content);
-                    postResponse.EnsureSuccessStatusCode();
-                    var contents = await postResponse.Content.ReadAsStringAsync();
-
-                    var jsonObject = JObject.Parse(contents);
-
-                    var success = (bool)jsonObject["success"];
-
-                    if (!((string)jsonObject["msg"]).Contains("Duplicate") && !success)
-                    {
-                        throw new ApiException((string)jsonObject["msg"]);
-                    }
-                    else
-                    {
-                        item.AccountType = AccountType.V2RAy;
-                        if (_db.SSHKeyInfos.Any(c => c.Id == item.Id))
-                        {
-                            entity = _db.SSHKeyInfos.Update(item);
-                        }
-                        else
-                        {
-                            entity = _db.SSHKeyInfos.Add(item);
-                        }
                         try
                         {
-                            var result = _db.SaveChanges();
-                            item.Id = entity.Entity.Id;
+
+
+                            var getKeys = await _db.SSHKeyInfos.Where(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date &&
+                           c.AccountType == AccountType.SSH).Skip(i * Convert.ToInt32(skipCount)).Take(Convert.ToInt32(skipCount))
+                           .ToListAsync();
+
+                            await DoSomething(item, getKeys, ssh);
                         }
                         catch (Exception ex)
                         {
 
-                            throw;
                         }
                     }
+
                 }
-
-
             }
-            return sSHKeys.First().Id;
+
+
+            else
+            {
+                await Task.Run(() => Parallel.ForEach(NodeIps, async item =>
+                {
+                    var connectionInfo = new PasswordConnectionInfo(item, 1027, "root", "!QAZ2wsx");
+                    using var ssh = new SshClient(connectionInfo);
+                    Connect(new V2Server(), ssh);
+                    await DoSomething(item, keys, ssh);
+                }));
+            }
+
+
+
+
         }
+
 
         private int? GetV2Port(int userId)
         {
-            var subId = 25000;
+            var subId = 170;
             if (userId == 71)
             {
-                subId = 26000;
+                subId = 160;
             }
-            if (userId == 37 || userId == 77)
+            if (userId == 41)
             {
-                subId = 27000;
+                subId = 150;
+            }
+
+            if (userId == 82)
+            {
+                subId = 180;
             }
             return subId;
         }
+
 
         private string GetSubId(int userId)
         {
-            var subId = "215";
-            if (userId == 71)
+            var subId = "26";
+            if (userId == 41) //ramin
             {
-                subId = "217";
+                subId = "26";
             }
-            if (userId == 37 || userId == 77)
+            if (userId == 71) //danial
             {
-                subId = "218";
+                subId = "250";
             }
+            if (userId == 82) //hamed
+            {
+                subId = "27";
+            }
+
+
+            return 1.ToString();
+        }
+
+        private string GetSecondOldSubId(int userId)
+        {
+            var subId = "24";
+            if (userId == 41) //ramin
+            {
+                subId = "25";
+            }
+            if (userId == 71) //danial
+            {
+                subId = "24";
+            }
+            if (userId == 82) //hamed
+            {
+                subId = "25";
+            }
+
+
             return subId;
         }
 
-        private string GetExpireTime(int durationId)
-        {
-            var expire = "2592000000";
-            if (durationId == 60)
-            {
-                expire = "5184000000";
-            }
-            if (durationId == 90)
-            {
-                expire = "7776000000";
-            }
-            return expire;
-        }
-
-        private int RandomPort()
-        {
-            var existProt = true;
-            var randomPort = 0;
-            while (existProt)
-            {
-                randomPort = new Random().Next(3000, 50000);
-                existProt = _db.SSHKeyInfos.Any(c => c.V2Port == randomPort);
-
-            }
-            return randomPort;
-        }
-
-        private async Task<string> ConnectPanel(HttpClient httpClient)
-        {
-            var random = new Random().Next(1, 10);
-            string baseUrl = $"http://v20.napstar.ir:1028";
-
-            var loginData = new
-            {
-                username = "admin",
-                password = "!Q@W3e4r"
-            };
-
-            //List<KeyValuePair<string, string>> loginData = new List<KeyValuePair<string, string>>();
-            //loginData.Add(new KeyValuePair<string, string>("username", "admin"));
-            //loginData.Add(new KeyValuePair<string, string>("password", "!Q@W3e4r"));
-            //StringContent queryString = new StringContent(JsonConvert.SerializeObject(loginData), UnicodeEncoding.UTF8, "application/json");
-
-            int attempts = 0;
-            int _connectiontRetryAttempts = 9;
-
-            try
-            {
-
-                var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrl}/login", loginData);
-                loginResponse.EnsureSuccessStatusCode();
-                var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
-                httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
-
-                attempts = _connectiontRetryAttempts;
-            }
-            catch (Exception ex)
-            {
-                httpClient.DefaultRequestHeaders.Clear();
-                throw new ApiException("عدم ارتباط با پنل لطفا مجدد تلاش کنید تلاش کنید");
-            }
-
-
-
-
-
-
-            return baseUrl;
-        }
-
-        public async Task AjdustNoThread()
+        private async Task<List<string>> ConnectPanel(int userId, AccountType accountType)
         {
 
-            var keyCountn = _db.SSHKeyInfos.Count(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date);
-            var skipCount = 100M;
-            var chunkCount = (int)Math.Ceiling(keyCountn > 100 ? keyCountn / skipCount : keyCountn);
-
-            for (int i = 0; i < chunkCount; i++)
+            var baseUrls = new List<string>()
             {
-                var newKeys = _db.SSHKeyInfos.Where(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date && c.Code == String.Empty).Skip(i * Convert.ToInt32(skipCount)).Take(Convert.ToInt32(skipCount)).ToList();
-                await CreateV2Ray(newKeys);
-                CreateSoftEather(newKeys);
+                "http://vm.iransshvpn.com",
+
+        };
+            //if (userId == 71)
+            //{
+            //    baseUrls = new List<string>();
+            //    baseUrls.AddRange(new List<string>
+            //    {
+            //       "http://v26.iransshvpn.com",
+            //});
+            //}
+            //if (userId == 41)
+            //{
+            //    baseUrls = new List<string>();
+            //    baseUrls.AddRange(new List<string>
+            //    {
+            //       "http://v25.iransshvpn.com",
+            //});
+            //}
+            //if (userId == 82)
+            //{
+            //    baseUrls = new List<string>();
+            //    baseUrls.AddRange(new List<string>
+            //    {
+            //       "http://v28.iransshvpn.com",
+            //});
+            //}
+
+            //if (accountType == AccountType.IRAN)
+            //{
+            //    baseUrls = new List<string>();
+            //    baseUrls.Add("46.245.64.66");
+            //}
+
+
+            return baseUrls;
+        }
+        public string? GetOldUrl(int userId)
+        {
+
+            var baseUrls = new List<string>()
+            {
+                "http://v27.iransshvpn.com",
+
+        };
+            if (userId == 71)
+            {
+                baseUrls = new List<string>();
+                baseUrls.AddRange(new List<string>
+                {
+                   "http://v26.iransshvpn.com",
+            });
             }
+            if (userId == 41)
+            {
+                baseUrls = new List<string>();
+                baseUrls.AddRange(new List<string>
+                {
+                   "http://v25.iransshvpn.com",
+            });
+            }
+            if (userId == 82)
+            {
+                baseUrls = new List<string>();
+                baseUrls.AddRange(new List<string>
+                {
+                   "http://v28.iransshvpn.com",
+            });
+            }
+
+            return baseUrls.First();
         }
 
-
-        private void DoSomething(string ip, List<SSHKey> keys)
+        private async Task DoSomething(string ip, List<SSHKey> keys, SshClient ssh)
         {
             try
             {
 
-                var keyCountn = keys.Count > 0 ? keys.Count : _db.SSHKeyInfos.Count(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date);
-                var skipCount = 100M;
-                var chunkCount = (int)Math.Ceiling(keyCountn > 100 ? keyCountn / skipCount : keyCountn);
-                var connectionInfo = new PasswordConnectionInfo(ip, 1027, "root", "!Q@W3e4r");
-                using var ssh = new SshClient(connectionInfo);
-                Connect(new V2Server(), ssh);
 
-                for (int i = 0; i < chunkCount; i++)
+
+                var newKeys = new List<SSHKey>();
+                string str = "";
+
+
+                foreach (var item in keys)
                 {
 
-                    var newKeys = new List<SSHKey>();
-                    string str = "";
-                    if (!keys.Any())
-                        newKeys = _db.SSHKeyInfos.Where(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date).Skip(i * Convert.ToInt32(skipCount)).Take(Convert.ToInt32(skipCount)).ToList();
-                    else
-                        newKeys = keys;
 
-                    foreach (var item in newKeys)
+                    if (!string.IsNullOrEmpty(item.UserName) && !string.IsNullOrEmpty(item.Password))
                     {
 
+                        str += $"sudo useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName} \n ";
 
-                        if (!string.IsNullOrEmpty(item.UserName) && !string.IsNullOrEmpty(item.Password))
-                        {
-
-                            str += $"sudo useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName} \n ";
-
-                        }
-
-                    }
-                    if (!str.IsNullOrEmpty())
-                    {
-                        var command = ssh.CreateCommand(str);
-                        command.Execute();
                     }
 
                 }
+                if (!str.IsNullOrEmpty())
+                {
+                    var command = ssh.CreateCommand(str);
+                    command.Execute();
+                }
+
                 //}
             }
             catch (Exception ex)
@@ -761,168 +733,161 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         }
 
-        private async Task AddUserToServer(List<SSHKey> users, V2Server server)
+
+        public async Task Charge(int keyId, int durationId, int userId)
         {
             try
             {
 
+                var month = durationId / 30;
+                var key = _db.SSHKeyInfos.Include(new[] { "User" })
+                    .AsNoTracking().First(a => a.Id == keyId);
 
-                string str = "";
-                CreateSoftEather(users, AccountActionStatus.Update);
 
-                foreach (var item in users)
+
+                DateTime expireDate = key.ExpireDate.Date <= DateTime.Now.Date ?
+                DateTime.UtcNow.AddMonths(month) :
+                key.ExpireDate.AddMonths(month);
+
+
+                if (expireDate.Date < DateTime.Now.Date)
                 {
-                    if (!string.IsNullOrEmpty(item.UserName) && !string.IsNullOrEmpty(item.Password))
-                    {
+                    expireDate = DateTime.Now;
+                }
 
-                        str += $"sudo useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName} \n ";
+                var input = new UpdateSSHKeyInput
+                {
+                    Password = key.Password.Trim(),
+
+                    UserId = key.UserId,
+                    Port = 1027,
+                    Enable = true,
+                    AccountType = key.AccountType,
+                    ChargeDate = DateTime.UtcNow,
+                    ExpireDate = expireDate.ToPeString("yyyy/MM/dd"),
+                    Name = key.User != null ? key.User.Mobile : " ",
+                    UserName = key.UserName.Trim(),
+                    Server = key.Server,
+                    V2Id = key.V2Id,
+                    V2Port = key.V2Port,
+                    V2Guid = key.V2Guid,
+                    Code = key.Code,
+                };
+
+
+
+
+                if (durationId < 0)
+                {
+                    key.DurationId += durationId;
+                    input.DurationId = key.DurationId;
+                }
+                else
+                {
+                    input.DurationId = durationId;
+                }
+
+                var map = _mapper.Map<SSHKey>(input);
+                map.Id = key.Id;
+
+                if (month == 1)
+                {
+                    map.TotalTraffic = input.UserId == 82 ? 40 : 55;
+                }
+                else if (month == 2)
+                {
+                    map.TotalTraffic = input.UserId == 82 ? 80 : 110;
+                }
+                else if (month == 3)
+                {
+                    map.TotalTraffic = input.UserId == 82 ? 120 : 165;
+                }
+                var keys = new List<SSHKey>()
+            {
+                map
+            };
+
+
+
+                if (input.DurationId <= 0)
+                {
+                    keys.First().Enable = false;
+
+                    if (key.AccountType == AccountType.V2RAy)
+                    {
+                        await CreateV2Ray(userId, keys, input.AccountType, AccountActionStatus.Delete);
                     }
                 }
-                var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, server.Password);
-                using var ssh = new SshClient(connectionInfo);
 
-                Connect(server, ssh);
+                else
+                {
 
-                var comm = str;
-                var command = ssh.CreateCommand(comm);
-                command.Execute();
-                ssh.Disconnect();
+                    if (key.AccountType == AccountType.V2RAy)
+                    {
+                        keys.First().UsedTraffic = 0;
+
+                        await CreateV2Ray(userId, keys, input.AccountType, AccountActionStatus.Update);
+
+                    }
+
+                    if (key.AccountType == AccountType.SSH)
+                    {
+                        await BulkAddUserToServer(keys);
+                        await base.UpdateAsync(key.Id, input);
+                    }
+                }
+
+                if (key.User != null)
+                {
+                    if (durationId >= 30)
+                    {
+                        _db.Orders.Add(new Order
+                        {
+                            SSHKeyId = key.Id,
+                            DurationId = durationId,
+                            CreatedAt = DateTime.UtcNow,
+                            CreatorUserId = userId,
+                            UserId = userId,
+                        });
+                    }
+                    if (durationId <= 0)
+                    {
+                        if (key.CreatedAt.Date >= DateTime.UtcNow.AddDays(5).Date)
+                            throw new ApiException("امکان تغییر تاریخ اکانت بعد از ده رو امکان پذیر نیست");
+
+                        var order = await _db.Orders.Where(c => c.SSHKeyId == keyId).ToListAsync();
+                        if (order != null)
+                        {
+                            order.ForEach(c => c.DurationId += durationId);
+                            if (order.Any(c => c.DurationId <= 0))
+                            {
+                                _db.Orders.RemoveRange(order);
+                            }
+                            else
+                            {
+                                _db.Orders.UpdateRange(order);
+                            }
+
+                        }
+                    }
+                }
+                _db.SaveChanges();
+
             }
             catch (Exception ex)
             {
 
-                //    throw new ApiException(ex.Message + "=" + server.IP);
-
+                throw;
             }
-
         }
 
-        public async Task Charge(int keyId, int durationId, int userId)
+        public async Task ChangeState(int id, int currentUserId, bool fromCharge = false)
         {
-
-            var key = await _db.SSHKeyInfos.Include(new[] { "User" })
-                .FirstAsync(a => a.Id == keyId);
-            //if (key.ExpireDate.Date > DateTime.UtcNow.Date.AddDays(10))
-            //    throw new ApiException("تاریخ اعتبار به پایان نرسیده");
-            //if (key == null)
-            //    await GenerateSshFromClient(userId);
-            DateTime expireDate = key.ExpireDate.Date <= DateTime.Now.Date ?
-                DateTime.UtcNow.AddDays(durationId + 1) :
-                key.ExpireDate.AddDays(durationId + 1);
-
-
-
-
-            var input = new UpdateSSHKeyInput
-            {
-                Password = key.Password.Trim(),
-
-                UserId = key.UserId,
-                Port = 1027,
-                Enable = true,
-                AccountType = key.AccountType,
-                ChargeDate = DateTime.UtcNow,
-                ExpireDate = durationId <= 0 ? DateTime.Now.ToPeString("yyyy/MM/dd") : expireDate.ToPeString("yyyy/MM/dd"),
-                Name = key.User != null ? key.User.Mobile : " ",
-                UserName = key.UserName.Trim(),
-                Server = key.Server,
-                V2Id = key.V2Id,
-                V2Port = key.V2Port,
-                V2Guid = key.V2Guid,
-                Code = key.Code,
-            };
-
-            if (durationId < 0)
-            {
-                key.DurationId += durationId;
-                input.DurationId = key.DurationId;
-            }
-            else
-            {
-                input.DurationId = durationId;
-            }
-
-            var map = _mapper.Map<SSHKey>(input);
-            map.Id = key.Id;
-            var keys = new List<SSHKey>();
-            keys.Add(map);
-
-
-
-            if (input.DurationId <= 0)
-            {
-                input.Enable = false;
-           
-
-                if (key.AccountType == AccountType.V2RAy)
-                    await CreateV2Ray(keys, AccountActionStatus.Delete);
-
-                if(key.AccountType == AccountType.SSH)
-                    await base.UpdateAsync(key.Id, input);
-            }
-        
-            else
-            {
-
-                if (key.AccountType == AccountType.V2RAy)
-                    await CreateV2Ray(keys, AccountActionStatus.Update);
-
-                if (key.AccountType == AccountType.SSH)
-                {
-                    await BulkAddUserToServer(keys);
-                    await base.UpdateAsync(key.Id, input);
-
-                }
-            }
-
-            if (key.AccountType == AccountType.L2TP)
-                CreateSoftEather(keys, AccountActionStatus.Update);
-
-            if (key.User != null)
-            {
-                if (durationId >= 30)
-                {
-                    _db.Orders.Add(new Order
-                    {
-                        SSHKeyId = key.Id,
-                        DurationId = durationId,
-                        CreatedAt = DateTime.UtcNow,
-                        CreatorUserId = userId,
-                        UserId = userId,
-                    });
-                }
-                if (durationId <= 0)
-                {
-                    if (key.CreatedAt.Date >= DateTime.UtcNow.AddDays(5).Date)
-                        throw new ApiException("امکان تغییر تاریخ اکانت بعد از ده رو امکان پذیر نیست");
-
-                    var order = await _db.Orders.Where(c => c.SSHKeyId == keyId).ToListAsync();
-                    if (order != null)
-                    {
-                        order.ForEach(c => c.DurationId += durationId);
-                        if (order.Any(c => c.DurationId <= 0))
-                        {
-                            _db.Orders.RemoveRange(order);
-                        }
-                        else
-                        {
-                            _db.Orders.UpdateRange(order);
-                        }
-
-                    }
-                }
-            }
-            _db.SaveChanges();
-
-
-        }
-
-        public async Task ChangeState(int id, bool fromCharge = false)
-        {
-
             var keyInfo = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == id);
+            keyInfo.SSHCode = $"ssh://{keyInfo.UserName}:{keyInfo.Password}@a.iransshvpn.com:1027?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#${keyInfo.UserName}";
 
             keyInfo.Enable = !keyInfo.Enable;
+
             if (fromCharge)
                 keyInfo.Enable = true;
 
@@ -931,47 +896,81 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             if (!keyInfo.Enable)
             {
+                if (keyInfo.AccountType == AccountType.Hiddify)
+                {
+
+                    var url = $"https://hi.iransshvpn.com/kQA0EMPWtl/api/v2/admin/user/{keyInfo.V2Guid}";
+
+                    using var client = new HttpClient();
+
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                    client.DefaultRequestHeaders.Add("Hiddify-API-Key", "082b6520-62d9-4879-8c21-28f3732efbfa");
+
+                    var response = await client.DeleteAsync(url);
+
+                    var contents = await response.Content.ReadAsStringAsync();
+                    response.EnsureSuccessStatusCode();
+
+
+                }
+                if (keyInfo.AccountType == AccountType.Hiddify)
+                {
+                    await CreateHiddify(keyInfo);
+                }
                 if (keyInfo.AccountType == AccountType.V2RAy)
                 {
-                    await CreateV2Ray(new List<SSHKey> { keyInfo }, AccountActionStatus.Delete, AccountType.V2RAy);
+
+                    await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Delete);
+                    return;
                 }
 
                 if (keyInfo.AccountType == AccountType.SSH)
                 {
                     await BulkDeleteServer(new List<SSHKey> { keyInfo });
-                }
-                if (keyInfo.AccountType == AccountType.L2TP)
-                    CreateSoftEather(new List<SSHKey> { keyInfo },AccountActionStatus.Delete);
+                    _db.Update(keyInfo);
 
+                }
             }
             else
             {
-                if (keyInfo.AccountType == AccountType.L2TP)
-                    CreateSoftEather(new List<SSHKey> { keyInfo });
-
                 if (keyInfo.AccountType == AccountType.V2RAy)
                 {
-                    await CreateV2Ray(new List<SSHKey> { keyInfo }, AccountActionStatus.Create);
+
+                    if (keyInfo.DurationId == 30)
+                    {
+                        keyInfo.TotalTraffic = keyInfo.UserId == 82 ? 40 : 55;
+                    }
+                    else if (keyInfo.DurationId == 60)
+                    {
+                        keyInfo.TotalTraffic = keyInfo.UserId == 82 ? 80 : 110;
+                    }
+                    else if (keyInfo.DurationId == 90)
+                    {
+                        keyInfo.TotalTraffic = keyInfo.UserId == 82 ? 120 : 165;
+                    }
+                    await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Create);
                 }
 
                 if (keyInfo.AccountType == AccountType.SSH)
+                {
                     await BulkAddUserToServer(new List<SSHKey> { keyInfo });
+
+                    _db.Update(keyInfo);
+
+                }
+
 
 
             }
-            _db.Update(keyInfo);
+
+
             _db.SaveChanges();
 
 
 
         }
 
-
-        public PasswordConnectionInfo GetConnectionInfo(string url, int port, string password, string userName)
-        {
-            var result = new PasswordConnectionInfo(url, port, userName, password);
-            return result;
-        }
 
         private string CreatePassword()
         {
@@ -1006,13 +1005,13 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             if (keyInfo.AccountType == AccountType.V2RAy)
             {
-                await CreateV2Ray(keys, AccountActionStatus.Delete);
+                await CreateV2Ray(keyInfo.UserId, keys, keyInfo.AccountType, AccountActionStatus.Delete);
             }
 
-            if (keyInfo.AccountType == AccountType.L2TP)
-            {
-                CreateSoftEather(keys, AccountActionStatus.Delete);
-            }
+            //if (keyInfo.AccountType == AccountType.L2TP || keyInfo.AccountType == AccountType.OpenVPN)
+            //{
+            //    CreateSoftEather(keys, AccountActionStatus.Delete);
+            //}
 
             if (keyInfo.ExpireDate.Date >= DateTime.Now.AddDays(6))
             {
@@ -1034,7 +1033,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             foreach (var item in keys)
             {
                 Thread.Sleep(1000);
-                await ChangeState(item.Id);
+                await ChangeState(item.Id, item.UserId);
             }
         }
 
@@ -1045,11 +1044,10 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
 
                 //await  AjdustNoThread();
-                var items = _db.SSHKeyInfos.Where(c => c.V2Id > 0 && c.Code != null).ToList();
-                await CreateV2Ray(items);
+                //var items = _db.SSHKeyInfos.Where(c => c.ExpireDate.Date > DateTime.Now.Date && c.Enable).ToList();
+                //await CreateV2Ray(items);
 
-
-                //await BulkAddUserToServer(new List<SSHKey>());
+                await BulkAddUserToServer(new List<SSHKey>());
             }
             catch (Exception ex)
             {
@@ -1059,62 +1057,178 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
+        public async Task AdjustV2()
+        {
+            try
+            {
 
+
+                //await  AjdustNoThread();
+                var items = _db.SSHKeyInfos.Where(c => c.ExpireDate.Date > DateTime.Now.Date && c.Enable && c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList();
+                await CreateV2Ray(41, items, AccountType.V2RAy);
+
+            }
+            catch (Exception ex)
+            {
+
+
+            }
+        }
+        public async Task UpdateUserTraffic()
+        {
+
+            var users = new List<int>()
+            {
+                1,
+                71,
+                41,
+                82
+            };
+            foreach (var item in users)
+            {
+
+                try
+                {
+
+
+                    HttpClientHandler clientHandler = new HttpClientHandler();
+                    clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+                    { return true; };
+
+                    using var httpClient = new HttpClient(clientHandler)
+                    {
+
+                        Timeout = TimeSpan.FromSeconds(360)
+                    };
+
+                    var baseUrls = await ConnectPanel(item, AccountType.V2RAy);
+
+                    var loginData = new
+                    {
+                        username = "admin",
+                        password = "!Q@W3e4r"
+                    };
+
+                    var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls.First()}/login", loginData);
+                    loginResponse.EnsureSuccessStatusCode();
+                    var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
+                    httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
+
+
+                    httpClient.DefaultRequestHeaders.Add("ContentType", "application/json");
+                    var panelresult = await httpClient.PostAsJsonAsync<Root>($"{baseUrls.First()}/panel/inbound/list", null);
+
+                    var contents = await panelresult.Content.ReadAsStringAsync();
+                    var accounts = JsonConvert.DeserializeObject<Root>(contents);
+                    var cliens = accounts.obj.First().clientStats;
+                    try
+                    {
+
+                        foreach (var item2 in cliens)
+                        {
+                            var key = _db.SSHKeyInfos.FirstOrDefault(c => c.UserName == item2.email);
+
+                            if (item2.down > 42949672960)
+                            {
+                                item2.down += 7368709120;
+                            }
+                            if (key != null)
+                            {
+                                var calTraffic = (BytesToGigabytes(item2.down) - key.UsedTraffic);
+                                if (item2.down > 1000 && key.UsedTraffic <= 0)
+                                {
+                                    key.UsedTraffic = 1;
+                                }
+                                key.UsedTraffic = BytesToGigabytes(item2.down);
+                                if (key.DurationId == 30)
+                                {
+                                    key.TotalTraffic = key.UserId == 82 ? 40 : 55;
+                                }
+                                else if (key.DurationId == 60)
+                                {
+                                    key.TotalTraffic = key.UserId == 82 ? 80 : 110;
+                                }
+                                else if (key.DurationId == 90)
+                                {
+                                    key.TotalTraffic = key.UserId == 82 ? 120 : 165;
+                                }
+                                else
+                                {
+                                    key.TotalTraffic = 50;
+                                }
+                                if (key.TotalTraffic < key.UsedTraffic)
+                                {
+                                    key.TrefficExpired = true;
+                                }
+                                _db.Update(key);
+                            }
+                        }
+                        _db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+
+            }
+
+        }
+        static int BytesToGigabytes(long bytes)
+        {
+            return Convert.ToInt32((double)bytes / (1024D * 1024D * 1024D));
+        }
         public async Task DisableExpired()
         {
-            //await ChangeId();
+
 
             var info = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
             DateTimeOffset localServerTime = DateTimeOffset.Now;
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(localServerTime, info);
 
 
-            var keys = _db.SSHKeyInfos.Where(c => c.ExpireDate <= DateTime.Now).ToList();
-            await BulkDeleteServerExpired(keys);
-            //var tt = keys.GroupBy(a => a.ServerId, (id, key) => new { Keys = key.ToList(), serverId = id });
-            //foreach (var key in tt)
-            //{
-            //    try
-            //    {
-            //        var server = _db.V2Servers.FirstOrDefault(a => a.Id == key.serverId);
-            //        if (server != null)
-            //        {
+            var keys = _db.SSHKeyInfos.Where(c => (c.ExpireDate <= DateTime.Now || c.UsedTraffic > c.TotalTraffic) && c.UserId != 41).ToList();
 
-            //            if (server.HasLoadBalance)
-            //            {
 
-            //                // await BulkAddUserToServer(key.Keys);
-            //            }
-            //            else
-            //            {
-            //                DeleteUserFromServerExpired(key.Keys, server);
-            //            }
-            //        }
+            try
+            {
 
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //    }
-            //}
-           
-            
-            await CreateV2Ray(keys, AccountActionStatus.Delete);
+                await CreateV2Ray(37, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 37).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                //await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 82).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                await CreateV2Ray(73, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 73).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                await CreateV2Ray(76, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 76).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 77).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            await BulkDeleteServerExpired(keys.Where(c => c.AccountType == AccountType.SSH).ToList());
 
             foreach (var item in keys)
             {
                 try
                 {
-                    if (item.ExpireDate.AddDays(20) < DateTime.UtcNow)
-                    {
-                        var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
-                        _db.SSHKeyInfos.Remove(newItem);
-                    }
+                    var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
                     if (item.Enable)
                     {
-                        var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
                         newItem.Enable = false;
                         _db.Update(newItem);
                     }
+                    if (item.ExpireDate.AddDays(15) < DateTime.UtcNow)
+                    {
+                        _db.SSHKeyInfos.Remove(newItem);
+                    }
+
 
                 }
                 catch (Exception ex)
@@ -1202,7 +1316,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
 
             int attempts = 0;
-            int _connectiontRetryAttempts = 20;
+            int _connectiontRetryAttempts = 50;
             do
             {
                 try
@@ -1230,7 +1344,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             if (user < 100)
                 user += 100;
 
-            return $"u{user}";
+            return $"u{user + 300}";
         }
 
 
@@ -1273,126 +1387,305 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
         }
 
-        public async Task CreateV2RayNotExist(string userName)
+
+        public async Task<int> CreateV2Ray(int currenUserId, List<SSHKey> sSHKeys, AccountType accountType, AccountActionStatus status = AccountActionStatus.Create)
         {
-            var user = await _db.SSHKeyInfos.FirstAsync(c => c.UserName == userName);
-            await CreateV2Ray(new List<SSHKey>
+            if (!sSHKeys.Any())
+                return 0;
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+            { return true; };
+
+            using var httpClient = new HttpClient(clientHandler)
             {
-                user
-            });
-        }
 
-        public async Task CreateSoftEatherNotExist(string userName)
-        {
-            var user = await _db.SSHKeyInfos.FirstAsync(c => c.UserName == userName);
-            CreateSoftEather(new List<SSHKey> { user }, AccountActionStatus.Create);
-        }
+                Timeout = TimeSpan.FromSeconds(7)
+            };
 
-        public void CreateSoftEather(List<SSHKey> users, AccountActionStatus actionStatus = AccountActionStatus.Create)
-        {
+            var baseUrls = await ConnectPanel(currenUserId, accountType);
 
-            string host = "212.33.202.66";
-            string username = "root";
-            string password = "!Q@W3e4r";
 
-            using (var sshClient = new SshClient(host, username, password))
+
+
+            var loginData = new
             {
-                try
+                username = "admin",
+                password = "!Q@W3e4r"
+            };
+
+            StringContent queryString = new StringContent(JsonConvert.SerializeObject(loginData), UnicodeEncoding.UTF8, "application/json");
+
+
+            EntityEntry<SSHKey>? entity = null;
+            foreach (var baseUrl in baseUrls)
+            {
+                var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrl}/login", loginData);
+                loginResponse.EnsureSuccessStatusCode();
+                var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
+                httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
+
+                foreach (var item in sSHKeys)
                 {
-
-                    sshClient.Connect();
-
-                    if (sshClient.IsConnected)
+                    if (accountType == AccountType.V2RAy)
                     {
-
-                        void DeleteUser()
-                        {
-                            foreach (var item in users)
-                            {
-                                ExecuteVpnCommand("UserDelete", item.UserName, sshClient);
-                            }
-                        }
-
-                        // Create new user
-                        void CreateUser()
-                        {
-                            foreach (var item in users)
-                            {
-                                var group = "none";
-                                if (item.DurationId > 1)
-                                {
-                                    group = "default";
-                                    if (item.MultiUser == 2)
-                                    {
-                                        group = "default-2";
-                                    }
-                                    if (item.MultiUser == 3)
-                                    {
-                                        group = "default-3";
-                                    }
-
-                                }
-
-                                ExecuteVpnCommand("UserCreate", $"{item.UserName} /GROUP:{group} /REALNAME:none /NOTE:none", sshClient);
-                                ExecuteVpnCommand("UserPasswordSet", $"{item.UserName} /PASSWORD:{item.Password}", sshClient);
-                                ExecuteVpnCommand("UserExpiresSet", $@"{item.UserName} /EXPIRES:""{item.ExpireDate.ToString("yyyy/MM/dd HH:mm:ss")}""", sshClient);
-                            }
-                        }
-
-                        if (actionStatus == AccountActionStatus.Delete)
-                        {
-                            DeleteUser();
-                        }
-                        else if (actionStatus == AccountActionStatus.Create)
-                        {
-                            CreateUser();
-                        }
-                        else
-                        {
-                            DeleteUser();
-                            CreateUser();
-                        }
-
-
-
-                        sshClient.Disconnect();
+                        item.V2Port = GetV2Port(item.UserId);
                     }
                     else
                     {
-                        throw new Exception("SSH connection failed.");
+                        //item.V2Port = 38000;
+                        //subId = 2.ToString();
                     }
-                }
-                catch (Exception ex)
-                {
 
-                    throw new Exception(ex.Message);
+                    var formData = new Dictionary<string, string>();
+
+                    if (status == AccountActionStatus.Delete)
+                    {
+                        for (int i = 0; i < 2; i++)
+                        {
+                            try
+                            {
+                                var subId = GetSubId(item.UserId);
+                                var urls = baseUrl;
+                                if (i == 0)
+                                    subId = GetOldSubId(item.UserId);
+
+                                if (i == 0)
+                                    urls = GetOldUrl(item.UserId);
+
+
+                                var url = $"{urls}/panel/inbound/{subId}/delClient/{item.V2Guid}";
+                                var postResponse = await httpClient.PostAsync($"{url}", null);
+                                postResponse.EnsureSuccessStatusCode();
+
+                            }
+
+                            catch (Exception)
+                            {
+
+
+                            }
+                        }
+                        item.AccountType = accountType;
+                        entity = _db.SSHKeyInfos.Update(item);
+                        _db.SaveChanges();
+
+                    }
+                    else
+                    {
+                        if (item.V2Guid.IsNullOrEmpty())
+                            item.V2Guid = Guid.NewGuid().ToString();
+
+                        //if (item.V2Port == null || item.V2Port == 0)
+                        //{
+                        //    item.V2Port = RandomPort();
+                        //};
+
+                     
+
+                        var publicKey = GetPublicKey(currenUserId);
+                        int number = GetUserNumber(currenUserId);
+                        if (accountType == AccountType.V2RAy)
+                        {
+                            item.Code = $"vless://{item.V2Guid}@vt{number}.iransshvpn.com:11000?type=tcp&security=tls&fp=&alpn=h3%2Ch2%2Chttp%2F1.1#{item.UserName}";
+
+                            formData = new Dictionary<string, string>
+        {
+            { "id", GetSubId(item.UserId) },
+            { "settings", "{\"clients\":" +
+            "[" +
+            "{\"flow\":\"\"," +
+            "\"id\":\"" + item.V2Guid + "\"," +
+            "\"email\":\"" + item.UserName + "\"," +
+            "\"limitIp\":0," +
+            "\"totalGB\":\"" +(item.DurationId/30) * 53687091200 + "\"," +
+            "\"expiryTime\":\"" +0 +"\"," +
+            "\"enable\":true," +
+            "\"tgId\":0," +
+
+            "\"reset\":0" +
+            "}" +
+            "]" +
+            "}"
+                            },
+
+        };
+                        }
+
+                        // Encode the form data
+                        var content = new FormUrlEncodedContent(formData);
+                        try
+                        {
+
+                            var url = $"{baseUrl}/panel/inbound/addClient";
+                            // Perform POST request to /panel/inbound/add
+                            var postResponse = await httpClient.PostAsync($"{url}", content);
+                            postResponse.EnsureSuccessStatusCode();
+                            var contents = await postResponse.Content.ReadAsStringAsync();
+
+                            var jsonObject = JObject.Parse(contents);
+
+                            var success = (bool)jsonObject["success"];
+
+                            if (!((string)jsonObject["msg"]).Contains("Duplicate") && !success)
+                            {
+                                throw new ApiException((string)jsonObject["msg"]);
+                            }
+                            else
+                            {
+                                item.AccountType = AccountType.V2RAy;
+                                if (_db.SSHKeyInfos.Any(c => c.Id == item.Id))
+                                {
+                                    entity = _db.SSHKeyInfos.Update(item);
+                                    _db.SaveChanges();
+                                }
+                                else
+                                {
+                                    entity = _db.SSHKeyInfos.Add(item);
+                                    _db.SaveChanges();
+                                }
+                                try
+                                {
+                                    var result = _db.SaveChanges();
+                                    item.Id = entity.Entity.Id;
+                                }
+                                catch (Exception ex)
+                                {
+
+                                    throw;
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+
+                            throw;
+                        }
+                    }
+
+
                 }
             }
+
+
+
+            return sSHKeys.First().Id;
         }
-        private void ExecuteVpnCommand(string cmd, string args, SshClient sshClient)
+
+        private string GetPublicKey(int currenUserId)
         {
-            string vpnCmdPath = "/usr/local/vpnserver/vpncmd"; // Path to vpncmd executable
-            string vpnHost = "localhost";          // VPN Server hostname or IP address
-            string vpnPort = "5555";               // VPN Server management port
-            string vpnHub = "vpn";             // VPN Hub name
-            var cmdStr = $"sudo {vpnCmdPath} /server {vpnHost}:{vpnPort} /hub:{vpnHub} /password:1q2w3e4r /cmd:{cmd} {args}";
-            using (var command = sshClient.CreateCommand(cmdStr))
+
+            var subId = GetSubId(currenUserId);
+            var pubKey = "iAGI6EJJnpfVI1uahPN8TS7HzUdLnta6XcjXcFelgWE";
+            if (subId == "150")
+                pubKey = "-VawEkWZTwjzDc4f1N-HtseuGqsZZ350MRkOGf1QUi8";
+            if (subId == "160")
+                pubKey = "Pvavf3yTNthbhKbqu3d2swtv_aT7Z0fFdz89TSzfUgM";
+            if (subId == "180")
+                pubKey = "jgdRws5lkScNKE4c0OFGhSRH2OZB-7ufejH5P_gUvUI";
+            return pubKey;
+        }
+
+        private string GetSID(int currenUserId)
+        {
+
+            var subId = GetSubId(currenUserId);
+            var pubKey = "ac6c";
+            if (subId == "150")
+                pubKey = "22e8249c1f933c";
+            if (subId == "160")
+                pubKey = "c3c5&spx";
+            if (subId == "180")
+                pubKey = "9949bbab9104495f";
+            return pubKey;
+        }
+
+        private string GetOldSubId(int userId)
+        {
+            var subId = "22";
+            if (userId == 41) //ramin
             {
-                var result = command.Execute();
+                subId = "20";
+            }
+            if (userId == 71) //danial
+            {
+                subId = "21";
+            }
+
+            if (userId == 82) //hamed
+            {
+                subId = "23";
+            }
+
+            return subId;
+        }
+
+        private int GetUserNumber(int userId)
+        {
+            int port = 17;
+            if (userId == 71)
+            {
+                port = 16;
+            }
+            if (userId == 41)
+            {
+                port = 15;
+            }
+            if (userId == 82)
+            {
+                port = 18;
+            }
+
+            return port;
+        }
+        private static string PostData(string privateKey, string publicKey, string userName)
+        {
+            return @"{
+                ""private_key"": """ + privateKey + @""",
+                ""public_key"": """ + publicKey + @""",
+                ""allowed_ips"": ""176.66.66.3"",
+                ""name"": """ + userName + @""",
+                ""bandwidth"": ""50"",
+                ""ends_at"": 1717484160,
+                ""DNS"": ""8.8.8.8"",
+                ""endpoint_allowed_ip"": ""0.0.0.0/0"",
+                ""MTU"": ""1280"",
+                ""keep_alive"": ""25"",
+                ""enable_preshared_key"": false,
+                ""preshared_key"": ""yrl36byvL5PIWW2kbymtbwKcARpdUvqtYjiX8IzR6Vo=""
+            }";
+        }
+
+
+
+        static async Task PostData(HttpClient client, string apiUrl, string postData)
+        {
+            try
+            {
+                // Set the content type
+                client.DefaultRequestHeaders.Add("ContentType", "application/json");
+                apiUrl = $"{apiUrl}/add_peer/wg0";
+                // Post the data
+                var response = client.PostAsync(apiUrl, new StringContent(postData, Encoding.UTF8, "application/json")).Result;
+
+                // Check if the response is successful
+                response.EnsureSuccessStatusCode();
+                var contents = await response.Content.ReadAsStringAsync();
+                if (contents != "true")
+                {
+                    throw new ApiException("خطا");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApiException(ex.Message);
             }
         }
 
-        public static string Encode(string method, string password, string host, int port)
+        static string ExecuteCommand(SshClient client, string command)
         {
-            // Encode the password to Base64
-            string encodedPassword = Convert.ToBase64String(Encoding.UTF8.GetBytes(password));
-
-            // Construct the Shadowsocks URI
-            string uri = $"ss://{method}:{encodedPassword}@{host}:{port}";
-
-            return uri;
+            var output = client.RunCommand(command);
+            return output.Result.Trim();
         }
-
 
     }
     public enum AccountActionStatus
@@ -1402,28 +1695,30 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Delete,
     }
 
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class ClientStat
     {
         public int id { get; set; }
         public int inboundId { get; set; }
         public bool enable { get; set; }
         public string email { get; set; }
-        public int up { get; set; }
-        public int down { get; set; }
+        public object up { get; set; }
+        public long down { get; set; }
         public int expiryTime { get; set; }
-        public int total { get; set; }
+        public object total { get; set; }
         public int reset { get; set; }
     }
 
     public class Obj
     {
         public int id { get; set; }
-        public int up { get; set; }
-        public int down { get; set; }
+        public long up { get; set; }
+        public long down { get; set; }
         public int total { get; set; }
         public string remark { get; set; }
         public bool enable { get; set; }
-        public object expiryTime { get; set; }
+        public int expiryTime { get; set; }
         public List<ClientStat> clientStats { get; set; }
         public string listen { get; set; }
         public int port { get; set; }
@@ -1440,5 +1735,38 @@ namespace V2Ray.Api.Services.SSHKeyServices
         public string msg { get; set; }
         public List<Obj> obj { get; set; }
     }
+
+
+
+    public class HiddfyUser
+    {
+        public string AddedByUuid { get; set; }
+        public string Comment { get; set; }
+        public double CurrentUsageGB { get; set; }
+        public string Ed25519PrivateKey { get; set; }
+        public string Ed25519PublicKey { get; set; }
+        public bool Enable { get; set; }
+        public int Id { get; set; }
+        public bool IsActive { get; set; }
+        public string Lang { get; set; }
+        public DateTime LastOnline { get; set; }
+        public DateTime LastResetTime { get; set; }
+        public string Mode { get; set; }
+        public string Name { get; set; }
+        public int PackageDays { get; set; }
+        public DateTime StartDate { get; set; }
+        public int? TelegramId { get; set; }
+        public double UsageLimitGB { get; set; }
+        public string Uuid { get; set; }
+        public string WgPk { get; set; }
+        public string WgPsk { get; set; }
+        public string WgPub { get; set; }
+    }
+
+
+
+
+
+
 }
 

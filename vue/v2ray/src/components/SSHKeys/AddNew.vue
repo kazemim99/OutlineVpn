@@ -30,7 +30,7 @@
                   ></v-select>
                 </v-col>
 
-                <v-col class="d-flex" cols="4" md="3" sm="6">
+                <!-- <v-col class="d-flex" cols="4" md="3" sm="6">
                   <v-select
                     v-model="sshKey.multiUser"
                     :items="multiUser"
@@ -39,7 +39,7 @@
                     label="تعداد کاربر"
                     solo
                   ></v-select>
-                </v-col>
+                </v-col> -->
 
                 <v-col cols="3" sm="12" md="3">
                   <v-text-field
@@ -178,10 +178,10 @@ export default Vue.extend({
 
   methods: {
     async getServers() {
-      await request.get(`/v2Server/all-servers`).then((response) => {
-        var data = response.data.result;
-        this.servers = data.result;
-      });
+      // await request.get(`/v2Server/all-servers`).then((response) => {
+      //   var data = response.data.result;
+      //   this.servers = data.result;
+      // });
     },
     async getSSHKey(id) {
       await request.get(`/sshKey/${id}`).then((response) => {

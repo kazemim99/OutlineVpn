@@ -1,7 +1,10 @@
-﻿using AutoWrapper.Wrappers;
+﻿using AutoMapper.Execution;
+using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Renci.SshNet;
+using System.Text;
+using V2Ray.Api.Database;
 using V2Ray.Api.Extensions;
 using V2Ray.Api.Services.sms;
 using V2Ray.Api.Services.sms.Kavenegar.Models.Enums;
@@ -23,11 +26,13 @@ namespace V2Ray.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IRahyabSmsSender _rahyab;
+        private readonly DB _db;
 
-        public PublicDataController(IUserService userService, IRahyabSmsSender rahyab)
+        public PublicDataController(IUserService userService, IRahyabSmsSender rahyab, DB db)
         {
             _userService = userService;
             _rahyab = rahyab;
+            _db = db;
         }
 
 
@@ -42,19 +47,122 @@ namespace V2Ray.Api.Controllers
         }
 
 
+
+        [HttpGet("profile/{guid}")]
+        public ApiResponse GetProfile([FromRoute] string guid)
+        {
+            var user = _db.SSHKeyInfos.First(c => c.V2Guid == guid || c.UserName == guid);
+
+            var response = new
+            {
+                configString = user.AccountType == Services.SSHKeyServices.Dto.AccountType.V2RAy ? user.Code : user.SSHCode,
+                username = user.UserName,
+                expireDate = user.ExpireDate.ToPeString(),
+                trafficUsage = user.UsedTraffic,
+                totalTraffic = user.TotalTraffic,
+                password  =user.Password,
+                server = $"{GetServer(user.UserId)}.iransshvpn.com",
+                selectedProtocol = user.AccountType,
+           
+            };
+            return new ApiResponse(response);
+        }
+
+        [HttpGet("profile/{guid}")]
+        public ApiResponse GetTotorianApp([FromRoute] AccountType account)
+        {
+            var response = new { };
+            return new ApiResponse(response);
+        }
+
+        private string GetServer(int? userId)
+        {
+            int length = 1;
+            string valid = "123456789";
+            StringBuilder res = new();
+            Random rnd = new();
+
+            if (userId == 41)
+            {
+
+                res.Append("r");
+            }
+            else
+            if (userId == 71)
+            {
+                res.Append("d");
+            }
+            else
+            if (userId == 73)
+            {
+                valid = "12345";
+                res.Append("s");
+            }
+            else
+            {
+                valid = "abcefghi";
+                res.Append(valid[rnd.Next(valid.Length)]);
+                return res.ToString().Trim(); ;
+            }
+            res.Append(valid[rnd.Next(valid.Length)]);
+            return res.ToString().Trim();
+        }
+        [HttpGet("ChangeConfig/{guid}/{account}")]
+        public ApiResponse ChangeConfig([FromRoute] string guid, [FromRoute] AccountType account)
+        {
+            var user = _db.SSHKeyInfos.First(c => c.V2Guid == guid || c.UserName == guid);
+
+            user.AccountType = account;
+            if (account == Services.SSHKeyServices.Dto.AccountType.SSH)
+            {
+                user.SSHCode = $"ssh://{user.UserName}:%2{user.Password}@a.iransshvpn.com:1027?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#migrate";
+            }
+            _db.Update(user);
+            _db.SaveChanges();
+
+            return new ApiResponse();
+        }
+
+
         [HttpGet("get-accounType")]
         [Authorize]
         public ApiResponse AccountType()
         {
             var result = Enum.GetValues(typeof(AccountType))
-                .Cast<AccountType>()
+                .Cast<AccountType>().Where(c => c != Services.SSHKeyServices.Dto.AccountType.IRAN)
                 .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
             return new ApiResponse(result);
         }
 
 
-       
+        [HttpGet("get-wireguard-config-file/{userName}")]
+        public IActionResult GetConfig([FromRoute] string userName)
+        {
+            // Generate the configuration content
+            var account = _db.SSHKeyInfos.First(c => c.UserName == userName);
 
+            string configData = GenerateClientConfig(account.WireGuardPrivateKey);
+            configData = configData.Replace("\r\n", "");
+
+            // Convert configuration content to byte array
+            byte[] bytes = Encoding.UTF8.GetBytes(configData);
+
+            // Return the configuration as a downloadable file
+            return File(bytes, "text/plain", "client.conf");
+        }
+        static string GenerateClientConfig(string privateKey)
+        {
+            return @$"[Interface]
+                        PrivateKey = {privateKey}
+                        Address = 176.66.66.2/32
+                        DNS = 8.8.8.8
+                        
+                        [Peer]
+                        PublicKey = TYzkMeJzKvbvvZYCrFLKVT3FZQ6wwZRR3gYstZsHzXk=
+                        Endpoint =46.245.64.66:55825
+                        AllowedIPs = 0.0.0.0/0
+                        PersistentKeepalive = 25".Trim();
+        }
         [HttpGet("get-operations")]
         [Authorize]
         public ApiResponse GetOpreations()

@@ -25,7 +25,6 @@ namespace V2Ray.Api.IOC
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRahyabSmsSender, SmsService>();
             services.AddScoped<IOtpService, OtpSharpService>();
-            services.AddScoped<IServerService, ServerService>();
             services.AddScoped<IOrderService, OrderService>();
             //services.AddScoped<IV2KeyService, V2KeyService>();
             services.AddScoped<IProblemReportservice, ProblemReportservice>();

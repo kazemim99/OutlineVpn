@@ -130,6 +130,14 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
+        [HttpPut("adjustV2")]
+
+        public async Task<ApiResponse> AdjustV2()
+        {
+            await _service.AdjustV2();
+            return new ApiResponse();
+        }
+
         /// <summary>
         /// ویرایش یک کاربر 
         /// </summary>
@@ -139,7 +147,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> ChangeState([FromRoute] int id)
         {
-            await _service.ChangeState(id);
+            await _service.ChangeState(id,UserId);
             return new ApiResponse();
         }
 
@@ -171,7 +179,7 @@ namespace V2Ray.Api.Controllers
             await _service.GenerateSshFromAdmin(input);
             return new ApiResponse();
         }
-
+        
 
         /// <summary>
         /// دریافت اطلاعات یک کاربر
