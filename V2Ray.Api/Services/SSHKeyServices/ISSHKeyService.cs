@@ -21,6 +21,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task Recreate(string name);
         Task UpdateUserTraffic();
         Task DisableExpired();
+        Task RandomDel();
         Task SetUser(int userId, SetPasswordModel model);
         Task Charge(int id, int durationId, int userId);
         void ChangeServer(SSHKey sshKey, V2Server newServer, V2Server oldserver);

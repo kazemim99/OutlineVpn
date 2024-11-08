@@ -585,7 +585,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
             if (userId == 71) //danial
             {
-                subId = "250";
+                subId = "25";
             }
             if (userId == 82) //hamed
             {
@@ -593,7 +593,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
 
 
-            return 1.ToString();
+            return 2.ToString();
         }
 
         private string GetSecondOldSubId(int userId)
@@ -621,7 +621,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var baseUrls = new List<string>()
             {
-                "http://vm.iransshvpn.com",
+                "http://vt.iransshvpn.com",
 
         };
             //if (userId == 71)
@@ -663,33 +663,33 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var baseUrls = new List<string>()
             {
-                "http://v27.iransshvpn.com",
+                "http://v25.iransshvpn.com",
 
         };
-            if (userId == 71)
-            {
-                baseUrls = new List<string>();
-                baseUrls.AddRange(new List<string>
-                {
-                   "http://v26.iransshvpn.com",
-            });
-            }
-            if (userId == 41)
-            {
-                baseUrls = new List<string>();
-                baseUrls.AddRange(new List<string>
-                {
-                   "http://v25.iransshvpn.com",
-            });
-            }
-            if (userId == 82)
-            {
-                baseUrls = new List<string>();
-                baseUrls.AddRange(new List<string>
-                {
-                   "http://v28.iransshvpn.com",
-            });
-            }
+            //if (userId == 71)
+            //{
+            //    baseUrls = new List<string>();
+            //    baseUrls.AddRange(new List<string>
+            //    {
+            //       "http://v26.iransshvpn.com",
+            //});
+            //}
+            //if (userId == 41)
+            //{
+            //    baseUrls = new List<string>();
+            //    baseUrls.AddRange(new List<string>
+            //    {
+            //       "http://v25.iransshvpn.com",
+            //});
+            //}
+            //if (userId == 82)
+            //{
+            //    baseUrls = new List<string>();
+            //    baseUrls.AddRange(new List<string>
+            //    {
+            //       "http://v28.iransshvpn.com",
+            //});
+            //}
 
             return baseUrls.First();
         }
@@ -1185,6 +1185,19 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
             return Convert.ToInt32((double)bytes / (1024D * 1024D * 1024D));
         }
+
+        public async Task RandomDel()
+        {
+
+            var keys = _db.SSHKeyInfos.Where(c => c.AccountType == AccountType.V2RAy).Take(3).ToList();
+            await CreateV2Ray(37, keys, AccountType.V2RAy, AccountActionStatus.Delete);
+            await CreateV2Ray(41, keys, AccountType.V2RAy, AccountActionStatus.Delete);
+            await CreateV2Ray(41, keys, AccountType.V2RAy, AccountActionStatus.Delete);
+            await CreateV2Ray(71, keys, AccountType.V2RAy, AccountActionStatus.Delete);
+            await CreateV2Ray(73, keys, AccountType.V2RAy, AccountActionStatus.Delete);
+            await CreateV2Ray(76, keys, AccountType.V2RAy, AccountActionStatus.Delete);
+            await CreateV2Ray(77, keys, AccountType.V2RAy, AccountActionStatus.Delete);
+        }
         public async Task DisableExpired()
         {
 
@@ -1194,14 +1207,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(localServerTime, info);
 
 
-            var keys = _db.SSHKeyInfos.Where(c => (c.ExpireDate <= DateTime.Now || c.UsedTraffic > c.TotalTraffic) && c.UserId != 41).ToList();
+            var keys = _db.SSHKeyInfos.Where(c => (c.ExpireDate <= DateTime.Now || c.UsedTraffic > c.TotalTraffic)).ToList();
 
 
             try
             {
 
                 await CreateV2Ray(37, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 37).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
-                //await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
                 await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 82).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
                 await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
                 await CreateV2Ray(73, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 73).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
@@ -1475,18 +1488,29 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         if (item.V2Guid.IsNullOrEmpty())
                             item.V2Guid = Guid.NewGuid().ToString();
 
-                        //if (item.V2Port == null || item.V2Port == 0)
-                        //{
-                        //    item.V2Port = RandomPort();
-                        //};
 
-                     
+                        var number = GetUserNumber(currenUserId);
 
-                        var publicKey = GetPublicKey(currenUserId);
-                        int number = GetUserNumber(currenUserId);
+                        var config = new
+                        {
+                            v = number.SubId,
+                            ps = item.UserName,
+                            add = $"vt{number.Domain}.iransshvpn.com",
+                            port = number.Port,
+                            id = $"{item.V2Guid}",
+                            scy = "auto",
+                            net = "tcp",
+                            type = "none",
+                            tls = "none"
+                        };
+
+                        string json = JsonConvert.SerializeObject(config);
+                        string base64Config = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+
+
                         if (accountType == AccountType.V2RAy)
                         {
-                            item.Code = $"vless://{item.V2Guid}@vt{number}.iransshvpn.com:11000?type=tcp&security=tls&fp=&alpn=h3%2Ch2%2Chttp%2F1.1#{item.UserName}";
+                            item.Code = $"vmess://{base64Config}";
 
                             formData = new Dictionary<string, string>
         {
@@ -1571,19 +1595,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             return sSHKeys.First().Id;
         }
 
-        private string GetPublicKey(int currenUserId)
-        {
 
-            var subId = GetSubId(currenUserId);
-            var pubKey = "iAGI6EJJnpfVI1uahPN8TS7HzUdLnta6XcjXcFelgWE";
-            if (subId == "150")
-                pubKey = "-VawEkWZTwjzDc4f1N-HtseuGqsZZ350MRkOGf1QUi8";
-            if (subId == "160")
-                pubKey = "Pvavf3yTNthbhKbqu3d2swtv_aT7Z0fFdz89TSzfUgM";
-            if (subId == "180")
-                pubKey = "jgdRws5lkScNKE4c0OFGhSRH2OZB-7ufejH5P_gUvUI";
-            return pubKey;
-        }
 
         private string GetSID(int currenUserId)
         {
@@ -1619,23 +1631,29 @@ namespace V2Ray.Api.Services.SSHKeyServices
             return subId;
         }
 
-        private int GetUserNumber(int userId)
+        private ConfigDateOutput GetUserNumber(int userId)
         {
-            int port = 17;
-            if (userId == 71)
+
+            var data = new ConfigDateOutput()
             {
-                port = 16;
+                Domain = 17,
+                Port = 7000,
+                SubId = 5,
+            };
+            if (userId == 71)//danial
+            {
+                data.Domain = 16;
+                data.Port = 6000;
+                data.SubId = 4;
             }
-            if (userId == 41)
+            if (userId == 41)//ramin
             {
-                port = 15;
-            }
-            if (userId == 82)
-            {
-                port = 18;
+                data.Domain = 15;
+                data.Port = 5000;
+                data.SubId = 3;
             }
 
-            return port;
+            return data;
         }
         private static string PostData(string privateKey, string publicKey, string userName)
         {
