@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using V2Ray.Api.Entity;
-using static V2Ray.Api.Services.Server.ServerService;
+
 
 namespace V2Ray.Api.Services.V2Keys.Dto
 {
@@ -12,6 +12,5 @@ namespace V2Ray.Api.Services.V2Keys.Dto
         public int Traffic { get; set; }
         public DateTime ExpireDate { get; set; }
         public bool State { get; set; }
-        public Protocol Protocol { get; set; }
     }
 }

@@ -74,6 +74,7 @@ namespace V2Ray.Api.Controllers
         {
             try
             {
+
                 filter.UserId = UserId;
                 filter.IsAdmin = IsAdmin;
                 filter.SortDesc = true;
@@ -112,7 +113,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> Recreate([FromRoute] string name)
         {
-            await _service.Recreate(name);
+            //await _service.Recreate(name);
             return new ApiResponse();
         }
 
@@ -122,12 +123,19 @@ namespace V2Ray.Api.Controllers
         /// ویرایش یک کاربر 
         /// </summary>
         ///
-        [HttpPut("adjust/{serverId:int}")]
-        [Authorize]
+        [HttpPut("adjust")]
 
-        public async Task<ApiResponse> Adjust([FromRoute] int serverId)
+        public async Task<ApiResponse> Adjust()
         {
-            await _service.Adjust(serverId);
+            await _service.Adjust();
+            return new ApiResponse();
+        }
+
+        [HttpPut("adjustV2")]
+
+        public async Task<ApiResponse> AdjustV2()
+        {
+            await _service.AdjustV2();
             return new ApiResponse();
         }
 
@@ -140,7 +148,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> ChangeState([FromRoute] int id)
         {
-            await _service.ChangeState(id);
+            await _service.ChangeState(id,UserId);
             return new ApiResponse();
         }
 
@@ -172,7 +180,7 @@ namespace V2Ray.Api.Controllers
             await _service.GenerateSshFromAdmin(input);
             return new ApiResponse();
         }
-
+        
 
         /// <summary>
         /// دریافت اطلاعات یک کاربر

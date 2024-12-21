@@ -43,7 +43,30 @@
       </template>
 
       <template v-slot:item.qrButton="{ item }">
-        <v-btn v-if="item.accountType == 2" @click="showQRCode(item)">QR</v-btn>
+        <v-icon
+          large
+          v-if="
+            item.accountType == 2 ||
+            item.accountType == 4 ||
+            item.accountType == 6
+          "
+          @click="showQRCode(item)"
+          >mdi-qrcode</v-icon
+        >
+      </template>
+      <template v-slot:item.copyqr="{ item }">
+        <v-row
+          v-if="
+            item.accountType == 2 ||
+            item.accountType == 4 ||
+            item.accountType == 6 ||
+            item.accountType == 7
+          "
+        >
+          <v-icon large class="mr-2" @click="copyToClipboardCode(item)">
+            mdi-content-copy</v-icon
+          >
+        </v-row>
       </template>
 
       <template v-slot:item.copy="{ item }">
@@ -51,7 +74,13 @@
           snackbarMessage
         }}</v-snackbar>
         <v-row v-if="item.accountType == 1 || item.accountType == 3">
-          <v-icon medium class="mr-2" @click="copyToClipBoard(item, true)"
+          <v-icon large class="mr-2" @click="copyToClipBoard(item, true)"
+            >mdi-content-copy</v-icon
+          >
+        </v-row>
+
+        <v-row v-if="item.accountType == 5">
+          <v-icon large class="mr-2" @click="copyToClipBoardWire(item)"
             >mdi-content-copy</v-icon
           >
         </v-row>
@@ -59,7 +88,7 @@
 
       <template v-slot:item.copy1="{ item }">
         <v-row v-if="item.accountType == 1 || item.accountType == 3">
-          <v-icon medium class="mr-2" @click="copyToClipBoard(item, false)">
+          <v-icon large class="mr-2" @click="copyToClipBoard(item, false)">
             mdi-content-copy</v-icon
           >
         </v-row>
@@ -130,6 +159,35 @@
         </v-menu>
       </template>
 
+      <template v-slot:header.password="{ header }">
+        {{ header.text }}
+        <v-menu offset-y left :close-on-content-click="false">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon small :color="password ? 'primary' : ''"
+                >mdi-filter</v-icon
+              >
+            </v-btn>
+          </template>
+          <div style="background-color: white; width: 280px">
+            <v-text-field
+              v-model="password"
+              class="pa-4"
+              type="text"
+              label="جستجو"
+            ></v-text-field>
+            <v-btn
+              @click="password = ''"
+              small
+              text
+              color="primary"
+              class="ml-2 mb-2"
+              >پاک کردن</v-btn
+            >
+          </div>
+        </v-menu>
+      </template>
+
       <template v-slot:item.chargeDate="{ item }">
         <v-badge color="green" :content="item.chargeDate"> </v-badge>
       </template>
@@ -147,7 +205,8 @@
             <vue-qrcode-component
               :text="qrData"
               :size="200"
-              @click.native="copyToClipboardCode"
+              error-level="L"
+              @click="copyToClipboardCode"
             />
           </div>
           <div v-else>No QR Code to display</div>
@@ -208,16 +267,20 @@ export default {
       serverid: null,
       isActive: null,
       userName: null,
+      password: null,
       sshKeys: [],
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
-        { text: "سرور", value: "server", sortable: true },
+        { text: "رمز عبور", value: "password", sortable: false },
+        { text: "وضعیت ترافیک", value: "trafficExpired", sortable: false },
+        { text: "ترافیک کل", value: "totalTraffic", sortable: true },
+        { text: "ترافیک مصرف شده", value: "usedTraffic", sortable: true },
         { text: "زمان ایجاد / تمدید", value: "chargeDate", sortable: true },
         { text: "تاریخ انقضا", value: "expireDate", sortable: true },
-        { text: "رمز عبور", value: "password", sortable: false },
         { text: "نام ", value: "name", sortable: true },
+        { text: "پروتکل ", value: "protocol", sortable: true },
         { text: "وضعیت", value: "enable", sortable: true },
         { text: "تمدید", value: "charge", sortable: false },
         { text: "تغییر رمز", value: "changePassword", sortable: false },
@@ -225,10 +288,19 @@ export default {
         { text: "حذف", value: "delete", sortable: false },
 
         { text: "", value: "qrButton", sortable: false },
+        { text: "", value: "copyqr", sortable: false },
+        { text: "", value: "qrButtonWireGuard", sortable: false },
+        { text: "", value: "downlaodWireGuard", sortable: false },
+
         { text: "", value: "copy", sortable: false },
         { text: "", value: "copy1", sortable: false },
       ],
     };
+  },
+  computed: {
+    filteredHeaders() {
+      return this.headers.filter((header) => this.showHeader(header.value));
+    },
   },
   watch: {
     options: {
@@ -238,12 +310,21 @@ export default {
       deep: true,
     },
 
+    password: function () {
+      if (this.password.length > 5 || this.password.length === 0) {
+        this.options.page = 1;
+        this.options.password = this.password;
+
+        if (this.password.length > 5) this.getSSHKeys();
+      }
+    },
+
     userName: function () {
       if (this.userName.length > 2 || this.userName.length === 0)
         this.options.page = 1;
       this.options.userName = this.userName;
 
-      this.getSSHKeys();
+      if (this.userName.length > 3) this.getSSHKeys();
     },
   },
   created() {
@@ -252,14 +333,25 @@ export default {
   },
 
   methods: {
-    async getServers() {
-      await request.get(`/v2Server/all-servers`).then((response) => {
-        var data = response.data.result;
-        this.servers = data.result;
-      });
+    showHeader(header) {
+      // Logic to determine whether to show the header based on the header name
+      if (header === "name") {
+        return this.showName;
+      } else if (header === "age") {
+        return this.showAge;
+      } else if (header === "gender") {
+        return this.showGender;
+      }
+      return false; // Default case, hide if not found
     },
+    async getServers() {
+      // await request.get(`/v2Server/all-servers`).then((response) => {
+      //   var data = response.data.result;
+      //   this.servers = data.result;
+      // });
+    },
+
     showQRCode(item) {
-      debugger;
       // Generate QR code data based on item data
       this.qrData = item.code;
 
@@ -284,9 +376,25 @@ export default {
       this.$refs.addSSHKeyCom.id = item.id;
     },
 
-    copyToClipboardCode() {
+    copyToClipboardCode(item) {
       // Copy QR code data to clipboard
-      navigator.clipboard.writeText(this.qrData);
+
+      navigator.clipboard.writeText(item.code);
+      this.snackbar = true;
+      setTimeout(() => {
+        this.snackbar = false;
+      }, 2000);
+    },
+    copyToClipBoardWire(item) {
+      // Copy QR code data to clipboard
+
+      let co = `پروفایل دانلود: https://iranv2ray.com/api/publicData/get-wireguard-config-file/${item.userName}
+لینک برنامه اندروید: https://download.wireguard.com/android-client/com.wireguard.android-1.0.20231018.apk 
+لینک برنامه آیفون:https://itunes.apple.com/us/app/wireguard/id1441195209?ls=1&mt=8 
+تاریخ اعتبار :  ${item.expireDate} 
+آموزش استفاده :https://my.uupload.ir/dl/yoOK6DRX `;
+
+      navigator.clipboard.writeText(co);
       this.snackbar = true;
       setTimeout(() => {
         this.snackbar = false;
@@ -304,30 +412,9 @@ export default {
         this.snackbarMessage = "کپی شد";
       }
       let textToCopy = "";
-      if (item.accountType == 3) {
-        if (withToturial) {
-          textToCopy = `
-                username: ${item.userName} \n
-                username: ${item.server}.iransshvpn.com \n
-                 password: ${item.password} \n
-                 تاریخ اعتبار :  ${item.expireDate} \n
-                 \nدانلو برنامه اندروید :https://my.uupload.ir/dl/yoOK6DRX
-                  \n دانلود برنامه آیفون : https://apps.apple.com/us/app/openvpn-connect-openvpn-app/id590379981
-                  \n دانلود پروفایل : https://iranv2ray.com/api/PublicData/get-file
-                 \nآموزش اتصال اندروید  : https://my.uupload.ir/p/yoOK6rxD
-                  \nآموزش اتصال l2tp (پیشنهادی) آیفون : https://my.uupload.ir/p/6E4o6vxW
-                 \nآموزش اتصال آیفون(OPEN VPN)  :https://my.uupload.ir/p/VX70k2KQ
-              `;
-        } else {
-          textToCopy = `username: ${item.userName} \n
-                 password: ${item.password} \n 
-                 server: ${item.server}.iransshvpn.com \n 
-                 دانلود پروفایل :https://iranv2ray.com/api/PublicData/get-file \n 
-                 تاریخ اعتبار : ${item.expireDate}`;
-        }
-   
+      if (item.accountType == 1) {
+        textToCopy = ` وارد لینک زیر شوید و آموزش داخل صفحه را ببنید \n ${item.code}`;
       }
-
       if (item.accountType == 1) {
         if (withToturial) {
           textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : ${item.server}.iransshvpn.com \n  Port : 1027 \nتاریخ اعتبار : ${item.expireDate} \nحروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \nآموزش اتصال: https://my.uupload.ir/dl/yoOWe2Y7 \n`;
@@ -400,7 +487,7 @@ export default {
         icon: "warning",
         input: "select",
         inputOptions: {
-          900: "3 ماه کامتر",
+          900: "3 ماه کمتر",
           600: "2 ماه کمتر",
           300: "1 ماه کمتر",
           30: "1 ماهه",

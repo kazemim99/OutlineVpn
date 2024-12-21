@@ -38,7 +38,12 @@ const routes: Array<RouteConfig> = [
         meta: { requireAuth: true },
         component: () => import("@/views/SSHKeys/index.vue"),
       },
-
+      {
+        path: "dnsrecords",
+        name: "DNSRecords",
+        meta: { requireAuth: true },
+        component: () => import("@/views/DNSRecords/index.vue"),
+      },
       {
         path: "profile",
         name: "Profile",
@@ -52,19 +57,7 @@ const routes: Array<RouteConfig> = [
 
         component: () => import("@/views/HomePage/Linux.vue"),
       },
-      // {
-      //   path: "checkout/:id",
-      //   name: "Checkout",
-      //   component: () => import("@/views/Plans/Checkout.vue"),
-      //   meta: { requireAuth: true }
-      // },
-
-      // {
-      //   path: "plans",
-      //   name: "Plans",
-      //   component: () => import("@/views/Plans/index.vue"),
-      //   meta: { requireAuth: true }
-      // },
+     
 
       {
         path: "v2servers",
@@ -87,6 +80,12 @@ const routes: Array<RouteConfig> = [
     component: () => import("@/views/Home.vue"),
   },
   {
+    path: "/dnsrecords",
+    name: "DNSRecords",
+    redirect: "/dashboard/dnsrecords",
+    component: () => import("@/views/DNSRecords/index.vue"),
+  },
+  {
     path: "/",
     name: "CustomerLogin",
     component: () => import("@/views/Login/customerLogin.vue"),
@@ -94,7 +93,6 @@ const routes: Array<RouteConfig> = [
   {
     path: "/customerInfo",
     name: "CustomerInfo",
-    meta: { requireAuth: true },
     component: () => import("@/views/Login/customerInfo.vue"),
   },
   {

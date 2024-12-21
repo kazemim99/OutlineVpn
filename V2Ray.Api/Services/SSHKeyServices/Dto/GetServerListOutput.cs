@@ -11,6 +11,11 @@
         public string Password { get; set; }
         public string ExpireDate { get; set; }
         public string CreatedAt { get; set; }
+        public string TrafficExpired { get; set; }
+
+        public int TotalTraffic { get; set; }
+        public int UsedTraffic { get; set; }
+
         public AccountType AccountType { get; set; }
 
         public string Name
@@ -18,5 +23,7 @@
             get; set;
         }
         public string ChargeDate { get; set; }
+        public string Protocol { get; set; }
+        public string WireGuardQrCode { get;  set; }
     }
 }

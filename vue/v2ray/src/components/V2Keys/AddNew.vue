@@ -112,10 +112,10 @@ export default Vue.extend({
 
   methods: {
     async getServers() {
-      await request.get(`/v2Server/all-servers`).then((response) => {
-        var data = response.data.result;
-        this.servers = data.result;
-      });
+      // await request.get(`/v2Server/all-servers`).then((response) => {
+      //   var data = response.data.result;
+      //   this.servers = data.result;
+      // });
     },
     async getV2Key(id) {
       await request.get(`/v2Key/${id}`).then((response) => {

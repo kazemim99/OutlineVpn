@@ -39,7 +39,6 @@ namespace V2Ray.Api.Database
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<V2Server> V2Servers { get; set; }
-        public DbSet<V2Key> V2Keys { get; set; }
         public DbSet<SSHKey> SSHKeyInfos { get; set; }
         public DbSet<DNSRecord> DNSRecords { get; set; }
 

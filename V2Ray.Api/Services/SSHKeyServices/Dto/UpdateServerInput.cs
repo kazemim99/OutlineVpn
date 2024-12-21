@@ -9,5 +9,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
        
         [JsonIgnore]
         public bool Enable { get;  set; }
+        [JsonIgnore]
+        public int UsedTraffic { get;  set; }
     }
 }

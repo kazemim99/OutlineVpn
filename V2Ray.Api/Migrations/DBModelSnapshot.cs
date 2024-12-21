@@ -56,17 +56,22 @@ namespace V2Ray.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<bool>("Enable")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Ipv4")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Ipv6")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdateDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("DNSRecords");
+                    b.ToTable("DNSRecords", (string)null);
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.Message", b =>
@@ -273,6 +278,11 @@ namespace V2Ray.Api.Migrations
                     b.Property<DateTime>("ExpireDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsSynced")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<int>("MultiUser")
                         .HasColumnType("int");
 
@@ -287,15 +297,28 @@ namespace V2Ray.Api.Migrations
                     b.Property<int>("Port")
                         .HasColumnType("int");
 
+                    b.Property<string>("SSHCode")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
                     b.Property<string>("Server")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("TotalTraffic")
+                        .HasColumnType("float");
+
+                    b.Property<bool>("TrefficExpired")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("UpdaterUserId")
                         .HasColumnType("int");
+
+                    b.Property<double>("UsedTraffic")
+                        .HasColumnType("float");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -315,6 +338,12 @@ namespace V2Ray.Api.Migrations
 
                     b.Property<int?>("V2ServerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("WireGuardPrivateKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WireGuardPublicKey")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -461,73 +490,6 @@ namespace V2Ray.Api.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("V2Ray.Api.Entity.V2Key", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ClientPort")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatorUserId")
-                        .HasColumnType("int");
-
-                    b.Property<long>("ExpireDate")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("KeyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Port")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Protocol")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Remark")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("State")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("Traffic")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UpdaterUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("V2ServerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("V2ServerId");
-
-                    b.ToTable("V2Keys");
-                });
-
             modelBuilder.Entity("V2Ray.Api.Entity.V2Server", b =>
                 {
                     b.Property<int>("Id")
@@ -591,7 +553,7 @@ namespace V2Ray.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
@@ -699,32 +661,11 @@ namespace V2Ray.Api.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("V2Ray.Api.Entity.V2Key", b =>
-                {
-                    b.HasOne("V2Ray.Api.Entity.User", "User")
-                        .WithMany("V2Keys")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("V2Ray.Api.Entity.V2Server", "V2Server")
-                        .WithMany()
-                        .HasForeignKey("V2ServerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("V2Server");
-                });
-
             modelBuilder.Entity("V2Ray.Api.Entity.V2Server", b =>
                 {
-                    b.HasOne("V2Ray.Api.Entity.User", "User")
+                    b.HasOne("V2Ray.Api.Entity.User", null)
                         .WithMany("Servers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("User");
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.Message", b =>
@@ -758,8 +699,6 @@ namespace V2Ray.Api.Migrations
                     b.Navigation("SSHKeyInfos");
 
                     b.Navigation("Servers");
-
-                    b.Navigation("V2Keys");
                 });
 
             modelBuilder.Entity("V2Ray.Api.Entity.V2Server", b =>
