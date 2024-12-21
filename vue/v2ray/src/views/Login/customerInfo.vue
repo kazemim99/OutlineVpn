@@ -173,7 +173,7 @@ export default {
           url = "/download/android";
           break;
         case "windows":
-          url = "/download/windows";
+          url = "https://sourceforge.net/projects/netmodhttp/";
           break;
       }
       window.open(url, "_blank");

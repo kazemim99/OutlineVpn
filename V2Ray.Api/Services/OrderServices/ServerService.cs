@@ -19,34 +19,13 @@ namespace V2Ray.Api.Services.OrderServices
         IOrderService
     {
         private readonly DB _db;
-        private readonly ISSHKeyService _sshKeyService;
         private readonly IMapper _mapper;
-        public OrderService(DB db, IMapper mapper, ISSHKeyService sshKeyService) : base(mapper, db)
+        public OrderService(DB db, IMapper mapper) : base(mapper, db)
         {
             _mapper = mapper;
             _db = db;
-            _sshKeyService = sshKeyService;
         }
 
-        //public async Task ChangeState(int id, OrderStateEnum stateId)
-        //{
-        //    var order = await _db.Orders.FirstAsync(a => a.Id == id);
-        //    var sshKey = await _db.SSHKeyInfos.Include(a => a.V2Server).FirstAsync(a => a.Id == order.SSHKeyId);
-        //    if (stateId == OrderStateEnum.Confirmed)
-        //    {
-        //        await _sshKeyService.Charge(order.UserId);
-        //    }
-        //    if (stateId == OrderStateEnum.Invalid)
-        //    {
-        //        await _sshKeyService.DeleteFromVPS(sshKey.UserName, sshKey.V2Server);
-        //        sshKey.Enable = false;
-        //        _db.Update(sshKey);
-        //    }
-        //    order.Status = stateId;
-        //    _db.Update(order);
-        //    _db.SaveChanges();
-
-        //}
 
 
         public override IQueryable<Order> Filter(OrderFilterInput filter)

@@ -43,7 +43,8 @@ namespace V2Ray.Api.Entity.Configurations
     {
         public void Configure(EntityTypeBuilder<DNSRecord> builder)
         {
-           
+            builder.ToTable("DNSRecords");
+            builder.Property(c => c.Ipv4).IsRequired();
         }
     }
 
@@ -56,6 +57,7 @@ namespace V2Ray.Api.Entity.Configurations
             builder.Property(c => c.UserName).IsRequired();
             builder.Property(c => c.SSHCode).HasMaxLength(512).IsRequired(false);
             builder.Property(c => c.Password).IsRequired();
+            builder.Property(c => c.IsSynced).HasDefaultValue(true);
 
 
             builder.HasOne(a => a.User).WithMany(c => c.SSHKeyInfos)

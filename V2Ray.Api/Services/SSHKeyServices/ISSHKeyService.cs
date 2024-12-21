@@ -18,12 +18,12 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task AdjustV2();
         Task ChangeState(int id,int currentUserId, bool fromCharge = false);
         Task ChangePassowrd(int id);
-        Task Recreate(string name);
+        //Task Recreate(string name);
         Task UpdateUserTraffic();
         Task DisableExpired();
-        Task RandomDel();
         Task SetUser(int userId, SetPasswordModel model);
         Task Charge(int id, int durationId, int userId);
         void ChangeServer(SSHKey sshKey, V2Server newServer, V2Server oldserver);
+        Task<string> CreateIranAccount(List<SSHKey> sSHKeys, AccountActionStatus status, bool isSync = false);
     }
 }

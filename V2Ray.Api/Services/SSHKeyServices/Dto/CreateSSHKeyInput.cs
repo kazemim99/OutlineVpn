@@ -68,19 +68,21 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         [Required]
         public AccountType AccountType { get; set; }
 
-     
+
     }
 
     public enum AccountType
     {
 
-        [Description("Hiddify")]
-        Hiddify = 4,
+        [Description("VMess")]
+        VMess = 4,
         [Description("SSH")]
         SSH = 1,
-        [Description("V2RAy")]
+        [Description("VLess")]
         V2RAy = 2,
         [Description("IRAN")]
-        IRAN = 3,
+        IRAN = 6,
+        [Description("Outline")]
+        Outline = 7,
     }
 }

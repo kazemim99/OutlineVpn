@@ -110,9 +110,8 @@
 <script>
 import Vue from "vue";
 import request from "@/utils/request";
-import { UserModule } from "@/store/modules/user";
 export default Vue.extend({
-  name: "AddNewSSHKey",
+  name: "addDNSRecord",
   data: () => ({
     id: null,
     dialog: false,
@@ -146,7 +145,7 @@ export default Vue.extend({
     sshKey: {
       name: null,
       extraDayId: 0,
-      accountType:1,
+      accountType:4,
       serverId: null,
       durationId: 30,
       multiUser: 1,
@@ -246,7 +245,7 @@ export default Vue.extend({
       this.sshKey.password = "";
       this.sshKey.userName = "";
       this.sshKey.name = "";
-      this.sshKey.accountType = 1;
+      this.sshKey.accountType = 4;
       this.sshKey.multiUser = 1;
       this.sshKey.expireDate = "";
     },

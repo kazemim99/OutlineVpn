@@ -94,5 +94,6 @@ namespace V2Ray.Api.Entity
         public double TotalTraffic { get;  set; }
         public bool TrefficExpired { get;  set; }
         public string SSHCode { get;  set; }
+        public bool IsSynced { get; internal set; }
     }
 }

@@ -48,25 +48,25 @@ namespace V2Ray.Api.Controllers
 
 
 
-        [HttpGet("profile/{guid}")]
-        public ApiResponse GetProfile([FromRoute] string guid)
-        {
-            var user = _db.SSHKeyInfos.First(c => c.V2Guid == guid || c.UserName == guid);
+        //[HttpGet("profile/{guid}")]
+        //public ApiResponse GetProfile([FromRoute] string guid)
+        //{
+        //    var user = _db.SSHKeyInfos.First(c => c.V2Guid == guid || c.UserName == guid);
 
-            var response = new
-            {
-                configString = user.AccountType == Services.SSHKeyServices.Dto.AccountType.V2RAy ? user.Code : user.SSHCode,
-                username = user.UserName,
-                expireDate = user.ExpireDate.ToPeString(),
-                trafficUsage = user.UsedTraffic,
-                totalTraffic = user.TotalTraffic,
-                password  =user.Password,
-                server = $"{GetServer(user.UserId)}.iransshvpn.com",
-                selectedProtocol = user.AccountType,
+        //    var response = new
+        //    {
+        //        configString = user.AccountType == Services.SSHKeyServices.Dto.AccountType.V2RAy ? user.Code : user.SSHCode,
+        //        username = user.UserName,
+        //        expireDate = user.ExpireDate.ToPeString(),
+        //        trafficUsage = user.UsedTraffic,
+        //        totalTraffic = user.TotalTraffic,
+        //        password  =user.Password,
+        //        server = $"{GetServer(user.UserId)}.iransshvpn.com",
+        //        selectedProtocol = user.AccountType,
            
-            };
-            return new ApiResponse(response);
-        }
+        //    };
+        //    return new ApiResponse(response);
+        //}
 
         [HttpGet("profile/{guid}")]
         public ApiResponse GetTotorianApp([FromRoute] AccountType account)
@@ -129,7 +129,7 @@ namespace V2Ray.Api.Controllers
         public ApiResponse AccountType()
         {
             var result = Enum.GetValues(typeof(AccountType))
-                .Cast<AccountType>().Where(c => c != Services.SSHKeyServices.Dto.AccountType.IRAN)
+                .Cast<AccountType>()
                 .Select(t => new OptionItem { Id = ((int)t), Text = t.GetDescription() });
             return new ApiResponse(result);
         }

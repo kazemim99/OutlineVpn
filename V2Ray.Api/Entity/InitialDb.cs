@@ -22,7 +22,7 @@ namespace V2Ray.Api.Entity
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
             }
-            SeedData.Seed(db, isTest);
+            //SeedData.Seed(db, isTest);
         }
     }
 
@@ -32,203 +32,26 @@ namespace V2Ray.Api.Entity
         {
             try
             {
-
-                CreateUser(db);
-                CreateKey(db);
-                //CreateServer(db);
-
-                //CreateLockerLog(db);
-                if (!isTest)
-                {
-                    //CreateComplex(db);
-                }
+                CreateDNS(db);
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
         }
-
-        private static void CreateServer<T>(T db) where T : DB
+        private static void CreateDNS<T>(T db) where T : DB
         {
-            //db.V2Servers.RemoveRange(db.V2Servers.ToList());
-            //db.SaveChanges();
-            //if (!db.V2Servers.Any(a => a.Title != "Amesterdam-B"))
-            //{
-            //    db.V2Servers.Add(new V2Server
-            //    {
-            //        Title = "Amesterdam-B",
-            //        CityId = db.Cities.First(a => a.Title == "Amesterdam").Id,
-            //        IP = "",
-            //        Password = "!Q@W3e4r",
-            //        Port = 4152,
-            //        UserName = "kazemi.mst",
-            //        State = false,
-            //        Url = "",
-            //    });
-            //}
-            //if (!db.V2Servers.Any(a => a.Title != "Amesterdam-A"))
-            //{
-            //    db.V2Servers.Add(new V2Server
-            //    {
-            //        Title = "Amesterdam-A",
-            //        CityId = db.Cities.First(a => a.Title == "Amesterdam").Id,
-            //        IP = "",
-            //        Password = "!Q@W3e4r",
-            //        Port = 4152,
-            //        UserName = "kazemi.mst",
-            //        State = false,
-            //        Url = "",
-            //    });
-            //}
-            //if (!db.V2Servers.Any(a => a.Title != "Paris-A"))
-            //{
-            //    db.V2Servers.Add(new V2Server
-            //    {
-            //        Title = "Paris-A",
-            //        CityId = db.Cities.First(a => a.Title == "Paris").Id,
-            //        IP = "",
-            //        Password = "!Q@W3e4r",
-            //        Port = 4152,
-            //        UserName = "kazemi.mst",
-            //        State = true,
-            //        Url = "",
-            //    });
-            //}
-
-            //if (!db.V2Servers.Any(a => a.Title != "Paris-B"))
-            //{
-            //    db.V2Servers.Add(new V2Server
-            //    {
-            //        Title = "Paris-B",
-            //        CityId = db.Cities.First(a => a.Title == "Paris").Id,
-            //        IP = "",
-            //        Password = "!Q@W3e4r",
-            //        Port = 4152,
-            //        UserName = "kazemi.mst",
-            //        State = true,
-            //        Url = "",
-            //    });
-            //}
-            if (!db.V2Servers.Any())
-            {
-                var obj = new V2Server
-                {
-                    IP = "1",
-                    Title = "Frankfurt-B",
-                    Password = "!Q@W#E$R5t6y7u8i",
-                    Port = 1027,
-                    UserName = "root",
-                    IsActive = true,
-                    Url = "ssh1.iranv2ray.com",
-                };
-                db.V2Servers.Add(obj);
-                db.SaveChanges();
-                var serverId = obj.Id;
-
-                //if (db.SSHKeyInfos.Any(c => c.ServerId == null))
-                //{
-                //    var keyInfos = db.SSHKeyInfos.Where(c => c.ServerId == null);
-                //    foreach (var item in keyInfos)
-                //    {
-                //        item.ServerId = serverId;
-                //        db.Update(item);
-                //    }
-                //    db.SaveChanges();
-                //}
-            }
-
-
-
-            //if (!db.V2Servers.Any(a=>a.Title == "Frankfurt-A"))
-            //{
-            //    db.V2Servers.Add(new V2Server
-            //    {
-            //        Title = "Frankfurt-A",
-            //        CityId = db.Cities.First(a => a.Title == "Frankfurt").Id,
-            //        IP = "",
-            //        Password = "!Q@W3e4r",
-            //        Port = 4152,
-            //        UserName = "kazemi.mst",
-            //        State = true,
-            //        IsActive =true,
-            //        Url = "gra.irantrojan.ml",
-            //    });
-            //}
-
-        }
-
-
-
-        private static void CreateUser<T>(T db) where T : DB
-        {
-            if (db.Users.Any())
+            if (db.DNSRecords.Any())
                 return;
 
-            db.Users.Add(new User
+            db.DNSRecords.Add(new DNSRecord
             {
-                IP = "192.168.1.1",
-                IsAdmin = true,
-                Enable = true,
-                Password = BCrypt.Net.BCrypt.HashPassword("11111111"),
-                FirstName = DefaultUserConst.FirstName,
-                LastName = DefaultUserConst.LastName,
-                Avatar = DefaultUserConst.Avatar,
-                Mobile = DefaultUserConst.Mobile,
-                Roles = new List<UserRole> {
-                    new UserRole
-                    {
-                        Role = new Role()
-                        {
-                            Title =  Policies.Admin,
-                        }
-                    },
-                     new UserRole
-                    {
-                        Role = new Role()
-                        {
-                            Title =  Policies.User,
-                        }
-                    }
-                },
+              Enable = true,
+              IsActive = true,
+              Ipv4 = "31.7.70.29",
+              UpdateDate = DateTime.Now,
             });
             db.SaveChanges();
-        }
-
-        private static void CreateKey<T>(T db) where T : DB
-        {
-            if (db.SSHKeyInfos.Any())
-                return;
-
-            try
-            {
-
-           
-            db.SSHKeyInfos.Add(new SSHKey
-            {
-                AccountType = Services.SSHKeyServices.Dto.AccountType.SSH,
-                ChargeDate = DateTime.Now,
-                Code = "",
-                DurationId = 100,
-                Enable = true,
-                ExpireDate = DateTime.Now.AddMonths(100),
-                MultiUser = 2,
-                Name = "ایمان",
-                Password = "123456",
-                Port = 1027,
-                UserId = 2,
-                UserName = "master",
-                Server="a",
-                V2Port = 1300
-            });
-            db.SaveChanges();
-
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
         }
     }
 }

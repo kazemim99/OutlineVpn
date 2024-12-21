@@ -74,6 +74,7 @@ namespace V2Ray.Api.Controllers
         {
             try
             {
+
                 filter.UserId = UserId;
                 filter.IsAdmin = IsAdmin;
                 filter.SortDesc = true;
@@ -112,7 +113,7 @@ namespace V2Ray.Api.Controllers
 
         public async Task<ApiResponse> Recreate([FromRoute] string name)
         {
-            await _service.Recreate(name);
+            //await _service.Recreate(name);
             return new ApiResponse();
         }
 

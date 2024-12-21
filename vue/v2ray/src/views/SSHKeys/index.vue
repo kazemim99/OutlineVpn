@@ -43,28 +43,37 @@
       </template>
 
       <template v-slot:item.qrButton="{ item }">
-        <v-icon large v-if="item.accountType == 2|| item.accountType == 4" @click="showQRCode(item)"
+        <v-icon
+          large
+          v-if="
+            item.accountType == 2 ||
+            item.accountType == 4 ||
+            item.accountType == 6
+          "
+          @click="showQRCode(item)"
           >mdi-qrcode</v-icon
         >
       </template>
       <template v-slot:item.copyqr="{ item }">
-        <v-row v-if="item.accountType == 2 || item.accountType == 4">
+        <v-row
+          v-if="
+            item.accountType == 2 ||
+            item.accountType == 4 ||
+            item.accountType == 6 ||
+            item.accountType == 7
+          "
+        >
           <v-icon large class="mr-2" @click="copyToClipboardCode(item)">
             mdi-content-copy</v-icon
           >
         </v-row>
       </template>
-   
 
       <template v-slot:item.copy="{ item }">
         <v-snackbar v-model="snackbar" :color="snackbarColor" right>{{
           snackbarMessage
         }}</v-snackbar>
-        <v-row
-          v-if="
-            item.accountType == 1 ||
-            item.accountType == 3"
-        >
+        <v-row v-if="item.accountType == 1 || item.accountType == 3">
           <v-icon large class="mr-2" @click="copyToClipBoard(item, true)"
             >mdi-content-copy</v-icon
           >
@@ -78,13 +87,7 @@
       </template>
 
       <template v-slot:item.copy1="{ item }">
-        <v-row
-          v-if="
-            item.accountType == 1 ||
-            item.accountType == 3 ||
-            item.accountType == 4
-          "
-        >
+        <v-row v-if="item.accountType == 1 || item.accountType == 3">
           <v-icon large class="mr-2" @click="copyToClipBoard(item, false)">
             mdi-content-copy</v-icon
           >
@@ -348,9 +351,6 @@ export default {
       // });
     },
 
-
-  
-
     showQRCode(item) {
       // Generate QR code data based on item data
       this.qrData = item.code;
@@ -378,9 +378,7 @@ export default {
 
     copyToClipboardCode(item) {
       // Copy QR code data to clipboard
-      if(item.accountType ==4){
-        item.code =   ` وارد لینک زیر شوید و آموزش داخل صفحه را ببنید \n ${item.code}`
-      }
+
       navigator.clipboard.writeText(item.code);
       this.snackbar = true;
       setTimeout(() => {
@@ -415,8 +413,7 @@ export default {
       }
       let textToCopy = "";
       if (item.accountType == 1) {
-
-        textToCopy = ` وارد لینک زیر شوید و آموزش داخل صفحه را ببنید \n ${item.code}`
+        textToCopy = ` وارد لینک زیر شوید و آموزش داخل صفحه را ببنید \n ${item.code}`;
       }
       if (item.accountType == 1) {
         if (withToturial) {

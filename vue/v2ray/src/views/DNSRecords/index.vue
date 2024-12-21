@@ -72,7 +72,6 @@
           <v-col cols="3">
             <template right>
               <AddNewDNSRecord
-                v-can="'Member_Create'"
                 ref="addDNSRecordCom"
                 @reloadDNSRecords="getDNSRecords"
               />

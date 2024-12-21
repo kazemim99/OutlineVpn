@@ -1,18 +1,32 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Serilog;
-using Serilog.Formatting.Compact;
-using System;
-using System.IO;
-using System.Reflection;
+﻿using Serilog;
+using Telegram.Bot;
+using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace V2Ray.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+
+        private static readonly TelegramBotClient _telegramBotClient = new TelegramBotClient("6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M");
+
+        public static async Task Main(string[] args)
         {
+            using var cts = new CancellationTokenSource();
+
+            //string botToken = "6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M";
+            //string webhookUrl = "https://755d-2a02-4540-e006-ec1a-e5f7-2a25-caea-5e8d.ngrok-free.app";
+
+            //using var httpClient = new HttpClient();
+
+
+            //var url = $"https://api.telegram.org/bot{botToken}/setWebhook?url={webhookUrl}/webhook";
+            //var response = await httpClient.GetAsync(url);
+            //string result = await response.Content.ReadAsStringAsync();
+            //await _telegramBotClient.DeleteWebhook();
+
 
             //Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(Configuration)
             //    .Enrich.FromLogContext()
@@ -25,7 +39,20 @@ namespace V2Ray.Api
             //    Log.Information("Application starting...");
             //    throw new Exception(Directory.GetCurrentDirectory());
             var build = CreateHostBuilder(args).Build();
-             build.Run();
+
+
+//            var soce = build.Services.CreateScope();
+//            var service = (IBotServices)soce.ServiceProvider.GetService(typeof(IBotServices));
+//            _telegramBotClient.StartReceiving(
+//           service.HandleUpdateAsync,
+//           service.HandleErrorAsync,
+//              receiverOptions: new ReceiverOptions { AllowedUpdates = Array.Empty<UpdateType>() },
+// cancellationToken: CancellationToken.None
+//);
+
+
+            build.Run();
+           
             //}
             //catch (Exception ex)
             //{
