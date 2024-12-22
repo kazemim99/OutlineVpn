@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using V2Ray.Api.Services.SSHKeyServices.Dto;
 using static V2Ray.Api.Entity.SSHKey;
-using static V2Ray.Api.Services.Server.ServerService;
+
 
 namespace V2Ray.Api.Entity
 {
@@ -58,8 +58,6 @@ namespace V2Ray.Api.Entity
         public List<SSHKey> SSHKeys { get; set; }
         public bool Enable { get; set; }
         public string Token { get; set; }
-        public int UserId { get; internal set; }
-        public User User { get; set; }
         public bool HasLoadBalance { get; set; }
         public int? MultiUser { get; set; }
 
@@ -89,23 +87,13 @@ namespace V2Ray.Api.Entity
         public int? V2Port { get; set; }
         public string? V2Guid { get; set; }
         public int V2Id { get; set; }
+        public string? WireGuardPrivateKey { get; set; }
+        public string? WireGuardPublicKey { get; set; }
         public AccountType AccountType { get; set; }
-    }
-    public class V2Key : FullAuditEntity<int>, ISoftDelete
-    {
-        public string Remark { get; set; }
-        public int Traffic { get; set; }
-        public int ClientPort { get; set; }
-        public long ExpireDate { get; set; }
-        public bool State { get; set; } = true;
-        public Protocol Protocol { get; set; }
-        public string Key { get; set; }
-        public bool IsDeleted { get; set; }
-        public int V2ServerId { get; set; }
-        public V2Server V2Server { get; set; }
-        public int? UserId { get; set; }
-        public User User { get; set; }
-        public int Port { get; internal set; }
-        public int KeyId { get; set; }
+        public double UsedTraffic { get;  set; }
+        public double TotalTraffic { get;  set; }
+        public bool TrefficExpired { get;  set; }
+        public string SSHCode { get;  set; }
+        public bool IsSynced { get; internal set; }
     }
 }

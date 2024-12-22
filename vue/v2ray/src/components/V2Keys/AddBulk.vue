@@ -100,10 +100,10 @@ export default Vue.extend({
 
   methods: {
     async getServers() {
-      await request.get(`/v2Server/all-servers`).then((response) => {
-        var data = response.data.result;
-        this.servers = data.result;
-      });
+      // await request.get(`/v2Server/all-servers`).then((response) => {
+      //   var data = response.data.result;
+      //   this.servers = data.result;
+      // });
     },
     submit() {
       if (!this.$refs.form.validate()) {

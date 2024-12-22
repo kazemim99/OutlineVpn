@@ -24,12 +24,13 @@ namespace V2Ray.Api.IOC
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRahyabSmsSender, SmsService>();
+            services.AddScoped<IOutlineVpnManager, OutlineVpnManager>();
             services.AddScoped<IOtpService, OtpSharpService>();
-            services.AddScoped<IServerService, ServerService>();
             services.AddScoped<IOrderService, OrderService>();
-            //services.AddScoped<IV2KeyService, V2KeyService>();
+            services.AddScoped<ICloudflareDnsUpdater, CloudflareDnsUpdater>();
             services.AddScoped<IProblemReportservice, ProblemReportservice>();
             services.AddScoped<ISSHKeyService, SSHKeyService>();
+            services.AddScoped<IBotServices, BotServices>();
 
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 

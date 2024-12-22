@@ -19,34 +19,13 @@ namespace V2Ray.Api.Services.OrderServices
         IOrderService
     {
         private readonly DB _db;
-        private readonly ISSHKeyService _sshKeyService;
         private readonly IMapper _mapper;
-        public OrderService(DB db, IMapper mapper, ISSHKeyService sshKeyService) : base(mapper, db)
+        public OrderService(DB db, IMapper mapper) : base(mapper, db)
         {
             _mapper = mapper;
             _db = db;
-            _sshKeyService = sshKeyService;
         }
 
-        //public async Task ChangeState(int id, OrderStateEnum stateId)
-        //{
-        //    var order = await _db.Orders.FirstAsync(a => a.Id == id);
-        //    var sshKey = await _db.SSHKeyInfos.Include(a => a.V2Server).FirstAsync(a => a.Id == order.SSHKeyId);
-        //    if (stateId == OrderStateEnum.Confirmed)
-        //    {
-        //        await _sshKeyService.Charge(order.UserId);
-        //    }
-        //    if (stateId == OrderStateEnum.Invalid)
-        //    {
-        //        await _sshKeyService.DeleteFromVPS(sshKey.UserName, sshKey.V2Server);
-        //        sshKey.Enable = false;
-        //        _db.Update(sshKey);
-        //    }
-        //    order.Status = stateId;
-        //    _db.Update(order);
-        //    _db.SaveChanges();
-
-        //}
 
 
         public override IQueryable<Order> Filter(OrderFilterInput filter)
@@ -60,11 +39,11 @@ namespace V2Ray.Api.Services.OrderServices
             if (filter.UserId != null)
                 query = query.Where(a => a.UserId == filter.UserId);
 
-            if (filter.From != null)
-                query = query.Where(a => a.CreatedAt.Date >= filter.From.Value.ToGeo().Date);
+            if (filter.FromGeo != null)
+                query = query.Where(a => a.CreatedAt.Date >= filter.FromGeo.Value.Date);
 
-            if (filter.To != null)
-                query = query.Where(a => a.CreatedAt.Date <= filter.To.Value.ToGeo().Date.Date);
+            if (filter.ToGeo != null)
+                query = query.Where(a => a.CreatedAt.Date <= filter.ToGeo.Value.Date);
 
             if (filter.DurationId != null)
                 query = query.Where(a => a.SSHKey.DurationId == filter.DurationId);
@@ -98,11 +77,11 @@ namespace V2Ray.Api.Services.OrderServices
             if (filter.UserId != null)
                 query = query.Where(a => a.UserId == filter.UserId);
 
-            if (filter.From != null)
-                query = query.Where(a => a.CreatedAt.Date >= filter.From.Value.ToGeo().Date);
+            if (filter.FromGeo != null)
+                query = query.Where(a => a.CreatedAt.Date >= filter.FromGeo.Value.Date);
 
-            if (filter.To != null)
-                query = query.Where(a => a.CreatedAt.Date <= filter.To.Value.ToGeo().Date.Date);
+            if (filter.ToGeo != null)
+                query = query.Where(a => a.CreatedAt.Date <= filter.ToGeo.Value.Date);
 
             if (filter.DurationId != null)
                 query = query.Where(a => a.DurationId == filter.DurationId);

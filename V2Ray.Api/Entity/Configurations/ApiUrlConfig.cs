@@ -43,7 +43,8 @@ namespace V2Ray.Api.Entity.Configurations
     {
         public void Configure(EntityTypeBuilder<DNSRecord> builder)
         {
-           
+            builder.ToTable("DNSRecords");
+            builder.Property(c => c.Ipv4).IsRequired();
         }
     }
 
@@ -54,7 +55,9 @@ namespace V2Ray.Api.Entity.Configurations
             builder.HasIndex(c => c.UserName)
                 .IsUnique();
             builder.Property(c => c.UserName).IsRequired();
+            builder.Property(c => c.SSHCode).HasMaxLength(512).IsRequired(false);
             builder.Property(c => c.Password).IsRequired();
+            builder.Property(c => c.IsSynced).HasDefaultValue(true);
 
 
             builder.HasOne(a => a.User).WithMany(c => c.SSHKeyInfos)
@@ -99,7 +102,6 @@ namespace V2Ray.Api.Entity.Configurations
         public void Configure(EntityTypeBuilder<V2Server> builder)
         {
             builder.HasQueryFilter(a => !a.IsDeleted);
-            builder.HasOne(a => a.User).WithMany(a=>a.Servers).HasForeignKey(c=>c.UserId).IsRequired(true).OnDelete(DeleteBehavior.Restrict);
             builder.Property(a => a.Capacity).HasDefaultValue(50);
         }
     }

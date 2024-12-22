@@ -30,7 +30,7 @@
                   ></v-select>
                 </v-col>
 
-                <v-col class="d-flex" cols="4" md="3" sm="6">
+                <!-- <v-col class="d-flex" cols="4" md="3" sm="6">
                   <v-select
                     v-model="sshKey.multiUser"
                     :items="multiUser"
@@ -39,7 +39,7 @@
                     label="تعداد کاربر"
                     solo
                   ></v-select>
-                </v-col>
+                </v-col> -->
 
                 <v-col cols="3" sm="12" md="3">
                   <v-text-field
@@ -110,9 +110,8 @@
 <script>
 import Vue from "vue";
 import request from "@/utils/request";
-import { UserModule } from "@/store/modules/user";
 export default Vue.extend({
-  name: "AddNewSSHKey",
+  name: "addDNSRecord",
   data: () => ({
     id: null,
     dialog: false,
@@ -146,7 +145,7 @@ export default Vue.extend({
     sshKey: {
       name: null,
       extraDayId: 0,
-      accountType:1,
+      accountType:4,
       serverId: null,
       durationId: 30,
       multiUser: 1,
@@ -178,10 +177,10 @@ export default Vue.extend({
 
   methods: {
     async getServers() {
-      await request.get(`/v2Server/all-servers`).then((response) => {
-        var data = response.data.result;
-        this.servers = data.result;
-      });
+      // await request.get(`/v2Server/all-servers`).then((response) => {
+      //   var data = response.data.result;
+      //   this.servers = data.result;
+      // });
     },
     async getSSHKey(id) {
       await request.get(`/sshKey/${id}`).then((response) => {
@@ -246,7 +245,7 @@ export default Vue.extend({
       this.sshKey.password = "";
       this.sshKey.userName = "";
       this.sshKey.name = "";
-      this.sshKey.accountType = 1;
+      this.sshKey.accountType = 4;
       this.sshKey.multiUser = 1;
       this.sshKey.expireDate = "";
     },

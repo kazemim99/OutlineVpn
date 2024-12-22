@@ -62,11 +62,12 @@ namespace V2Ray.Api
                .WriteTo.Seq("http://localhost:5341")
                .CreateLogger();
 
-            //services.AddSingleton<ITelegramBotClient>(new TelegramBotClient("6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M"));
+            services.AddSingleton<ITelegramBotClient>(new TelegramBotClient("6178109792:AAH9P_fd-nMu5lzrE6NaSFlJyTmCEp6-E5M"));
 
 
             services.BindAppSettings(Configuration);
             services.AddHostedService<UpdateUserUsageLockerState>();
+            services.AddHostedService<UpdateTrafficUsage>();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
@@ -114,7 +115,7 @@ namespace V2Ray.Api
                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                    options.UseSqlServer
                    (Configuration.GetConnectionString("Default"),c=>c.EnableRetryOnFailure());
-               });
+               },ServiceLifetime.Transient);
 
                 services.AddHostedService<JwtRefreshTokenCache>();
                 services.AddLogging();

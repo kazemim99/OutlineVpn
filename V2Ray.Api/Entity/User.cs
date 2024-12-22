@@ -2,6 +2,7 @@
 
 namespace V2Ray.Api.Entity
 {
+  
     public class User : FullAuditEntity<int>, ISoftDelete
     {
         public User()
@@ -27,7 +28,6 @@ namespace V2Ray.Api.Entity
         public string? FirstName { get;  set; }
         public string? LastName { get;  set; }
         public List<SSHKey> SSHKeyInfos { get; set; }
-        public List<V2Key> V2Keys { get; set; }
         public List<ProblemReport> ProblemReports { get;  set; }
         public List<Order> Orders { get;  set; }
         public string Mobile { get;  set; }
