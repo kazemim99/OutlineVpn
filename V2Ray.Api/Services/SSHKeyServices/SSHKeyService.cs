@@ -512,6 +512,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         private string ConnectPanel(int userId, AccountType accountType)
         {
+            if (accountType == AccountType.IRAN)
+                return "http://irv.iransshvpn.com:180/W5TFZcn3ia";
+
             var baseUrls = "http://v27.iransshvpn.com";
 
             if (userId == 41) //ramin
@@ -746,13 +749,22 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         Timeout = TimeSpan.FromSeconds(360)
                     };
 
-                    var baseUrls = ConnectPanel(keyInfo.UserId, AccountType.V2RAy);
-
+                    var baseUrls = ConnectPanel(keyInfo.UserId, keyInfo.AccountType);
                     var loginData = new
                     {
                         username = "admin",
                         password = "!Q@W3e4r"
                     };
+
+                    if (keyInfo.AccountType == AccountType.IRAN)
+                    {
+                        loginData = new
+                        {
+                            username = "Mostafa",
+                            password = "M0staf@136$"
+                        };
+                    }
+
 
                     var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
                     loginResponse.EnsureSuccessStatusCode();
@@ -771,9 +783,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         //_db.Update(keyInfo);
                         //_db.SaveChanges();
                     }
-                    await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Delete);
-                    return;
+                    await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Delete,true);
+                    if (keyInfo.AccountType != AccountType.IRAN)
+                    {
+                        return;
+                    }
+                    _db.Update(keyInfo);
                 }
+
 
                 else if (keyInfo.AccountType == AccountType.SSH)
                 {
@@ -804,7 +821,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     {
                         keyInfo.TotalTraffic = keyInfo.UserId == 82 ? 120 : 165;
                     }
-                    await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Create);
+                    await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Create,true);
                 }
 
                 else if (keyInfo.AccountType == AccountType.SSH)
@@ -1264,14 +1281,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
-        public async Task<int> CreateV2Ray(int currenUserId, List<SSHKey> sSHKeys, AccountType accountType, AccountActionStatus status = AccountActionStatus.Create)
+        public async Task<int> CreateV2Ray(int currenUserId, List<SSHKey> sSHKeys, AccountType accountType, AccountActionStatus status = AccountActionStatus.Create,bool isSync =false)
         {
             if (!sSHKeys.Any())
                 return 0;
 
             if (accountType == AccountType.IRAN)
             {
-                await CreateIranAccount(sSHKeys, status);
+                await CreateIranAccount(sSHKeys, status,isSync);
                 return 0;
             }
             HttpClientHandler clientHandler = new HttpClientHandler();
@@ -1511,7 +1528,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             foreach (var item in sSHKeys)
             {
-                if (!isSync)
+                if (!isSync && status != AccountActionStatus.Delete)
                 {
                     if (item.V2Guid.IsNullOrEmpty())
                         item.V2Guid = Guid.NewGuid().ToString();
