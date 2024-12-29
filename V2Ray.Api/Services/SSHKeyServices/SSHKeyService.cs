@@ -1019,7 +1019,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                             if (item2.down > 42949672960)
                             {
-                                item2.down += 9398809120;
+                                item2.down += 8398809120;
                             }
                             if (key != null)
                             {
@@ -1642,16 +1642,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 data.Domain = 6;
                 data.Port = 26000;
-                data.SubId = 2;
-                data.VmessSubId = 5;
+                data.SubId = 11;
+                data.VmessSubId = 12;
                 data.VmessPort = 600;
             }
             if (userId == 41)//ramin
             {
                 data.Domain = 5;
                 data.Port = 25000;
-                data.SubId = 1;
-                data.VmessSubId = 4;
+                data.SubId = 14;
+                data.VmessSubId = 12;
                 data.VmessPort = 500;
             }
             return data;
