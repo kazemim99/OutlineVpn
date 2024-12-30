@@ -417,9 +417,9 @@ export default {
       }
       if (item.accountType == 1) {
         if (withToturial) {
-          textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : ${item.server}.iransshvpn.com \n  Port : 1027 \nتاریخ اعتبار : ${item.expireDate} \nحروف کوچک و بزرگ مهم میباشند و اطلاعات را حتما دستی وارد نمایید \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \nآموزش اتصال: https://my.uupload.ir/dl/yoOWe2Y7 \n`;
+          textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : ${item.server}.iransshvpn.com \n  Port : ${item.port} \nتاریخ اعتبار : ${item.expireDate} \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \n آموزش اتصال اندروید: https://my.uupload.ir/dl/v9p1WVDr \n آموزش اتصال آیفون : https://my.uupload.ir/dl/VX7QEBWR`;
         } else {
-          textToCopy = `username: ${item.userName} \n password: ${item.password} \n server : ${item.server}.iransshvpn.com \n تاریخ اعتبار : ${item.expireDate} \n Port : 1027 \n`;
+          textToCopy = `username: ${item.userName} \n password: ${item.password} \n server : ${item.server}.iransshvpn.com \n تاریخ اعتبار : ${item.expireDate} \n Port : ${item.port} \n`;
         }
       }
       if (navigator.clipboard && window.isSecureContext) {

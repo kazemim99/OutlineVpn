@@ -12,6 +12,7 @@
         public string ExpireDate { get; set; }
         public string CreatedAt { get; set; }
         public string TrafficExpired { get; set; }
+        public string Port { get; set; }
 
         public int TotalTraffic { get; set; }
         public int UsedTraffic { get; set; }

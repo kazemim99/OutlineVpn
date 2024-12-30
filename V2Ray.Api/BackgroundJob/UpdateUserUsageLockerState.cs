@@ -28,7 +28,7 @@ namespace V2Ray.Api.BackgroundJob
         {
             try
             {
-                Thread.Sleep(120000);
+                //Thread.Sleep(120000);
                 using var scope = _scopeFactory.CreateScope();
                 var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
                 await sSHKeyService.DisableExpired();
