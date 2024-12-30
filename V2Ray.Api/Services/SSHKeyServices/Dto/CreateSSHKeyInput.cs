@@ -82,7 +82,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
         V2RAy = 2,
         [Description("IRAN")]
         IRAN = 6,
-        //[Description("Outline")]
-        //Outline = 7,
+        [Description("Outline")]
+        Outline = 7,
     }
 }

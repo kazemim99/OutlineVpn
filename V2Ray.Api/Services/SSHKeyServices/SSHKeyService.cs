@@ -1670,7 +1670,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 data.Domain = 5;
                 data.Port = 25000;
                 data.SubId = 14;
-                data.VmessSubId = 12;
+                data.VmessSubId = 13;
                 data.VmessPort = 500;
             }
             return data;
