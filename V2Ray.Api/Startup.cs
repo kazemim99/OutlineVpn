@@ -66,8 +66,8 @@ namespace V2Ray.Api
 
 
             services.BindAppSettings(Configuration);
-            services.AddHostedService<UpdateUserUsageLockerState>();
-            services.AddHostedService<UpdateTrafficUsage>();
+            //services.AddHostedService<UpdateUserUsageLockerState>();
+            //services.AddHostedService<UpdateTrafficUsage>();
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
