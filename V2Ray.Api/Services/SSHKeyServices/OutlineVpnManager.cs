@@ -1,14 +1,17 @@
 ﻿using Renci.SshNet;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
+using Telegram.Bot.Requests;
 using V2Ray.Api.Database;
+using V2Ray.Api.Extensions;
+using V2Ray.Api.Services.SSHKeyServices.Dto;
 
 namespace V2Ray.Api.Services.SSHKeyServices
 {
 
     public interface IOutlineVpnManager
     {
-        string AddAccessKey(int id, string userName, long bytes);
+        AddAccessKeyOutOut AddAccessKey(int id, string userName, long bytes);
         void DeleteAccessKey(string accessKeyId);
         void UpdateAccessKey(string accessKeyId, string newName, int newDataLimitBytes);
     }
@@ -24,15 +27,21 @@ namespace V2Ray.Api.Services.SSHKeyServices
             _db = db;
         }
 
-        public string AddAccessKey(int id,string userName, long bytes)
+        public AddAccessKeyOutOut AddAccessKey(int id,string userName, long bytes)
         {
-            var pass = Guid.NewGuid().ToString();
+            var output = new AddAccessKeyOutOut();
+            var user = _db.SSHKeyInfos.FirstOrDefault(c => c.UserName == userName && c.AccountType == Dto.AccountType.Outline && c.Password.Length > 10);
+           
+            if (user == null) {
+                output.Pass = Guid.NewGuid().ToString();
+
+            }
             using (var client = new SshClient(host,1027, username, password))
             {
                 client.Connect();
 
                 // Command to add a new access key to shadowbox_config.json
-                string addCommand = "jq '.accessKeys += [{\"id\": \""+ id + "\", \"name\": \""+ userName + "\", \"password\": \""+ pass + "\", \"port\": 14190, \"encryptionMethod\": \"chacha20-ietf-poly1305\", \"dataLimit\": {\"bytes\": " + bytes + "}}]' /opt/outline/persisted-state/shadowbox_config.json > /opt/outline/persisted-state/temp_config.json && mv /opt/outline/persisted-state/temp_config.json /opt/outline/persisted-state/shadowbox_config.json";
+                string addCommand = "jq '.accessKeys += [{\"id\": \""+ id + "\", \"name\": \""+ userName + "\", \"password\": \""+ output.Pass + "\", \"port\": 14190, \"encryptionMethod\": \"chacha20-ietf-poly1305\", \"dataLimit\": {\"bytes\": " + bytes + "}}]' /opt/outline/persisted-state/shadowbox_config.json > /opt/outline/persisted-state/temp_config.json && mv /opt/outline/persisted-state/temp_config.json /opt/outline/persisted-state/shadowbox_config.json";
                 client.RunCommand(addCommand);
 
                 // Restart the Outline service
@@ -40,13 +49,17 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 client.Disconnect();
             }
+            if (user == null)
+            {
+                var phrase = $"chacha20-ietf-poly1305:{output.Pass}";
 
-            var phrase = $"chacha20-ietf-poly1305:{pass}";
-
-            byte[] plainBytes = Encoding.UTF8.GetBytes(phrase);
-            string encodedString = Convert.ToBase64String(plainBytes);
-            var code = $"ss://{encodedString}@ss.iransshvpn.com:14190/?outline=1";
-            return code;
+                byte[] plainBytes = Encoding.UTF8.GetBytes(phrase);
+                string encodedString = Convert.ToBase64String(plainBytes);
+                var code = $"ss://{encodedString}@ss.iransshvpn.com:14190/?outline=1";
+                output.Code = code;
+            }
+            output.Pass = password;
+            return output;
         }
 
         public void DeleteAccessKey(string accessKeyId)

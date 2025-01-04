@@ -188,6 +188,32 @@
         </v-menu>
       </template>
 
+      <template v-slot:header.codeFil="{ header }">
+        {{ header.text }}
+        <v-menu offset-y left :close-on-content-click="false">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on">
+              <v-icon small :color="codeFil ? 'primary' : ''">mdi-filter</v-icon>
+            </v-btn>
+          </template>
+          <div style="background-color: white; width: 280px">
+            <v-text-field
+              v-model="codeFil"
+              class="pa-4"
+              type="text"
+              label="جستجو"
+            ></v-text-field>
+            <v-btn
+              @click="codeFil = ''"
+              small
+              text
+              color="primary"
+              class="ml-2 mb-2"
+              >پاک کردن</v-btn
+            >
+          </div>
+        </v-menu>
+      </template>
       <template v-slot:item.chargeDate="{ item }">
         <v-badge color="green" :content="item.chargeDate"> </v-badge>
       </template>
@@ -268,12 +294,14 @@ export default {
       isActive: null,
       userName: null,
       password: null,
+      codeFil: null,
       sshKeys: [],
       loading: true,
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
+        { text: "کد", value: "codeFil", sortable: false, width: "1%"},
         { text: "وضعیت ترافیک", value: "trafficExpired", sortable: false },
         { text: "ترافیک کل", value: "totalTraffic", sortable: true },
         { text: "ترافیک مصرف شده", value: "usedTraffic", sortable: true },
@@ -318,7 +346,14 @@ export default {
         if (this.password.length > 5) this.getSSHKeys();
       }
     },
+    codeFil: function () {
+      if (this.codeFil.length > 5 || this.codeFil.length === 0) {
+        this.options.page = 1;
+        this.options.codeFil = this.codeFil;
 
+        if (this.codeFil.length > 5) this.getSSHKeys();
+      }
+    },
     userName: function () {
       if (this.userName.length > 2 || this.userName.length === 0)
         this.options.page = 1;

@@ -7,6 +7,7 @@
         public string ServerName { get; set; }
         public string Server { get; set; }
         public string Code { get; set; }
+        public string CodeFil { get; set; }
         public bool Enable { get; set; }
         public string Password { get; set; }
         public string ExpireDate { get; set; }

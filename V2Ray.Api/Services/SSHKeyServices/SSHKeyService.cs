@@ -122,7 +122,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 if (input.AccountType == AccountType.Outline)
                 {
-                    input.Code = _outlineVpnManager.AddAccessKey(_db.SSHKeyInfos.Max(c => c.Id), key.UserName, 50000000000 * key.DurationId);
+                    var outLine = _outlineVpnManager.AddAccessKey(_db.SSHKeyInfos.Max(c => c.Id), key.UserName, 50000000000 * key.DurationId);
+                    input.Code = outLine.Code;
+                    input.Password = outLine.Pass;
                     id = await base.InsertGetIdAsync(input);
                 }
                 else if (input.AccountType == AccountType.V2RAy || input.AccountType == AccountType.VMess || input.AccountType == AccountType.IRAN)
@@ -275,8 +277,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 if (input.AccountType == AccountType.Outline)
                 {
-
-                    key.Code = _outlineVpnManager.AddAccessKey(key.Id, key.UserName, 50000000000);
+                    var outline = _outlineVpnManager.AddAccessKey(key.Id, key.UserName, input.DurationId * 50000000000);
+                    key.Code = outline.Code;
+                    key.Password = outline.Pass;
                     await BulkDeleteServer(keys);
                     await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
                     return;
@@ -1201,6 +1204,11 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 if (filter.Expired)
                 {
                     query = query.Where(a => a.ExpireDate.Date <= DateTime.UtcNow.Date);
+                }
+
+                if (!filter.CodeFil.IsNullOrEmpty())
+                {
+                    query = query.Where(a => a.Code == filter.CodeFil);
                 }
 
                 return query;
