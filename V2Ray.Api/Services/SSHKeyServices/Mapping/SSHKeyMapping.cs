@@ -12,6 +12,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Mapping
             CreateMap<SSHKey, GetSSHKeyListOutput>()
                 .ForMember(a => a.Protocol, c => c.MapFrom(b => b.AccountType.GetDescription()))
                 .ForMember(a => a.UsedTraffic, c => c.MapFrom(b => b.UsedTraffic))
+                .ForMember(a => a.CodeFil, c => c.MapFrom(b => ""))
                 .ForMember(a => a.TrafficExpired, c => c.MapFrom(b => b.TrefficExpired ? "اتمام ترافیک": "فعال"))
                 .ForMember(a => a.TotalTraffic, c => c.MapFrom(b => b.TotalTraffic))
                 .ForMember(a => a.ChargeDate, c => c.MapFrom(b => b.ChargeDate.ToPeString("yyyy/MM/dd")))

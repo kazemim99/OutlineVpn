@@ -22,6 +22,7 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
        
         public int? UserId { get;  set; }
         public bool IsAdmin { get; internal set; }
+        public string? CodeFil { get;  set; }
     }
 
 }
