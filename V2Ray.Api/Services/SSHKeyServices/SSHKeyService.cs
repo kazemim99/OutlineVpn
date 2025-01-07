@@ -90,7 +90,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     SSHCode = $"ssh://{input.UserName}:{input.Password}@{server}.iransshvpn.com:{input.Port}?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#${input.UserName}",
                     UserName = input.UserName,
                     Password = input.Password,
-                    Port  = input.Port,
+                    Port = input.Port,
                     Name = input.Name,
                     ChargeDate = input.ChargeDate,
                     Server = input.Server,
@@ -258,7 +258,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
 
             var key = _db.SSHKeyInfos.Include(new[] { "Orders" }).First(a => a.Id == id);
-         
+
             input.DurationId = key.DurationId;
             input.UserId = key.UserId;
             input.Enable = key.Enable;
@@ -1105,60 +1105,66 @@ namespace V2Ray.Api.Services.SSHKeyServices
             var info = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
             DateTimeOffset localServerTime = DateTimeOffset.Now;
             DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(localServerTime, info);
-
-
-            var keys = _db.SSHKeyInfos.OrderByDescending(c => c.ExpireDate).Where(c => (c.ExpireDate <= DateTime.Now || c.UsedTraffic > c.TotalTraffic)).ToList();
-
-
-            try
+            if (currentTime.Hour > 1 && currentTime.Hour < 7)
             {
-
-                await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
-                await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.VMess && c.UserId == 41).ToList(), AccountType.VMess, AccountActionStatus.Delete);
-                await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
-                await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.VMess && c.UserId == 71).ToList(), AccountType.VMess, AccountActionStatus.Delete);
-                await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 77 || c.UserId == 76).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
-                await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.VMess && c.UserId == 77 || c.UserId == 76).ToList(), AccountType.VMess, AccountActionStatus.Delete);
-
-
-                foreach (var key in keys.Where(c => c.AccountType == AccountType.Outline))
-                {
-                    _outlineVpnManager.DeleteAccessKey(key.UserName);
-
-                }
-                await CreateIranAccount(keys.Where(c => c.AccountType == AccountType.IRAN).ToList(), AccountActionStatus.Delete);
+                await UpdateUserTraffic();
             }
-            catch (Exception ex)
+            else
             {
 
-            }
-            await BulkDeleteServerExpired(keys.Where(c => c.AccountType == AccountType.SSH).ToList());
+                var keys = _db.SSHKeyInfos.OrderByDescending(c => c.ExpireDate).Where(c => (c.ExpireDate <= DateTime.Now || c.UsedTraffic > c.TotalTraffic)).ToList();
 
-            foreach (var item in keys)
-            {
+
                 try
                 {
-                    var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
-                    if (item.Enable)
-                    {
-                        newItem.Enable = false;
-                        _db.Update(newItem);
-                    }
-                    if (item.ExpireDate.AddDays(15) < DateTime.UtcNow)
-                    {
-                        //_db.SSHKeyInfos.Remove(newItem);
-                    }
+
+                    await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                    await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.VMess && c.UserId == 41).ToList(), AccountType.VMess, AccountActionStatus.Delete);
+                    await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                    await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.VMess && c.UserId == 71).ToList(), AccountType.VMess, AccountActionStatus.Delete);
+                    await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 77 || c.UserId == 76).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
+                    await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.VMess && c.UserId == 77 || c.UserId == 76).ToList(), AccountType.VMess, AccountActionStatus.Delete);
 
 
+                    foreach (var key in keys.Where(c => c.AccountType == AccountType.Outline))
+                    {
+                        _outlineVpnManager.DeleteAccessKey(key.UserName);
+
+                    }
+                    await CreateIranAccount(keys.Where(c => c.AccountType == AccountType.IRAN).ToList(), AccountActionStatus.Delete);
                 }
                 catch (Exception ex)
                 {
 
                 }
-                //}
-            }
-            await _db.SaveChangesAsync();
+                await BulkDeleteServerExpired(keys.Where(c => c.AccountType == AccountType.SSH).ToList());
 
+                foreach (var item in keys)
+                {
+                    try
+                    {
+                        var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
+                        if (item.Enable)
+                        {
+                            newItem.Enable = false;
+                            _db.Update(newItem);
+                        }
+                        if (item.ExpireDate.AddDays(15) < DateTime.UtcNow)
+                        {
+                            //_db.SSHKeyInfos.Remove(newItem);
+                        }
+
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    //}
+                }
+                await _db.SaveChangesAsync();
+
+            }
 
 
 
