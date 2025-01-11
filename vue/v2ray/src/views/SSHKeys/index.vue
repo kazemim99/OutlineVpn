@@ -452,7 +452,7 @@ export default {
       }
       if (item.accountType == 1) {
         if (withToturial) {
-          textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : ${item.server}.iransshvpn.com \n  Port : ${item.port} \nتاریخ اعتبار : ${item.expireDate} \nدانلو برنامه اندروید : https://my.uupload.ir/dl/v9pdXMWM \n دانلود برنامه آیفون : https://apps.apple.com/us/app/napsternetv/id1629465476 \n آموزش اتصال اندروید: https://my.uupload.ir/dl/v9p1WVDr \n آموزش اتصال آیفون : https://my.uupload.ir/dl/VX7QEBWR`;
+          textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : ${item.server}.iransshvpn.com \n Port : ${item.port} \nتاریخ اعتبار : ${item.expireDate} \nدانلو برنامه اندروید : https://my.uupload.ir/dl/EOgAxvxR \n   دانلود برنامه آیفون : https://apps.apple.com/eg/app/ssh-vpn-client-for-ssh/id6471132702 \n  آموزش اتصال اندروید: https://my.uupload.ir/p/v9p1WVDr \n آموزش اتصال آیفون : https://my.uupload.ir/p/1LzpAZX8`;
         } else {
           textToCopy = `username: ${item.userName} \n password: ${item.password} \n server : ${item.server}.iransshvpn.com \n تاریخ اعتبار : ${item.expireDate} \n Port : ${item.port} \n`;
         }
