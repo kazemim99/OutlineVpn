@@ -34,7 +34,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         private readonly IMapper _mapper;
         private List<string> NodeIpD = new List<string>
         {
-                "65.109.134.138"
+                "ss.iransshvpn.com"
         };
 
 
@@ -1125,12 +1125,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 77 || c.UserId == 76).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
                     await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.VMess && c.UserId == 77 || c.UserId == 76).ToList(), AccountType.VMess, AccountActionStatus.Delete);
 
-
-                    foreach (var key in keys.Where(c => c.AccountType == AccountType.Outline))
-                    {
-                        _outlineVpnManager.DeleteAccessKey(key.UserName);
-
-                    }
+                  
                     await CreateIranAccount(keys.Where(c => c.AccountType == AccountType.IRAN).ToList(), AccountActionStatus.Delete);
                 }
                 catch (Exception ex)
