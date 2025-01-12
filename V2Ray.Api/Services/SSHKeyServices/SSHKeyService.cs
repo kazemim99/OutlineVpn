@@ -120,14 +120,15 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 int id = 0;
 
 
-                if (input.AccountType == AccountType.Outline)
-                {
-                    var outLine = _outlineVpnManager.AddAccessKey(_db.SSHKeyInfos.Max(c => c.Id), key.UserName, 50000000000 * key.DurationId);
-                    input.Code = outLine.Code;
-                    input.Password = outLine.Pass;
-                    id = await base.InsertGetIdAsync(input);
-                }
-                else if (input.AccountType == AccountType.V2RAy || input.AccountType == AccountType.VMess || input.AccountType == AccountType.IRAN)
+                //if (input.AccountType == AccountType.Outline)
+                //{
+                //    var outLine = _outlineVpnManager.AddAccessKey(_db.SSHKeyInfos.Max(c => c.Id), key.UserName, 50000000000 * key.DurationId);
+                //    input.Code = outLine.Code;
+                //    input.Password = outLine.Pass;
+                //    id = await base.InsertGetIdAsync(input);
+                //}
+                //else 
+                if (input.AccountType == AccountType.V2RAy || input.AccountType == AccountType.VMess || input.AccountType == AccountType.IRAN)
                 {
                     id = await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
                 }
@@ -275,17 +276,18 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 key.AccountType = input.AccountType;
 
-                if (input.AccountType == AccountType.Outline)
-                {
-                    var outline = _outlineVpnManager.AddAccessKey(key.Id, key.UserName, input.DurationId * 50000000000);
-                    key.Code = outline.Code;
-                    key.Password = outline.Pass;
-                    await BulkDeleteServer(keys);
-                    await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
-                    return;
+                //if (input.AccountType == AccountType.Outline)
+                //{
+                //    var outline = _outlineVpnManager.AddAccessKey(key.Id, key.UserName, input.DurationId * 50000000000);
+                //    key.Code = outline.Code;
+                //    key.Password = outline.Pass;
+                //    await BulkDeleteServer(keys);
+                //    await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
+                //    return;
 
-                }
-                else if (input.AccountType == AccountType.V2RAy || input.AccountType == AccountType.VMess || input.AccountType == AccountType.IRAN)
+                //}
+                //else 
+                if (input.AccountType == AccountType.V2RAy || input.AccountType == AccountType.VMess || input.AccountType == AccountType.IRAN)
                 {
                     await BulkDeleteServer(keys);
                     _outlineVpnManager.DeleteAccessKey(key.UserName);
@@ -820,11 +822,11 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     _db.Update(keyInfo);
 
                 }
-                else if (keyInfo.AccountType == AccountType.Outline)
-                {
-                    _outlineVpnManager.DeleteAccessKey(keyInfo.UserName);
-                    _db.Update(keyInfo);
-                }
+                //else if (keyInfo.AccountType == AccountType.Outline)
+                //{
+                //    _outlineVpnManager.DeleteAccessKey(keyInfo.UserName);
+                //    _db.Update(keyInfo);
+                //}
             }
             else
             {
@@ -854,11 +856,11 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 }
 
-                else if (keyInfo.AccountType == AccountType.Outline)
-                {
-                    _outlineVpnManager.AddAccessKey(keyInfo.Id, keyInfo.UserName, 50000000000);
-                    _db.Update(keyInfo);
-                }
+                //else if (keyInfo.AccountType == AccountType.Outline)
+                //{
+                //    _outlineVpnManager.AddAccessKey(keyInfo.Id, keyInfo.UserName, 50000000000);
+                //    _db.Update(keyInfo);
+                //}
 
             }
 
