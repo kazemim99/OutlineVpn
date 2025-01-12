@@ -28,7 +28,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
     {
         private readonly DB _db;
 
-        private readonly IOutlineVpnManager _outlineVpnManager;
+        //private readonly IOutlineVpnManager _outlineVpnManager;
         private readonly ICloudflareDnsUpdater _cloudflareDnsUpdater;
 
         private readonly IMapper _mapper;
@@ -44,7 +44,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
             _db = db;
             _mapper = mapper;
-            _outlineVpnManager = outlineVpnManager;
+            //_outlineVpnManager = outlineVpnManager;
             _cloudflareDnsUpdater = cloudflareDnsUpdater;
         }
 
@@ -276,21 +276,21 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 key.AccountType = input.AccountType;
 
-                //if (input.AccountType == AccountType.Outline)
-                //{
-                //    var outline = _outlineVpnManager.AddAccessKey(key.Id, key.UserName, input.DurationId * 50000000000);
-                //    key.Code = outline.Code;
-                //    key.Password = outline.Pass;
-                //    await BulkDeleteServer(keys);
-                //    await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
-                //    return;
+                if (input.AccountType == AccountType.Outline)
+                {
+                    //var outline = _outlineVpnManager.AddAccessKey(key.Id, key.UserName, input.DurationId * 50000000000);
+                    //key.Code = outline.Code;
+                    //key.Password = outline.Pass;
+                    await BulkDeleteServer(keys);
+                    await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
+                    return;
 
-                //}
-                //else 
+                }
+                else
                 if (input.AccountType == AccountType.V2RAy || input.AccountType == AccountType.VMess || input.AccountType == AccountType.IRAN)
                 {
                     await BulkDeleteServer(keys);
-                    _outlineVpnManager.DeleteAccessKey(key.UserName);
+                    //_outlineVpnManager.DeleteAccessKey(key.UserName);
                     await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
                     await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
                     return;
@@ -298,7 +298,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
                 else
                 {
-                    _outlineVpnManager.DeleteAccessKey(key.UserName);
+                    //_outlineVpnManager.DeleteAccessKey(key.UserName);
                     await BulkAddUserToServer(keys);
                     await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
 

@@ -30,7 +30,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         public AddAccessKeyOutOut AddAccessKey(int id,string userName, long bytes)
         {
             var output = new AddAccessKeyOutOut();
-            var user = _db.SSHKeyInfos.FirstOrDefault(c => c.UserName == userName && c.AccountType == Dto.AccountType.Outline && c.Password.Length > 10);
+            var user = _db.SSHKeyInfos.FirstOrDefault(c => c.UserName == userName  && c.Password.Length > 10);
            
             if (user == null) {
                 output.Pass = Guid.NewGuid().ToString();
