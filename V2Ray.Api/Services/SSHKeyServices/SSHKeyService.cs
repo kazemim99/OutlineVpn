@@ -1114,7 +1114,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             else
             {
 
-                var keys = _db.SSHKeyInfos.OrderByDescending(c => c.ExpireDate).Where(c => (c.ExpireDate <= DateTime.Now || c.UsedTraffic > c.TotalTraffic)).ToList();
+                var keys = _db.SSHKeyInfos.OrderByDescending(c => c.ExpireDate).Where(c => (c.ExpireDate <= DateTime.Now) && c.Enable || c.Enable && c.TotalTraffic).ToList();
 
 
                 try
