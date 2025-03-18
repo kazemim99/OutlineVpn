@@ -73,16 +73,13 @@ namespace V2Ray.Api.Services.SSHKeyServices.Dto
 
     public enum AccountType
     {
-
-        [Description("VMess")]
-        VMess = 4,
         [Description("SSH")]
         SSH = 1,
         [Description("VLess")]
         V2RAy = 2,
         [Description("IRAN")]
         IRAN = 6,
-        [Description("Outline")]
-        Outline = 7,
+        [Description("L2TP")]
+        L2TP = 7,
     }
 }

@@ -25,6 +25,7 @@ namespace V2Ray.Api.IOC
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRahyabSmsSender, SmsService>();
             services.AddScoped<IOutlineVpnManager, OutlineVpnManager>();
+            services.AddScoped<ISoftEather, SoftEather>();
             services.AddScoped<IOtpService, OtpSharpService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ICloudflareDnsUpdater, CloudflareDnsUpdater>();

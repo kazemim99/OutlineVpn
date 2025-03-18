@@ -193,7 +193,9 @@
         <v-menu offset-y left :close-on-content-click="false">
           <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
-              <v-icon small :color="codeFil ? 'primary' : ''">mdi-filter</v-icon>
+              <v-icon small :color="codeFil ? 'primary' : ''"
+                >mdi-filter</v-icon
+              >
             </v-btn>
           </template>
           <div style="background-color: white; width: 280px">
@@ -301,7 +303,6 @@ export default {
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
         { text: "رمز عبور", value: "password", sortable: false },
-        { text: "کد", value: "codeFil", sortable: false, width: "1%"},
         { text: "وضعیت ترافیک", value: "trafficExpired", sortable: false },
         { text: "ترافیک کل", value: "totalTraffic", sortable: true },
         { text: "ترافیک مصرف شده", value: "usedTraffic", sortable: true },
@@ -317,9 +318,6 @@ export default {
 
         { text: "", value: "qrButton", sortable: false },
         { text: "", value: "copyqr", sortable: false },
-        { text: "", value: "qrButtonWireGuard", sortable: false },
-        { text: "", value: "downlaodWireGuard", sortable: false },
-
         { text: "", value: "copy", sortable: false },
         { text: "", value: "copy1", sortable: false },
       ],
@@ -414,27 +412,18 @@ export default {
     copyToClipboardCode(item) {
       // Copy QR code data to clipboard
 
-      navigator.clipboard.writeText(item.code);
+      if(item.accountType === 7){
+       let textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : l.iransshvpn.com \n secret:vpn \nتاریخ اعتبار : ${item.expireDate} \n آموزش آیفون : https://my.uupload.ir/p/6E4o6vxW \n آموزش اندروید : https://my.uupload.ir/dl/6E4oxVgV \n دانلود پروفایل : https://my.uupload.ir/dl/OD1YOaL9`;
+        navigator.clipboard.writeText(textToCopy);
+      }else{
+        navigator.clipboard.writeText(item.code);
+      }
       this.snackbar = true;
       setTimeout(() => {
         this.snackbar = false;
       }, 2000);
     },
-    copyToClipBoardWire(item) {
-      // Copy QR code data to clipboard
-
-      let co = `پروفایل دانلود: https://iranv2ray.com/api/publicData/get-wireguard-config-file/${item.userName}
-لینک برنامه اندروید: https://download.wireguard.com/android-client/com.wireguard.android-1.0.20231018.apk 
-لینک برنامه آیفون:https://itunes.apple.com/us/app/wireguard/id1441195209?ls=1&mt=8 
-تاریخ اعتبار :  ${item.expireDate} 
-آموزش استفاده :https://my.uupload.ir/dl/yoOK6DRX `;
-
-      navigator.clipboard.writeText(co);
-      this.snackbar = true;
-      setTimeout(() => {
-        this.snackbar = false;
-      }, 2000);
-    },
+   
     copyToClipBoard(item, withToturial) {
       this.snackbar = true;
       setTimeout(() => {
@@ -447,10 +436,10 @@ export default {
         this.snackbarMessage = "کپی شد";
       }
       let textToCopy = "";
-      if (item.accountType == 1) {
+      if (item.accountType == 1 || item.accountType == 7) {
         textToCopy = ` وارد لینک زیر شوید و آموزش داخل صفحه را ببنید \n ${item.code}`;
       }
-      if (item.accountType == 1) {
+      if (item.accountType == 1 || item.accountType == 7) {
         if (withToturial) {
           textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : ${item.server}.iransshvpn.com \n Port : ${item.port} \nتاریخ اعتبار : ${item.expireDate} \nدانلو برنامه اندروید : https://my.uupload.ir/dl/EOgAxvxR \n   دانلود برنامه آیفون : https://apps.apple.com/eg/app/ssh-vpn-client-for-ssh/id6471132702 \n  آموزش اتصال اندروید: https://my.uupload.ir/p/v9p1WVDr \n آموزش اتصال آیفون : https://my.uupload.ir/p/1LzpAZX8`;
         } else {
