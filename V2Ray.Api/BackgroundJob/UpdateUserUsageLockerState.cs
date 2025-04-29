@@ -20,7 +20,7 @@ namespace V2Ray.Api.BackgroundJob
 
         public Task StartAsync(CancellationToken stoppingToken)
         { // remove expired refresh tokens from
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(8));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(10));
             return Task.CompletedTask;
         }
 
@@ -28,10 +28,53 @@ namespace V2Ray.Api.BackgroundJob
         {
             try
             {
-                //Thread.Sleep(120000);
                 using var scope = _scopeFactory.CreateScope();
                 var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
                 await sSHKeyService.DisableExpired();
+
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        public Task StopAsync(CancellationToken stoppingToken)
+        {
+            _timer?.Change(Timeout.Infinite, 0);
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
+        }
+    }
+
+    public class UpdateTrafficUsage : IHostedService, IDisposable
+    {
+        private Timer _timer;
+
+        private readonly IServiceScopeFactory _scopeFactory;
+
+        public UpdateTrafficUsage(IServiceScopeFactory scopeFactory)
+        {
+            _scopeFactory = scopeFactory;
+        }
+
+        public Task StartAsync(CancellationToken stoppingToken)
+        { // remove expired refresh tokens from
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromHours(6));
+            return Task.CompletedTask;
+        }
+
+        private async void DoWork(object state)
+        {
+            try
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
+                await sSHKeyService.UpdateUserTraffic();
 
             }
             catch (Exception ex)

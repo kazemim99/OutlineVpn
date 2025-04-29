@@ -35,7 +35,7 @@ namespace V2Ray.Api.IOC
 
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 
-            RegisterOutMapper(env);
+            //RegisterOutMapper(env);
             services.AddAutoMapper(typeof(Program));
         }
 

@@ -16,26 +16,13 @@ namespace V2Ray.Api.Services.OTP
         {
             key = key.TrimStart(new[] { '0' });
 
-
-
             var totp = GetTotp(key, _settings.StepWindow);
-
             return totp;
         }
 
         public OtpVerifyOut VerifyCode(string key, string code)
         {
 
-            if ((key.Contains("9125351533") && code.Contains("1111")))
-            {
-                return new OtpVerifyOut(code == "1111", 1);
-            }
-            if (key.Contains("9123135143") && code.Contains("2525"))
-            {
-                return new OtpVerifyOut(code == "2525", 1);
-            }
-            else
-            {
                 key = key.TrimStart(new[] { '0' });
                 var totp = GetTotp(key);
 
@@ -48,7 +35,6 @@ namespace V2Ray.Api.Services.OTP
                     throw new Exception("کد ارسال شده اشتباه است");
 
                 return resp;
-            }
         }
 
         private Totp GetTotp(string key, int? stepWindowSeconds = null)

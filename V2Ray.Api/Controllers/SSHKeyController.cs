@@ -78,8 +78,8 @@ namespace V2Ray.Api.Controllers
                 filter.UserId = UserId;
                 filter.IsAdmin = IsAdmin;
                 filter.SortDesc = true;
-                filter.SortBy = "UsedTraffic";
                 var result = await _service.GetAllAsync(filter);
+                
                 return new ApiResponse(result);
             }
 
