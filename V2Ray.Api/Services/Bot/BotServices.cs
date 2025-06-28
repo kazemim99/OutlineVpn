@@ -112,7 +112,6 @@ public class BotServices : IBotServices
 
             var key = new V2Ray.Api.Entity.SSHKey
             {
-                AccountType = V2Ray.Api.Services.SSHKeyServices.Dto.AccountType.IRAN,
                 ChargeDate = DateTime.UtcNow,
                 DurationId = 1,
                 Code = null,

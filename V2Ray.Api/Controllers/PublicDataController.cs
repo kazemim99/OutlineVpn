@@ -113,10 +113,10 @@ namespace V2Ray.Api.Controllers
             var user = _db.SSHKeyInfos.First(c => c.V2Guid == guid || c.UserName == guid);
 
             user.AccountType = account;
-            if (account == Services.SSHKeyServices.Dto.AccountType.SSH)
-            {
-                user.SSHCode = $"ssh://{user.UserName}:%2{user.Password}@a.iransshvpn.com:1027?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#migrate";
-            }
+            //if (account == Services.SSHKeyServices.Dto.AccountType.SSH)
+            //{
+            //    user.SSHCode = $"ssh://{user.UserName}:%2{user.Password}@a.iransshvpn.com:1027?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#migrate";
+            //}
             _db.Update(user);
             _db.SaveChanges();
 

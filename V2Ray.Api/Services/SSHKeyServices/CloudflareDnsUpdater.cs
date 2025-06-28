@@ -145,7 +145,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
             }
 
-            await CreateIranAccount(_db.SSHKeyInfos.Where(c => c.AccountType == AccountType.IRAN && c.IsSynced == false).ToList(), AccountActionStatus.Create);
+            //await CreateIranAccount(_db.SSHKeyInfos.Where(c => c.AccountType == AccountType.IRAN && c.IsSynced == false).ToList(), AccountActionStatus.Create);
 
 
         }
