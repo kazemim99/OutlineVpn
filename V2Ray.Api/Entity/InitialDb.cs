@@ -7,6 +7,7 @@ using static V2Ray.Api.Entity.SSHKey;
 namespace V2Ray.Api.Entity
 {
     public static class InitialDb
+
     {
         public static void EnsureMigrationOfContext<T>(this IApplicationBuilder app, string envEnvironmentName) where T : DB
         {

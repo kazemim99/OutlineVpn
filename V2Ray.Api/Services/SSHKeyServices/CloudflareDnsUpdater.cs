@@ -190,7 +190,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                     try
                     {
-                        var api = $"{url}/panel/inbound/{2}/delClient/{item.V2Guid}";
+                        var api = $"{url}/panel/api/inbounds/{2}/delClient/{item.V2Guid}";
                         var postResponse = await httpClient.PostAsync($"{url}", null);
                         postResponse.EnsureSuccessStatusCode();
                     }
@@ -236,8 +236,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     try
                     {
 
-                        var panelUrl = $"{url}/panel/inbound/addClient";
-                        // Perform POST request to /panel/inbound/add
+                        var panelUrl = $"{url}/panel/api/inbounds/addClient";
+                        // Perform POST request to /panel/api/inbounds/add
                         var postResponse = await httpClient.PostAsync($"{panelUrl}", content);
                         postResponse.EnsureSuccessStatusCode();
                         var contents = await postResponse.Content.ReadAsStringAsync();

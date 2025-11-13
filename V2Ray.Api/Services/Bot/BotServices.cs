@@ -120,7 +120,6 @@ public class BotServices : IBotServices
                 IsSynced = true,
                 UserId = 71
             };
-            var account =await _iSSHKeyService.CreateIranAccount(new List<V2Ray.Api.Entity.SSHKey> { key }, AccountActionStatus.Create);
 
             _db.SSHKeyInfos.Add(key);
             _db.SaveChanges();
@@ -130,12 +129,7 @@ public class BotServices : IBotServices
              });
 
 
-            await botClient.SendMessage(
-                      chatId: update.Message.Chat.Id,
-                      text: account,
-                      replyMarkup: replyKeyboard,
-                      cancellationToken: cancellationToken
-                  );
+           
         }
 
 
