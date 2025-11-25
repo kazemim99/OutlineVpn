@@ -146,14 +146,22 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 input.ChargeDate = DateTime.UtcNow;
                 if (input.DurationId != 1)
                 {
-                    _db.Orders.Add(new Order
+                    var oneWeekAgo = DateTime.UtcNow.AddDays(-7);
+                    var hasRecentOrder = _db.Orders
+                        .Include(c => c.SSHKey)
+                        .Any(c => c.SSHKey.UserName == input.UserName && c.CreatedAt >= oneWeekAgo);
+
+                    if (!hasRecentOrder)
                     {
-                        SSHKeyId = id,
-                        CreatedAt = DateTime.UtcNow.Date,
-                        DurationId = input.DurationId,
-                        CreatorUserId = input.UserId,
-                        UserId = input.UserId.Value,
-                    });
+                        _db.Orders.Add(new Order
+                        {
+                            SSHKeyId = id,
+                            CreatedAt = DateTime.UtcNow.Date,
+                            DurationId = input.DurationId,
+                            CreatorUserId = input.UserId,
+                            UserId = input.UserId.Value,
+                        });
+                    }
                 }
                 _db.SaveChanges();
                 input.UserName = "";
@@ -535,29 +543,21 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
 
 
-            var baseUrls = $"v.iransshvpn.com/FhFNjd6Q9p";
-
+            var baseUrls = $"p.iransshvpn.com/FhFNjd6Q9p";
 
             //if (userId == 85)
             //{
             //    baseUrls = "v.iransshvpn.com/FhFNjd6Q9p";
             //}
 
-            //if (userId == 41) //ramin
-            //{
-            //    baseUrls = "v.iransshvpn.com/FhFNjd6Q9p";
-            //}
-            if (userId == 71)
+            if (userId == 41) //ramin
             {
-                var panelUrl = "v6.iransshvpn.com";
-                baseUrls = $"v6.iransshvpn.com/FhFNjd6Q9p";
+                baseUrls = "p.iransshvpn.com/FhFNjd6Q9p";
             }
-            else
+            else if (userId == 71)//danial
             {
-                baseUrls = "v.iransshvpn.com/FhFNjd6Q9p";
-
+                baseUrls = "p6.iransshvpn.com/FhFNjd6Q9p";
             }
-
             var url = baseUrls.Split("/");
             IPAddress[] addresses = Dns.GetHostAddresses(url[0]);
             return $"http://{baseUrls}";
@@ -1121,7 +1121,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         {
             try
             {
-                
+
 
                 var info = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
                 DateTimeOffset localServerTime = DateTimeOffset.Now;
@@ -1524,7 +1524,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
 
                 data.Port = 26000;
-                data.SubId = 3;
+                data.SubId = 9;
             }
             if (userId == 41)//ramin
             {
@@ -1534,7 +1534,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     data.Domain = 4;
                 }
                 data.Port = 25000;
-                data.SubId = 1;
+                data.SubId = 8;
             }
 
             return data;
