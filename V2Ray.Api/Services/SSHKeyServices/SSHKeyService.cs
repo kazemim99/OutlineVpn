@@ -13,6 +13,8 @@ using Newtonsoft.Json.Linq;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Text.Json.Serialization;
 using System.Net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace V2Ray.Api.Services.SSHKeyServices
 {
@@ -26,243 +28,128 @@ namespace V2Ray.Api.Services.SSHKeyServices
         ISSHKeyService
     {
         private readonly DB _db;
-
-        //private readonly IOutlineVpnManager _outlineVpnManager;
         private readonly ICloudflareDnsUpdater _cloudflareDnsUpdater;
-        private readonly ISoftEather _softEather;
         private readonly IMapper _mapper;
-        private List<string> NodeIpD = new List<string>
-        {
-                "199.247.28.162"
-        };
+        private readonly ILogger<SSHKeyService> _logger;
 
-
-
-
-        public SSHKeyService(IMapper mapper, DB db, IOutlineVpnManager outlineVpnManager, ICloudflareDnsUpdater cloudflareDnsUpdater, ISoftEather softEather) : base(mapper, db)
+        public SSHKeyService(
+            IMapper mapper,
+            DB db,
+            IOutlineVpnManager outlineVpnManager,
+            ICloudflareDnsUpdater cloudflareDnsUpdater,
+            ILogger<SSHKeyService> logger) : base(mapper, db)
         {
             _db = db;
             _mapper = mapper;
-            //_outlineVpnManager = outlineVpnManager;
             _cloudflareDnsUpdater = cloudflareDnsUpdater;
-            _softEather = softEather;
+            _logger = logger;
         }
+
 
         public async Task GenerateSshFromAdmin(CreateSSHKeyInput input)
         {
-
-            if (input.Count > 10)
-                throw new ApiException("امکان ساخت بیشتر از ده اکانت همزمان  وجود ندارد");
-
-
-
-            var user = _db.Users.Include(c => c.SSHKeyInfos).First(c => c.Id == input.UserId);
-
-            //if (user.SSHKeyInfos.Count > 50)
-            //    throw new ApiException("امکان ارائه این پروتکل وجود ندارد");
-
-            var ceiling = user.SSHKeyInfos.Count(c => c.Enable) + input.Count;
-
-            if (user.AccountLimit > 0 && user.AccountLimit < ceiling)
+            try
             {
-                throw new ApiException($"امکان ساخت بیش از {user.AccountLimit} برای شما وجود ندارد");
-            }
+
+                if (input.Count > 10)
+                    throw new ApiException("امکان ساخت بیشتر از ده اکانت همزمان  وجود ندارد");
 
 
 
+                var user = _db.Users.Include(c => c.SSHKeyInfos).First(c => c.Id == input.UserId);
 
 
+                var ceiling = user.SSHKeyInfos.Count(c => c.Enable) + input.Count;
 
-            for (int i = 0; i < input.Count; i++)
-            {
-                var keys = new List<SSHKey>();
-                var port = GetSSHPort(input.UserId.Value);
-
-                input.Password = input.Password.IsNullOrEmpty() ? CreatePassword() : input.Password;
-                input.Port = port;
-                input.UserName = input.UserName.IsNullOrEmpty() ? GenerateUser() : input.UserName;
-                input.ExpireDate = DateTime.UtcNow.AddDays(input.DurationId + 1 + input.ExtraDayId).ToPeString("yyyy/MM/dd");
-                var server = GetServer(input.UserId);
-                input.Server = server;
-                input.ChargeDate = DateTime.UtcNow;
-                var key = new SSHKey
+                if (user.AccountLimit > 0 && user.AccountLimit < ceiling)
                 {
-                    SSHCode = $"ssh://{input.UserName}:{input.Password}@{server}.iransshvpn.com:{input.Port}?LCHepgjuVVy6UQRcXWdT8MFUMaAm31Xu8huIC93UZkqH92e6+WtSSbKYEp0PHKy5#${input.UserName}",
-                    UserName = input.UserName,
-                    Password = input.Password,
-                    Port = input.Port,
-                    Name = input.Name,
-                    ChargeDate = input.ChargeDate,
-                    Server = input.Server,
-                    DurationId = input.DurationId,
-                    ExpireDate = input.ExpireDate.ToGeo(),
-                    MultiUser = input.MultiUser,
-                    UserId = input.UserId.Value,
-                    Enable = true,
-                    AccountType = input.AccountType,
-                };
-
-                if (input.DurationId == 30)
-                {
-                    key.TotalTraffic = 45;
-                }
-                else if (input.DurationId == 60)
-                {
-                    key.TotalTraffic = 90;
-                }
-                else if (input.DurationId == 90)
-                {
-                    key.TotalTraffic = 135;
+                    throw new ApiException($"امکان ساخت بیش از {user.AccountLimit} برای شما وجود ندارد");
                 }
 
-                keys.Add(key);
-
-                int id = 0;
 
 
-                if (input.AccountType == AccountType.V2RAy)
+
+
+
+                for (int i = 0; i < input.Count; i++)
                 {
-                    id = await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
-                }
+                    var keys = new List<SSHKey>();
 
-                //else if (input.AccountType == AccountType.SSH)
-                //{
-                //    await CreateSSH(input, keys);
-                //    id = await base.InsertGetIdAsync(input);
-                //}
-                //else if (input.AccountType == AccountType.L2TP)
-                //{
-                //    _softEather.CreateSoftEather(keys);
-                //    id = await base.InsertGetIdAsync(input);
-                //}
-                //else
-                //{
-                //    throw new ApiException("پروتکل یافت نشد");
-                //}
-
-
-
-
-                input.ChargeDate = DateTime.UtcNow;
-                if (input.DurationId != 1)
-                {
-                    var oneWeekAgo = DateTime.UtcNow.AddDays(-7);
-                    var hasRecentOrder = _db.Orders
-                        .Include(c => c.SSHKey)
-                        .Any(c => c.SSHKey.UserName == input.UserName && c.CreatedAt >= oneWeekAgo);
-
-                    if (!hasRecentOrder)
+                    input.UserName = input.UserName.IsNullOrEmpty() ? GenerateUser(i) : input.UserName;
+                    input.ExpireDate = DateTime.UtcNow.AddDays(input.DurationId + 1 + input.ExtraDayId).ToPeString("yyyy/MM/dd");
+                    input.ChargeDate = DateTime.UtcNow;
+                    var key = new SSHKey
                     {
-                        _db.Orders.Add(new Order
-                        {
-                            SSHKeyId = id,
-                            CreatedAt = DateTime.UtcNow.Date,
-                            DurationId = input.DurationId,
-                            CreatorUserId = input.UserId,
-                            UserId = input.UserId.Value,
-                        });
+                        UserName = input.UserName,
+                        Password = "pass",
+                        Port = input.Port,
+                        Name = input.Name,
+                        ChargeDate = input.ChargeDate,
+                        Server = "server",
+                        DurationId = input.DurationId,
+                        ExpireDate = input.ExpireDate.ToGeo(),
+                        MultiUser = input.MultiUser,
+                        UserId = input.UserId.Value,
+                        Enable = true,
+                        AccountType = input.AccountType,
+                    };
+
+                    if (input.DurationId == 30)
+                    {
+                        key.TotalTraffic = 45;
                     }
+                    else if (input.DurationId == 60)
+                    {
+                        key.TotalTraffic = 90;
+                    }
+                    else if (input.DurationId == 90)
+                    {
+                        key.TotalTraffic = 135;
+                    }
+
+                    keys.Add(key);
+                    _db.Add(key);
+
+                    int id = 0;
+
+
+                    if (input.AccountType == AccountType.V2RAy)
+                    {
+                        id = await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
+                    }
+
+                    input.ChargeDate = DateTime.UtcNow;
+                    if (input.DurationId != 1)
+                    {
+                        var oneWeekAgo = DateTime.UtcNow.AddDays(-7);
+                        var hasRecentOrder = _db.Orders
+                            .Include(c => c.SSHKey)
+                            .Any(c => c.SSHKey.UserName == input.UserName && c.CreatedAt >= oneWeekAgo);
+
+                        if (!hasRecentOrder)
+                        {
+                            _db.Orders.Add(new Order
+                            {
+                                SSHKeyId = id,
+                                CreatedAt = DateTime.UtcNow.Date,
+                                DurationId = input.DurationId,
+                                CreatorUserId = input.UserId,
+                                UserId = input.UserId.Value,
+                            });
+                        }
+                    }
+                    input.UserName = string.Empty;
+                    input.Password = string.Empty;
                 }
                 _db.SaveChanges();
-                input.UserName = "";
-                input.Password = "";
+
             }
-
-
-
-
-        }
-
-        private int GetSSHPort(int userId)
-        {
-            var random = new Random().Next(1020, 1021);
-
-
-            if (userId == 41)
-            {
-                random = new Random().Next(1030, 1031);
-            }
-            else if (userId == 71)
-            {
-                random = new Random().Next(1040, 1041);
-            }
-
-
-            return random;
-        }
-
-        private object GetLimit(int durationId)
-        {
-            if (durationId == 60)
-                return 100;
-            else if (durationId == 90)
-                return 150;
-            return 50;
-        }
-
-        public async Task CreateSSH(CreateSSHKeyInput input, List<SSHKey> keys)
-        {
-
-
-            //TimeSpan days = input.ExpireDate - input.ChargeDate;
-
-            //int daysDifference = Math.Abs(days.Days);
-            var server = GetServer(input.UserId);
-
-
-            await BulkAddUserToServer(keys);
-
-
-        }
-        private string GetServer(int? userId)
-        {
-            int length = 1;
-            string valid = "123456789";
-            StringBuilder res = new();
-            Random rnd = new();
-
-            if (userId == 41)
+            catch (Exception ex)
             {
 
-                res.Append("r");
+                throw;
             }
-            else
-            if (userId == 71)
-            {
-                res.Append("d");
-            }
-            else
-            if (userId == 73)
-            {
-                valid = "12345";
-                res.Append("s");
-            }
-            else
-            {
-                valid = "abcefghi";
-                res.Append(valid[rnd.Next(valid.Length)]);
-                return res.ToString().Trim(); ;
-            }
-            res.Append(valid[rnd.Next(valid.Length)]);
-            return res.ToString().Trim();
         }
-
-        public async Task ChangePassowrd(int id)
-        {
-            var key = await _db.SSHKeyInfos.FirstAsync(a => a.Id == id);
-
-            key.Password = CreatePassword();
-            _db.Update(key);
-            _db.SaveChanges();
-
-            await BulkDeleteServer(new List<SSHKey> { key });
-            await BulkAddUserToServer(new List<SSHKey> { key });
-
-
-
-
-        }
-
         public override async Task UpdateAsync(int id, UpdateSSHKeyInput input, params string[] include)
         {
 
@@ -284,36 +171,9 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 key.AccountType = input.AccountType;
 
-                //if (input.AccountType == AccountType.L2TP)
-                //{
-                //    //var outline = _outlineVpnManager.AddAccessKey(key.Id, key.UserName, input.DurationId * 50000000000);
-                //    //key.Code = outline.Code;
-                //    //key.Password = outline.Pass;
-                //    _softEather.CreateSoftEather(keys);
-                //    await BulkDeleteServer(keys);
-                //    await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
-                //    return;
-
-                //}
-                //else
-                if (input.AccountType == AccountType.V2RAy)
-                {
-                    await BulkDeleteServer(keys);
-
-                    await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
-                    await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
-                    return;
-
-                }
-                else
-                {
-                    _softEather.CreateSoftEather(keys, AccountActionStatus.Delete);
-                    await BulkAddUserToServer(keys);
-                    await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
-
-                    return;
-                }
-
+                //await CreateV2Ray(input.UserId.Value, keys, key.AccountType, AccountActionStatus.Delete);
+                await CreateV2Ray(input.UserId.Value, keys, input.AccountType, AccountActionStatus.Create);
+                return;
             }
 
             await base.UpdateAsync(id, input, include);
@@ -329,194 +189,11 @@ namespace V2Ray.Api.Services.SSHKeyServices
             return result;
         }
 
-        private void DeleteUserFromServerExpired(List<SSHKey> users, V2Server server)
-        {
-            var i = 0;
-
-            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, "o^qw7^n3LdDhfs5O");
-            using var ssh = new SshClient(connectionInfo);
-            try
-            {
-
-                var str = "";
-                Connect(server, ssh);
-                foreach (var item in users)
-                {
-
-                    try
-                    {
-
-                        if (!string.IsNullOrEmpty(item.UserName))
-                        {
-                            str = $"sudo pkill -u {item.UserName} \n";
-                            var command2 = ssh.CreateCommand(str);
-                            command2.Execute();
-                            str += $"sudo deluser --remove-home {item.UserName} \n";
-                            var command3 = ssh.CreateCommand(str);
-                            command3.Execute();
-
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                }
-
-                ssh.Disconnect();
-            }
-            catch (Exception ex)
-            {
-
-                // throw new ApiException(ex.Message + "=" + server.Url);
-            }
-
-        }
-
-        private void DeleteUserFromServer(List<SSHKey> users, V2Server server)
-        {
-            var i = 0;
-
-            var connectionInfo = new PasswordConnectionInfo(server.Url, 1027, server.UserName, "o^qw7^n3LdDhfs5O");
-            using var ssh = new SshClient(connectionInfo);
-            try
-            {
-
-                var str = "";
-
-                Connect(server, ssh);
-                foreach (var item in users)
-                {
-                    try
-                    {
-
-                        if (!string.IsNullOrEmpty(item.UserName))
-                        {
-                            //str = $"sudo pkill -u {item.UserName} \n";
-                            str += $"sudo deluser --remove-home {item.UserName} \n";
-
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                }
-                var command2 = ssh.CreateCommand(str);
-                command2.Execute();
-                ssh.Disconnect();
-            }
-            catch (Exception ex)
-            {
-
-                // throw new ApiException(ex.Message + "=" + server.Url);
-            }
-
-        }
-
-        private async Task BulkDeleteServerExpired(List<SSHKey> keys)
-        {
-
-
-            foreach (var item in NodeIpD)
-            {
-                DoSomethingDeleteExpired(item, keys);
-
-            }
-
-        }
-
-        private async Task BulkDeleteServer(List<SSHKey> keys)
-        {
-
-
-            foreach (var item in NodeIpD)
-            {
-                DoSomethingDelete(item, keys);
-            }
-
-        }
-
-        private void DoSomethingDeleteExpired(string ip, List<SSHKey> keys)
-        {
-            var server = new V2Server();
-
-            server.IP = ip;
-            server.Url = ip;
-            server.UserName = "root";
-            server.Password = "o^qw7^n3LdDhfs5O";
-            DeleteUserFromServerExpired(keys, server);
-        }
-        private void DoSomethingDelete(string ip, List<SSHKey> keys)
-        {
-            var server = new V2Server();
-
-            server.IP = ip;
-            server.Url = ip;
-            server.UserName = "root";
-            server.Password = "o^qw7^n3LdDhfs5O";
-            DeleteUserFromServer(keys, server);
-        }
-
-        public async Task BulkAddUserToServer(List<SSHKey> keys)
-        {
-
-
-            var NodeIps = NodeIpD;
-
-            int chunkCount = keys.Count;
-            if (!keys.Any())
-            {
-                var keyCountn = _db.SSHKeyInfos.Count(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date);
-                var skipCount = 100M;
-                chunkCount = (int)Math.Ceiling(keyCountn > 100 ? keyCountn / skipCount : keyCountn);
-
-                foreach (var item in NodeIps)
-                {
-
-                    var connectionInfo = new PasswordConnectionInfo(item, 1027, "root", "o^qw7^n3LdDhfs5O");
-                    using var ssh = new SshClient(connectionInfo);
-                    Connect(new V2Server(), ssh);
-
-                    for (int i = 0; i < chunkCount; i++)
-                    {
-                        try
-                        {
-
-
-                            var getKeys = await _db.SSHKeyInfos.Where(c => c.Enable && c.ExpireDate.Date >= DateTime.Now.Date).Skip(i * Convert.ToInt32(skipCount)).Take(Convert.ToInt32(skipCount))
-                       .ToListAsync();
-
-                            await DoSomething(item, getKeys, ssh);
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
-
-                }
-            }
-
-
-            else
-            {
-                foreach (var item in NodeIps)
-                {
-                    var connectionInfo = new PasswordConnectionInfo(item, 1027, "root", "o^qw7^n3LdDhfs5O");
-                    using var ssh = new SshClient(connectionInfo);
-                    Connect(new V2Server(), ssh);
-                    await DoSomething(item, keys, ssh);
-
-                }
-
-
-            }
 
 
 
 
-        }
+
 
 
         private int? GetV2Port(int userId, AccountType accountType)
@@ -541,214 +218,244 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         private string ConnectPanel(int userId, AccountType accountType)
         {
+            var baseUrls = "p.iransshvpn.com";
 
-
-            var baseUrls = $"p.iransshvpn.com/FhFNjd6Q9p";
-
-            //if (userId == 85)
-            //{
-            //    baseUrls = "v.iransshvpn.com/FhFNjd6Q9p";
-            //}
-
-            if (userId == 41) //ramin
-            {
-                baseUrls = "p.iransshvpn.com/FhFNjd6Q9p";
-            }
-            else if (userId == 71)//danial
-            {
-                baseUrls = "p6.iransshvpn.com/FhFNjd6Q9p";
-            }
             var url = baseUrls.Split("/");
-            IPAddress[] addresses = Dns.GetHostAddresses(url[0]);
-            return $"http://{baseUrls}";
+            IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
+            return $"http://{baseUrls}/FhFNjd6Q9p";
         }
-
-
-        private async Task DoSomething(string ip, List<SSHKey> keys, SshClient ssh)
-        {
-            try
-            {
-
-
-
-                var newKeys = new List<SSHKey>();
-                string str = "";
-
-
-                foreach (var item in keys)
-                {
-
-
-                    if (!string.IsNullOrEmpty(item.UserName) && !string.IsNullOrEmpty(item.Password))
-                    {
-
-                        str += $"sudo useradd -m -p  $(openssl passwd -1 {item.Password}) -s /bin/bash {item.UserName} \n ";
-
-                    }
-
-                }
-                if (!str.IsNullOrEmpty())
-                {
-                    var command = ssh.CreateCommand(str);
-                    command.Execute();
-                }
-
-                //}
-            }
-            catch (Exception ex)
-            {
-
-                throw new ApiException(ex.Message + "=" + ip);
-            }
-
-        }
-
 
         public async Task Charge(int keyId, int durationId, int userId)
         {
             try
             {
-                var month = durationId / 30;
-                var key = _db.SSHKeyInfos.Include(new[] { "User" })
-                    .AsNoTracking().First(a => a.Id == keyId);
+                _logger.LogInformation("Starting charge operation for KeyId: {KeyId}, DurationId: {DurationId}, UserId: {UserId}",
+                    keyId, durationId, userId);
 
-                //if (userId == 71 && key.AccountType == AccountType.SSH)
-                //    throw new ApiException("امکان ارائه این پروتکل وجود ندارد");
+                // Validate input parameters
+                ValidateChargeParameters(keyId, durationId, userId);
 
+                // Calculate months from duration (handle edge cases)
+                var month = CalculateMonths(durationId);
 
-                DateTime expireDate = key.ExpireDate.Date <= DateTime.Now.Date ?
-                DateTime.UtcNow.AddMonths(month) :
-                key.ExpireDate.AddMonths(month);
+                // Fetch key with better error handling
+                var key = await _db.SSHKeyInfos
+                    .Include(k => k.User)
+                    .FirstOrDefaultAsync(a => a.Id == keyId);
 
-
-                if (expireDate.Date < DateTime.Now.Date)
+                if (key == null)
                 {
-                    expireDate = DateTime.Now;
+                    _logger.LogError("SSH Key not found with Id: {KeyId}", keyId);
+                    throw new ApiException($"کلید SSH با شناسه {keyId} یافت نشد");
                 }
 
-                var input = new UpdateSSHKeyInput
-                {
-                    Password = key.Password.Trim(),
-                    UsedTraffic = 0,
-                    UserId = key.UserId,
-                    Port = key.Port,
-                    Enable = true,
-                    AccountType = key.AccountType,
-                    ChargeDate = DateTime.UtcNow,
-                    ExpireDate = expireDate.ToPeString("yyyy/MM/dd"),
-                    Name = key.User != null ? key.User.Mobile : " ",
-                    UserName = key.UserName.Trim(),
-                    Server = key.Server,
-                    V2Id = key.V2Id,
-                    V2Port = key.V2Port,
-                    V2Guid = key.V2Guid,
-                    Code = key.Code,
-                };
+                _logger.LogDebug("Found key {KeyId} for user {UserId}, Account Type: {AccountType}",
+                    keyId, key.UserId, key.AccountType);
 
+                // Calculate new expiration date
+                var expireDate = CalculateExpirationDate(key.ExpireDate, month);
 
-
-
+                // Update key properties
+                key.TrefficExpired = false;
+                key.UsedTraffic = 0;
+                key.Enable = true;
+                key.ChargeDate = DateTime.UtcNow;
+                key.ExpireDate = expireDate;
                 if (durationId < 0)
                 {
-                    key.DurationId += durationId;
-                    input.DurationId = key.DurationId;
+                    key.ExpireDate = DateTime.Now.AddDays(-1);
+                    key.Enable = false;
                 }
-                else
-                {
-                    input.DurationId = durationId;
-                }
+                // Update duration
+                UpdateDuration(key, durationId);
 
-                var map = _mapper.Map<SSHKey>(input);
-                map.Id = key.Id;
+                // Set traffic limits based on duration and user
+                SetTrafficLimits(key, month, userId);
 
-                if (month == 1)
-                {
-                    map.TotalTraffic = input.UserId == 82 ? 40 : 55;
-                }
-                else if (month == 2)
-                {
-                    map.TotalTraffic = input.UserId == 82 ? 80 : 110;
-                }
-                else if (month == 3)
-                {
-                    map.TotalTraffic = input.UserId == 82 ? 120 : 165;
-                }
-                var keys = new List<SSHKey>()
+                var keys = new List<SSHKey> { key };
+
+                // Handle account operations based on duration
+                await HandleAccountOperations(userId, key, keys, durationId);
+
+                // Handle order management
+                await HandleOrderManagement(key, keyId, userId, durationId);
+
+                // Save all changes
+
+                _db.Update(key);
+                await _db.SaveChangesAsync();
+
+                _logger.LogInformation("Charge operation completed successfully for KeyId: {KeyId}", keyId);
+            }
+            catch (ApiException)
             {
-                map
-            };
-
-
-
-                if (input.DurationId <= 0)
-                {
-                    keys.First().Enable = false;
-
-                    if (key.AccountType == AccountType.V2RAy)
-                    {
-                        await CreateV2Ray(userId, keys, input.AccountType, AccountActionStatus.Delete);
-                    }
-                }
-
-                else
-                {
-
-                    if (key.AccountType == AccountType.V2RAy)
-                    {
-                        keys.First().UsedTraffic = 0;
-
-                        await CreateV2Ray(userId, keys, input.AccountType, AccountActionStatus.Update);
-
-                    }
-
-                    //if (key.AccountType == AccountType.SSH)
-                    //{
-                    //    await BulkAddUserToServer(keys);
-                    //    await base.UpdateAsync(key.Id, input);
-                    //}
-                }
-
-                if (key.User != null)
-                {
-                    if (durationId >= 30)
-                    {
-                        _db.Orders.Add(new Order
-                        {
-                            SSHKeyId = key.Id,
-                            DurationId = durationId,
-                            CreatedAt = DateTime.UtcNow,
-                            CreatorUserId = userId,
-                            UserId = userId,
-                        });
-                    }
-                    if (durationId <= 0)
-                    {
-                        if (key.CreatedAt.Date >= DateTime.UtcNow.AddDays(5).Date)
-                            throw new ApiException("امکان تغییر تاریخ اکانت بعد از ده رو امکان پذیر نیست");
-
-                        var order = await _db.Orders.Where(c => c.SSHKeyId == keyId).ToListAsync();
-                        if (order != null)
-                        {
-                            order.ForEach(c => c.DurationId += durationId);
-                            if (order.Any(c => c.DurationId <= 0))
-                            {
-                                _db.Orders.RemoveRange(order);
-                            }
-                            else
-                            {
-                                _db.Orders.UpdateRange(order);
-                            }
-
-                        }
-                    }
-                }
-                _db.SaveChanges();
-
+                throw;
+            }
+            catch (ChargeValidationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error during charge operation for KeyId: {KeyId}", keyId);
+                throw new ApiException(ex.Message);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unexpected error during charge operation for KeyId: {KeyId}, DurationId: {DurationId}",
+                    keyId, durationId);
+                throw new ApiException($"خطا در شارژ اکانت: {ex.Message}");
+            }
+        }
 
-                throw;
+        private void ValidateChargeParameters(int keyId, int durationId, int userId)
+        {
+            if (keyId <= 0)
+                throw new ChargeValidationException("شناسه کلید نامعتبر است");
+
+            if (userId <= 0)
+                throw new ChargeValidationException("شناسه کاربر نامعتبر است");
+
+            // Allow negative durations for adjustments, but validate range
+            if (durationId < -365 || durationId > 91)
+                throw new ChargeValidationException("مدت زمان نامعتبر است");
+        }
+
+        private int CalculateMonths(int durationId)
+        {
+            // Handle negative durations (for adjustments)
+            var absDuration = Math.Abs(durationId);
+
+            // Calculate months, ensuring at least 0
+            var month = absDuration / 30;
+
+            return month;
+        }
+
+        private DateTime CalculateExpirationDate(DateTime currentExpireDate, int months)
+        {
+            DateTime expireDate;
+
+            // If key is already expired, start from now
+            if (currentExpireDate.Date <= DateTime.UtcNow.Date)
+            {
+                expireDate = DateTime.UtcNow.AddMonths(months);
+            }
+            else
+            {
+                // Add to existing expiration date
+                expireDate = currentExpireDate.AddMonths(months);
+            }
+
+            // Ensure expiration is not in the past
+            if (expireDate.Date < DateTime.UtcNow.Date)
+            {
+                expireDate = DateTime.UtcNow;
+            }
+
+            return expireDate;
+        }
+
+        private void UpdateDuration(SSHKey key, int durationId)
+        {
+            if (durationId < 0)
+            {
+                // For negative durations, adjust the existing duration
+                key.DurationId += durationId;
+
+                // Ensure duration doesn't go negative
+                if (key.DurationId < 0)
+                {
+                    _logger.LogWarning("Duration adjusted to negative value for KeyId: {KeyId}, setting to 0", key.Id);
+                    key.DurationId = 0;
+                }
+            }
+            else
+            {
+                // Replace with new duration
+                key.DurationId = durationId;
+            }
+        }
+
+        private void SetTrafficLimits(SSHKey key, int months, int userId)
+        {
+            if (months <= 0)
+            {
+                _logger.LogDebug("No traffic limit set for 0 months duration");
+                return;
+            }
+            var config = new UserTrafficConfiguration();
+            // Use configuration for traffic limits
+            key.TotalTraffic = config.GetTrafficForDuration(userId, months);
+
+            _logger.LogDebug("Set traffic limit for KeyId: {KeyId}, Months: {Months}, Traffic: {Traffic}GB",
+                key.Id, months, key.TotalTraffic);
+        }
+
+        private async Task HandleAccountOperations(int userId, SSHKey key, List<SSHKey> keys, int durationId)
+        {
+            if (durationId <= 0)
+            {
+                // Disable account
+                keys.First().Enable = false;
+
+                if (key.AccountType == AccountType.V2RAy)
+                {
+                    _logger.LogInformation("Deleting V2Ray account for KeyId: {KeyId}", key.Id);
+                    await CreateV2Ray(userId, keys, key.AccountType, AccountActionStatus.Delete);
+                }
+            }
+            else
+            {
+                // Enable/Update account
+                if (key.AccountType == AccountType.V2RAy)
+                {
+                    keys.First().UsedTraffic = 0;
+                    _logger.LogInformation("Updating V2Ray account for KeyId: {KeyId}", key.Id);
+                    await CreateV2Ray(userId, keys, key.AccountType, AccountActionStatus.Update);
+                }
+            }
+        }
+
+        private async Task HandleOrderManagement(SSHKey key, int keyId, int userId, int durationId)
+        {
+            if (key.User == null)
+            {
+                _logger.LogDebug("No user associated with key {KeyId}, skipping order management", keyId);
+                return;
+            }
+
+            if (durationId >= 30)
+            {
+                // Create new order for valid durations
+                _db.Orders.Add(new Order
+                {
+                    SSHKeyId = key.Id,
+                    DurationId = durationId,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatorUserId = userId,
+                    UserId = userId,
+                });
+
+                _logger.LogInformation("Created order for KeyId: {KeyId}, Duration: {Duration}", keyId, durationId);
+            }
+            else if (durationId <= 0)
+            {
+
+
+                //var orders = await _db.Orders.Where(c => c.SSHKeyId == keyId).ToListAsync();
+                //if (orders != null && orders.Any())
+                //{
+                //    // Adjust order durations
+                //    orders.ForEach(c => c.DurationId += durationId);
+
+                //    if (orders.Any(c => c.DurationId <= 0))
+                //    {
+                //        _logger.LogInformation("Removing {Count} orders for KeyId: {KeyId}", orders.Count, keyId);
+                //        _db.Orders.RemoveRange(orders);
+                //    }
+                //    else
+                //    {
+                //        _logger.LogInformation("Updating {Count} orders for KeyId: {KeyId}", orders.Count, keyId);
+                //        _db.Orders.UpdateRange(orders);
+                //    }
+                //}
             }
         }
 
@@ -792,16 +499,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         password = "!Q@W3e4r"
                     };
 
-                    //if (keyInfo.AccountType == AccountType.IRAN)
-                    //{
-                    //    loginData = new
-                    //    {
-                    //        username = "Mostafa",
-                    //        password = "M0staf@136$"
-                    //    };
-                    //}
-
-
                     //var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
                     //loginResponse.EnsureSuccessStatusCode();
                     //var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
@@ -821,7 +518,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     //}
                     await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Delete, true);
 
-                    _db.Update(keyInfo);
                 }
 
 
@@ -872,29 +568,13 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 //}
 
             }
-
+            _db.Update(keyInfo);
 
             _db.SaveChanges();
 
 
 
         }
-
-
-        private string CreatePassword()
-        {
-            int length = 3;
-            const string valid = "0123456789";
-            StringBuilder res = new();
-            Random rnd = new();
-            res.Append("643");
-            while (0 < length--)
-            {
-                res.Append(valid[rnd.Next(valid.Length)]);
-            }
-            return res.ToString().Trim();
-        }
-
 
         public override async Task Delete(int id)
         {
@@ -948,25 +628,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         //    }
         //}
 
-        public async Task Adjust()
-        {
-            try
-            {
-
-
-                //await  AjdustNoThread();
-                //var items = _db.SSHKeyInfos.Where(c => c.ExpireDate.Date > DateTime.Now.Date && c.Enable).ToList();
-                //await CreateV2Ray(items);
-
-                await BulkAddUserToServer(new List<SSHKey>());
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
-        }
-
 
         public async Task AdjustV2()
         {
@@ -980,12 +641,15 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
 
                 await CreateV2Ray(41, items.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList(), AccountType.V2RAy);
+                await CreateV2Ray(41, items.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 88).ToList(), AccountType.V2RAy);
 
                 await CreateV2Ray(71, items.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(), AccountType.V2RAy);
 
                 await CreateV2Ray(77, items.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 77).ToList(), AccountType.V2RAy);
 
                 await CreateV2Ray(77, items.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 76).ToList(), AccountType.V2RAy);
+                await CreateV2Ray(77, items.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 85).ToList(), AccountType.V2RAy);
+                await CreateV2Ray(77, items.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 87).ToList(), AccountType.V2RAy);
 
             }
             catch (Exception ex)
@@ -1048,26 +712,22 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     {
 
 
-                        foreach (var item2 in cliens.Where(c => c.down > 54071707335))
+                        foreach (var item2 in cliens.Where(c => c.down > 34071707335))
                         {
 
                             var key = await _db.SSHKeyInfos.FirstOrDefaultAsync(c => c.UserName == item2.email);
-                            if (key.UserName == "u42339")
-                            {
 
-                            }
                             if (key != null)
                             {
                                 try
                                 {
-                                    var usage = BytesToGigabytes(item2.down);
+                                    var usage = BytesToGigabytes(item2.down, key.DurationId);
                                     var calTraffic = (key.UsedTraffic - usage);
-                                    key.UsedTraffic = usage;
-                                    if (item2.down > 1000 && key.UsedTraffic <= 0)
+                                    if (item2.down > 1000 && usage <= 0)
                                     {
                                         key.UsedTraffic = 1;
                                     }
-                                    key.UsedTraffic = BytesToGigabytes(item2.down);
+                                    key.UsedTraffic = usage;
                                     if (key.DurationId == 30)
                                     {
                                         key.TotalTraffic = 55;
@@ -1084,11 +744,24 @@ namespace V2Ray.Api.Services.SSHKeyServices
                                     {
                                         key.TotalTraffic = 50;
                                     }
-                                    if (key.TotalTraffic < usage && key.CreatedAt.AddDays(2) < DateTime.UtcNow)
+                                    if (key.TotalTraffic < (usage))
                                     {
                                         key.TrefficExpired = true;
+
                                     }
+                                    var newUser = key.ChargeDate.Date >= DateTime.UtcNow.Date.AddDays(-5);
+                                    if (newUser && key.TrefficExpired)
+                                    {
+                                        key.TrefficExpired = false;
+                                        if (key.UsedTraffic >= key.TotalTraffic)
+                                        {
+                                            key.UsedTraffic = 4;
+                                        }
+                                    }
+
+
                                     _db.Update(key);
+                                    _db.SaveChanges();
 
                                 }
                                 catch (Exception ex)
@@ -1101,7 +774,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     }
 
 
-                    _db.SaveChanges();
 
                 }
                 catch (Exception ex)
@@ -1111,68 +783,64 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
 
         }
-        static int BytesToGigabytes(long bytes)
+        static int BytesToGigabytes(long bytes, int durationId)
         {
-            return Convert.ToInt32(bytes / 1_000_000_000);
+            var result = Convert.ToInt32(bytes / 1_000_000_000);
+            if (durationId == 30)
+            {
+                result += 5;
+            }
+            else if (durationId == 60)
+            {
+                result += 10;
+            }
+            else if (durationId == 90)
+            {
+                result += 15;
+            }
+            return result;
         }
-
 
         public async Task DisableExpired()
         {
             try
             {
+                _logger.LogInformation("Starting DisableExpired background job");
+
+                // Only look at currently enabled keys
+                var keys = _db.SSHKeyInfos
+                    .OrderByDescending(c => c.ExpireDate)
+                    .Where(c => (c.ExpireDate.Date < DateTime.Now.Date || c.TrefficExpired))
+                    .ToList();
+
+                _logger.LogInformation("Found {Count} enabled keys to check for expiration", keys.Count);
 
 
-                var info = TimeZoneInfo.FindSystemTimeZoneById("Iran Standard Time");
-                DateTimeOffset localServerTime = DateTimeOffset.Now;
-                DateTimeOffset currentTime = TimeZoneInfo.ConvertTime(localServerTime, info);
-                //await UpdateUserTraffic();
-
-
-                var keys = _db.SSHKeyInfos.OrderByDescending(c => c.ExpireDate).Where(c => (c.ExpireDate <= DateTime.Now || c.TrefficExpired)).ToList();
-
-                await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 41).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
-                await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
-                await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 77 || c.UserId == 76 || c.UserId == 85 || c.UserId == 87).ToList(), AccountType.V2RAy, AccountActionStatus.Delete);
-
-                //await BulkDeleteServerExpired(keys.Where(c => c.AccountType == AccountType.SSH).ToList());
-
-
-                foreach (var item in keys)
+                // Now delete from V2Ray panels
+                if (keys.Any())
                 {
-                    try
-                    {
+                    await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && (c.UserId == 41 || c.UserId == 88)).ToList(),
+                        AccountType.V2RAy, AccountActionStatus.Delete);
 
-                        //var newItem = await _db.SSHKeyInfos.FirstOrDefaultAsync(a => a.Id == item.Id);
-                        if (item.Enable)
-                        {
-                            item.Enable = false;
-                            _db.Update(item);
-                        }
-                        if (item.ExpireDate.AddDays(20) < DateTime.UtcNow)
-                        {
-                            //_db.SSHKeyInfos.Remove(item);
-                        }
+                    await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(),
+                        AccountType.V2RAy, AccountActionStatus.Delete);
 
+                    await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.V2RAy && (c.UserId == 77 || c.UserId == 76 || c.UserId == 85 || c.UserId == 87)).ToList(),
+                        AccountType.V2RAy, AccountActionStatus.Delete);
+                    keys.ForEach(c => c.Enable = false);
 
-                    }
-                    catch (Exception ex)
-                    {
+                    // Update database
+                    _db.UpdateRange(keys);
+                    await _db.SaveChangesAsync();
 
-                    }
-                    //}
                 }
-                await _db.SaveChangesAsync();
 
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "Fatal error in DisableExpired background job");
                 throw;
             }
-
-
-
         }
 
 
@@ -1269,54 +937,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
-        private string GenerateUser()
+        private string GenerateUser(int i)
         {
             var user = _db.SSHKeyInfos.Max(c => c.Id);
             if (user < 100)
                 user += 100;
 
-            return $"u{user + 300}";
+            return $"u{user + 300 + i}";
         }
 
 
-        public async void ChangeServer(SSHKey sshKey, V2Server newServer, V2Server oldServer)
-        {
-
-            var server = _db.V2Servers.Include(a => a.SSHKeys).FirstOrDefault(a => a.Id == newServer.Id);
-            //sshKey.V2Server = newServer;
-
-            if (server.SSHKeys.Count(a => a.Enable) >= server.Capacity)
-                throw new ApiException("ظرفیت سرور تکمیل است");
-
-
-            var lst = new List<SSHKey>
-            {
-                sshKey
-            };
-
-            //if (server.HasLoadBalance)
-            //{
-            await BulkDeleteServer(lst);
-            //}
-            //else
-            //{
-            //    DeleteUserFromServer(lst, oldServer);
-            //}
-            Thread.Sleep(1000);
-            if (sshKey.Enable)
-            {
-                //if (server.HasLoadBalance)
-                //{
-                await BulkAddUserToServer(lst);
-                //}
-                //else
-                //{
-                //    await AddUserToServer(lst, newServer);
-                //}
-
-
-            }
-        }
 
 
         public async Task<int> CreateV2Ray(int currenUserId, List<SSHKey> sSHKeys, AccountType accountType, AccountActionStatus status = AccountActionStatus.Create, bool isSync = false)
@@ -1384,6 +1014,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         }
 
                         catch (Exception ex)
+
                         {
 
 
@@ -1453,27 +1084,27 @@ namespace V2Ray.Api.Services.SSHKeyServices
                             }
                             else
                             {
-                                item.AccountType = accountType;
-                                if (_db.SSHKeyInfos.Any(c => c.Id == item.Id))
-                                {
-                                    entity = _db.SSHKeyInfos.Update(item);
-                                    _db.SaveChanges();
-                                }
-                                else
-                                {
-                                    entity = _db.SSHKeyInfos.Add(item);
-                                    _db.SaveChanges();
-                                }
-                                try
-                                {
-                                    var result = _db.SaveChanges();
-                                    item.Id = entity.Entity.Id;
-                                }
-                                catch (Exception ex)
-                                {
+                                //item.AccountType = accountType;
+                                //if (_db.SSHKeyInfos.Any(c => c.Id == item.Id))
+                                //{
+                                //    entity = _db.SSHKeyInfos.Update(item);
+                                //    _db.SaveChanges();
+                                //}
+                                //else
+                                //{
+                                //    entity = _db.SSHKeyInfos.Add(item);
+                                //    _db.SaveChanges();
+                                //}
+                                //try
+                                //{
+                                //    var result = _db.SaveChanges();
+                                //    item.Id = entity.Entity.Id;
+                                //}
+                                //catch (Exception ex)
+                                //{
 
-                                    throw;
-                                }
+                                //    throw;
+                                //}
                             }
                         }
                         catch (Exception ex)
@@ -1509,32 +1140,18 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 SubId = 2,
             };
 
-            if (userId % 2 == 0)
+            if (userId == 71 || userId == 88)//danial
             {
-                data.Domain = 1;
-            }
-
-            if (userId == 71)//danial
-            {
-                data.Domain = 6;
-
-                if (userId % 2 == 0)
-                {
-                    data.Domain = 8;
-                }
-
                 data.Port = 26000;
+                data.Domain = 6;
                 data.SubId = 9;
             }
             if (userId == 41)//ramin
             {
-                data.Domain = 5;
-                if (userId % 2 == 0)
-                {
-                    data.Domain = 4;
-                }
+
                 data.Port = 25000;
                 data.SubId = 8;
+                data.Domain = 5;
             }
 
             return data;

@@ -6,7 +6,7 @@
           <v-flex xs12 sm8 md4>
             <v-card class="elevation-12">
               <v-toolbar dark color="primary">
-                <v-toolbar-title>فرم ورود</v-toolbar-title>
+                <v-toolbar-title> ورود</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-form
@@ -64,7 +64,18 @@
                   </v-row>
                 </v-form>
               </v-card-text>
-              <v-card-actions> </v-card-actions>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="success"
+                  text
+                  @click="downloadApk"
+                >
+                  <v-icon left>mdi-download</v-icon>
+                  دانلود اپلیکیشن
+                </v-btn>
+                <v-spacer></v-spacer>
+              </v-card-actions>
             </v-card>
           </v-flex>
         </v-layout>
@@ -110,6 +121,16 @@ export default {
     userNameRules: [(v) => !!v || "نام کاربری الزامی میباشد"],
   }),
   methods: {
+    downloadApk() {
+      // Create a link that points directly to the backend
+      const link = document.createElement('a');
+      link.href = `${process.env.VUE_APP_API_BASE_URL || 'https://localhost:7087'}/File.apk`;
+      link.download = 'File.apk';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
     async handleError() {
       alert("خطا");
     },

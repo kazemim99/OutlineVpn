@@ -4,7 +4,7 @@ module.exports = {
     headers: { "Access-Control-Allow-Origin": "*" },
     proxy: "https://localhost:7087/",
   },
-  outputDir: "C:/Users/stocksna/source/repos/kazemim99/OutlineVpn/V2Ray.Api/wwwroot",
+  outputDir: "C:/Users/Mostafa/OutlineVpn/V2Ray.Api/wwwroot/",
   transpileDependencies: ["vuetify"],
   css: {
     loaderOptions: {

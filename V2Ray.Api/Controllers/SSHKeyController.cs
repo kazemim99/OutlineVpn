@@ -19,8 +19,18 @@ namespace V2Ray.Api.Controllers
 
 
 
-       
 
+
+        [HttpPost]
+        [Authorize]
+        public async Task<ApiResponse> Create([FromBody] CreateSSHKeyInput input)
+        {
+            input.UserId = UserId;
+            input.IsAdmin = IsAdmin;
+            input.Name = FullName;
+            await _service.GenerateSshFromAdmin(input);
+            return new ApiResponse();
+        }
 
         [HttpGet("all-sshkeys")]
         [Authorize]
@@ -120,17 +130,6 @@ namespace V2Ray.Api.Controllers
 
 
 
-        /// <summary>
-        /// ویرایش یک کاربر 
-        /// </summary>
-        ///
-        [HttpPut("adjust")]
-
-        public async Task<ApiResponse> Adjust()
-        {
-            await _service.Adjust();
-            return new ApiResponse();
-        }
 
         [HttpPut("adjustV2")]
 
@@ -171,16 +170,7 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(details);
         }
 
-        [HttpPost]
-        [Authorize]
-        public async Task<ApiResponse> Create([FromBody] CreateSSHKeyInput input)
-        {
-            input.UserId = UserId;
-            input.IsAdmin = IsAdmin;
-            input.Name = FullName;
-            await _service.GenerateSshFromAdmin(input);
-            return new ApiResponse();
-        }
+    
         
 
         /// <summary>
@@ -194,15 +184,6 @@ namespace V2Ray.Api.Controllers
             var result = await _service.GetById(id, new[] { "Orders" });
 
             return new ApiResponse(result);
-        }
-
-
-        [Authorize]
-        [HttpPost("change-password/{id}")]
-        public async Task<ApiResponse> ChangePassowrd([FromRoute] int id)
-        {
-            await _service.ChangePassowrd(id);
-            return new ApiResponse();
         }
 
 
