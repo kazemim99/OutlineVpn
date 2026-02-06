@@ -302,17 +302,14 @@ export default {
       options: { mustSort: true, sortDesc: [false] },
       headers: [
         { text: "نام کاربری", value: "userName", sortable: true },
-        { text: "رمز عبور", value: "password", sortable: false },
         { text: "وضعیت ترافیک", value: "trafficExpired", sortable: false },
         { text: "ترافیک کل", value: "totalTraffic", sortable: true },
         { text: "ترافیک مصرف شده", value: "usedTraffic", sortable: true },
         { text: "زمان ایجاد / تمدید", value: "chargeDate", sortable: true },
         { text: "تاریخ انقضا", value: "expireDate", sortable: true },
         { text: "نام ", value: "name", sortable: true },
-        { text: "پروتکل ", value: "protocol", sortable: true },
         { text: "وضعیت", value: "enable", sortable: true },
         { text: "تمدید", value: "charge", sortable: false },
-        { text: "تغییر رمز", value: "changePassword", sortable: false },
         { text: "ویرایش", value: "edit", sortable: false },
         { text: "حذف", value: "delete", sortable: false },
 
