@@ -11,7 +11,7 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.enable="{ item }">
+      <template #item.enable="{ item }">
         <v-switch
           v-model="item.enable"
           flat
@@ -20,7 +20,7 @@
         ></v-switch>
       </template>
 
-      <template v-slot:item.isActive="{ item }">
+      <template #item.isActive="{ item }">
         <v-switch
           v-model="item.isActive"
           flat
@@ -29,7 +29,7 @@
         ></v-switch>
       </template>
 
-      <template v-slot:item.hasLoadBalance="{ item }">
+      <template #item.hasLoadBalance="{ item }">
         <v-switch
           v-model="item.hasLoadBalance"
           flat
@@ -38,7 +38,7 @@
         ></v-switch>
       </template>
 
-      <template v-slot:item.adjust="{ item }">
+      <template #item.adjust="{ item }">
         <v-btn
           :loading="loadingItems[item.id]"
           color="blue darken-1"
@@ -47,7 +47,7 @@
         >
       </template>
 
-      <template v-slot:item.edit="{ item }">
+      <template #item.edit="{ item }">
         <v-icon
           v-can="'Member_Edit'"
           medium
@@ -57,7 +57,7 @@
         >
       </template>
 
-      <template v-slot:item.delete="{ item }">
+      <template #item.delete="{ item }">
         <v-icon
           v-can="'Member_Delete'"
           medium
@@ -67,7 +67,7 @@
         >
       </template>
 
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-col cols="3">
             <template right>
@@ -84,10 +84,10 @@
           <v-toolbar-title>لیست سرور ها</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:header.title="{ header }">
+      <template #header.title="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="title ? 'primary' : ''">mdi-filter</v-icon>
             </v-btn>
@@ -226,12 +226,12 @@ export default {
 
     async changeActive(item) {
       debugger;
-      
-      const api = new AezaAPI('ea09de9d2f1a7952ae8e524074a8ec92');
+
+      const api = new AezaAPI("ea09de9d2f1a7952ae8e524074a8ec92");
       const { response } = await api.profile.get();
 
       console.log(response);
-      
+
       this.switchLoading = "warning";
       await request
         .put(`/v2Server/change-active/${item.id}`)
@@ -316,7 +316,7 @@ export default {
       await request
         .get("/v2Server/filter?" + filterQuery)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.v2ServerList = data.result;
           this.totalV2Servers = data.totalItems;
           this.pages = data.pageCount;

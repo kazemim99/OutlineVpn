@@ -46,18 +46,49 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
+        public async Task AccountInfo(string userName)
+        {
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+            { return true; };
+
+            using var httpClient = new HttpClient(clientHandler)
+            {
+
+                Timeout = TimeSpan.FromSeconds(360)
+            };
+
+            var baseUrls = ConnectPanel(0, AccountType.V2RAy);
+
+            var loginData = new
+            {
+                username = "master640",
+                password = "!Q@W3e4r"
+            };
+
+            var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
+            loginResponse.EnsureSuccessStatusCode();
+            var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
+            httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
+
+
+            httpClient.DefaultRequestHeaders.Add("ContentType", "application/json");
+            var panelresult = await httpClient.GetFromJsonAsync<Root>($"{baseUrls}/panel/api/inbounds/list");
+
+            var inbounds = panelresult.obj.Where(c => c.enable);
+
+            //inbounds.Select(c=>c.clientStats).FirstOrDefault(c=>c.)
+
+        }
         public async Task GenerateSshFromAdmin(CreateSSHKeyInput input)
         {
             try
             {
-
                 if (input.Count > 10)
                     throw new ApiException("امکان ساخت بیشتر از ده اکانت همزمان  وجود ندارد");
 
 
-
                 var user = _db.Users.Include(c => c.SSHKeyInfos).First(c => c.Id == input.UserId);
-
 
                 var ceiling = user.SSHKeyInfos.Count(c => c.Enable) + input.Count;
 
@@ -222,7 +253,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var url = baseUrls.Split("/");
             IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
-            return $"http://{baseUrls}/FhFNjd6Q9p";
+            return $"http://185.232.155.89/FhFNjd6Q9p";
         }
 
         public async Task Charge(int keyId, int durationId, int userId)
@@ -1137,20 +1168,20 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 Domain = 7,
                 Port = 27000,
-                SubId = 2,
+                SubId = 13,
             };
 
             if (userId == 71 || userId == 88)//danial
             {
                 data.Port = 26000;
                 data.Domain = 6;
-                data.SubId = 9;
+                data.SubId = 12;
             }
             if (userId == 41)//ramin
             {
 
                 data.Port = 25000;
-                data.SubId = 8;
+                data.SubId = 11;
                 data.Domain = 5;
             }
 

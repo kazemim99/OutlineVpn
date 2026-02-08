@@ -9,13 +9,20 @@
       </v-col>
     </v-row>
     <v-row class="mb-5">
-      <a text color="success" target="_blank" href="https://my.uupload.ir/dl/BvmkBVvv"
+      <a
+        text
+        color="success"
+        target="_blank"
+        href="https://my.uupload.ir/dl/BvmkBVvv"
         >ویدئو آموزش آیفون
       </a>
-      
     </v-row>
     <v-row>
-      <a text color="success" target="_blank" href="https://my.uupload.ir/dl/1LzX1jBg"
+      <a
+        text
+        color="success"
+        target="_blank"
+        href="https://my.uupload.ir/dl/1LzX1jBg"
         >ویدئو آموزش اندروید
       </a>
     </v-row>
@@ -72,7 +79,6 @@ export default {
           name: " دانلود مستقیم اندروید",
           url: "https://my.uupload.ir/dl/v9pdXMWM",
           image: require("@/assets/images/apk.png"),
-
         },
         // {
         //   fileName: "netmode.apk",

@@ -8,7 +8,7 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on">ثبت پلن</v-btn>
       </template>
       <v-card>
@@ -82,18 +82,18 @@
                       hidden
                       v-model="plan.image"
                       :debug="1"
-                      :maxWidth="512"
+                      :max-width="512"
                       :quality="0.7"
-                      :autoRotate="true"
+                      :auto-rotate="true"
                       :preview="false"
-                      outputFormat="verbose"
-                      :className="[
+                      output-format="verbose"
+                      :class-name="[
                         'fileinput',
                         { 'fileinput--loaded': hasImage },
                       ]"
                       :capture="false"
                       accept="image/*"
-                      doNotResize="['gif', 'svg']"
+                      do-not-resize="['gif', 'svg']"
                       @input="onFileChange"
                     ></image-uploader>
                   </v-col>
@@ -160,7 +160,7 @@ export default Vue.extend({
       period: 30,
       planState: true,
       image: undefined,
-      trafficCapacity:1,
+      trafficCapacity: 1,
     },
 
     TitleRules: [(v) => !!v || "لطفا عنوان را وارد نمایید"],
@@ -185,7 +185,7 @@ export default Vue.extend({
   methods: {
     async getPlan(id) {
       await request.get(`/plan/${id}`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.plan.id = id;
         this.plan.title = data.title;
         this.plan.description = data.description;
@@ -217,13 +217,13 @@ export default Vue.extend({
       }
       this.hasImage = true;
       this.imageUrl = file.dataUrl;
-      let output = this.dataUrl(file.dataUrl, file.info.name);
+      const output = this.dataUrl(file.dataUrl, file.info.name);
       this.plan.image = this.dataUrl(file.dataUrl, file.info.name);
-      file = '';
+      file = "";
     },
 
     dataUrl(dataurl, filename) {
-      var arr = dataurl.split(","),
+      let arr = dataurl.split(","),
         mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]),
         n = bstr.length,
@@ -242,13 +242,13 @@ export default Vue.extend({
       }
       this.loading = true;
 
-      var form_data = new FormData();
-      
-      for (var key in this.plan) {
+      const form_data = new FormData();
+
+      for (const key in this.plan) {
         if (this.plan[key] !== "" && this.plan[key] !== null)
           form_data.append(key, this.plan[key]);
       }
-      
+
       request.defaults.headers.common.accept = "multipart/form-data";
       if (this.id) {
         request

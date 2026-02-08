@@ -27,8 +27,8 @@
     </v-card>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import Vue from "vue";
 import request from "@/utils/request";
 export default {
@@ -47,7 +47,7 @@ export default {
   methods: {
     async tickets() {
       await request.get(`/user-tickets/`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.messageHistory = data.result;
       });
     },
@@ -57,9 +57,9 @@ export default {
       }
       this.loading = true;
 
-      var form_data = new FormData();
+      const form_data = new FormData();
 
-      for (var key in this.model) {
+      for (const key in this.model) {
         form_data.append(key, this.model[key]);
       }
       request.defaults.headers.common.accept = "multipart/form-data";
@@ -81,4 +81,3 @@ export default {
   },
 };
 </script>
-  

@@ -8,7 +8,7 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on">ثبت DNS</v-btn>
       </template>
       <v-card>
@@ -96,7 +96,7 @@ export default Vue.extend({
   methods: {
     async getV2Server(id) {
       await request.get(`/dnsRecords/${id}`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
       });
     },
 
@@ -106,7 +106,7 @@ export default Vue.extend({
       }
 
       this.textFields.forEach((textField, index) => {
-        let re = textField["value" + (index + 1)];
+        const re = textField["value" + (index + 1)];
         this.dnsRecords.iPs.push(re);
       });
       this.loading = true;

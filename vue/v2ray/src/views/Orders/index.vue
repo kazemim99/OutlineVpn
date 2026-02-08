@@ -59,7 +59,7 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.statuses="{ item }">
+      <template #item.statuses="{ item }">
         <v-select
           @change="changeState(item.id, $event)"
           :items="item.statuses"
@@ -68,10 +68,10 @@
         ></v-select>
       </template>
 
-      <template v-slot:header.keyUserName="{ header }">
+      <template #header.keyUserName="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="keyUserName ? 'primary' : ''"
                 >mdi-filter</v-icon
@@ -202,7 +202,7 @@ export default {
       await request
         .get("/user/users")
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.users = data.result;
         })
         .catch((error) => {
@@ -246,13 +246,13 @@ export default {
       await request
         .get("/order/filter?" + filterQuery)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.orders = data.result;
           this.totalOrders = data.totalItems;
           this.pages = data.pageCount;
 
           request.get("/order/orderCount?" + filterQuery).then((response) => {
-            var data = response.data.result;
+            const data = response.data.result;
             this.oneMonthCount = data.oneMonthCount;
             this.twoMonthCount = data.twoMonthCount;
             this.threeMonthCount = data.threeMonthCount;

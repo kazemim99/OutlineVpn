@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog v-model="dialog" max-width="490">
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on">
           ورود اطاعات
         </v-btn>
@@ -50,8 +50,6 @@
   </v-row>
 </template>
 
-
-
 <script>
 import request from "@/utils/request";
 
@@ -88,7 +86,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .v-card {

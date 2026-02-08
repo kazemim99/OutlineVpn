@@ -1,8 +1,7 @@
 //get user permissions
 //if you are using token or something you could do something like
 import Vue from "vue";
-import store from "@/store/index"
-
+import store from "@/store/index";
 
 //create v-can directive
 Vue.directive("can", {

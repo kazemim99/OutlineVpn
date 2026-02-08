@@ -13,7 +13,7 @@
     >
       <template
         v-if="this.$store.state.userDetails.isAdmin"
-        v-slot:item.edit="{ item }"
+        #item.edit="{ item }"
       >
         <v-icon
           v-can="'Member_Edit'"
@@ -24,7 +24,7 @@
         >
       </template>
 
-      <template v-slot:item.show="{ item }">
+      <template #item.show="{ item }">
         <v-btn
           v-if="item.answer"
           medium
@@ -34,7 +34,7 @@
         >
       </template>
 
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-spacer></v-spacer>
           <v-divider class="mx-4" inset vertical></v-divider>
@@ -42,10 +42,10 @@
           <v-toolbar-title>لیست پیامها</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:heade.email="{ header }">
+      <template #heade.email="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="email ? 'primary' : ''">mdi-filter</v-icon>
             </v-btn>
@@ -147,7 +147,7 @@ export default {
 
   methods: {
     async openAnswer(id) {
-      let answer = prompt("پاسخ", "");
+      const answer = prompt("پاسخ", "");
       if (answer != null) {
         this.model.answer = answer;
         this.sendAnwer(id);
@@ -169,7 +169,7 @@ export default {
       this.$refs.addProblemReportCom.problemReportId = item.id;
     },
     getAnswer(answer) {
-      Vue.swal("",`${answer}`);
+      Vue.swal("", `${answer}`);
     },
     deleteItem(id) {
       Vue.swal({
@@ -221,7 +221,7 @@ export default {
       await request
         .get("/problemReport/?" + filterQuery)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.problemReportList = data.result;
           this.totalProblemReports = data.totalItems;
           this.pages = data.pageCount;

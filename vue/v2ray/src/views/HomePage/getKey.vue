@@ -22,17 +22,14 @@
             </v-col>
           </v-row>
 
-
           <v-row>
             <v-col md="6" sm="12">
-              <div class="mb-2">  ترافیک مصرف شده :</div>
+              <div class="mb-2">ترافیک مصرف شده :</div>
             </v-col>
             <v-col md="6" sm="12">
               <div class="mb-2">{{ this.userKeyDetails.usedTraffic }}</div>
             </v-col>
           </v-row>
-
-         
 
           <v-row>
             <v-col md="6" sm="12">
@@ -153,8 +150,8 @@
     <div></div>
   </div>
 </template>
-  
-  <script>
+
+<script>
 import request from "@/utils/request";
 import AddProblmeReport from "@/components/common/ProblemReport.vue";
 import AddOrder from "@/components/Home/Order.vue";
@@ -207,7 +204,7 @@ export default {
       request
         .get(`/v2Key/getUsedTraffic`)
         .then((response) => {
-          var data = response.data.message;
+          const data = response.data.message;
           this.loading1 = false;
           this.down = data;
         })
@@ -231,7 +228,7 @@ export default {
       request
         .get(`/sshkey/create-test-ssh`)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.loading = false;
           Vue.swal(
             "تبریک",
@@ -247,15 +244,15 @@ export default {
     },
     getUserKeyDetails() {
       request.get(`/sshKey/user-key-details`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.userKeyDetails = data;
       });
     },
   },
 };
 </script>
-  
-  <style>
+
+<style>
 .small {
   max-width: 600px;
   margin: 150px auto;
@@ -281,4 +278,3 @@ tr:nth-child(even) {
   background-color: #dddddd;
 }
 </style>
-  

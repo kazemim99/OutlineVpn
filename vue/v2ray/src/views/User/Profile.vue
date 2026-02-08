@@ -143,9 +143,9 @@ export default Vue.extend({
       password: "",
       complexRolesString: [],
       firstName: "",
-      userState:true,
-      code:"",
-      isAdmin:false,
+      userState: true,
+      code: "",
+      isAdmin: false,
       lastName: "",
       email: null,
       mobile: "",
@@ -184,7 +184,7 @@ export default Vue.extend({
   methods: {
     async getUser() {
       await request.get(`/user/profile`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.user.firstName = data.firstName;
         this.user.lastName = data.lastName;
         this.user.isAdmin = data.isAdmin;
@@ -221,9 +221,9 @@ export default Vue.extend({
       }
       this.loading = true;
 
-      var form_data = new FormData();
+      const form_data = new FormData();
 
-      for (var key in this.user) {
+      for (const key in this.user) {
         form_data.append(key, this.user[key]);
       }
       form_data.append("complexRolesString", JSON.stringify(this.complexRoles));

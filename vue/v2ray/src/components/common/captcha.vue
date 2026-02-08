@@ -7,20 +7,18 @@
   ></VueRecaptcha>
 </template>
 
-
-
 <script>
-import { computed, defineComponent } from 'vue';
-import { VueRecaptcha } from 'vue-recaptcha';
+import { computed, defineComponent } from "vue";
+import { VueRecaptcha } from "vue-recaptcha";
 
 export default defineComponent({
-  name: 'captcah',
+  name: "Captcah",
   components: {
-    VueRecaptcha
+    VueRecaptcha,
   },
   setup() {
     const siteKey = computed(() => {
-      return '6LcdGLUjAAAAAPqmwHQH5YB1siI6vEgddeqsTOtY';
+      return "6LcdGLUjAAAAAPqmwHQH5YB1siI6vEgddeqsTOtY";
     });
 
     const handleError = () => {
@@ -28,7 +26,7 @@ export default defineComponent({
     };
 
     const handleSuccess = (response) => {
-     // Do some validation
+      // Do some validation
     };
 
     return {
@@ -36,6 +34,6 @@ export default defineComponent({
       handleError,
       siteKey,
     };
-  }
+  },
 });
 </script>

@@ -69,7 +69,10 @@ export default class extends Vue {
         this.loading = false;
         return;
       }
-      await UserModule.VerifyCode({ code: this.code, mobile: UserModule.mobile });
+      await UserModule.VerifyCode({
+        code: this.code,
+        mobile: UserModule.mobile,
+      });
       this.loading = false;
       if (UserModule.verfied) {
         this.$router.push("/dashboard/sshkeys");

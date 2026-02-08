@@ -11,17 +11,17 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.isActive="{ item }">
+      <template #item.isActive="{ item }">
         <v-switch
           v-model="item.isActive"
           flat
           @change="changeState(item)"
           :label="`${item.isActive ? 'فعال' : 'غیر فعال'}`"
         >
-      </v-switch>
+        </v-switch>
       </template>
 
-      <template v-slot:item.edit="{ item }">
+      <template #item.edit="{ item }">
         <v-icon
           v-can="'Member_Edit'"
           medium
@@ -33,7 +33,7 @@
 
       <template
         v-if="this.$store.state.userDetails.isAdmin"
-        v-slot:item.delete="{ item }"
+        #item.delete="{ item }"
       >
         <v-icon
           v-can="'Member_Delete'"
@@ -44,7 +44,7 @@
         >
       </template>
 
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-col cols="12">
             <template right>
@@ -65,10 +65,10 @@
           <v-toolbar-title>لیست سرور ها</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:header.title="{ header }">
+      <template #header.title="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="title ? 'primary' : ''">mdi-filter</v-icon>
             </v-btn>
@@ -233,7 +233,7 @@ export default {
       await request
         .get("/v2Key/filter?" + filterQuery)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.v2Keys = data.result;
           this.totalV2Keys = data.totalItems;
           this.pages = data.pageCount;

@@ -206,7 +206,7 @@ export default {
     formattedDate: function () {
       // !! format the date based on this.currentLocale !!
       let formattedDate = "";
-      let options = {
+      const options = {
         weekday: "short",
         year: "numeric",
         month: "2-digit",
@@ -223,7 +223,7 @@ export default {
     formattedDate1: function () {
       // !! format the date based on this.currentLocale !!
       let formattedDate = "";
-      let options = {
+      const options = {
         weekday: "short",
         year: "numeric",
         month: "2-digit",
@@ -258,7 +258,7 @@ export default {
     },
     async getComplexes() {
       await request.get(`/publicData/main-complexes`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.complexes = data;
       });
     },
@@ -266,7 +266,7 @@ export default {
       await request
         .get(`/publicData/sub-complexes/${this.selectedComplexId}`)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.subComplexes = data;
           this.selectedSubComplexId = this.selectedComplexId;
           this.getDevices();
@@ -276,7 +276,7 @@ export default {
       await request
         .get(`/publicData/main-complexes-devices/${this.selectedSubComplexId}`)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.users = data;
         });
     },
@@ -298,7 +298,7 @@ export default {
       await request
         .get(`/user/member-log?${filterQuery}`)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.logList = data.result;
           this.totalLogs = data.totalItems;
           this.pages = data.pageCount;

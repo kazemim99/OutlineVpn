@@ -15,15 +15,12 @@ const routes: Array<RouteConfig> = [
     redirect: "/sshkeys",
     meta: { requireAuth: true },
     children: [
-
-
       {
         path: "users",
         name: "User",
         component: () => import("@/views/User/Users.vue"),
         meta: { requireAuth: true },
       },
-
 
       {
         path: "orders",
@@ -57,7 +54,6 @@ const routes: Array<RouteConfig> = [
 
         component: () => import("@/views/HomePage/Linux.vue"),
       },
-     
 
       {
         path: "v2servers",

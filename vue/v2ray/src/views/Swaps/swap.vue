@@ -67,7 +67,7 @@ export default Vue.extend({
     },
     async getNewServers() {
       await request.get(`/v2Server/new-servers`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.newServers = data.result;
       });
     },

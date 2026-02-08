@@ -24,7 +24,7 @@
 </template>
 <script>
 export default {
-    name: "breadcrump",
+  name: "Breadcrump",
   props: {
     crumbs: {
       text: "",

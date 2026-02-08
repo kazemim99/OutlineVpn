@@ -8,7 +8,7 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on">ثبت کلید</v-btn>
       </template>
       <v-card>
@@ -111,7 +111,7 @@
 import Vue from "vue";
 import request from "@/utils/request";
 export default Vue.extend({
-  name: "addDNSRecord",
+  name: "AddDNSRecord",
   data: () => ({
     id: null,
     dialog: false,
@@ -145,7 +145,7 @@ export default Vue.extend({
     sshKey: {
       name: null,
       extraDayId: 0,
-      accountType:4,
+      accountType: 4,
       serverId: null,
       durationId: 30,
       multiUser: 1,
@@ -167,7 +167,7 @@ export default Vue.extend({
         if (this.id != null) {
           this.getSSHKey(this.id);
         } else {
-          var userDetails = this.$store.state.userDetails;
+          const userDetails = this.$store.state.userDetails;
           this.sshKey.name = userDetails.firstName + " " + userDetails.lastName;
         }
       },
@@ -184,7 +184,7 @@ export default Vue.extend({
     },
     async getSSHKey(id) {
       await request.get(`/sshKey/${id}`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.sshKey.id = id;
         this.sshKey.serverId = data.serverId;
         this.sshKey.password = data.password;
@@ -234,7 +234,7 @@ export default Vue.extend({
 
     async getAccountType() {
       await request.get(`/publicData/get-accounType`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.accountTypes = data;
       });
     },

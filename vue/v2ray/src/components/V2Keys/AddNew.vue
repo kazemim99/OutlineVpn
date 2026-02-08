@@ -8,7 +8,7 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on">ثبت کلید</v-btn>
       </template>
       <v-card>
@@ -119,7 +119,7 @@ export default Vue.extend({
     },
     async getV2Key(id) {
       await request.get(`/v2Key/${id}`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.v2Key.id = id;
         this.v2Key.serverId = data.serverId;
         this.v2Key.traffic = data.traffic;

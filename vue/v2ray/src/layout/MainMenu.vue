@@ -42,7 +42,6 @@ export default class Dashboard extends Vue {
       to: "/swaps",
     },
 
-   
     {
       icon: "mdi-currency-usd ",
       title: "تراکنش ها",
@@ -50,7 +49,6 @@ export default class Dashboard extends Vue {
       to: "/orders",
     },
 
-  
     {
       icon: "mdi-server",
       title: "سرورها",
@@ -58,7 +56,7 @@ export default class Dashboard extends Vue {
       permission: "ApiUrl_Show",
       to: "/v2servers",
     },
-   
+
     {
       icon: "mdi-key",
       title: "کلیدها",
@@ -83,7 +81,6 @@ export default class Dashboard extends Vue {
       to: "/users",
     },
 
-
     {
       icon: "mdi-account-edit",
       title: "پروفایل",
@@ -103,5 +100,4 @@ export default class Dashboard extends Vue {
   };
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>

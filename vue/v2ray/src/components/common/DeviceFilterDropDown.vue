@@ -46,7 +46,7 @@ export default {
       selectedComplexId: null,
       selectedSubComplexId: null,
       deviceId: null,
-      subComplexes:[],
+      subComplexes: [],
       complexes: [],
       devices: [],
     };
@@ -57,7 +57,7 @@ export default {
   methods: {
     async getComplexes() {
       await request.get(`/publicData/main-complexes`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.complexes = data;
         this.complexes.unshift({ id: null, text: "انتخاب..." });
       });
@@ -67,7 +67,7 @@ export default {
         await request
           .get(`/publicData/sub-complexes/${this.selectedComplexId}`)
           .then((response) => {
-            var data = response.data.result;
+            const data = response.data.result;
             this.subComplexes = data;
             this.subComplexes.unshift({ id: null, text: "انتخاب..." });
             this.getDevices(this.selectedComplexId);
@@ -79,7 +79,7 @@ export default {
         await request
           .get(`/publicData/main-complexes-devices/${complexId}`)
           .then((response) => {
-            var data = response.data.result;
+            const data = response.data.result;
             this.devices = data;
             this.devices.unshift({ id: null, text: "انتخاب..." });
           });

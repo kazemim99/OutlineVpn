@@ -27,7 +27,7 @@
                 
                 </v-text-field> -->
 
-                <v-text-field
+                  <v-text-field
                     id="شماره موبایل"
                     autocomplete="on"
                     v-model="loginForm.mobile"
@@ -96,8 +96,6 @@
                         color="primary"
                         >ورود</v-btn
                       >
-
-                  
                     </v-col>
                   </v-row>
                 </v-form>
@@ -156,7 +154,6 @@ export default {
       alert("خطا");
     },
     async handleSuccess(response) {
-      
       this.loginForm.loginToken = response;
       this.captchaHasError = false;
     },
@@ -187,7 +184,7 @@ export default {
 
       this.loading = true;
       try {
-         await UserModule.Login(this.loginForm);
+        await UserModule.Login(this.loginForm);
         // this.$router.push("/verify-code/");
         this.$router.push("/dashboard/sshkeys");
 

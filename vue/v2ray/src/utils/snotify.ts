@@ -7,8 +7,6 @@ Vue.use(Snotify, {
   },
 });
 
-
-
 // import Vue from "vue";
 // import Snotify from "vue-snotify";
 // import { SnotifyService } from "vue-snotify/SnotifyService";

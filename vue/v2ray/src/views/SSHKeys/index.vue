@@ -11,7 +11,7 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.enable="{ item }">
+      <template #item.enable="{ item }">
         <v-switch
           v-model="item.enable"
           flat
@@ -20,29 +20,29 @@
         ></v-switch>
       </template>
 
-      <template v-slot:item.delete="{ item }">
+      <template #item.delete="{ item }">
         <v-icon medium class="mr-2" @click="deleteItem(item.id)"
           >mdi-delete</v-icon
         >
       </template>
 
-      <template v-slot:item.changePassword="{ item }">
+      <template #item.changePassword="{ item }">
         <v-icon medium class="mr-2" @click="changePassword(item.id)"
           >mdi-key-change</v-icon
         >
       </template>
 
-      <template v-slot:item.charge="{ item }">
+      <template #item.charge="{ item }">
         <v-icon medium class="mr-2" @click="charge(item.id)"
           >mdi-recycle</v-icon
         >
       </template>
 
-      <template v-slot:item.edit="{ item }">
+      <template #item.edit="{ item }">
         <v-icon medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
       </template>
 
-      <template v-slot:item.qrButton="{ item }">
+      <template #item.qrButton="{ item }">
         <v-icon
           large
           v-if="
@@ -54,7 +54,7 @@
           >mdi-qrcode</v-icon
         >
       </template>
-      <template v-slot:item.copyqr="{ item }">
+      <template #item.copyqr="{ item }">
         <v-row
           v-if="
             item.accountType == 2 ||
@@ -69,7 +69,7 @@
         </v-row>
       </template>
 
-      <template v-slot:item.copy="{ item }">
+      <template #item.copy="{ item }">
         <v-snackbar v-model="snackbar" :color="snackbarColor" right>{{
           snackbarMessage
         }}</v-snackbar>
@@ -86,7 +86,7 @@
         </v-row>
       </template>
 
-      <template v-slot:item.copy1="{ item }">
+      <template #item.copy1="{ item }">
         <v-row v-if="item.accountType == 1 || item.accountType == 3">
           <v-icon large class="mr-2" @click="copyToClipBoard(item, false)">
             mdi-content-copy</v-icon
@@ -96,12 +96,12 @@
 
       <template
         v-if="this.$store.state.userDetails.isAdmin"
-        v-slot:item.name="{ item }"
+        #item.name="{ item }"
       >
         {{ item.name }}
       </template>
 
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-col cols="12">
             <template right>
@@ -130,10 +130,10 @@
           <v-toolbar-title>لیست سرور ها</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:header.userName="{ header }">
+      <template #header.userName="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="userName ? 'primary' : ''"
                 >mdi-filter</v-icon
@@ -159,10 +159,10 @@
         </v-menu>
       </template>
 
-      <template v-slot:header.password="{ header }">
+      <template #header.password="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="password ? 'primary' : ''"
                 >mdi-filter</v-icon
@@ -188,10 +188,10 @@
         </v-menu>
       </template>
 
-      <template v-slot:header.codeFil="{ header }">
+      <template #header.codeFil="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="codeFil ? 'primary' : ''"
                 >mdi-filter</v-icon
@@ -216,11 +216,11 @@
           </div>
         </v-menu>
       </template>
-      <template v-slot:item.chargeDate="{ item }">
+      <template #item.chargeDate="{ item }">
         <v-badge color="green" :content="item.chargeDate"> </v-badge>
       </template>
 
-      <template v-slot:item.expireDate="{ item }">
+      <template #item.expireDate="{ item }">
         <v-badge color="blue" :content="item.expireDate"> </v-badge>
       </template>
     </v-data-table>
@@ -409,10 +409,10 @@ export default {
     copyToClipboardCode(item) {
       // Copy QR code data to clipboard
 
-      if(item.accountType === 7){
-       let textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : l.iransshvpn.com \n secret:vpn \nتاریخ اعتبار : ${item.expireDate} \n آموزش آیفون : https://my.uupload.ir/p/6E4o6vxW \n آموزش اندروید : https://my.uupload.ir/dl/6E4oxVgV \n دانلود پروفایل : https://my.uupload.ir/dl/OD1YOaL9`;
+      if (item.accountType === 7) {
+        const textToCopy = `username: ${item.userName} \n password: ${item.password} \n  server : l.iransshvpn.com \n secret:vpn \nتاریخ اعتبار : ${item.expireDate} \n آموزش آیفون : https://my.uupload.ir/p/6E4o6vxW \n آموزش اندروید : https://my.uupload.ir/dl/6E4oxVgV \n دانلود پروفایل : https://my.uupload.ir/dl/OD1YOaL9`;
         navigator.clipboard.writeText(textToCopy);
-      }else{
+      } else {
         navigator.clipboard.writeText(item.code);
       }
       this.snackbar = true;
@@ -420,7 +420,7 @@ export default {
         this.snackbar = false;
       }, 2000);
     },
-   
+
     copyToClipBoard(item, withToturial) {
       this.snackbar = true;
       setTimeout(() => {
@@ -589,7 +589,7 @@ export default {
       await request
         .get("/sshkey/filter?" + filterQuery)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.sshKeys = data.result;
           this.totalSSHKeys = data.totalItems;
           this.pages = data.pageCount;

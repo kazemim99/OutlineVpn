@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn
           color="error"
           dark
@@ -24,7 +24,7 @@
                   <v-select
                     :items="osList"
                     :rules="select1"
-                    v-on:change="selectOs"
+                    @change="selectOs"
                     v-model="os"
                     required
                     item-value="id"
@@ -36,7 +36,7 @@
                   <v-select
                     :items="oprations"
                     :rules="select2"
-                    v-on:change="selectOperator"
+                    @change="selectOperator"
                     v-model="operator"
                     required
                     item-value="id"

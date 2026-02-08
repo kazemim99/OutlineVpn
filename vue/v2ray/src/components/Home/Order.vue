@@ -1,34 +1,33 @@
 <template>
   <v-row justify="center">
     <v-dialog v-model="dialog" max-width="490">
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on"> تمدید </v-btn>
       </template>
       <v-card>
-        <v-card-title class="text-h5">  کارت به کارت</v-card-title>
+        <v-card-title class="text-h5"> کارت به کارت</v-card-title>
 
         <v-card-text>
-          مبلغ 100 تومان به کارت زیر واریز کرده سپس شماره کارت خود را کارت وارد کرده و ارسال نمایید
-          <br/>
+          مبلغ 100 تومان به کارت زیر واریز کرده سپس شماره کارت خود را کارت وارد
+          کرده و ارسال نمایید
+          <br />
           6219-8619-1061-8114
-          <br/>
+          <br />
           مصطفی کاظمی
         </v-card-text>
-        
 
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-container>
-              <v-col sm="12" md="12">
-                <v-text-field
-                  v-model="order.cardNumber"
-                  label="َشماره کارت شما *"
-                  placeholder=" "
-                  autocomplete="false"
-                  :rules="CardNumberRules"
-                  required
-                ></v-text-field>
-              </v-col>
-            
+            <v-col sm="12" md="12">
+              <v-text-field
+                v-model="order.cardNumber"
+                label="َشماره کارت شما *"
+                placeholder=" "
+                autocomplete="false"
+                :rules="CardNumberRules"
+                required
+              ></v-text-field>
+            </v-col>
           </v-container>
         </v-form>
         <v-card-actions>
@@ -43,8 +42,6 @@
   </v-row>
 </template>
 
-
-
 <script>
 import request from "@/utils/request";
 
@@ -55,7 +52,7 @@ export default {
       loading: false,
       valid: true,
       order: {
-        cardNumber:null
+        cardNumber: null,
       },
       CardNumberRules: [
         (v) => !!v || "شماره کارت",
@@ -88,7 +85,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .v-card {

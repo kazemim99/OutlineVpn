@@ -8,7 +8,7 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on"
           >ثبت کلید انبوه</v-btn
         >
@@ -90,7 +90,7 @@ export default Vue.extend({
       handler() {
         if (!this.dialog) {
           this.clearData();
-        }else{
+        } else {
           this.getServers();
         }
       },

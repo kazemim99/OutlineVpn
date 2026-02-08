@@ -1,5 +1,3 @@
-
-
 <template>
   <v-container class="pa-4">
     <!-- Protocol Selection and User Data Section -->
@@ -193,7 +191,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .pa-4 {
   padding: 16px;
@@ -207,4 +204,3 @@ export default {
   margin-top: 8px;
 }
 </style>
-

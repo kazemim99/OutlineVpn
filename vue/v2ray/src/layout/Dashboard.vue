@@ -39,7 +39,7 @@
           </v-list-item>
 
           <v-list-group v-else :key="i">
-            <template v-slot:activator>
+            <template #activator>
               <v-list-item-action>
                 <v-icon>{{ item.icon }}</v-icon>
               </v-list-item-action>
@@ -113,7 +113,7 @@ export default class Dashboard extends Vue {
       adminVisible: true,
       permission: "Home_Show",
     },
-   
+
     {
       icon: "mdi-account",
       title: "مدیریت کاربران",
@@ -156,7 +156,7 @@ export default class Dashboard extends Vue {
     //   title: "اموزش اتصال لینوکس",
     //   to: "/dashboard/linux-toturial",
     // },
-   
+
     // {
     //   icon: "mdi-server",
     //   title: "سرورها",
@@ -205,5 +205,4 @@ export default class Dashboard extends Vue {
   };
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>

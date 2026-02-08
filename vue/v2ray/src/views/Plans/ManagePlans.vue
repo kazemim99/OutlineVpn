@@ -11,7 +11,7 @@
       :options.sync="options"
       class="elevation-1"
     >
-      <template v-slot:item.planState="{ item }">
+      <template #item.planState="{ item }">
         <v-switch
           v-model="item.planState"
           flat
@@ -19,23 +19,36 @@
           :label="`${item.planState ? 'فعال' : 'غیر فعال'}`"
         ></v-switch>
       </template>
- 
 
-      <template  v-slot:item.edit="{ item }">
-        <v-icon v-can="'Member_Edit'" medium class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+      <template #item.edit="{ item }">
+        <v-icon
+          v-can="'Member_Edit'"
+          medium
+          class="mr-2"
+          @click="editItem(item)"
+          >mdi-pencil</v-icon
+        >
       </template>
 
-    
-
-         <template  v-slot:item.delete="{ item }">
-        <v-icon v-can="'Member_Delete'" medium class="mr-2" @click="deleteItem(item.id)">mdi-delete</v-icon>
+      <template #item.delete="{ item }">
+        <v-icon
+          v-can="'Member_Delete'"
+          medium
+          class="mr-2"
+          @click="deleteItem(item.id)"
+          >mdi-delete</v-icon
+        >
       </template>
 
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-col cols="3">
-            <template right >
-              <AddNewPlan v-can="'Member_Create'" ref="addPlanCom" @reloadPlans="getPlans" />
+            <template right>
+              <AddNewPlan
+                v-can="'Member_Create'"
+                ref="addPlanCom"
+                @reloadPlans="getPlans"
+              />
             </template>
           </v-col>
           <v-spacer></v-spacer>
@@ -44,10 +57,10 @@
           <v-toolbar-title>لیست پلن ها</v-toolbar-title>
         </v-toolbar>
       </template>
-      <template v-slot:header.title="{ header }">
+      <template #header.title="{ header }">
         {{ header.text }}
         <v-menu offset-y left :close-on-content-click="false">
-          <template v-slot:activator="{ on, attrs }">
+          <template #activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on">
               <v-icon small :color="firstName ? 'primary' : ''"
                 >mdi-filter</v-icon
@@ -96,7 +109,7 @@ export default {
   },
   data() {
     return {
-        crumbs: [
+      crumbs: [
         {
           text: "خانه",
           disabled: false,
@@ -169,7 +182,7 @@ export default {
       this.$refs.addPlanCom.dialog = true;
       this.$refs.addPlanCom.id = item.id;
     },
-     deleteItem(id) {
+    deleteItem(id) {
       Vue.swal({
         title: "ایا مطمئن  هستید",
         icon: "warning",
@@ -193,7 +206,6 @@ export default {
       });
     },
 
-  
     next(page) {
       this.options.page = page;
       this.getPlans();
@@ -220,7 +232,7 @@ export default {
       await request
         .get("/plan/plans?" + filterQuery)
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.planList = data.result;
           this.totalPlans = data.totalItems;
           this.pages = data.pageCount;

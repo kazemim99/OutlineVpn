@@ -56,7 +56,6 @@ class User extends VuexModule implements IUserState {
     this.mobile = mobile;
   }
   @Mutation
-
   @Mutation
   SET_FULLNAME(input: any) {
     this.fullName = `${input.firstName} ${input.lastName}`;
@@ -99,7 +98,7 @@ class User extends VuexModule implements IUserState {
       setToken(`Bearer ${token}`);
       store.commit("setUserDetails", result);
 
-      this.SET_FULLNAME(result)
+      this.SET_FULLNAME(result);
     });
   }
 
@@ -115,7 +114,6 @@ class User extends VuexModule implements IUserState {
   @Action
   public async Register(userInfo: { mobile: string; password: string }) {
     await register(userInfo).then((a) => {
-
       // this.GetCode(userInfo.mobile)
     });
   }
@@ -127,7 +125,7 @@ class User extends VuexModule implements IUserState {
     });
   }
   @Action
-  public async GetCode(input: { mobile: string, loginToken: string }) {
+  public async GetCode(input: { mobile: string; loginToken: string }) {
     this.SET_Mobile(input.mobile);
     await getCode(input);
   }

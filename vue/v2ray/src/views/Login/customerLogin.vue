@@ -66,11 +66,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                  color="success"
-                  text
-                  @click="downloadApk"
-                >
+                <v-btn color="success" text @click="downloadApk">
                   <v-icon left>mdi-download</v-icon>
                   دانلود اپلیکیشن
                 </v-btn>
@@ -123,10 +119,12 @@ export default {
   methods: {
     downloadApk() {
       // Create a link that points directly to the backend
-      const link = document.createElement('a');
-      link.href = `${process.env.VUE_APP_API_BASE_URL || 'https://localhost:7087'}/File.apk`;
-      link.download = 'File.apk';
-      link.target = '_blank';
+      const link = document.createElement("a");
+      link.href = `${
+        process.env.VUE_APP_API_BASE_URL || "https://localhost:7087"
+      }/File.apk`;
+      link.download = "File.apk";
+      link.target = "_blank";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -150,7 +148,7 @@ export default {
         request
           .post(`/authentication/customer-login`, this.loginForm)
           .then((a) => {
-            var result = a.data.result;
+            const result = a.data.result;
             if (result.seller) {
               UserModule.Login({
                 mobile: this.loginForm.userName,

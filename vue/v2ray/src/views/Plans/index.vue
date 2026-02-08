@@ -25,7 +25,7 @@
           ></v-card-title>
 
           <v-card-actions>
-            <v-btn color="deep-purple lighten-2"  text @click="reserve(card.id)">
+            <v-btn color="deep-purple lighten-2" text @click="reserve(card.id)">
               خرید
             </v-btn>
           </v-card-actions>
@@ -49,12 +49,12 @@ export default {
 
   methods: {
     formatPrice(value) {
-      let val = (value / 1).toFixed().replace(".", ",");
+      const val = (value / 1).toFixed().replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     getConsumedTraffic() {
       request.get(`plan/plans`).then((response) => {
-        let data = response.data.result;
+        const data = response.data.result;
         this.cards = data.result;
       });
     },
@@ -88,5 +88,3 @@ export default {
 //     });
 //   },
 </script>
-
-

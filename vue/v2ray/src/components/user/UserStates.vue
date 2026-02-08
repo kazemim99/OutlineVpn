@@ -1,11 +1,10 @@
-
 <template>
   <v-container fluid>
     <v-row>
       <v-col cols="6" sm="6">
         <v-select
           :items="userStates"
-          v-on:change="selectState"
+          @change="selectState"
           v-model="userState"
           item-value="id"
           item-text="text"
@@ -16,7 +15,7 @@
     </v-row>
   </v-container>
 </template>
- <script>
+<script>
 import Vue from "vue";
 
 export default Vue.extend({
@@ -43,4 +42,3 @@ export default Vue.extend({
   },
 });
 </script>
- 

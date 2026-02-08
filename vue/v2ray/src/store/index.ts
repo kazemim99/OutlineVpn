@@ -10,17 +10,16 @@ export default new Vuex.Store({
     userMobile: "",
     userStates: [],
     selectedDeviceName: "",
-    customerUserName:"",
+    customerUserName: "",
     userDetails: {
       isAdmin: false,
       firstName: null,
-      lastName: null
+      lastName: null,
     },
     roles: [],
     permissions: [],
   },
   mutations: {
-
     setRoles(state, roles: []) {
       state.roles = roles;
     },
@@ -33,11 +32,9 @@ export default new Vuex.Store({
     },
     setUserStates(state, userStates: any) {
       state.userStates = userStates;
-    }
-
+    },
   },
   actions: {
-
     getRoles({ commit }) {
       request.get("/userRoleAndPermission/roles").then((response) => {
         commit("setRoles", response.data.result);

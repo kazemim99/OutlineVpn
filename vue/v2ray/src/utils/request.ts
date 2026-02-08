@@ -25,23 +25,22 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
-    if(error.response.data.detail){
+    if (error.response.data.detail) {
       Vue.swal("خطا", error.response.data.detail, "error");
-    }else{
+    } else {
+      let message = error.response.data;
+      if (message.errors) {
+        const result = Object.keys(message.errors).map((key) => [
+          key,
+          message.errors[key],
+        ]);
 
-    let message = error.response.data;
-    if (message.errors) {
-      const result = Object.keys(message.errors).map((key) => [
-        key,
-        message.errors[key],
-      ]);
-
-      for (let index = 1; index < result[0].length; index++) {
-        message = result[0][index] + "<br/>";
+        for (let index = 1; index < result[0].length; index++) {
+          message = result[0][index] + "<br/>";
+        }
       }
+      Vue.swal("خطا", message, "error");
     }
-    Vue.swal("خطا", message, "error");  
-  }
     return Promise.reject(error);
   }
 );

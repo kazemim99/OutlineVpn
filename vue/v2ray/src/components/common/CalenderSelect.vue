@@ -9,7 +9,7 @@
         offset-y
         min-width="auto"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template #activator="{ on, attrs }">
           <v-text-field
             clearable
             @click:clear="clearFrom()"
@@ -39,7 +39,7 @@
         offset-y
         min-width="auto"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template #activator="{ on, attrs }">
           <v-text-field
             clearable
             @click:clear="clearTo()"
@@ -79,7 +79,7 @@ export default {
     formattedDate: function () {
       // !! format the date based on this.currentLocale !!
       let formattedDate = "";
-      let options = {
+      const options = {
         weekday: "short",
         year: "numeric",
         month: "2-digit",
@@ -93,7 +93,7 @@ export default {
     formattedDate1: function () {
       // !! format the date based on this.currentLocale !!
       let formattedDate = "";
-      let options = {
+      const options = {
         weekday: "short",
         year: "numeric",
         month: "2-digit",

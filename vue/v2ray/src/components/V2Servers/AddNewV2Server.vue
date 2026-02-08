@@ -8,7 +8,7 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on">ثبت سرور</v-btn>
       </template>
       <v-card>
@@ -111,18 +111,14 @@
                 <v-col cols="4" v-if="this.$store.state.userDetails.isAdmin">
                   <v-switch
                     v-model="v2Server.enable"
-                    :label="`فعال : ${
-                      v2Server.enable ? 'فعال' : 'غیر فعال'
-                    }`"
+                    :label="`فعال : ${v2Server.enable ? 'فعال' : 'غیر فعال'}`"
                   ></v-switch>
                 </v-col>
 
                 <v-col cols="4">
                   <v-switch
                     v-model="v2Server.isActive"
-                    :label="`وضعیت: ${
-                      v2Server.isActive ? 'فعال' : 'غیر فعال'
-                    }`"
+                    :label="`وضعیت: ${v2Server.isActive ? 'فعال' : 'غیر فعال'}`"
                   ></v-switch>
                 </v-col>
                 <v-col cols="4">
@@ -205,7 +201,7 @@ export default Vue.extend({
       await request
         .get("/user/users")
         .then((response) => {
-          var data = response.data.result;
+          const data = response.data.result;
           this.users = data.result;
         })
         .catch((error) => {
@@ -217,7 +213,7 @@ export default Vue.extend({
     },
     async addEmpty() {
       this.currentRows++;
-      var tempObj = {};
+      const tempObj = {};
 
       tempObj["label" + this.currentRows] = `آی پی ${this.currentRows}`;
       tempObj["value" + this.currentRows] = "";
@@ -225,7 +221,7 @@ export default Vue.extend({
     },
     async add(ip) {
       this.currentRows++;
-      var tempObj = {};
+      const tempObj = {};
 
       tempObj["label" + this.currentRows] = `آی پی ${this.currentRows}`;
       tempObj["value" + this.currentRows] = ip ? ip : "";
@@ -239,7 +235,7 @@ export default Vue.extend({
 
     async getV2Server(id) {
       await request.get(`/v2Server/${id}`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.v2Server.id = id;
         this.v2Server.capacity = data.capacity;
         this.v2Server.title = data.title;
@@ -265,7 +261,7 @@ export default Vue.extend({
 
     async getCities() {
       await request.get(`city/all-cities`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
         this.cities = data.result;
       });
     },
@@ -275,7 +271,7 @@ export default Vue.extend({
       }
 
       this.textFields.forEach((textField, index) => {
-        let re = textField["value" + (index + 1)];
+        const re = textField["value" + (index + 1)];
         this.v2Server.iPs.push(re);
       });
       this.loading = true;

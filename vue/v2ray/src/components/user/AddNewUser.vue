@@ -8,7 +8,7 @@
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn color="primary" dark v-bind="attrs" v-on="on">ثبت کاربر</v-btn>
       </template>
       <v-card>
@@ -48,7 +48,7 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
-       
+
               <v-row>
                 <v-col cols="4" sm="12" md="4">
                   <v-text-field
@@ -220,7 +220,7 @@ export default Vue.extend({
     },
     async getUser(id) {
       await request.get(`/user/${id}`).then((response) => {
-        var data = response.data.result;
+        const data = response.data.result;
 
         this.user.firstName = data.firstName;
         this.user.lastName = data.lastName;
@@ -261,12 +261,12 @@ export default Vue.extend({
       }
       this.hasImage = true;
       this.imageUrl = file.dataUrl;
-      let output = this.dataUrl(file.dataUrl, file.info.name);
+      const output = this.dataUrl(file.dataUrl, file.info.name);
       this.user.avatar = this.dataUrl(file.dataUrl, file.info.name);
     },
 
     dataUrl(dataurl, filename) {
-      var arr = dataurl.split(","),
+      let arr = dataurl.split(","),
         mime = arr[0].match(/:(.*?);/)[1],
         bstr = atob(arr[1]),
         n = bstr.length,
@@ -289,9 +289,9 @@ export default Vue.extend({
       }
       this.loading = true;
 
-      var form_data = new FormData();
+      const form_data = new FormData();
 
-      for (var key in this.user) {
+      for (const key in this.user) {
         if (this.user[key] !== "" && this.user[key] !== null)
           form_data.append(key, this.user[key]);
       }

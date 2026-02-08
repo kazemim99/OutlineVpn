@@ -31,7 +31,7 @@
                     :type="show1 ? 'text' : 'password'"
                     @click:append="show1 = !show1"
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :rules="[confirmPasswordRules,compareConfirmPasswordRules]"
+                    :rules="[confirmPasswordRules, compareConfirmPasswordRules]"
                     autocomplete="off"
                     v-model="confirmPassword"
                     prepend-icon="mdi-lock"
@@ -63,14 +63,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue  } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { UserModule } from "@/store/modules/user";
 
 @Component({
   name: "Login",
   components: {},
 })
-
 export default class extends Vue {
   $refs!: {
     form: HTMLFormElement;
@@ -81,19 +80,19 @@ export default class extends Vue {
   private password = "";
   private confirmPassword = "";
 
-
-
   private passwordRules = [
     (v: string) => !!v || "رمز عبور   الزامی میباشد",
     (v: string) => v.length > 5 || "رمز عبور   باید 6 رقم باشد ",
   ];
 
-    private confirmPasswordRules = [
-    (v: string) => !!v || "لطفا تکرار رمز عبور را وارد نمایید"]
+  private confirmPasswordRules = [
+    (v: string) => !!v || "لطفا تکرار رمز عبور را وارد نمایید",
+  ];
 
-  get compareConfirmPasswordRules(){
-       return this.password === this.confirmPassword ||
-        "تکرار رمز عبور اشتباه است";
+  get compareConfirmPasswordRules() {
+    return (
+      this.password === this.confirmPassword || "تکرار رمز عبور اشتباه است"
+    );
   }
   private async changePassword() {
     this.validationForm();
