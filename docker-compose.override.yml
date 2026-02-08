@@ -19,18 +19,6 @@ services:
   #  volumes:
   #    - /datadrive:/data
 
-  posgresdb:
-    container_name: posgresdb
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=!Q@W#E
-      - POSTGRES_DB=V2Ray
-    restart: always
-    ports:
-        - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-
 
   #pgadmin:
   #  container_name: pgadmin
@@ -76,7 +64,6 @@ services:
       - "5000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionString:Default=Server=posgresdb;Port=5432;Database=V2Ray;User Id=admin;Password=!Q@W#E;
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     restart: always
