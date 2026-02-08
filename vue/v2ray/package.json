@@ -26,7 +26,6 @@
     "vue-persian-datetime-picker": "^2.10.4",
     "vue-property-decorator": "^9.1.2",
     "vue-qrcode-component": "^2.1.1",
-    "vue-recaptcha": "^2.0.3",
     "vue-router": "^3.6.5",
     "vue-snotify": "^3.2.1",
     "vue-sweetalert2": "^5.0.11",
