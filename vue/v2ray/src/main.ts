@@ -6,11 +6,7 @@ import vuetify from "./plugins/vuetify";
 import VueSweetalert2 from "vue-sweetalert2";
 import acl from "../src/acl.js";
 import "./assets/sass/main.scss";
-import VueCompositionAPI from "@vue/composition-api";
-
 Vue.config.productionTip = false;
-
-Vue.use(VueCompositionAPI);
 
 Vue.use(VueSweetalert2);
 import "sweetalert2/dist/sweetalert2.min.css";
