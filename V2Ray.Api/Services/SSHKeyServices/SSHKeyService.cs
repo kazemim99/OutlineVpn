@@ -224,7 +224,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var url = baseUrls.Split("/");
             IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
-            return $"http://{addresses}/FhFNjd6Q9p";
+            return $"https://{addresses}/FhFNjd6Q9p";
         }
 
         public async Task Charge(int keyId, int durationId, int userId)
@@ -1155,20 +1155,20 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 Domain = 7,
                 Port = 27000,
-                SubId = 2,
+                SubId = 3,
             };
 
             if (userId == 71 || userId == 88)//danial
             {
                 data.Port = 26000;
                 data.Domain = 6;
-                data.SubId = 9;
+                data.SubId = 2;
             }
             if (userId == 41)//ramin
             {
 
                 data.Port = 25000;
-                data.SubId = 11;
+                data.SubId = 1;
                 data.Domain = 8;
             }
 
