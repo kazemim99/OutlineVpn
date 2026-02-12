@@ -22,5 +22,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         Task Charge(int id, int durationId, int userId);
         Task<int> CreateV2Ray(int currenUserId, List<SSHKey> sSHKeys, AccountType accountType, AccountActionStatus status = AccountActionStatus.Create, bool isSync = false);
         Task GenerateSshFromAdmin(CreateSSHKeyInput input);
+        Task RemoveOrphanPanelClients();
     }
 }

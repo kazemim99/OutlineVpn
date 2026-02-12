@@ -138,7 +138,6 @@ export default {
     },
 
     async handleLogin() {
-      this.loading = false;
       // if (this.captchaHasError) return;
       this.validationForm();
       if (!this.valid) return;
@@ -163,9 +162,6 @@ export default {
           .finally(() => {
             this.loading = false;
           });
-        // this.$router.push("/verify-code/");
-
-        this.loading = false;
       } catch (error) {
         this.loading = false;
       }

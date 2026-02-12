@@ -48,36 +48,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
         public async Task AccountInfo(string userName)
         {
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
-            { return true; };
-
-            using var httpClient = new HttpClient(clientHandler)
-            {
-
-                Timeout = TimeSpan.FromSeconds(360)
-            };
-
-            var baseUrls = ConnectPanel(0, AccountType.V2RAy);
-
-            var loginData = new
-            {
-                username = "master640",
-                password = "!Q@W3e4r"
-            };
-
-            var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
-            loginResponse.EnsureSuccessStatusCode();
-            var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
-            httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
-
-
-            httpClient.DefaultRequestHeaders.Add("ContentType", "application/json");
-            var panelresult = await httpClient.GetFromJsonAsync<Root>($"{baseUrls}/panel/api/inbounds/list");
-
-            var inbounds = panelresult.obj.Where(c => c.enable);
-
-            //inbounds.Select(c=>c.clientStats).FirstOrDefault(c=>c.)
+           
 
         }
         public async Task GenerateSshFromAdmin(CreateSSHKeyInput input)
@@ -253,7 +224,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             var url = baseUrls.Split("/");
             IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
-            return $"http://185.232.155.89/FhFNjd6Q9p";
+            return $"http://{addresses}/FhFNjd6Q9p";
         }
 
         public async Task Charge(int keyId, int durationId, int userId)
@@ -289,6 +260,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 // Update key properties
                 key.TrefficExpired = false;
                 key.UsedTraffic = 0;
+                key.LastPanelTraffic = 0;
                 key.Enable = true;
                 key.ChargeDate = DateTime.UtcNow;
                 key.ExpireDate = expireDate;
@@ -691,28 +663,18 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
         public async Task UpdateUserTraffic()
         {
+            var remarks = new List<string> { "M", "D", "R" };
 
-
-            var remarks = new List<string>
-                    {
-                        "M",
-                        "D",
-                        "R"
-                    };
             foreach (var item in remarks)
             {
-
                 try
                 {
-
-
                     HttpClientHandler clientHandler = new HttpClientHandler();
                     clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
                     { return true; };
 
                     using var httpClient = new HttpClient(clientHandler)
                     {
-
                         Timeout = TimeSpan.FromSeconds(360)
                     };
 
@@ -730,106 +692,67 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
                     httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
 
-
                     httpClient.DefaultRequestHeaders.Add("ContentType", "application/json");
                     var panelresult = await httpClient.GetFromJsonAsync<Root>($"{baseUrls}/panel/api/inbounds/list");
 
                     var inbounds = panelresult.obj.Where(c => c.enable);
 
-                    var sshKeys = new List<SSHKey>();
-
-
                     foreach (var cliens in inbounds.Where(c => c.remark == item).Select(d => d.clientStats))
                     {
-
-
-                        foreach (var item2 in cliens.Where(c => c.down > 34071707335))
+                        foreach (var item2 in cliens)
                         {
-
                             var key = await _db.SSHKeyInfos.FirstOrDefaultAsync(c => c.UserName == item2.email);
 
                             if (key != null)
                             {
                                 try
                                 {
-                                    var usage = BytesToGigabytes(item2.down, key.DurationId);
-                                    var calTraffic = (key.UsedTraffic - usage);
-                                    if (item2.down > 1000 && usage <= 0)
+                                    var currentPanelTraffic = BytesToGigabytes(item2.down);
+
+                                    // Delta-based tracking:
+                                    // - If panel traffic >= last known panel value: no reset, add only the delta
+                                    // - If panel traffic < last known panel value: panel was reset, add the new value
+                                    if (currentPanelTraffic < key.LastPanelTraffic)
                                     {
-                                        key.UsedTraffic = 1;
-                                    }
-                                    key.UsedTraffic = usage;
-                                    if (key.DurationId == 30)
-                                    {
-                                        key.TotalTraffic = 55;
-                                    }
-                                    else if (key.DurationId == 60)
-                                    {
-                                        key.TotalTraffic = 105;
-                                    }
-                                    else if (key.DurationId == 90)
-                                    {
-                                        key.TotalTraffic = 160;
+                                        // Panel was reset - add new panel traffic on top of stored usage
+                                        key.UsedTraffic += currentPanelTraffic;
                                     }
                                     else
                                     {
-                                        key.TotalTraffic = 50;
+                                        // No reset - add only the difference since last check
+                                        key.UsedTraffic += (currentPanelTraffic - key.LastPanelTraffic);
                                     }
-                                    if (key.TotalTraffic < (usage))
+
+                                    // Remember the current panel value for next comparison
+                                    key.LastPanelTraffic = currentPanelTraffic;
+
+                                    // Check if traffic limit exceeded
+                                    if (key.TotalTraffic > 0 && key.UsedTraffic >= key.TotalTraffic)
                                     {
                                         key.TrefficExpired = true;
-
                                     }
-                                    var newUser = key.ChargeDate.Date >= DateTime.UtcNow.Date.AddDays(-5);
-                                    if (newUser && key.TrefficExpired)
-                                    {
-                                        key.TrefficExpired = false;
-                                        if (key.UsedTraffic >= key.TotalTraffic)
-                                        {
-                                            key.UsedTraffic = 4;
-                                        }
-                                    }
-
 
                                     _db.Update(key);
                                     _db.SaveChanges();
-
                                 }
                                 catch (Exception ex)
                                 {
-                                    Thread.Sleep(1000);
+                                    _logger.LogError(ex, "Error updating traffic for user {UserName}", item2.email);
                                 }
-
                             }
                         }
                     }
-
-
-
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ex, "Error updating traffic for remark {Remark}", item);
                 }
-
             }
-
         }
-        static int BytesToGigabytes(long bytes, int durationId)
+
+        static double BytesToGigabytes(long bytes)
         {
-            var result = Convert.ToInt32(bytes / 1_000_000_000);
-            if (durationId == 30)
-            {
-                result += 5;
-            }
-            else if (durationId == 60)
-            {
-                result += 10;
-            }
-            else if (durationId == 90)
-            {
-                result += 15;
-            }
-            return result;
+            return Math.Round((double)bytes / 1_000_000_000, 2);
         }
 
         public async Task DisableExpired()
@@ -1023,7 +946,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 foreach (var item in sSHKeys)
                 {
-                    item.V2Port = GetV2Port(item.UserId, accountType);
 
 
                     var formData = new Dictionary<string, string>();
@@ -1035,32 +957,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         var secSub = number.SubId;
                         var secUrl = panelUrl;
 
-                        try
-                        {
-                            var url = $"{secUrl}/panel/api/inbounds/{secSub}/delClient/{item.V2Guid}";
-                            var postResponse = await httpClient.PostAsync($"{url}", null);
-                            postResponse.EnsureSuccessStatusCode();
 
-
-                        }
-
-                        catch (Exception ex)
-
-                        {
-
-
-                        }
-
-
-
-
-                        item.AccountType = accountType;
-                        entity = _db.SSHKeyInfos.Update(item);
-                        _db.SaveChanges();
+                        var url = $"{secUrl}/panel/api/inbounds/{secSub}/delClient/{item.V2Guid}";
+                        var postResponse = await httpClient.PostAsync($"{url}", null);
+                        postResponse.EnsureSuccessStatusCode();
 
                     }
                     else
                     {
+                        item.V2Port = GetV2Port(item.UserId, accountType);
+
                         if (item.V2Guid.IsNullOrEmpty())
                             item.V2Guid = Guid.NewGuid().ToString();
 
@@ -1160,6 +1066,87 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
+        public async Task RemoveOrphanPanelClients()
+        {
+            var remarkUserMap = new Dictionary<string, int>
+            {
+                { "M", 77 },
+                { "D", 71 },
+                { "R", 41 }
+            };
+
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+            using var httpClient = new HttpClient(clientHandler) { Timeout = TimeSpan.FromSeconds(30) };
+
+            var panelUrl = ConnectPanel(1, AccountType.V2RAy);
+
+            var loginData = new { username = "master640", password = "!Q@W3e4r" };
+            var loginResponse = await httpClient.PostAsJsonAsync($"{panelUrl}/login", loginData);
+            loginResponse.EnsureSuccessStatusCode();
+            var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").First();
+            httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
+
+            var panelResult = await httpClient.GetFromJsonAsync<Root>($"{panelUrl}/panel/api/inbounds/list");
+            if (panelResult?.obj == null)
+                return;
+
+            var dbUserNames = await _db.SSHKeyInfos
+                .Where(c => c.AccountType == AccountType.V2RAy && c.Enable)
+                .Select(c => c.UserName)
+                .ToListAsync();
+
+            foreach (var (remark, userId) in remarkUserMap)
+            {
+                try
+                {
+                    var orphanKeys = new List<SSHKey>();
+
+                    foreach (var inbound in panelResult.obj.Where(c => c.remark == remark && c.enable))
+                    {
+                        if (string.IsNullOrEmpty(inbound.settings) || inbound.clientStats == null)
+                            continue;
+
+                        var settingsJson = JObject.Parse(inbound.settings);
+                        var clients = settingsJson["clients"] as JArray;
+                        if (clients == null)
+                            continue;
+
+                        var clientGuidMap = clients
+                            .Where(c => c["email"] != null)
+                            .ToDictionary(c => c["email"]!.ToString(), c => c["id"]!.ToString());
+
+                        foreach (var clientStat in inbound.clientStats)
+                        {
+                            if (!string.IsNullOrEmpty(clientStat.email)
+                                && !dbUserNames.Contains(clientStat.email)
+                                && clientGuidMap.TryGetValue(clientStat.email, out var guid))
+                            {
+                                orphanKeys.Add(new SSHKey
+                                {
+                                    UserName = clientStat.email,
+                                    V2Guid = guid,
+                                    UserId = userId,
+                                    AccountType = AccountType.V2RAy
+                                });
+                            }
+                        }
+                    }
+
+                    if (orphanKeys.Any())
+                    {
+                        _logger.LogInformation("Removing {Count} orphan clients for remark {Remark}", orphanKeys.Count, remark);
+                        await CreateV2Ray(userId, orphanKeys, AccountType.V2RAy, AccountActionStatus.Delete);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error removing orphan clients for remark {Remark}", remark);
+                }
+            }
+        }
+
         private ConfigDateOutput GetUserNumber(int userId)
         {
 
@@ -1168,21 +1155,21 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 Domain = 7,
                 Port = 27000,
-                SubId = 13,
+                SubId = 2,
             };
 
             if (userId == 71 || userId == 88)//danial
             {
                 data.Port = 26000;
                 data.Domain = 6;
-                data.SubId = 12;
+                data.SubId = 9;
             }
             if (userId == 41)//ramin
             {
 
                 data.Port = 25000;
                 data.SubId = 11;
-                data.Domain = 5;
+                data.Domain = 8;
             }
 
             return data;

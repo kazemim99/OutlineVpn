@@ -71,9 +71,11 @@ namespace V2Ray.Api
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyHeader()
-                    .AllowAnyMethod()
-                .AllowAnyOrigin());
+                    builder => builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .SetIsOriginAllowed(origin => true) // Allow any origin
+                        .AllowCredentials()); // Allow credentials (cookies, auth headers)
             });
             services.Configure<IISServerOptions>(options =>
             {
@@ -196,10 +198,11 @@ namespace V2Ray.Api
             }
             app.UseRouting();
 
+            app.UseCors("CorsPolicy");
+
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

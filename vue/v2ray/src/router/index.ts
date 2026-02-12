@@ -138,8 +138,8 @@ router.beforeEach((to, from, next) => {
 
   if (to.matched.some((record) => record.meta.requireAuth) && !isLoggedIn) {
     next({ path: "/", query: { returnUrl: to.path } });
+  } else {
+    next();
   }
-
-  next();
 });
 export default router;

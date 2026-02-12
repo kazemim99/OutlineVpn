@@ -63,6 +63,13 @@ namespace V2Ray.Api.Services.UserServices
                 {
                     Mobile = input.Mobile
                 });
+
+                // Reload user after creation
+                user = await _db.Users.Include(new[] { "Roles.Role" })
+                    .FirstOrDefaultAsync(a => a.Mobile == input.Mobile);
+
+                if (user == null)
+                    throw new ApiException("خطا در ایجاد کاربر");
             }
             //await RecaptchaResult(input.LoginToken);
 

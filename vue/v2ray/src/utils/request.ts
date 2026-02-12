@@ -4,7 +4,8 @@ import { getToken } from "@/utils/cookies";
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // withCredentials: true // send cookies when cross-domain requests
+  withCredentials: true, // send cookies when cross-domain requests
+  timeout: 30000, // 30 second timeout
 });
 
 service.interceptors.request.use(
@@ -25,21 +26,32 @@ service.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response.data.detail) {
-      Vue.swal("خطا", error.response.data.detail, "error");
-    } else {
-      let message = error.response.data;
-      if (message.errors) {
-        const result = Object.keys(message.errors).map((key) => [
-          key,
-          message.errors[key],
-        ]);
+    // Check if error.response exists (server responded with error)
+    if (error.response) {
+      if (error.response.data && error.response.data.detail) {
+        Vue.swal("خطا", error.response.data.detail, "error");
+      } else if (error.response.data) {
+        let message = error.response.data;
+        if (message.errors) {
+          const result = Object.keys(message.errors).map((key) => [
+            key,
+            message.errors[key],
+          ]);
 
-        for (let index = 1; index < result[0].length; index++) {
-          message = result[0][index] + "<br/>";
+          for (let index = 1; index < result[0].length; index++) {
+            message = result[0][index] + "<br/>";
+          }
         }
+        Vue.swal("خطا", message, "error");
+      } else {
+        Vue.swal("خطا", "خطای ناشناخته در سرور", "error");
       }
-      Vue.swal("خطا", message, "error");
+    } else if (error.request) {
+      // Request was made but no response received
+      Vue.swal("خطا", "سرور پاسخگو نیست. لطفا اتصال اینترنت خود را بررسی کنید.", "error");
+    } else {
+      // Something else happened
+      Vue.swal("خطا", error.message || "خطای ناشناخته", "error");
     }
     return Promise.reject(error);
   }

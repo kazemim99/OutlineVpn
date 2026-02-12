@@ -91,6 +91,7 @@ namespace V2Ray.Api.Entity
         public string? WireGuardPublicKey { get; set; }
         public AccountType AccountType { get; set; }
         public double UsedTraffic { get;  set; }
+        public double LastPanelTraffic { get;  set; }
         public double TotalTraffic { get;  set; }
         public bool TrefficExpired { get;  set; }
         public string SSHCode { get;  set; }

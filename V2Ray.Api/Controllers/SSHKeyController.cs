@@ -139,6 +139,14 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse();
         }
 
+        [HttpPut("RemoveOrphanPanelClients")]
+
+        public async Task<ApiResponse> RemoveOrphanPanelClients()
+        {
+            await _service.RemoveOrphanPanelClients();
+            return new ApiResponse();
+        }
+
         /// <summary>
         /// ویرایش یک کاربر 
         /// </summary>

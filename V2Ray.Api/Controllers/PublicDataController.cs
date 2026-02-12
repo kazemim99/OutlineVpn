@@ -75,6 +75,60 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(response);
         }
 
+        [HttpGet("account-info/{username}")]
+        public ApiResponse GetAccountInfo([FromRoute] string username)
+        {
+            var account = _db.SSHKeyInfos.FirstOrDefault(c => c.UserName == username);
+
+            if (account == null)
+                throw new ApiException("حساب کاربری یافت نشد");
+
+            var isExpired = account.ExpireDate < DateTime.Now;
+            var daysRemaining = (account.ExpireDate - DateTime.Now).Days;
+
+            string expireDateMessage = "";
+            if (isExpired)
+            {
+                expireDateMessage = "حساب شما منقضی شده است";
+            }
+            else if (daysRemaining <= 3)
+            {
+                expireDateMessage = $"حساب شما {daysRemaining} روز دیگر منقضی می‌شود";
+            }
+            else
+            {
+                expireDateMessage = $"{daysRemaining} روز باقی مانده";
+            }
+
+            string trafficMessage = "";
+            if (account.TrefficExpired)
+            {
+                trafficMessage = "ترافیک شما تمام شده است";
+            }
+            else
+            {
+                var remainingTraffic = account.TotalTraffic - account.UsedTraffic;
+                trafficMessage = $"{remainingTraffic:F2} GB باقی مانده";
+            }
+
+            var response = new
+            {
+                username = account.UserName,
+                usedTraffic = $"{account.UsedTraffic:F2} GB",
+                totalTraffic = $"{account.TotalTraffic:F2} GB",
+                createDate = account.CreatedAt.ToPeString(),
+                expireDate = account.ExpireDate.ToPeString(),
+                expireDateMessage = expireDateMessage,
+                trafficMessage = trafficMessage,
+                isExpired = isExpired,
+                trafficExpired = account.TrefficExpired,
+                enable = account.Enable,
+                enableMessage = account.Enable ? "فعال" : "غیرفعال",
+            };
+
+            return new ApiResponse(response);
+        }
+
         private string GetServer(int? userId)
         {
             int length = 1;
@@ -125,7 +179,6 @@ namespace V2Ray.Api.Controllers
 
 
         [HttpGet("get-accounType")]
-        [Authorize]
         public ApiResponse AccountType()
         {
             var result = Enum.GetValues(typeof(AccountType))

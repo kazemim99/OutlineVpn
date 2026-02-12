@@ -1,8 +1,14 @@
 module.exports = {
   devServer: {
-    socket: "socket",
     headers: { "Access-Control-Allow-Origin": "*" },
-    proxy: "https://localhost:7087/",
+    proxy: {
+      "/api": {
+        target: "https://localhost:7087",
+        changeOrigin: true,
+        secure: false, // Disable SSL verification for development
+        logLevel: "debug",
+      },
+    },
   },
   outputDir: "C:/Users/Mostafa/OutlineVpn/V2Ray.Api/wwwroot/",
 

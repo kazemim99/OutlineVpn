@@ -187,9 +187,9 @@ export default {
         await UserModule.Login(this.loginForm);
         // this.$router.push("/verify-code/");
         this.$router.push("/dashboard/sshkeys");
-
-        this.loading = false;
       } catch (error) {
+        // Only reset loading on error, navigation will handle successful state
+      } finally {
         this.loading = false;
       }
     },
