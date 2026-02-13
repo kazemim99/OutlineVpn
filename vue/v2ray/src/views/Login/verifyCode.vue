@@ -75,7 +75,8 @@ export default class extends Vue {
       });
       this.loading = false;
       if (UserModule.verfied) {
-        this.$router.push("/dashboard/sshkeys");
+        const returnUrl = (this.$route.query.returnUrl as string) || "/dashboard/sshkeys";
+        this.$router.replace(returnUrl);
       }
     } catch (error) {
       this.loading = false;

@@ -186,7 +186,8 @@ export default {
       try {
         await UserModule.Login(this.loginForm);
         // this.$router.push("/verify-code/");
-        this.$router.push("/dashboard/sshkeys");
+        const returnUrl = (this.$route.query.returnUrl as string) || "/dashboard/sshkeys";
+        this.$router.replace(returnUrl);
       } catch (error) {
         // Only reset loading on error, navigation will handle successful state
       } finally {

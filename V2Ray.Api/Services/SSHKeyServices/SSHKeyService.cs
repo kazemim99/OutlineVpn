@@ -1155,20 +1155,20 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 Domain = 7,
                 Port = 27000,
-                SubId = 3,
+                SubId = 2,
             };
 
             if (userId == 71 || userId == 88)//danial
             {
                 data.Port = 26000;
                 data.Domain = 6;
-                data.SubId = 2;
+                data.SubId = 9;
             }
             if (userId == 41)//ramin
             {
 
                 data.Port = 25000;
-                data.SubId = 1;
+                data.SubId = 8;
                 data.Domain = 8;
             }
 

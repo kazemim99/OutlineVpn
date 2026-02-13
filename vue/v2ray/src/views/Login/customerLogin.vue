@@ -144,6 +144,7 @@ export default {
 
       this.loading = true;
       try {
+        const returnUrl = this.$route.query.returnUrl;
         request
           .post(`/authentication/customer-login`, this.loginForm)
           .then((a) => {
@@ -153,10 +154,10 @@ export default {
                 mobile: this.loginForm.userName,
                 password: this.loginForm.password,
               });
-              this.$router.push("/dashboard/sshkeys");
+              this.$router.replace(returnUrl || "/dashboard/sshkeys");
             } else {
               UserModule.CustomerLogin(result);
-              this.$router.push("/customerInfo");
+              this.$router.replace(returnUrl || "/customerInfo");
             }
           })
           .finally(() => {
