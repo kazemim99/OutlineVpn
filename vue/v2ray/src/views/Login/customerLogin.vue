@@ -144,7 +144,7 @@ export default {
 
       this.loading = true;
       try {
-        const returnUrl = this.$route.query.returnUrl;
+        const returnUrl = this.$route.query.returnUrl || "";
         request
           .post(`/authentication/customer-login`, this.loginForm)
           .then((a) => {

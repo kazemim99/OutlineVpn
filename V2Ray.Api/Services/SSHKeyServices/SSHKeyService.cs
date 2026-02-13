@@ -46,11 +46,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
-        public async Task AccountInfo(string userName)
-        {
-           
-
-        }
         public async Task GenerateSshFromAdmin(CreateSSHKeyInput input)
         {
             try
@@ -543,15 +538,15 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                     if (keyInfo.DurationId == 30)
                     {
-                        keyInfo.TotalTraffic = keyInfo.UserId == 82 ? 40 : 55;
+                        keyInfo.TotalTraffic =  55;
                     }
                     else if (keyInfo.DurationId == 60)
                     {
-                        keyInfo.TotalTraffic = keyInfo.UserId == 82 ? 80 : 110;
+                        keyInfo.TotalTraffic = 110;
                     }
                     else if (keyInfo.DurationId == 90)
                     {
-                        keyInfo.TotalTraffic = keyInfo.UserId == 82 ? 120 : 165;
+                        keyInfo.TotalTraffic =165;
                     }
                     await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Create, true);
                 }

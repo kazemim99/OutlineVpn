@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   plugins: [
     createPersistedState({
-      paths: ['auth', 'userDetails', 'customerUserName', 'roles', 'permissions']
+      paths: ['userDetails', 'customerUserName', 'roles', 'permissions']
     })
   ],
   state: {

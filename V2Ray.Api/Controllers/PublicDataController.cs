@@ -75,10 +75,33 @@ namespace V2Ray.Api.Controllers
             return new ApiResponse(response);
         }
 
+        /// <summary>
+        /// Get account information by username or VLESS URL
+        /// VLESS URL format: vless://[GUID]@[server]:[port]?[params]#[username]
+        /// Example: vless://9604b197-1335-41b0-9583-db7defcd0a55@v7.iransshvpn.com:27000?type=ws&path=%2F&host=&security=none#u16323
+        /// - GUID: Client identifier (V2Ray UUID)
+        /// - username: Appears after '#' symbol in the URL fragment
+        /// </summary>
         [HttpGet("account-info/{username}")]
         public ApiResponse GetAccountInfo([FromRoute] string username)
         {
-            var account = _db.SSHKeyInfos.FirstOrDefault(c => c.UserName == username);
+            // Extract username from VLESS URL if provided
+            // VLESS format: vless://[guid]@[server]:[port]?[params]#[username]
+            string extractedUsername = username;
+
+            if (username.StartsWith("vless://", StringComparison.OrdinalIgnoreCase))
+            {
+                var fragmentIndex = username.IndexOf('#');
+                if (fragmentIndex > 0 && fragmentIndex < username.Length - 1)
+                {
+                    // Extract username from the fragment (part after #)
+                    extractedUsername = username.Substring(fragmentIndex + 1);
+                    // URL decode in case of encoded characters
+                    extractedUsername = Uri.UnescapeDataString(extractedUsername);
+                }
+            }
+
+            var account = _db.SSHKeyInfos.FirstOrDefault(c => c.UserName == extractedUsername);
 
             if (account == null)
                 throw new ApiException("حساب کاربری یافت نشد");
@@ -114,6 +137,7 @@ namespace V2Ray.Api.Controllers
             var response = new
             {
                 username = account.UserName,
+                guid = account.V2Guid, // Client identifier (V2Ray UUID) used in VLESS URL
                 usedTraffic = $"{account.UsedTraffic:F2} GB",
                 totalTraffic = $"{account.TotalTraffic:F2} GB",
                 createDate = account.CreatedAt.ToPeString(),
@@ -124,6 +148,7 @@ namespace V2Ray.Api.Controllers
                 trafficExpired = account.TrefficExpired,
                 enable = account.Enable,
                 enableMessage = account.Enable ? "فعال" : "غیرفعال",
+                configUrl = account.Code // Full VLESS configuration URL
             };
 
             return new ApiResponse(response);
