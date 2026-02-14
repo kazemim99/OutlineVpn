@@ -944,7 +944,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
 
                     var formData = new Dictionary<string, string>();
-                    var number = GetUserNumber(item.UserId);
+                    var number =await GetUserNumber(item.UserId);
 
                     if (status == AccountActionStatus.Delete)
                     {
@@ -968,7 +968,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                         if (accountType == AccountType.V2RAy)
                         {
-                            number = GetUserNumber(currenUserId);
+                            number =await GetUserNumber(currenUserId);
                             item.Code = $"vless://{item.V2Guid}@v{number.Domain}.iransshvpn.com:{number.Port}?type=ws&path=%2F&host=&security=none#{item.UserName}";
 
                             formData = new Dictionary<string, string>
@@ -1142,8 +1142,32 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
         }
 
-        private ConfigDateOutput GetUserNumber(int userId)
+        private async Task<ConfigDateOutput> GetUserNumber(int userId)
         {
+            HttpClientHandler clientHandler = new HttpClientHandler();
+            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+            { return true; };
+
+            using var httpClient = new HttpClient(clientHandler)
+            {
+                Timeout = TimeSpan.FromSeconds(360)
+            };
+
+            var baseUrls = ConnectPanel(0, AccountType.V2RAy);
+
+            var loginData = new
+            {
+                username = "master640",
+                password = "!Q@W3e4r"
+            };
+
+            var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
+            loginResponse.EnsureSuccessStatusCode();
+            var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
+            httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
+
+            httpClient.DefaultRequestHeaders.Add("ContentType", "application/json");
+            var panelresult = await httpClient.GetFromJsonAsync<Root>($"{baseUrls}/panel/api/inbounds/list");
 
 
             var data = new ConfigDateOutput()
@@ -1155,15 +1179,17 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             if (userId == 71 || userId == 88)//danial
             {
+                var danial = panelresult.obj.First(c => c.port == 26000);
                 data.Port = 26000;
                 data.Domain = 6;
-                data.SubId = 9;
+                data.SubId = danial.id;
             }
             if (userId == 41)//ramin
             {
+                var ramin = panelresult.obj.First(c => c.port == 25000);
 
                 data.Port = 25000;
-                data.SubId = 8;
+                data.SubId = ramin.id;
                 data.Domain = 8;
             }
 
