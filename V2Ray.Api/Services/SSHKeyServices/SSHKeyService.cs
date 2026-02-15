@@ -216,7 +216,10 @@ namespace V2Ray.Api.Services.SSHKeyServices
         private string ConnectPanel(int userId, AccountType accountType)
         {
             var baseUrls = "p.iransshvpn.com";
-
+            if (userId == 71 || userId == 88 || userId == 41)//danial
+            {
+                baseUrls = "v.iransshvpn.com";
+            }
             var url = baseUrls.Split("/");
             IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
             return $"https://{addresses}/FhFNjd6Q9p";
@@ -538,15 +541,15 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                     if (keyInfo.DurationId == 30)
                     {
-                        keyInfo.TotalTraffic =  55;
+                        keyInfo.TotalTraffic =  45;
                     }
                     else if (keyInfo.DurationId == 60)
                     {
-                        keyInfo.TotalTraffic = 110;
+                        keyInfo.TotalTraffic = 90;
                     }
                     else if (keyInfo.DurationId == 90)
                     {
-                        keyInfo.TotalTraffic =165;
+                        keyInfo.TotalTraffic =135;
                     }
                     await CreateV2Ray(currentUserId, new List<SSHKey> { keyInfo }, keyInfo.AccountType, AccountActionStatus.Create, true);
                 }
@@ -634,7 +637,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
 
 
-                var items = _db.SSHKeyInfos.Where(c => c.ExpireDate.Date > DateTime.Now.Date && c.Enable).ToList();
+                var items = _db.SSHKeyInfos.Where(c => c.ExpireDate.Date > DateTime.Now.Date && c.Enable);
 
 
 
@@ -860,30 +863,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
             _db.SaveChanges();
         }
 
-        private void Connect(V2Server server, SshClient ssh)
-        {
-
-            int attempts = 0;
-            int _connectiontRetryAttempts = 50;
-            do
-            {
-                try
-                {
-                    ssh.Connect();
-                    attempts = _connectiontRetryAttempts;
-                }
-                catch (Renci.SshNet.Common.SshConnectionException ex)
-                {
-
-                    attempts++;
-                    if (attempts >= _connectiontRetryAttempts)
-                    {
-                        throw new Exception("اتصال به سرور : " + ssh.ConnectionInfo.Host);
-                    }
-                }
-            } while (attempts < _connectiontRetryAttempts && !ssh.IsConnected);
-
-        }
 
 
         private string GenerateUser(int i)
@@ -1070,22 +1049,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 { "R", 41 }
             };
 
-            HttpClientHandler clientHandler = new HttpClientHandler();
-            clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
-
-            using var httpClient = new HttpClient(clientHandler) { Timeout = TimeSpan.FromSeconds(30) };
-
-            var panelUrl = ConnectPanel(1, AccountType.V2RAy);
-
-            var loginData = new { username = "master640", password = "!Q@W3e4r" };
-            var loginResponse = await httpClient.PostAsJsonAsync($"{panelUrl}/login", loginData);
-            loginResponse.EnsureSuccessStatusCode();
-            var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").First();
-            httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
-
-            var panelResult = await httpClient.GetFromJsonAsync<Root>($"{panelUrl}/panel/api/inbounds/list");
-            if (panelResult?.obj == null)
-                return;
+          
 
             var dbUserNames = await _db.SSHKeyInfos
                 .Where(c => c.AccountType == AccountType.V2RAy && c.Enable)
@@ -1094,6 +1058,22 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
             foreach (var (remark, userId) in remarkUserMap)
             {
+                HttpClientHandler clientHandler = new HttpClientHandler();
+                clientHandler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true;
+
+                using var httpClient = new HttpClient(clientHandler) { Timeout = TimeSpan.FromSeconds(30) };
+
+                var panelUrl = ConnectPanel(userId, AccountType.V2RAy);
+
+                var loginData = new { username = "master640", password = "!Q@W3e4r" };
+                var loginResponse = await httpClient.PostAsJsonAsync($"{panelUrl}/login", loginData);
+                loginResponse.EnsureSuccessStatusCode();
+                var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").First();
+                httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
+
+                var panelResult = await httpClient.GetFromJsonAsync<Root>($"{panelUrl}/panel/api/inbounds/list");
+                if (panelResult?.obj == null)
+                    return;
                 try
                 {
                     var orphanKeys = new List<SSHKey>();
@@ -1153,7 +1133,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 Timeout = TimeSpan.FromSeconds(360)
             };
 
-            var baseUrls = ConnectPanel(0, AccountType.V2RAy);
+            var baseUrls = ConnectPanel(userId, AccountType.V2RAy);
 
             var loginData = new
             {
