@@ -1154,7 +1154,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             {
                 Domain = 7,
                 Port = 27000,
-                SubId = 2,
+                SubId = panelresult.obj.First(c => c.port == 27000).id,
             };
 
             if (userId == 71 || userId == 88)//danial
