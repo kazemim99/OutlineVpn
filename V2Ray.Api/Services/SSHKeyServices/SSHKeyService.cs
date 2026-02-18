@@ -216,9 +216,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
         private string ConnectPanel(int userId, AccountType accountType)
         {
             var baseUrls = "p.iransshvpn.com";
-            if (userId == 71 || userId == 88 || userId == 41)//danial
+            //if (userId == 71 || userId == 88 || userId == 41)//danial
+            //{
+            //    baseUrls = "v.iransshvpn.com";
+            //}
+            if(userId == 41)
             {
-                baseUrls = "v.iransshvpn.com";
+                baseUrls = "v5.iransshvpn.com";
+
             }
             var url = baseUrls.Split("/");
             IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
@@ -774,8 +779,8 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     await CreateV2Ray(41, keys.Where(c => c.AccountType == AccountType.V2RAy && (c.UserId == 41 || c.UserId == 88)).ToList(),
                         AccountType.V2RAy, AccountActionStatus.Delete);
 
-                    await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(),
-                        AccountType.V2RAy, AccountActionStatus.Delete);
+                    //await CreateV2Ray(71, keys.Where(c => c.AccountType == AccountType.V2RAy && c.UserId == 71).ToList(),
+                    //    AccountType.V2RAy, AccountActionStatus.Delete);
 
                     await CreateV2Ray(77, keys.Where(c => c.AccountType == AccountType.V2RAy && (c.UserId == 77 || c.UserId == 76 || c.UserId == 85 || c.UserId == 87)).ToList(),
                         AccountType.V2RAy, AccountActionStatus.Delete);
@@ -917,13 +922,16 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 loginResponse.EnsureSuccessStatusCode();
                 var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").ToString();
                 httpClient.DefaultRequestHeaders.Add("Cookie", sessionCookie);
-
+                var number = new ConfigDateOutput();
                 foreach (var item in sSHKeys)
                 {
 
 
                     var formData = new Dictionary<string, string>();
-                    var number =await GetUserNumber(item.UserId);
+                    if(number.SubId == 0)
+                    {
+                     number =await GetUserNumber(item.UserId);
+                    }
 
                     if (status == AccountActionStatus.Delete)
                     {
@@ -934,7 +942,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                         var url = $"{secUrl}/panel/api/inbounds/{secSub}/delClient/{item.V2Guid}";
                         var postResponse = await httpClient.PostAsync($"{url}", null);
-                        postResponse.EnsureSuccessStatusCode();
+                        //postResponse.EnsureSuccessStatusCode();
 
                     }
                     else
@@ -1029,7 +1037,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 }
 
 
-
+                number = new ConfigDateOutput();
                 return sSHKeys.First().Id;
             }
             catch (Exception ex)
