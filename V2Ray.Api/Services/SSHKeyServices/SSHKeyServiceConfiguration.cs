@@ -1,26 +1,9 @@
 namespace V2Ray.Api.Services.SSHKeyServices
 {
-    public class SSHKeyServiceConfiguration
-    {
-        public SshConfiguration Ssh { get; set; } = new();
-        public PanelConfiguration Panel { get; set; } = new();
-        public List<string> NodeIps { get; set; } = new();
-        public UserTrafficConfiguration UserTraffic { get; set; } = new();
-    }
 
-    public class SshConfiguration
-    {
-        public int Port { get; set; } = 1027;
-        public string Username { get; set; } = "root";
-        public string Password { get; set; } = string.Empty;
-    }
 
-    public class PanelConfiguration
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string BaseDomain { get; set; } = "p.iransshvpn.com";
-    }
+
+
 
     public class UserTrafficConfiguration
     {

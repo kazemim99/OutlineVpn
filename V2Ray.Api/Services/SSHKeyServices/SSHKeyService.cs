@@ -216,10 +216,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         private string ConnectPanel(int userId, AccountType accountType)
         {
             var baseUrls = "p.iransshvpn.com";
-            //if (userId == 71 || userId == 88 || userId == 41)//danial
-            //{
-            //    baseUrls = "v.iransshvpn.com";
-            //}
+          
             if(userId == 41)
             {
                 baseUrls = "v5.iransshvpn.com";
@@ -666,7 +663,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
         public async Task UpdateUserTraffic()
         {
-            var remarks = new List<string> { "M", "D", "R" };
+            var remarks = new List<string> {  "R" };
 
             foreach (var item in remarks)
             {
@@ -681,7 +678,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         Timeout = TimeSpan.FromSeconds(360)
                     };
 
-                    var userid = item == "D" ? 71 : 1;
+                    var userid = item == "R" ? 41 : 77;
                     var baseUrls = ConnectPanel(userid, AccountType.V2RAy);
 
                     var loginData = new
@@ -711,7 +708,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                                 try
                                 {
                                     var currentPanelTraffic = BytesToGigabytes(item2.down);
-
+                                
                                     // Delta-based tracking:
                                     // - If panel traffic >= last known panel value: no reset, add only the delta
                                     // - If panel traffic < last known panel value: panel was reset, add the new value
@@ -1157,12 +1154,12 @@ namespace V2Ray.Api.Services.SSHKeyServices
             httpClient.DefaultRequestHeaders.Add("ContentType", "application/json");
             var panelresult = await httpClient.GetFromJsonAsync<Root>($"{baseUrls}/panel/api/inbounds/list");
 
-
+            var mostafa = panelresult.obj.FirstOrDefault(c => c.port == 27000);
             var data = new ConfigDateOutput()
             {
                 Domain = 7,
                 Port = 27000,
-                SubId = panelresult.obj.First(c => c.port == 27000).id,
+                SubId = mostafa != null ? mostafa.id : 0,
             };
 
             if (userId == 71 || userId == 88)//danial
