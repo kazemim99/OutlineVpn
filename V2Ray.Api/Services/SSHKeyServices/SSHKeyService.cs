@@ -1162,20 +1162,14 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 SubId = mostafa != null ? mostafa.id : 0,
             };
 
-            if (userId == 71 || userId == 88)//danial
-            {
-                var danial = panelresult.obj.First(c => c.port == 26000);
-                data.Port = 26000;
-                data.Domain = 6;
-                data.SubId = danial.id;
-            }
+        
             if (userId == 41)//ramin
             {
                 var ramin = panelresult.obj.First(c => c.port == 25000);
 
                 data.Port = 25000;
                 data.SubId = ramin.id;
-                data.Domain = 8;
+                data.Domain = 5;
             }
 
             return data;
