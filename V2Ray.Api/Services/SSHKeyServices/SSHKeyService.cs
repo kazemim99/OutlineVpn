@@ -187,12 +187,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
         }
 
 
-
-
-
-
-
-
         private int? GetV2Port(int userId, AccountType accountType)
         {
             var subId = 27000;
@@ -208,11 +202,6 @@ namespace V2Ray.Api.Services.SSHKeyServices
             return subId;
         }
 
-
-
-
-
-
         private string ConnectPanel(int userId, AccountType accountType)
         {
             var baseUrls = "p.iransshvpn.com";
@@ -224,7 +213,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
             var url = baseUrls.Split("/");
             IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
-            return $"https://{addresses}/FhFNjd6Q9p";
+            return $"http://{addresses}:443/FhFNjd6Q9p";
         }
 
         public async Task Charge(int keyId, int durationId, int userId)
@@ -949,7 +938,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                         if (item.V2Guid.IsNullOrEmpty())
                             item.V2Guid = Guid.NewGuid().ToString();
 
-
+                        
                         if (accountType == AccountType.V2RAy)
                         {
                             number =await GetUserNumber(currenUserId);
@@ -1050,7 +1039,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             var remarkUserMap = new Dictionary<string, int>
             {
                 { "M", 77 },
-                { "D", 71 },
+                //{ "D", 71 },
                 { "R", 41 }
             };
 
