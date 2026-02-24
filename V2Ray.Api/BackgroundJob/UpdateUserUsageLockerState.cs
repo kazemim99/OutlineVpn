@@ -74,7 +74,7 @@ namespace V2Ray.Api.BackgroundJob
             {
                 using var scope = _scopeFactory.CreateScope();
                 var sSHKeyService = scope.ServiceProvider.GetRequiredService<ISSHKeyService>();
-                //await sSHKeyService.UpdateUserTraffic();
+                await sSHKeyService.UpdateUserTraffic();
 
             }
             catch (Exception ex)
