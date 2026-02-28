@@ -213,7 +213,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             }
             var url = baseUrls.Split("/");
             IPAddress addresses = Dns.GetHostAddresses(url[0])[0];
-            return $"http://{addresses}:443/FhFNjd6Q9p";
+            return $"http://{addresses}";
         }
 
         public async Task Charge(int keyId, int durationId, int userId)
@@ -488,7 +488,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     var loginData = new
                     {
                         username = "master640",
-                        password = "!Q@W3e4r"
+                        password = "!Q@W#E4r5t6y"
                     };
 
                     //var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
@@ -673,7 +673,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                     var loginData = new
                     {
                         username = "master640",
-                        password = "!Q@W3e4r"
+                        password = "!Q@W#E4r5t6y"
                     };
 
                     var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
@@ -894,7 +894,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
                 var loginData = new
                 {
                     username = "master640",
-                    password = "!Q@W3e4r"
+                    password = "!Q@W#E4r5t6y"
                 };
 
                 StringContent queryString = new StringContent(JsonConvert.SerializeObject(loginData), UnicodeEncoding.UTF8, "application/json");
@@ -1059,7 +1059,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
 
                 var panelUrl = ConnectPanel(userId, AccountType.V2RAy);
 
-                var loginData = new { username = "master640", password = "!Q@W3e4r" };
+                var loginData = new { username = "master640", password = "!Q@W#E4r5t6y" };
                 var loginResponse = await httpClient.PostAsJsonAsync($"{panelUrl}/login", loginData);
                 loginResponse.EnsureSuccessStatusCode();
                 var sessionCookie = loginResponse.Headers.GetValues("Set-Cookie").First();
@@ -1132,7 +1132,7 @@ namespace V2Ray.Api.Services.SSHKeyServices
             var loginData = new
             {
                 username = "master640",
-                password = "!Q@W3e4r"
+                password = "!Q@W#E4r5t6y"
             };
 
             var loginResponse = await httpClient.PostAsJsonAsync($"{baseUrls}/login", loginData);
